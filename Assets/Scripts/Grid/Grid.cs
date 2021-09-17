@@ -10,13 +10,22 @@ public class Grid : MonoBehaviour
     [SerializeField] private float _TileSize = 1.0f;
 
     [SerializeField] private Texture2D _TerrainTiles;
-    [SerializeField] private int _TilesPerRow;
-    [SerializeField] private int _TilesPerCol;
+    [SerializeField] private int _TexTilesPerRow;
+    [SerializeField] private int _TexTilesPerCol;
 
     private TileMap _TileMap;
 
+    private Vector2[] _Uvs;
+
     public TileMap TileMap => _TileMap;
+    public int Width => _Width;
+    public int Height => _Height;
     public float TileSize => _TileSize;
+
+    public Vector2[] Uvs => _Uvs;
+
+    public int TexTilesPerRow => _TexTilesPerRow;
+    public int TexTilesPerCol => _TexTilesPerCol;
 
     private void Awake()
     {
@@ -30,12 +39,12 @@ public class Grid : MonoBehaviour
 
     public void BuildMesh()
     {
-        _TileMap = new TileMap(_Width, _Height, _TileSize);
+        _TileMap = new TileMap(this, _Width, _Height, _TileSize);
 
         int vertCount = _Width * _Height * 4;
 
-        float tileTexProcRow = 1.0f / _TilesPerRow;
-        float tileTexProcCol = 1.0f / _TilesPerCol;
+        float tileTexProcRow = 1.0f / _TexTilesPerRow;
+        float tileTexProcCol = 1.0f / _TexTilesPerCol;
 
         Vector3[] vertices = new Vector3[vertCount];
         Vector3[] normals = new Vector3[vertCount];
@@ -43,7 +52,7 @@ public class Grid : MonoBehaviour
 
         int[] triangles = new int[_Width * _Height * 6];
 
-        float vertexOffset = _TileSize * 0.5f;
+        float vertexOffset = _TileSize;
 
         int v = 0, t = 0;
         for (int x = 0; x < _Width; ++x)
@@ -54,22 +63,23 @@ public class Grid : MonoBehaviour
 
                 Vector3 tileOffset = new Vector3(x * _TileSize, 0, z * _TileSize);
 
-                vertices[v + 0] = new Vector3(-vertexOffset, 0, -vertexOffset) + tileOffset;
-                vertices[v + 1] = new Vector3(-vertexOffset, 0,  vertexOffset) + tileOffset;
-                vertices[v + 2] = new Vector3( vertexOffset, 0, -vertexOffset) + tileOffset;
-                vertices[v + 3] = new Vector3( vertexOffset, 0,  vertexOffset) + tileOffset;
+                vertices[v + 0] = new Vector3( 0,             0,             0)            + tileOffset;
+                vertices[v + 1] = new Vector3( 0,             0,             vertexOffset) + tileOffset;
+                vertices[v + 2] = new Vector3( vertexOffset,  0,             0)            + tileOffset;
+                vertices[v + 3] = new Vector3( vertexOffset,  0,             vertexOffset) + tileOffset;
 
                 normals[v + 0] = Vector3.up;
                 normals[v + 1] = Vector3.up;
                 normals[v + 2] = Vector3.up;
                 normals[v + 3] = Vector3.up;
 
-                float proc = (int)tile.TileType / (float)_TilesPerRow;
+                float proc = (int)tile.TileType / (float)_TexTilesPerRow;
+                float dFix = 0.05f; // dilation
 
-                uv[v + 0] = new Vector2(proc, 1.0f);                  // top-left
-                uv[v + 1] = new Vector2(proc + tileTexProcRow, 1.0f); // top-right
-                uv[v + 2] = new Vector2(proc, 0.5f);                  // bottom-left
-                uv[v + 3] = new Vector2(proc + tileTexProcRow, 0.5f); // bottom-right
+                uv[v + 0] = new Vector2(proc + dFix,                  1.0f - dFix); // top-left
+                uv[v + 1] = new Vector2(proc + tileTexProcRow - dFix, 1.0f - dFix); // top-right
+                uv[v + 2] = new Vector2(proc + dFix,                  0.0f + dFix); // bottom-left
+                uv[v + 3] = new Vector2(proc + tileTexProcRow - dFix, 0.0f + dFix); // bottom-right
 
                 triangles[t] = v;
                 triangles[t + 1] = triangles[t + 4] = v + 1;
@@ -85,7 +95,7 @@ public class Grid : MonoBehaviour
         mesh.vertices = vertices;
         mesh.triangles = triangles;
         mesh.normals = normals;
-        mesh.uv = uv;
+        mesh.uv = _Uvs = uv;
 
         MeshFilter meshFilter = GetComponent<MeshFilter>();
         MeshRenderer meshRenderer = GetComponent<MeshRenderer>();

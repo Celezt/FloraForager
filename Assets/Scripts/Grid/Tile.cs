@@ -12,23 +12,37 @@ public class Tile
 {
     private GameObject _HeldObject;
     private TileType _TileType;
-    private Vector2 _Position;
+    private Vector3 _PositionWorld;
+    private Vector3 _PositionLocal;
     private float _Size;
 
     public GameObject HeldObject => _HeldObject;
     public TileType TileType => _TileType;
-    public Vector2 Position => _Position;
+    public Vector3 PositionWorld => _PositionWorld;
+    public Vector3 PositionLocal => _PositionLocal;
+    public Vector3 Middle => _PositionWorld + new Vector3(_Size / 2, 0, _Size / 2);
     public float Size => _Size;
 
     public bool Occupied { get; set; }
 
-    public Tile(Vector2 position, float size, TileType tileType = TileType.Empty)
+    public Tile(Vector3 posW, Vector3 posL, float size, TileType tileType = TileType.Empty)
     {
-        _Position = position;
+        _PositionWorld = posW;
+        _PositionLocal = posL;
         _Size = size;
         _TileType = tileType;
 
         Occupied = false;
+    }
+
+    public bool UpdateType(TileType type)
+    {
+        if (Occupied)
+            return false;
+
+        _TileType = type;
+
+        return true;
     }
 
     public bool OccupyTile(GameObject obj)
