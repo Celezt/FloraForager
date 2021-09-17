@@ -42,12 +42,14 @@ public class PlayerMovement : MonoBehaviour
         get => _rotation;
         set => _rotation = value;
     }
+    public bool IsRunning => _isRunning;
 
     [SerializeField] private Rigidbody _rigidbody;
     [SerializeField] private PivotMode _pivotMode;
     [SerializeField, ConditionalField(nameof(_pivotMode), false, PivotMode.Camera)] private Camera _camera;
     [SerializeField, ConditionalField(nameof(_pivotMode), false, PivotMode.Target)] private Transform _pivot;
-    [SerializeField] private float _speed = 5.0f;
+    [SerializeField] private float _speed = 6.0f;
+    [SerializeField] private float _runningSpeed = 10.0f;
     [SerializeField] private float _drag = 8.0f;
     [SerializeField] private float _angularDrag = 5.0f;
 
@@ -65,10 +67,19 @@ public class PlayerMovement : MonoBehaviour
     private Vector3 _velocity;
     private Quaternion _rotation;
 
-    public void OnMovement(InputAction.CallbackContext context)
+    private bool _isRunning;
+
+    public void OnMove(InputAction.CallbackContext context)
     {
         Vector2 value = context.ReadValue<Vector2>();
         _rawDirection = new Vector3(value.x, 0, value.y);
+    }
+
+    public void OnRun(InputAction.CallbackContext context)
+    {
+        float value = context.ReadValue<float>();
+
+        _isRunning = value > 0.5f;
     }
 
     private void OnEnable()
@@ -125,7 +136,7 @@ public class PlayerMovement : MonoBehaviour
 
         void FixedMove()
         {
-            _rawVelocity = currentDirection * _speed * fixedDeltaTime;
+            _rawVelocity = currentDirection * ((_isRunning) ? _runningSpeed : _speed) * fixedDeltaTime;
             _velocity = Vector3.Lerp(_velocity, _rawVelocity, _drag * fixedDeltaTime);
             _rigidbody.MovePosition(transform.position + _velocity);
         }

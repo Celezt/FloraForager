@@ -28,13 +28,22 @@ public partial class @PlayerAction : IInputActionCollection2, IDisposable
             ""id"": ""05be8186-ebca-42f3-a1f2-00bd2e7d9b28"",
             ""actions"": [
                 {
-                    ""name"": ""Movement"",
+                    ""name"": ""Move"",
                     ""type"": ""Value"",
                     ""id"": ""becf28c3-836b-4e02-a26f-3f5a5e7ea584"",
                     ""expectedControlType"": ""Vector2"",
                     ""processors"": """",
                     ""interactions"": """",
                     ""initialStateCheck"": true
+                },
+                {
+                    ""name"": ""Run"",
+                    ""type"": ""Button"",
+                    ""id"": ""2c946915-6922-440d-ab6f-486e6eb12450"",
+                    ""expectedControlType"": ""Button"",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
                 }
             ],
             ""bindings"": [
@@ -45,7 +54,7 @@ public partial class @PlayerAction : IInputActionCollection2, IDisposable
                     ""interactions"": """",
                     ""processors"": """",
                     ""groups"": """",
-                    ""action"": ""Movement"",
+                    ""action"": ""Move"",
                     ""isComposite"": true,
                     ""isPartOfComposite"": false
                 },
@@ -56,7 +65,7 @@ public partial class @PlayerAction : IInputActionCollection2, IDisposable
                     ""interactions"": """",
                     ""processors"": """",
                     ""groups"": ""KeyboardAndMouse"",
-                    ""action"": ""Movement"",
+                    ""action"": ""Move"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": true
                 },
@@ -67,7 +76,7 @@ public partial class @PlayerAction : IInputActionCollection2, IDisposable
                     ""interactions"": """",
                     ""processors"": """",
                     ""groups"": ""KeyboardAndMouse"",
-                    ""action"": ""Movement"",
+                    ""action"": ""Move"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": true
                 },
@@ -78,7 +87,7 @@ public partial class @PlayerAction : IInputActionCollection2, IDisposable
                     ""interactions"": """",
                     ""processors"": """",
                     ""groups"": ""KeyboardAndMouse"",
-                    ""action"": ""Movement"",
+                    ""action"": ""Move"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": true
                 },
@@ -89,7 +98,7 @@ public partial class @PlayerAction : IInputActionCollection2, IDisposable
                     ""interactions"": """",
                     ""processors"": """",
                     ""groups"": ""KeyboardAndMouse"",
-                    ""action"": ""Movement"",
+                    ""action"": ""Move"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": true
                 },
@@ -100,7 +109,18 @@ public partial class @PlayerAction : IInputActionCollection2, IDisposable
                     ""interactions"": """",
                     ""processors"": """",
                     ""groups"": ""Dualshock4"",
-                    ""action"": ""Movement"",
+                    ""action"": ""Move"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""774891a8-2767-469a-8cc6-6c238e931938"",
+                    ""path"": ""<Keyboard>/shift"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": ""KeyboardAndMouse"",
+                    ""action"": ""Run"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
                 }
@@ -139,7 +159,8 @@ public partial class @PlayerAction : IInputActionCollection2, IDisposable
 }");
         // Ground
         m_Ground = asset.FindActionMap("Ground", throwIfNotFound: true);
-        m_Ground_Movement = m_Ground.FindAction("Movement", throwIfNotFound: true);
+        m_Ground_Move = m_Ground.FindAction("Move", throwIfNotFound: true);
+        m_Ground_Run = m_Ground.FindAction("Run", throwIfNotFound: true);
     }
 
     public void Dispose()
@@ -199,12 +220,14 @@ public partial class @PlayerAction : IInputActionCollection2, IDisposable
     // Ground
     private readonly InputActionMap m_Ground;
     private IGroundActions m_GroundActionsCallbackInterface;
-    private readonly InputAction m_Ground_Movement;
+    private readonly InputAction m_Ground_Move;
+    private readonly InputAction m_Ground_Run;
     public struct GroundActions
     {
         private @PlayerAction m_Wrapper;
         public GroundActions(@PlayerAction wrapper) { m_Wrapper = wrapper; }
-        public InputAction @Movement => m_Wrapper.m_Ground_Movement;
+        public InputAction @Move => m_Wrapper.m_Ground_Move;
+        public InputAction @Run => m_Wrapper.m_Ground_Run;
         public InputActionMap Get() { return m_Wrapper.m_Ground; }
         public void Enable() { Get().Enable(); }
         public void Disable() { Get().Disable(); }
@@ -214,16 +237,22 @@ public partial class @PlayerAction : IInputActionCollection2, IDisposable
         {
             if (m_Wrapper.m_GroundActionsCallbackInterface != null)
             {
-                @Movement.started -= m_Wrapper.m_GroundActionsCallbackInterface.OnMovement;
-                @Movement.performed -= m_Wrapper.m_GroundActionsCallbackInterface.OnMovement;
-                @Movement.canceled -= m_Wrapper.m_GroundActionsCallbackInterface.OnMovement;
+                @Move.started -= m_Wrapper.m_GroundActionsCallbackInterface.OnMove;
+                @Move.performed -= m_Wrapper.m_GroundActionsCallbackInterface.OnMove;
+                @Move.canceled -= m_Wrapper.m_GroundActionsCallbackInterface.OnMove;
+                @Run.started -= m_Wrapper.m_GroundActionsCallbackInterface.OnRun;
+                @Run.performed -= m_Wrapper.m_GroundActionsCallbackInterface.OnRun;
+                @Run.canceled -= m_Wrapper.m_GroundActionsCallbackInterface.OnRun;
             }
             m_Wrapper.m_GroundActionsCallbackInterface = instance;
             if (instance != null)
             {
-                @Movement.started += instance.OnMovement;
-                @Movement.performed += instance.OnMovement;
-                @Movement.canceled += instance.OnMovement;
+                @Move.started += instance.OnMove;
+                @Move.performed += instance.OnMove;
+                @Move.canceled += instance.OnMove;
+                @Run.started += instance.OnRun;
+                @Run.performed += instance.OnRun;
+                @Run.canceled += instance.OnRun;
             }
         }
     }
@@ -248,6 +277,7 @@ public partial class @PlayerAction : IInputActionCollection2, IDisposable
     }
     public interface IGroundActions
     {
-        void OnMovement(InputAction.CallbackContext context);
+        void OnMove(InputAction.CallbackContext context);
+        void OnRun(InputAction.CallbackContext context);
     }
 }
