@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.InputSystem;
+using MyBox;
 
 public class PlayerMovement : MonoBehaviour
 {
@@ -43,10 +44,19 @@ public class PlayerMovement : MonoBehaviour
     }
 
     [SerializeField] private Rigidbody _rigidbody;
-    [SerializeField] private Transform _targetTransform;
+    [SerializeField] private PivotMode _pivotMode;
+    [SerializeField, ConditionalField(nameof(_pivotMode), false, PivotMode.Camera)] private Camera _camera;
+    [SerializeField, ConditionalField(nameof(_pivotMode), false, PivotMode.Target)] private Transform _pivot;
     [SerializeField] private float _speed = 5.0f;
     [SerializeField] private float _drag = 8.0f;
     [SerializeField] private float _angularDrag = 5.0f;
+
+    private enum PivotMode
+    {
+        None,
+        Camera,
+        Target,
+    }
 
     private Vector3 _rawDirection;
     private Vector3 _rawVelocity;
@@ -59,9 +69,6 @@ public class PlayerMovement : MonoBehaviour
     {
         Vector2 value = context.ReadValue<Vector2>();
         _rawDirection = new Vector3(value.x, 0, value.y);
-
-        if (_rawDirection != Vector3.zero)
-            _lookDirection = _rawDirection;
     }
 
     private void OnEnable()
@@ -74,16 +81,47 @@ public class PlayerMovement : MonoBehaviour
         float fixedDeltaTime = Time.fixedDeltaTime;
         _rawRotation = _rigidbody.rotation;
 
-        Vector3 targetForward = _targetTransform.forward;
-        Vector3 targetRight = _targetTransform.right;
+        Vector3 GetDirection(Vector3 pivotForward, Vector3 pivotRight)
+        {
+            pivotForward.y = 0f;
+            pivotRight.y = 0f;
 
-        targetForward.y = 0f;
-        targetRight.y = 0f;
+            Vector3 direction = (pivotForward * _rawDirection.z + pivotRight * _rawDirection.x).normalized;
 
-        Vector3 currentDirection = (targetForward * _rawDirection.z + targetRight * _rawDirection.x).normalized;
+            if (_rawDirection != Vector3.zero)
+                _lookDirection = direction;
 
-        if (_rawDirection != Vector3.zero)
-            _lookDirection = currentDirection;
+            return direction;
+        }
+
+        Vector3 pivotForward = Vector3.zero;
+        Vector3 pivotRight = Vector3.zero;
+        Vector3 currentDirection = Vector3.zero;
+        switch (_pivotMode)
+        {
+            case PivotMode.Camera:
+                if (_camera == null)
+                    _camera = Camera.main;
+
+                Transform cameraTransform = _camera.transform;
+                pivotForward = cameraTransform.forward;
+                pivotRight = cameraTransform.right;
+
+                currentDirection = GetDirection(pivotForward, pivotRight);
+                break;
+            case PivotMode.Target:
+                pivotForward = _pivot.forward;
+                pivotRight = _pivot.right;
+
+                currentDirection = GetDirection(pivotForward, pivotRight);
+                break;
+            default:
+                if (_rawDirection != Vector3.zero)
+                    _lookDirection = _rawDirection;
+
+                currentDirection = _rawDirection;
+                break;
+        }
 
         void FixedMove()
         {
