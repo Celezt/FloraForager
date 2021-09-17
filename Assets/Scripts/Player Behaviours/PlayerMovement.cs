@@ -43,14 +43,15 @@ public class PlayerMovement : MonoBehaviour
     }
 
     [SerializeField] private Rigidbody _rigidbody;
+    [SerializeField] private Transform _targetTransform;
     [SerializeField] private float _speed = 5.0f;
     [SerializeField] private float _drag = 8.0f;
     [SerializeField] private float _angularDrag = 5.0f;
 
-    private Vector3 _forward;
     private Vector3 _rawDirection;
     private Vector3 _rawVelocity;
     private Quaternion _rawRotation;
+    private Vector3 _lookDirection;
     private Vector3 _velocity;
     private Quaternion _rotation;
 
@@ -60,30 +61,40 @@ public class PlayerMovement : MonoBehaviour
         _rawDirection = new Vector3(value.x, 0, value.y);
 
         if (_rawDirection != Vector3.zero)
-            _forward = _rawDirection;
+            _lookDirection = _rawDirection;
     }
 
     private void OnEnable()
     {
-        _forward = transform.forward;
+        _lookDirection = transform.forward;
     }
 
     private void FixedUpdate()
     {
         float fixedDeltaTime = Time.fixedDeltaTime;
-        Vector3 forward = _forward;
         _rawRotation = _rigidbody.rotation;
-        
+
+        Vector3 targetForward = _targetTransform.forward;
+        Vector3 targetRight = _targetTransform.right;
+
+        targetForward.y = 0f;
+        targetRight.y = 0f;
+
+        Vector3 currentDirection = (targetForward * _rawDirection.z + targetRight * _rawDirection.x).normalized;
+
+        if (_rawDirection != Vector3.zero)
+            _lookDirection = currentDirection;
+
         void FixedMove()
         {
-            _rawVelocity = _rawDirection * _speed * fixedDeltaTime;
+            _rawVelocity = currentDirection * _speed * fixedDeltaTime;
             _velocity = Vector3.Lerp(_velocity, _rawVelocity, _drag * fixedDeltaTime);
             _rigidbody.MovePosition(transform.position + _velocity);
         }
 
         void FixedRotate()
         {
-            _rotation = Quaternion.Slerp(_rawRotation, Quaternion.LookRotation(forward, Vector3.up), _angularDrag * fixedDeltaTime);
+            _rotation = Quaternion.Slerp(_rawRotation, Quaternion.LookRotation(_lookDirection, Vector3.up), _angularDrag * fixedDeltaTime);
             _rigidbody.MoveRotation(_rotation);
         }
 
