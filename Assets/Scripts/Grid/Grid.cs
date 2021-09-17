@@ -39,7 +39,7 @@ public class Grid : MonoBehaviour
 
     public void BuildMesh()
     {
-        _TileMap = new TileMap(this, _Width, _Height, _TileSize);
+        _TileMap = new TileMap(this);
 
         int vertCount = _Width * _Height * 4;
 

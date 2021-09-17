@@ -27,6 +27,9 @@ public class GridInteraction : MonoBehaviour
         _MeshFilter = GetComponent<MeshFilter>();
 
         _Selection = Instantiate(_SelectionObject, Vector3.zero, Quaternion.identity);
+
+        float scale = _Selection.transform.localScale.x;
+        _Selection.transform.localScale = new Vector3(scale * _Grid.TileSize, scale, scale * _Grid.TileSize);
     }
 
     private void Update()
