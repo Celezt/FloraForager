@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using MyBox;
+using IngameDebugConsole;
 
 public class PlayerMovement : MonoBehaviour
 {
@@ -42,6 +43,9 @@ public class PlayerMovement : MonoBehaviour
         get => _rotation;
         set => _rotation = value;
     }
+    /// <summary>
+    /// If currently running.
+    /// </summary>
     public bool IsRunning => _isRunning;
 
     [SerializeField] private Rigidbody _rigidbody;
@@ -49,7 +53,7 @@ public class PlayerMovement : MonoBehaviour
     [SerializeField, ConditionalField(nameof(_pivotMode), false, PivotMode.Camera)] private Camera _camera;
     [SerializeField, ConditionalField(nameof(_pivotMode), false, PivotMode.Target)] private Transform _pivot;
     [SerializeField] private float _speed = 6.0f;
-    [SerializeField] private float _runningSpeed = 10.0f;
+    [SerializeField, Min(0)] private float _runningSpeedMultiplier = 2.0f;
     [SerializeField] private float _drag = 8.0f;
     [SerializeField] private float _angularDrag = 5.0f;
 
@@ -69,6 +73,11 @@ public class PlayerMovement : MonoBehaviour
 
     private bool _isRunning;
 
+    public void SetSpeed(float speed) => _speed = speed;
+    public void SetRunMultiplier(float multiplier) => _runningSpeedMultiplier = multiplier;
+    public void SetDrag(float drag) => _drag = drag;
+    public void SetAngularDrag(float angularDrag) => _angularDrag = angularDrag;
+
     public void OnMove(InputAction.CallbackContext context)
     {
         Vector2 value = context.ReadValue<Vector2>();
@@ -80,6 +89,14 @@ public class PlayerMovement : MonoBehaviour
         float value = context.ReadValue<float>();
 
         _isRunning = value > 0.5f;
+    }
+
+    private void Start()
+    {
+        DebugLogConsole.AddCommandInstance("player_speed", "Set player's speed value", nameof(SetSpeed), this);
+        DebugLogConsole.AddCommandInstance("player_run", "Set player's run multiplier", nameof(SetRunMultiplier), this);
+        DebugLogConsole.AddCommandInstance("player_drag", "Set player's drag value", nameof(SetDrag), this);
+        DebugLogConsole.AddCommandInstance("player_angular_drag", "Set player's angular drag value", nameof(SetAngularDrag), this);
     }
 
     private void OnEnable()
@@ -136,7 +153,7 @@ public class PlayerMovement : MonoBehaviour
 
         void FixedMove()
         {
-            _rawVelocity = currentDirection * ((_isRunning) ? _runningSpeed : _speed) * fixedDeltaTime;
+            _rawVelocity = currentDirection * ((_isRunning) ? _speed * _runningSpeedMultiplier : _speed) * fixedDeltaTime;
             _velocity = Vector3.Lerp(_velocity, _rawVelocity, _drag * fixedDeltaTime);
             _rigidbody.MovePosition(transform.position + _velocity);
         }
