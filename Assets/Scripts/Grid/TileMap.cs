@@ -8,15 +8,15 @@ public class TileMap
 
     public Tile[] Tiles => _Tiles;
 
-    public TileMap(Grid grid)
+    public TileMap(Grid grid, TileType tileType, bool random)
     {
         _Grid = grid;
 
-        CreateTiles();
+        CreateTiles(tileType, random);
         AddNeighbours();
     }
 
-    private void CreateTiles()
+    private void CreateTiles(TileType tileType, bool random)
     {
         _Tiles = new Tile[_Grid.Width * _Grid.Height];
 
@@ -27,7 +27,9 @@ public class TileMap
                 Vector3 posWorld = _Grid.transform.position + new Vector3(x * _Grid.TileSize, 0, z * _Grid.TileSize);
                 Vector3 posLocal = new Vector3(x, 0, z);
 
-                _Tiles[x + z * _Grid.Width] = new Tile(posWorld, posLocal, _Grid.TileSize, (TileType)UnityEngine.Random.Range(0, Enum.GetValues(typeof(TileType)).Length));
+                TileType tile = (random) ? (TileType)UnityEngine.Random.Range(0, Enum.GetValues(typeof(TileType)).Length) : tileType;
+
+                _Tiles[x + z * _Grid.Width] = new Tile(posWorld, posLocal, _Grid.TileSize, tile);
             }
         }
     }

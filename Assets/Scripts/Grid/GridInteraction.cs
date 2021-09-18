@@ -51,7 +51,7 @@ public class GridInteraction : MonoBehaviour
             _CurrentTile = _Grid.TileMap.GetTile(x, z);
         }
 
-        if (_MouseCollision)
+        if (_MouseCollision && !_CurrentTile.Occupied)
         {
             if (!_Selection.activeSelf)
                 _Selection.SetActive(true);
@@ -119,6 +119,9 @@ public class GridInteraction : MonoBehaviour
 
         return true;
     }
+
+    public bool LeftPressed() => _MouseCollision && Mouse.current.leftButton.wasPressedThisFrame;
+    public bool RightPressed() => _MouseCollision && Mouse.current.rightButton.wasPressedThisFrame;
 
     public void UpdateTile(Tile tile, TileType type)
     {
