@@ -5,14 +5,20 @@ using UnityEngine;
 [RequireComponent(typeof(MeshFilter), typeof(MeshRenderer), typeof(MeshCollider))]
 public class Grid : MonoBehaviour
 {
+    [Space(5), Header("Grid")] 
     [SerializeField] private int _Width = 100;
     [SerializeField] private int _Height = 50;
     [SerializeField] private float _TileSize = 1.0f;
 
+    [Space(5), Header("Texture")]
     [SerializeField] private Texture2D _TerrainTiles;
     [SerializeField] private int _TexTilesPerRow;
     [SerializeField] private int _TexTilesPerCol;
 
+    [Space(5), Header("Generation")]
+    [SerializeField] private bool _Random;
+    [SerializeField] private TileType _TileType;
+    
     private TileMap _TileMap;
 
     private Vector2[] _Uvs;
@@ -22,24 +28,19 @@ public class Grid : MonoBehaviour
     public int Height => _Height;
     public float TileSize => _TileSize;
 
-    public Vector2[] Uvs => _Uvs;
-
     public int TexTilesPerRow => _TexTilesPerRow;
     public int TexTilesPerCol => _TexTilesPerCol;
+
+    public Vector2[] Uvs => _Uvs;
 
     private void Awake()
     {
         BuildMesh();
     }
 
-    private void Update()
-    {
-
-    }
-
     public void BuildMesh()
     {
-        _TileMap = new TileMap(this, _Width, _Height, _TileSize);
+        _TileMap = new TileMap(this, _TileType, _Random);
 
         int vertCount = _Width * _Height * 4;
 

@@ -12,13 +12,11 @@ public class GridInteraction : MonoBehaviour
     private MeshFilter _MeshFilter;
 
     private GameObject _Selection;
-
-    private Tile _CurrentTile;
     private Vector3 _CurrentTilePos;
-
     private bool _MouseCollision; // if mouse is currently colliding with grid
 
-    public Tile CurrentTile => _CurrentTile;
+    public static Tile CurrentTile { get; private set; } = null;
+    public static GridInteraction CurrentGrid { get; private set; } = null;
     public bool MouseCollision => _MouseCollision;
 
     private void Awake()
@@ -27,14 +25,21 @@ public class GridInteraction : MonoBehaviour
         _MeshFilter = GetComponent<MeshFilter>();
 
         _Selection = Instantiate(_SelectionObject, Vector3.zero, Quaternion.identity);
+
+        float scale = _Selection.transform.localScale.x;
+        _Selection.transform.localScale = new Vector3(scale * _Grid.TileSize, scale, scale * _Grid.TileSize);
     }
 
     private void Update()
     {
-        _CurrentTile = null;
-
         Ray ray = Camera.main.ScreenPointToRay(Mouse.current.position.ReadValue());
         bool collision = Physics.Raycast(ray, out RaycastHit hitInfo, Mathf.Infinity, 1 << LayerMask.NameToLayer("Grid"));
+
+        if (!collision)
+        {
+            CurrentTile = null;
+            CurrentGrid = null;
+        }
 
         if (_MouseCollision = (collision && hitInfo.transform.gameObject == gameObject))
         {
@@ -45,15 +50,16 @@ public class GridInteraction : MonoBehaviour
             _CurrentTilePos.y = hitInfo.point.y;
             _CurrentTilePos.z = z;
 
-            _CurrentTile = _Grid.TileMap.GetTile(x, z);
+            CurrentTile = _Grid.TileMap.GetTile(x, z);
+            CurrentGrid = this;
         }
 
-        if (_MouseCollision)
+        if (ValidTile(CurrentTile) && !CurrentTile.Occupied)
         {
             if (!_Selection.activeSelf)
                 _Selection.SetActive(true);
 
-            _Selection.transform.position = _CurrentTile.Middle + new Vector3(0, float.Epsilon, 0.0f);
+            _Selection.transform.position = CurrentTile.Middle + new Vector3(0, float.Epsilon, 0.0f);
         }
         else
         {
@@ -63,23 +69,20 @@ public class GridInteraction : MonoBehaviour
             _Selection.transform.position = Vector3.zero;
         }
 
-        if (_MouseCollision) // for testing
+        if (LeftPressed())
         {
-            if (Mouse.current.leftButton.wasPressedThisFrame)
-            {
-                GameObject cube = GameObject.CreatePrimitive(PrimitiveType.Cube);
+            GameObject cube = GameObject.CreatePrimitive(PrimitiveType.Cube);
 
-                cube.transform.localScale = new Vector3(0.5f, 0.5f, 0.5f);
-                cube.transform.position = _CurrentTile.Middle;
-                cube.transform.position += new Vector3(0.0f, cube.transform.lossyScale.y / 2.0f, 0.0f);
+            cube.transform.localScale = new Vector3(0.5f, 0.5f, 0.5f);
+            cube.transform.position = CurrentTile.Middle;
+            cube.transform.position += new Vector3(0.0f, cube.transform.lossyScale.y / 2.0f, 0.0f);
 
-                if (!PlaceObject(_CurrentTile, cube))
-                    Destroy(cube);
-            }
-            if (Mouse.current.rightButton.wasPressedThisFrame)
-            {
-                RemoveObject(_CurrentTile);
-            }
+            if (!PlaceObject(CurrentTile, cube))
+                Destroy(cube);
+        }
+        if (RightPressed())
+        {
+            RemoveObject(CurrentTile);
         }
     }
 
@@ -117,6 +120,16 @@ public class GridInteraction : MonoBehaviour
         return true;
     }
 
+    public bool ValidTile(Tile tile) => _MouseCollision && tile.TileType != TileType.Undefined;
+
+    public bool LeftPressed() => ValidTile(CurrentTile) && Mouse.current.leftButton.wasPressedThisFrame;
+    public bool RightPressed() => ValidTile(CurrentTile) && Mouse.current.rightButton.wasPressedThisFrame;
+
+    /// <summary>
+    /// updates specified tile type and changes texture on grid accordingly
+    /// </summary>
+    /// <param name="tile"></param>
+    /// <param name="type"></param>
     public void UpdateTile(Tile tile, TileType type)
     {
         tile.UpdateType(type);

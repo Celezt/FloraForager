@@ -1,5 +1,3 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 using UnityEditor;
 
@@ -10,9 +8,12 @@ public class GridInspector : Editor
     {
         DrawDefaultInspector();
 
-        if (GUILayout.Button("Regenerate"))
+        Grid grid = (Grid)target;
+
+        GUILayout.Space(10);
+
+        if (GUILayout.Button("Generate"))
         {
-            Grid grid = (Grid)target;
             grid.BuildMesh();
         }
     }

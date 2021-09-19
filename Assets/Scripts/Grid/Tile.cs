@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using UnityEngine;
 
 public enum TileType
@@ -16,12 +17,16 @@ public class Tile
     private Vector3 _PositionLocal;
     private float _Size;
 
+    private List<Tile> _Neighbours;
+
     public GameObject HeldObject => _HeldObject;
     public TileType TileType => _TileType;
     public Vector3 PositionWorld => _PositionWorld;
     public Vector3 PositionLocal => _PositionLocal;
     public Vector3 Middle => _PositionWorld + new Vector3(_Size / 2, 0, _Size / 2);
     public float Size => _Size;
+
+    public List<Tile> Neighbours => _Neighbours;
 
     public bool Occupied { get; set; }
 
@@ -32,6 +37,7 @@ public class Tile
         _Size = size;
         _TileType = tileType;
 
+        _Neighbours = new List<Tile>();
         Occupied = false;
     }
 
@@ -51,9 +57,8 @@ public class Tile
             return false;
 
         _HeldObject = obj;
-        Occupied = true;
 
-        return true;
+        return (Occupied = true);
     }
 
     public GameObject FreeTile()
@@ -62,6 +67,16 @@ public class Tile
             return null;
 
         Occupied = false;
+
         return _HeldObject;
+    }
+
+    public void AddNeighbour(Tile tile)
+    {
+        _Neighbours.Add(tile);
+    }
+    public void RemoveNeighbour(Tile tile)
+    {
+        _Neighbours.Remove(tile);
     }
 }
