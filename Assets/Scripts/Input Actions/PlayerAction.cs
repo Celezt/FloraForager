@@ -44,6 +44,24 @@ public partial class @PlayerAction : IInputActionCollection2, IDisposable
                     ""processors"": """",
                     ""interactions"": """",
                     ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""Select"",
+                    ""type"": ""Button"",
+                    ""id"": ""da351995-88b3-43e3-9b6f-7f0e620987fc"",
+                    ""expectedControlType"": ""Button"",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""Cursor"",
+                    ""type"": ""Value"",
+                    ""id"": ""3a0176d8-2b2b-4001-a828-fb901964c5da"",
+                    ""expectedControlType"": ""Vector2"",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": true
                 }
             ],
             ""bindings"": [
@@ -123,6 +141,28 @@ public partial class @PlayerAction : IInputActionCollection2, IDisposable
                     ""action"": ""Run"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""66b4fb57-c03f-4fa5-ada8-4a8e97916c98"",
+                    ""path"": ""<Mouse>/leftButton"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": ""KeyboardAndMouse"",
+                    ""action"": ""Select"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""31b1cdf0-d25a-49c0-9791-1669cb23a9f3"",
+                    ""path"": ""<Mouse>/position"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Cursor"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
                 }
             ]
         }
@@ -161,6 +201,8 @@ public partial class @PlayerAction : IInputActionCollection2, IDisposable
         m_Ground = asset.FindActionMap("Ground", throwIfNotFound: true);
         m_Ground_Move = m_Ground.FindAction("Move", throwIfNotFound: true);
         m_Ground_Run = m_Ground.FindAction("Run", throwIfNotFound: true);
+        m_Ground_Select = m_Ground.FindAction("Select", throwIfNotFound: true);
+        m_Ground_Cursor = m_Ground.FindAction("Cursor", throwIfNotFound: true);
     }
 
     public void Dispose()
@@ -222,12 +264,16 @@ public partial class @PlayerAction : IInputActionCollection2, IDisposable
     private IGroundActions m_GroundActionsCallbackInterface;
     private readonly InputAction m_Ground_Move;
     private readonly InputAction m_Ground_Run;
+    private readonly InputAction m_Ground_Select;
+    private readonly InputAction m_Ground_Cursor;
     public struct GroundActions
     {
         private @PlayerAction m_Wrapper;
         public GroundActions(@PlayerAction wrapper) { m_Wrapper = wrapper; }
         public InputAction @Move => m_Wrapper.m_Ground_Move;
         public InputAction @Run => m_Wrapper.m_Ground_Run;
+        public InputAction @Select => m_Wrapper.m_Ground_Select;
+        public InputAction @Cursor => m_Wrapper.m_Ground_Cursor;
         public InputActionMap Get() { return m_Wrapper.m_Ground; }
         public void Enable() { Get().Enable(); }
         public void Disable() { Get().Disable(); }
@@ -243,6 +289,12 @@ public partial class @PlayerAction : IInputActionCollection2, IDisposable
                 @Run.started -= m_Wrapper.m_GroundActionsCallbackInterface.OnRun;
                 @Run.performed -= m_Wrapper.m_GroundActionsCallbackInterface.OnRun;
                 @Run.canceled -= m_Wrapper.m_GroundActionsCallbackInterface.OnRun;
+                @Select.started -= m_Wrapper.m_GroundActionsCallbackInterface.OnSelect;
+                @Select.performed -= m_Wrapper.m_GroundActionsCallbackInterface.OnSelect;
+                @Select.canceled -= m_Wrapper.m_GroundActionsCallbackInterface.OnSelect;
+                @Cursor.started -= m_Wrapper.m_GroundActionsCallbackInterface.OnCursor;
+                @Cursor.performed -= m_Wrapper.m_GroundActionsCallbackInterface.OnCursor;
+                @Cursor.canceled -= m_Wrapper.m_GroundActionsCallbackInterface.OnCursor;
             }
             m_Wrapper.m_GroundActionsCallbackInterface = instance;
             if (instance != null)
@@ -253,6 +305,12 @@ public partial class @PlayerAction : IInputActionCollection2, IDisposable
                 @Run.started += instance.OnRun;
                 @Run.performed += instance.OnRun;
                 @Run.canceled += instance.OnRun;
+                @Select.started += instance.OnSelect;
+                @Select.performed += instance.OnSelect;
+                @Select.canceled += instance.OnSelect;
+                @Cursor.started += instance.OnCursor;
+                @Cursor.performed += instance.OnCursor;
+                @Cursor.canceled += instance.OnCursor;
             }
         }
     }
@@ -279,5 +337,7 @@ public partial class @PlayerAction : IInputActionCollection2, IDisposable
     {
         void OnMove(InputAction.CallbackContext context);
         void OnRun(InputAction.CallbackContext context);
+        void OnSelect(InputAction.CallbackContext context);
+        void OnCursor(InputAction.CallbackContext context);
     }
 }
