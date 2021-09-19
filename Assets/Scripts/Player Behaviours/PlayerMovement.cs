@@ -12,6 +12,10 @@ public class PlayerMovement : MonoBehaviour
     /// </summary>
     public Vector3 RawDirection => _rawDirection;
     /// <summary>
+    /// Forward direction accounting for ground normal.
+    /// </summary>
+    public Vector3 SlopeForward => _slopeForward;
+    /// <summary>
     /// Current speed of the player.
     /// </summary>
     public float Speed
@@ -47,6 +51,10 @@ public class PlayerMovement : MonoBehaviour
     /// If currently running.
     /// </summary>
     public bool IsRunning => _isRunning;
+    /// <summary>
+    /// If currently touching the ground.
+    /// </summary>
+    public bool IsGrounded => _isGrounded;
 
     [SerializeField] private Rigidbody _rigidbody;
     [SerializeField] private PivotMode _pivotMode;
@@ -56,6 +64,9 @@ public class PlayerMovement : MonoBehaviour
     [SerializeField, Min(0)] private float _runningSpeedMultiplier = 2.0f;
     [SerializeField] private float _drag = 8.0f;
     [SerializeField] private float _angularDrag = 5.0f;
+    [SerializeField] private LayerMask _groundLayer;
+    [SerializeField] private float _groundCheckDistance = 1.5f;
+    [SerializeField, Tooltip("In degrees."), Range(0, 180)] private float _maxSlopeAngle = 45.0f;
 
     private enum PivotMode
     {
@@ -64,19 +75,25 @@ public class PlayerMovement : MonoBehaviour
         Target,
     }
 
+    private Vector3 _slopeForward;
     private Vector3 _rawDirection;
     private Vector3 _rawVelocity;
-    private Quaternion _rawRotation;
-    private Vector3 _lookDirection;
+    private Vector3 _relativeForward;
     private Vector3 _velocity;
+    private Vector3 _forward;
+    private Quaternion _rawRotation;
     private Quaternion _rotation;
-
+    private float _groundAngle;
     private bool _isRunning;
+    private bool _isGrounded;
+    private bool _isOnLedge;
 
     public void SetSpeed(float speed) => _speed = speed;
     public void SetRunMultiplier(float multiplier) => _runningSpeedMultiplier = multiplier;
     public void SetDrag(float drag) => _drag = drag;
     public void SetAngularDrag(float angularDrag) => _angularDrag = angularDrag;
+    public void SetGroundCheckDistance(float distance) => _groundCheckDistance = distance;
+    public void SetMaxSlopeAngle(float degree) => _maxSlopeAngle = degree;
 
     public void OnMove(InputAction.CallbackContext context)
     {
@@ -96,35 +113,41 @@ public class PlayerMovement : MonoBehaviour
         DebugLogConsole.AddCommandInstance("player_speed", "Set player's speed value", nameof(SetSpeed), this);
         DebugLogConsole.AddCommandInstance("player_run", "Set player's run multiplier", nameof(SetRunMultiplier), this);
         DebugLogConsole.AddCommandInstance("player_drag", "Set player's drag value", nameof(SetDrag), this);
-        DebugLogConsole.AddCommandInstance("player_angular_drag", "Set player's angular drag value", nameof(SetAngularDrag), this);
+        DebugLogConsole.AddCommandInstance("player_ground_check_distance", "Set player's ground check distance if on the ground", nameof(SetGroundCheckDistance), this);
+        DebugLogConsole.AddCommandInstance("player_max_slope_angle", "Set player's max slope angle that are possible to move over", nameof(SetMaxSlopeAngle), this);
     }
 
     private void OnEnable()
     {
-        _lookDirection = transform.forward;
+        _relativeForward = transform.forward;
     }
 
     private void FixedUpdate()
     {
+        Vector3 position = transform.position;
+
+        Movement(position);
+        SlopeMovement(position);
+    }
+
+    private void Movement(Vector3 position)
+    {
         float fixedDeltaTime = Time.fixedDeltaTime;
         _rawRotation = _rigidbody.rotation;
 
-        Vector3 GetDirection(Vector3 pivotForward, Vector3 pivotRight)
+        void GetDirection(Vector3 pivotForward, Vector3 pivotRight)
         {
             pivotForward.y = 0f;
             pivotRight.y = 0f;
 
-            Vector3 direction = (pivotForward * _rawDirection.z + pivotRight * _rawDirection.x).normalized;
+            _forward = (pivotForward * _rawDirection.z + pivotRight * _rawDirection.x).normalized;
 
             if (_rawDirection != Vector3.zero)
-                _lookDirection = direction;
-
-            return direction;
+                _relativeForward = _forward;
         }
 
         Vector3 pivotForward = Vector3.zero;
         Vector3 pivotRight = Vector3.zero;
-        Vector3 currentDirection = Vector3.zero;
         switch (_pivotMode)
         {
             case PivotMode.Camera:
@@ -135,36 +158,81 @@ public class PlayerMovement : MonoBehaviour
                 pivotForward = cameraTransform.forward;
                 pivotRight = cameraTransform.right;
 
-                currentDirection = GetDirection(pivotForward, pivotRight);
+                GetDirection(pivotForward, pivotRight);
                 break;
             case PivotMode.Target:
                 pivotForward = _pivot.forward;
                 pivotRight = _pivot.right;
 
-                currentDirection = GetDirection(pivotForward, pivotRight);
+                GetDirection(pivotForward, pivotRight);
                 break;
             default:
                 if (_rawDirection != Vector3.zero)
-                    _lookDirection = _rawDirection;
+                    _relativeForward = _rawDirection;
 
-                currentDirection = _rawDirection;
+                _forward = _rawDirection;
                 break;
         }
 
         void FixedMove()
         {
-            _rawVelocity = currentDirection * ((_isRunning) ? _speed * _runningSpeedMultiplier : _speed) * fixedDeltaTime;
+            if (_groundAngle >= _maxSlopeAngle)
+                return;
+
+            _rawVelocity = _slopeForward * ((_isRunning) ? _speed * _runningSpeedMultiplier : _speed) * fixedDeltaTime;
             _velocity = Vector3.Lerp(_velocity, _rawVelocity, _drag * fixedDeltaTime);
-            _rigidbody.MovePosition(transform.position + _velocity);
+            _rigidbody.MovePosition(position + _velocity);
         }
 
         void FixedRotate()
         {
-            _rotation = Quaternion.Slerp(_rawRotation, Quaternion.LookRotation(_lookDirection, Vector3.up), _angularDrag * fixedDeltaTime);
+            _rotation = Quaternion.Slerp(_rawRotation, Quaternion.LookRotation(_relativeForward, Vector3.up), _angularDrag * fixedDeltaTime);
             _rigidbody.MoveRotation(_rotation);
         }
 
         FixedMove();
         FixedRotate();
+    }
+
+    private void SlopeMovement(Vector3 position)
+    {
+        RaycastHit hit = new RaycastHit();
+
+        void CheckGround()
+        {
+            _isGrounded = Physics.Raycast(position, -Vector3.up, out hit, _groundCheckDistance, _groundLayer);
+        }
+
+        void ForwardSlope()
+        {
+            if (!_isGrounded)
+            {
+                _slopeForward = _forward;
+                return;
+            }
+
+            _slopeForward = Vector3.Cross(Vector3.Cross(Vector3.up, _forward), hit.normal).normalized;
+        };
+
+        void GroundAngle()
+        {
+            _groundAngle = Vector3.Angle(hit.normal, _forward) - 90.0f;
+        }
+
+        void DrawDebugLines()
+        {
+#if UNITY_EDITOR
+            if (DebugManager.DebugMode)
+            {
+                Debug.DrawLine(position, position + _slopeForward * _groundCheckDistance * 2, Color.blue);
+                Debug.DrawLine(position, position - Vector3.up * _groundCheckDistance, Color.green);
+            }
+#endif
+        }
+
+        CheckGround();
+        ForwardSlope();
+        GroundAngle();
+        DrawDebugLines();
     }
 }
