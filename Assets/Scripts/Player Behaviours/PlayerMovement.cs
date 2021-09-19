@@ -86,6 +86,7 @@ public class PlayerMovement : MonoBehaviour
     private float _groundAngle;
     private bool _isRunning;
     private bool _isGrounded;
+    private bool _isOnLedge;
 
     public void SetSpeed(float speed) => _speed = speed;
     public void SetRunMultiplier(float multiplier) => _runningSpeedMultiplier = multiplier;
@@ -113,7 +114,7 @@ public class PlayerMovement : MonoBehaviour
         DebugLogConsole.AddCommandInstance("player_run", "Set player's run multiplier", nameof(SetRunMultiplier), this);
         DebugLogConsole.AddCommandInstance("player_drag", "Set player's drag value", nameof(SetDrag), this);
         DebugLogConsole.AddCommandInstance("player_ground_check_distance", "Set player's ground check distance if on the ground", nameof(SetGroundCheckDistance), this);
-        DebugLogConsole.AddCommandInstance("player_angular_angle", "Set player's max slope angle that are possible to move over", nameof(SetMaxSlopeAngle), this);
+        DebugLogConsole.AddCommandInstance("player_max_slope_angle", "Set player's max slope angle that are possible to move over", nameof(SetMaxSlopeAngle), this);
     }
 
     private void OnEnable()
@@ -123,11 +124,13 @@ public class PlayerMovement : MonoBehaviour
 
     private void FixedUpdate()
     {
-        Movement();
-        SlopeMovement();
+        Vector3 position = transform.position;
+
+        Movement(position);
+        SlopeMovement(position);
     }
 
-    private void Movement()
+    private void Movement(Vector3 position)
     {
         float fixedDeltaTime = Time.fixedDeltaTime;
         _rawRotation = _rigidbody.rotation;
@@ -178,7 +181,7 @@ public class PlayerMovement : MonoBehaviour
 
             _rawVelocity = _slopeForward * ((_isRunning) ? _speed * _runningSpeedMultiplier : _speed) * fixedDeltaTime;
             _velocity = Vector3.Lerp(_velocity, _rawVelocity, _drag * fixedDeltaTime);
-            _rigidbody.MovePosition(transform.position + _velocity);
+            _rigidbody.MovePosition(position + _velocity);
         }
 
         void FixedRotate()
@@ -191,9 +194,8 @@ public class PlayerMovement : MonoBehaviour
         FixedRotate();
     }
 
-    private void SlopeMovement()
+    private void SlopeMovement(Vector3 position)
     {
-        Vector3 position = transform.position;
         RaycastHit hit = new RaycastHit();
 
         void CheckGround()
@@ -219,8 +221,13 @@ public class PlayerMovement : MonoBehaviour
 
         void DrawDebugLines()
         {
-            Debug.DrawLine(transform.position, transform.position + _slopeForward * _groundCheckDistance * 2, Color.blue);
-            Debug.DrawLine(transform.position, transform.position - Vector3.up * _groundCheckDistance, Color.green);
+#if UNITY_EDITOR
+            if (DebugManager.DebugMode)
+            {
+                Debug.DrawLine(position, position + _slopeForward * _groundCheckDistance * 2, Color.blue);
+                Debug.DrawLine(position, position - Vector3.up * _groundCheckDistance, Color.green);
+            }
+#endif
         }
 
         CheckGround();
