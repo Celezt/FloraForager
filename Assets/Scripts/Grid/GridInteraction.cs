@@ -120,7 +120,7 @@ public class GridInteraction : MonoBehaviour
         return true;
     }
 
-    public bool ValidTile(Tile tile) => _MouseCollision && tile.TileType != TileType.Undefined;
+    public bool ValidTile(Tile tile) => _MouseCollision && tile != null && tile.TileType != TileType.Undefined;
 
     public bool LeftPressed() => ValidTile(CurrentTile) && Mouse.current.leftButton.wasPressedThisFrame;
     public bool RightPressed() => ValidTile(CurrentTile) && Mouse.current.rightButton.wasPressedThisFrame;
