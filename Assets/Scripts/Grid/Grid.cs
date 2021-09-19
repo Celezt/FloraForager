@@ -38,11 +38,6 @@ public class Grid : MonoBehaviour
         BuildMesh();
     }
 
-    private void Update()
-    {
-
-    }
-
     public void BuildMesh()
     {
         _TileMap = new TileMap(this, _TileType, _Random);

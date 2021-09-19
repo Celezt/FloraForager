@@ -15,7 +15,8 @@ public class GridInteraction : MonoBehaviour
     private Vector3 _CurrentTilePos;
     private bool _MouseCollision; // if mouse is currently colliding with grid
 
-    public static Tile CurrentTile { get; private set; }
+    public static Tile CurrentTile { get; private set; } = null;
+    public static GridInteraction CurrentGrid { get; private set; } = null;
     public bool MouseCollision => _MouseCollision;
 
     private void Awake()
@@ -35,7 +36,10 @@ public class GridInteraction : MonoBehaviour
         bool collision = Physics.Raycast(ray, out RaycastHit hitInfo, Mathf.Infinity, 1 << LayerMask.NameToLayer("Grid"));
 
         if (!collision)
+        {
             CurrentTile = null;
+            CurrentGrid = null;
+        }
 
         if (_MouseCollision = (collision && hitInfo.transform.gameObject == gameObject))
         {
@@ -47,6 +51,7 @@ public class GridInteraction : MonoBehaviour
             _CurrentTilePos.z = z;
 
             CurrentTile = _Grid.TileMap.GetTile(x, z);
+            CurrentGrid = this;
         }
 
         if (ValidTile(CurrentTile) && !CurrentTile.Occupied)
