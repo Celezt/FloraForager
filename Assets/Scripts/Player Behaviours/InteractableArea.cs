@@ -67,7 +67,7 @@ public class InteractableArea : MonoBehaviour
                 interactables[i].OnInteract(new InteractContext(
                     closest,
                     trans,
-                    trans.position,
+                    hit.point,
                     hit.normal,
                     hit.barycentricCoordinate,
                     _screenPosition,

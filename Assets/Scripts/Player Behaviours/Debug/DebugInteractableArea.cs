@@ -5,6 +5,8 @@ using UnityEngine;
 #if UNITY_EDITOR
 public class DebugInteractableArea : MonoBehaviour, IInteractable
 {
+    public int Priority => 0;
+
     public void OnInteract(InteractContext context)
     {
         if (context.performed)

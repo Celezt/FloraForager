@@ -2,6 +2,9 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+/// <summary>
+/// Contains information from the interaction.
+/// </summary>
 public readonly struct InteractContext
 {
     public readonly Collider collider;
