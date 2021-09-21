@@ -5,7 +5,9 @@ using UnityEngine;
 #if UNITY_EDITOR
 public class DebugInteractableArea : MonoBehaviour, IInteractable
 {
-    public int Priority => 0;
+    [SerializeField] private int _priority = 0;
+
+    public int Priority => _priority;
 
     public void OnInteract(InteractContext context)
     {

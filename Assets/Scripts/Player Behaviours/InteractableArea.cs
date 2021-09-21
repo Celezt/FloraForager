@@ -14,6 +14,14 @@ public class InteractableArea : MonoBehaviour
 
     private PlayerAction _inputs;
 
+    private struct InteractableObject
+    {
+        public Collider Collider { get; set; }
+        public IInteractable Interactable { get; set; }
+        public Vector3 Position { get; set; }
+        public int Priority { get; set; }
+    }
+
     public void OnInteract(InputAction.CallbackContext context)
     {
         void InteractAtCursor(InputAction.CallbackContext context)
@@ -23,24 +31,21 @@ public class InteractableArea : MonoBehaviour
             {
                 if (Vector3.Distance(transform.position, hit.point) <= _radius)
                 {
-                    IInteractable[] interactables = hit.transform.gameObject.GetComponents<IInteractable>();
-                    for (int i = 0; i < interactables.Length; i++)
-                    {
-                        interactables[i].OnInteract(new InteractContext(
-                            hit.collider,
-                            hit.transform,
-                            hit.point,
-                            hit.normal,
-                            hit.barycentricCoordinate,
-                            _screenPosition,
-                            hit.textureCoord,
-                            hit.textureCoord2,
-                            hit.distance,
-                            hit.triangleIndex,
-                            context.canceled,
-                            context.started,
-                            context.performed));
-                    }
+                    IInteractable interactable = hit.transform.gameObject.GetComponent<IInteractable>();
+                    interactable.OnInteract(new InteractContext(
+                        hit.collider,
+                        hit.transform,
+                        hit.point,
+                        hit.normal,
+                        hit.barycentricCoordinate,
+                        _screenPosition,
+                        hit.textureCoord,
+                        hit.textureCoord2,
+                        hit.distance,
+                        hit.triangleIndex,
+                        context.canceled,
+                        context.started,
+                        context.performed));
                 }
             }
         }
@@ -49,36 +54,69 @@ public class InteractableArea : MonoBehaviour
         {
             Vector3 position = transform.position;
             Collider[] colliders = Physics.OverlapSphere(position, _radius, _interactableLayers);
-            KdTree<Collider> tree = new KdTree<Collider>();
+            List<InteractableObject> interactableObjects = new List<InteractableObject>(colliders.Length);
 
+            int highestPriority = 0;
             for (int i = 0; i < colliders.Length; i++)
-                if (colliders[i].TryGetComponent(out IInteractable _))
-                    tree.Add(colliders[i]);
-
-            Collider closest = tree.FindClosest(position);
-            Transform trans = closest.transform;
-            IInteractable[] interactables = closest.GetComponents<IInteractable>();
-
-            Ray ray = Camera.main.ScreenPointToRay(Camera.main.WorldToScreenPoint(trans.position));
-            closest.Raycast(ray, out RaycastHit hit, Mathf.Infinity);
-
-            for (int i = 0; i < interactables.Length; i++)
             {
-                interactables[i].OnInteract(new InteractContext(
-                    closest,
-                    trans,
-                    hit.point,
-                    hit.normal,
-                    hit.barycentricCoordinate,
-                    _screenPosition,
-                    hit.textureCoord,
-                    hit.textureCoord2,
-                    hit.distance,
-                    hit.triangleIndex,
-                    context.canceled,
-                    context.started,
-                    context.performed));
+                if (colliders[i].gameObject == gameObject)  // Skip itself.
+                    continue;
+
+                if (colliders[i].TryGetComponent(out IInteractable interactable))
+                {
+                    int priority = interactable.Priority;
+                    // Add all component with IInteractable.
+                    interactableObjects.Add(new InteractableObject {
+                        Collider = colliders[i],
+                        Interactable = interactable, 
+                        Position = colliders[i].transform.position, 
+                        Priority = priority
+                    });
+
+                    if (priority > highestPriority)
+                        highestPriority = priority;
+                }
             }
+
+            InteractableObject interactableObject = new InteractableObject();
+            float minDistance = _radius;
+            bool foundAny = false;
+            for (int i = 0; i < interactableObjects.Count; i++)
+            {
+                if (interactableObjects[i].Priority == highestPriority) // Only loop through the highest priority interactables.
+                {
+                    float distance = Vector3.Distance(interactableObjects[i].Position, position);
+
+                    if (distance < minDistance) // Get the current closest interactable.
+                    {
+                        interactableObject = interactableObjects[i];
+                        minDistance = distance;
+                        foundAny = true;
+                    }
+                }
+            }
+
+            if (!foundAny)  // Return if no interactable objects could be found.
+                return;
+
+            // Raycast artificial ray to the closest interactable object.
+            Ray ray = Camera.main.ScreenPointToRay(Camera.main.WorldToScreenPoint(interactableObject.Position));
+            interactableObject.Collider.Raycast(ray, out RaycastHit hit, Mathf.Infinity);
+
+            interactableObject.Interactable.OnInteract(new InteractContext(
+                interactableObject.Collider,
+                interactableObject.Collider.transform,
+                hit.point,
+                hit.normal,
+                hit.barycentricCoordinate,
+                _screenPosition,
+                hit.textureCoord,
+                hit.textureCoord2,
+                hit.distance,
+                hit.triangleIndex,
+                context.canceled,
+                context.started,
+                context.performed));
         }
 
         if (_schemeManager.CurrentScheme == _inputs.KeyboardAndMouseScheme)
