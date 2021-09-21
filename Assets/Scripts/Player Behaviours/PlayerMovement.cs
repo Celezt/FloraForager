@@ -87,6 +87,7 @@ public class PlayerMovement : MonoBehaviour
     private bool _isRunning;
     private bool _isGrounded;
     private bool _isOnLedge;
+    private PlayerAction _inputs;
 
     public void SetSpeed(float speed) => _speed = speed;
     public void SetRunMultiplier(float multiplier) => _runningSpeedMultiplier = multiplier;
@@ -99,6 +100,11 @@ public class PlayerMovement : MonoBehaviour
     {
         Vector2 value = context.ReadValue<Vector2>();
         _rawDirection = new Vector3(value.x, 0, value.y);
+
+        if (context.canceled)
+        {
+            _inputs.Ground.Run.Reset();
+        }
     }
 
     public void OnRun(InputAction.CallbackContext context)
@@ -106,6 +112,11 @@ public class PlayerMovement : MonoBehaviour
         float value = context.ReadValue<float>();
 
         _isRunning = value > 0.5f;
+    }
+
+    private void Awake()
+    {
+        _inputs = new PlayerAction();
     }
 
     private void Start()
@@ -119,7 +130,26 @@ public class PlayerMovement : MonoBehaviour
 
     private void OnEnable()
     {
+        _inputs.Enable();
+        _inputs.Ground.Move.started += OnMove;
+        _inputs.Ground.Move.performed += OnMove;
+        _inputs.Ground.Move.canceled += OnMove;
+        _inputs.Ground.Run.started += OnRun;
+        _inputs.Ground.Run.performed += OnRun;
+        _inputs.Ground.Run.canceled += OnRun;
+
         _relativeForward = transform.forward;
+    }
+
+    private void OnDisable()
+    {
+        _inputs.Disable();
+        _inputs.Ground.Move.started -= OnMove;
+        _inputs.Ground.Move.performed -= OnMove;
+        _inputs.Ground.Move.canceled -= OnMove;
+        _inputs.Ground.Run.started -= OnRun;
+        _inputs.Ground.Run.performed -= OnRun;
+        _inputs.Ground.Run.canceled -= OnRun;
     }
 
     private void FixedUpdate()

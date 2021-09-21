@@ -30,7 +30,7 @@ public static class GizmosC
             posA = posB;
         }
 
-        for (var i = 0; i <= maxSteps; i++)
+        for (var i = (anglesRange < 360 ? 0 : 1); i <= maxSteps; i++)
         {
             var rad = Mathf.Deg2Rad * angle;
             var posB = initialPos;

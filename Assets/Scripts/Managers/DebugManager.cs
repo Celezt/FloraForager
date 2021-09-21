@@ -39,4 +39,9 @@ public class DebugManager : Singleton<DebugManager>
             OnDebugModeOff.Invoke();
         });
     }
+
+    private void OnDisable()
+    {
+        DebugMode = false;
+    }
 }
