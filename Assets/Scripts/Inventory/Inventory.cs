@@ -222,6 +222,4 @@ public class Inventory : MonoBehaviour
         }
         return stackables; // returns a list filled with positions of the same stackable items 
     }
-
-
 }
