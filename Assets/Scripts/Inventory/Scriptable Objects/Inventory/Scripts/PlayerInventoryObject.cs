@@ -7,9 +7,9 @@ public class PlayerInventoryObject : InventoryObject
     public InventorySlot[] playerInventory = new InventorySlot[32];
     public int gold;
     public InventoryObject inventoryObject;
-    private bool noMoreSlots;
+    private bool isFull;
 
-    public bool NoMoreSlots { get => noMoreSlots; set => noMoreSlots = value; }
+    public bool IsFull { get => isFull; set => isFull = value; }
 
     public void BeginANew() 
     {
@@ -17,14 +17,14 @@ public class PlayerInventoryObject : InventoryObject
         {
             playerInventory[i] = null;
         }
-        noMoreSlots = false;
+        isFull = false;
     }
     public void Awake()
     {
         BeginANew();
         if (inventoryObject.container.Count == playerInventory.Length)
         {
-            noMoreSlots = true;
+            isFull = true;
         }
     }
 }

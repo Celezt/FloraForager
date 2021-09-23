@@ -7,7 +7,7 @@ public class Player : MonoBehaviour
     public PlayerInventoryObject inventory;
     public void OnTriggerEnter(Collider other)
     {
-        if (!inventory.NoMoreSlots)
+        if (!inventory.IsFull) // Inventory is not full
         {
             var item = other.GetComponent<Item>();
             if (item)
@@ -16,6 +16,10 @@ public class Player : MonoBehaviour
                 Destroy(other.gameObject);
             }
         }
+    }
+    public void Update()
+    {
+        
     }
     private void OnApplicationQuit()
     {

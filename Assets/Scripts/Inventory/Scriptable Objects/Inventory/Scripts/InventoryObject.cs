@@ -9,6 +9,7 @@ public class InventoryObject : ScriptableObject
 
     public void AddItem(ItemObject _item, int _amount)
     {
+        
         bool hasItem = false;
         for (int i = 0; i < container.Count; i++)
         {
@@ -25,7 +26,7 @@ public class InventoryObject : ScriptableObject
             container.Add(new InventorySlot(_item, _amount));
         }
     }
-    public void AddItemAtPos(ItemObject _item, int _amount, int _pos) 
+    public void AddItemAtPos(ItemObject _item, int _amount, int _pos)
     {
         bool hasItem = false;
         for (int i = 0; i < container.Count; i++)
@@ -50,18 +51,42 @@ public class InventorySlot
 {
     public ItemObject item;
     public int amount;
-    public int pos;
-    
     private bool isFull;
+    private bool isOccupied;
     public InventorySlot(ItemObject _item, int _amount)
     {
         item = _item;
         AddAmount(_amount);
-        pos = -1;
+        isOccupied = true;
+    }
+    public InventorySlot(InventorySlot other)
+    {
+        item = other.item;
+        amount = other.amount;
+        isFull = other.IsFull;
+        isOccupied = other.isOccupied;
+    }
+    public void Swap(ref InventorySlot other) 
+    {
+        InventorySlot holder = new InventorySlot(this);
+        item = other.item;
+        amount = other.amount;
+        isFull = other.IsFull;
+        isOccupied = other.isOccupied;
+        other = new InventorySlot(holder);
+    }
+    
+    public void RemoveFromSlot() 
+    {
+        item = null;
+        isOccupied = false;
+        amount = 0;
+        isFull = false;
     }
 
     public bool IsFull { get => isFull;}
-    
+    public bool IsOccupied { get => isOccupied;}
+
     public bool AddAmount(int value)
     {
         bool added = false;
