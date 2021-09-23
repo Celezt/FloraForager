@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 
 #if UNITY_EDITOR
-public class DebugInteractableArea : MonoBehaviour, IInteractable
+public class InteractableAreaTest : MonoBehaviour, IInteractable
 {
     [SerializeField] private int _priority = 0;
 
