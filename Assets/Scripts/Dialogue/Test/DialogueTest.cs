@@ -28,23 +28,6 @@ public class DialogueTest : MonoBehaviour
         {"activate_test",  (string _) => { Debug.Log("Activated"); } }
     };
 
-    private int _index;
-
-    public void OnClick()
-    {
-
-    }
-
-    private void Start()
-    {
-        for (int i = 0; i < _buttons.Length; i++)
-        {
-            _index = i;
-            _buttons[i].onClick.AddListener(OnClick);
-        }
-    }
-
-
     [ButtonMethod]
     private void Deserialize()
     {

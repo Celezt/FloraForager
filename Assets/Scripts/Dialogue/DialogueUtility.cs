@@ -1,11 +1,27 @@
+using FF.Json;
+using Newtonsoft.Json;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
 using UnityEngine;
 
 public static class DialogueUtility
 {
+    /// <summary>
+    /// Deserialize JSON-file already loaded.
+    /// </summary>
+    /// <param name="fileName">File name.</param>
+    /// <returns>Stack of <c>ParagraphAsset</c>.</returns>
+    private static Stack<ParagraphAsset> Deserialize(string fileName)
+    {
+        // Deserialize the string to an object. 
+        DialogueAsset asset = JsonConvert.DeserializeObject<DialogueAsset>(JsonLoader.GetContent(fileName));
+
+        return new Stack<ParagraphAsset>(asset.Dialogues.Reverse());
+    }
+
     /// <summary>
     /// Convert all id to mapped alias.
     /// </summary>
