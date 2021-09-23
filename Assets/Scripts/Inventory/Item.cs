@@ -4,6 +4,7 @@ using UnityEngine;
 
 public class Item : MonoBehaviour
 {
+    public ItemObject item;
     private int maxAmount;
     private int amount;
     private bool isFull;

@@ -145,7 +145,7 @@ public class Inventory : MonoBehaviour
             items[FindFirstEmptySlot()] = new Item(item); // Does not Exist in a slot and is not stackable, Add to an empty slot
             ++nrItems; // Added one item
             UpdateFullness(); // If isFull == true
-            return true; // Item successfully added to one slot            
+            return true; // Item successfully added to one slot
         }
         return false; // Is full
     }

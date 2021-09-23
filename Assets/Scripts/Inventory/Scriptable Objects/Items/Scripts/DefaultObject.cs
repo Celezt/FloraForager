@@ -8,5 +8,6 @@ public class DefaultObject : ItemObject
     public void Awake()
     {
         type = ItemType.Default;
+        maxAmount = 1;
     }
 }

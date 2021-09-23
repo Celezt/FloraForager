@@ -6,13 +6,16 @@ public enum ItemType
 {
 Food,
 Equipment,
-Default
+Default,
+Tool,
+Seed
 }
 public abstract class ItemObject : ScriptableObject
 {
-    public GameObject prefab;
+    public GameObject prefabOverworld;
+    public GameObject prefabInventorySlot;
+    public int maxAmount;
     public ItemType type;
     [TextArea(15, 20)]
     public string description;
-
 }
