@@ -32,6 +32,10 @@ public class InteractableArea : MonoBehaviour
                 if (Vector3.Distance(transform.position, hit.point) <= _radius)
                 {
                     IInteractable interactable = hit.transform.gameObject.GetComponent<IInteractable>();
+
+                    if (interactable == null)
+                        return;
+
                     interactable.OnInteract(new InteractContext(
                         hit.collider,
                         hit.transform,

@@ -82,7 +82,6 @@ public class CMVCamHandler : MonoBehaviour
     /// <returns>If the transform does not already exist</returns>
     public bool AddMember(Transform trans)
     {
-        Debug.Log("added: " + trans);
         if (_emptyIsUsed)
         {
             RemoveMember(_empty.transform);
