@@ -1,3 +1,4 @@
+using System.Linq;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -12,9 +13,13 @@ public class Flora : MonoBehaviour, IInteractable
 
     [Space(3), Header("Growth")]
     [SerializeField, Min(0)] private int _GrowTime = 0; // growth time in days
-    [SerializeField] private Mesh[] _Stages;            // number of visual growth stages this flora has [0 = start, x = final]
+    [SerializeField] private GameObject[] _Stages; // Number of visual growth stages this flora has [0 = start, x = final]
+
+    private MeshFilter[] _StagesMeshFilters;
+    private MeshRenderer[] _StagesMeshRenderers;
 
     private MeshFilter _MeshFilter;
+    private MeshRenderer _MeshRenderer;
     private BoxCollider _Collider;
 
     private FloraMaster _FloraMaster; // master
@@ -32,17 +37,23 @@ public class Flora : MonoBehaviour, IInteractable
     private void Awake()
     {
         _MeshFilter = GetComponent<MeshFilter>();
+        _MeshRenderer = GetComponent<MeshRenderer>();
         _Collider = GetComponent<BoxCollider>();
+
+        _StagesMeshFilters = System.Array.ConvertAll(_Stages, mf => mf.GetComponent<MeshFilter>()); // extract mesh and materials from objects
+        _StagesMeshRenderers = System.Array.ConvertAll(_Stages, mr => mr.GetComponent<MeshRenderer>());
     }
 
     private void Start()
     {
-        _MeshFilter.mesh = _Stages[_Mesh];
+        _MeshFilter.sharedMesh = _StagesMeshFilters[_Mesh].sharedMesh; // set new mesh and materials on this object
+        _MeshRenderer.sharedMaterials = _StagesMeshRenderers[_Mesh].sharedMaterials;
+
         _StageUpdate = (_GrowTime + 1) / (float)_Stages.Length;
 
         _Collider.center = new Vector3(0, 
-            _MeshFilter.mesh.bounds.center.y + 
-            (_Collider.bounds.size.y - _MeshFilter.mesh.bounds.size.y) / 2.0f, 0);
+            _MeshFilter.sharedMesh.bounds.center.y + 
+            (_Collider.bounds.size.y - _MeshFilter.sharedMesh.bounds.size.y) / 2.0f, 0);
     }
 
     private void Update()
@@ -50,7 +61,7 @@ public class Flora : MonoBehaviour, IInteractable
         
     }
 
-    public void Create(FloraMaster floraMaster, Tile tile)
+    public void Initialize(FloraMaster floraMaster, Tile tile)
     {
         _FloraMaster = floraMaster;
         _Tile = tile;
@@ -63,14 +74,17 @@ public class Flora : MonoBehaviour, IInteractable
 
         if (++_Stage >= (_StageUpdate + _Mesh))
         {
-            _MeshFilter.mesh = _Stages[++_Mesh];
+            ++_Mesh;
+
+            _MeshFilter.sharedMesh = _StagesMeshFilters[_Mesh].sharedMesh;
+            _MeshRenderer.sharedMaterials = _StagesMeshRenderers[_Mesh].sharedMaterials;
 
             transform.position = _Tile.Middle;
-            transform.position += Vector3.up * (_MeshFilter.mesh.bounds.size.y / 2.0f);
+            transform.position += Vector3.up * (_MeshFilter.sharedMesh.bounds.size.y / 2.0f);
 
             _Collider.center = new Vector3(0, 
-                _MeshFilter.mesh.bounds.center.y + 
-                (_Collider.bounds.size.y - _MeshFilter.mesh.bounds.size.y) / 2.0f, 0);
+                _MeshFilter.sharedMesh.bounds.center.y + 
+                (_Collider.bounds.size.y - _MeshFilter.sharedMesh.bounds.size.y) / 2.0f, 0);
         }
     }
 

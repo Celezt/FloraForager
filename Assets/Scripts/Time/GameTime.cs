@@ -95,11 +95,13 @@ public class GameTime : MonoBehaviour
         UpdateTime();
     }
 
+#if UNITY_EDITOR
     private void OnDrawGizmos()
     {
         Handles.Label(transform.position + Vector3.up * 3.00f, Date);
         Handles.Label(transform.position + Vector3.up * 2.60f, DigitalTime);
     }
+#endif
 
     public void SetElapsedTime(decimal elapsedTime)
     {

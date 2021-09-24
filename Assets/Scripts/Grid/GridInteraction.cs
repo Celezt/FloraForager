@@ -94,7 +94,7 @@ public class GridInteraction : MonoBehaviour, IInteractable
     }
 
     /// <summary>
-    /// remove object at specified tile
+    /// remove object at specified tile [DESTROYS OBJECT]
     /// </summary>
     /// <returns>false if no object at tile</returns>
     public static bool RemoveObject(Tile tile)

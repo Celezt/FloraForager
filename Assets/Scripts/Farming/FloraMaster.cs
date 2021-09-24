@@ -53,7 +53,7 @@ public class FloraMaster : MonoBehaviour
         }
 
         Flora flora = obj.GetComponent<Flora>();
-        flora.Create(this, tile);
+        flora.Initialize(this, tile);
 
         _Floras.Add(flora);
 
