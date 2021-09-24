@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEditor;
 
-public class DateTime : MonoBehaviour
+public class GameTime : MonoBehaviour
 {
     [Space(5), Header("Game")]
     [SerializeField, Min(0)] private float _InGameHour = 60.0f; // how long an in-game hour lasts in seconds
@@ -30,6 +30,11 @@ public class DateTime : MonoBehaviour
     public decimal ElapsedTime => _ElapsedTime;
     public float InGameHour => _InGameHour;
 
+    /// <summary>
+    /// game time in common format 0.0-24.0
+    /// </summary>
+    public float CurrentTime => HourClock + (_MinuteClock / 60.0f);
+
     public float MinuteClock => _MinuteClock;
     public float HourClock => _HourClock;
 
@@ -40,11 +45,6 @@ public class DateTime : MonoBehaviour
 
     public string DigitalTime => string.Format("{0:00}:{1:00}", _HourClock, _MinuteClock);
     public string Date => string.Format("{0:0000}/{1:00}/{2:00}", Year, _MonthCalendar, _DayCalendar);
-
-    private void Awake()
-    {
-
-    }
 
     private void Start()
     {
@@ -73,8 +73,8 @@ public class DateTime : MonoBehaviour
         Month = _CurrentMonth + (Day / _DaysPerMonth);
         Year = _CurrentYear + (Month / _MonthsPerYear);
 
-        _MinuteClock = (float)_ElapsedTime * (60 / _InGameHour) % 60; // keep to common standards of 00:00-24:00
-        _HourClock = Mathf.FloorToInt(Hour) * (24.0f / _HoursPerDay) % 24;
+        _MinuteClock = (float)_ElapsedTime * (60.0f / _InGameHour) % 60.0f; // keep to common standards of 00:00-24:00
+        _HourClock = (int)Hour * (24.0f / _HoursPerDay) % 24.0f;
 
         _DayCalendar = 1 + Day % _DaysPerMonth;
         _MonthCalendar = 1 + Month % _MonthsPerYear;
@@ -83,12 +83,12 @@ public class DateTime : MonoBehaviour
     /// <summary>
     /// accelerates time from point in current day by given amount in hours
     /// </summary>
-    public void AccelerateTime(float from, float amount)
+    public void AccelerateTime(float from, float hours)
     {
         float elapsedTimeToDay = (int)(Hour / _HoursPerDay) * _HoursPerDay * InGameHour; // total time elapsed to this day
         float acceleratedTime = (elapsedTimeToDay + 
             (from * InGameHour) * (_HoursPerDay / 24.0f) + 
-            (amount * InGameHour) * (_HoursPerDay / 24.0f) - 
+            (hours * InGameHour) * (_HoursPerDay / 24.0f) - 
             (_CurrentHour * _InGameHour)); // time to accelerate by
 
         SetElapsedTime((decimal)acceleratedTime);

@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.InputSystem;
 
 public class SleepSchedule : MonoBehaviour
 {
@@ -11,16 +12,19 @@ public class SleepSchedule : MonoBehaviour
     [SerializeField] private GameObject _Player;
     [SerializeField] private FloraMaster _FloraMaster;
 
-    private DateTime _DateTime;
+    private GameTime _GameTime;
 
     private PlayerMovement _PlayerMovement;
     private InteractableArea _InteractableArea;
+    private Rigidbody _PlayerRigidbody;
 
-    private bool _Sleep = false;
-    private float _TotalTimeToSleep = 0;
+    private bool _Sleeping = false;      // if the player is currently sleeping
+    private float _TotalTimeToSleep = 0; // total time in hours for player to sleep
 
     public float MorningTime => _MorningTime;
     public float NightTime => _NightTime;
+
+    public bool SleepNow { get; set; } = false;
 
     private void Awake()
     {
@@ -29,9 +33,10 @@ public class SleepSchedule : MonoBehaviour
         if (_FloraMaster == null)
             Debug.LogError("need reference to current FloraMaster in scene");
 
-        _DateTime = GetComponent<DateTime>();
+        _GameTime = GetComponent<GameTime>();
         _PlayerMovement = _Player.GetComponent<PlayerMovement>();
         _InteractableArea = _Player.GetComponent<InteractableArea>();
+        _PlayerRigidbody = _Player.GetComponent<Rigidbody>();
     }
 
     private void Start()
@@ -41,9 +46,11 @@ public class SleepSchedule : MonoBehaviour
 
     private void Update()
     {
-        if (!_Sleep && _DateTime.HourClock + (_DateTime.MinuteClock / 60) >= _NightTime)
+        if (SleepNow || (!_Sleeping && _GameTime.CurrentTime >= _NightTime))
         {
-            _Sleep = true;
+            _Sleeping = true;
+            SleepNow = false;
+
             StartCoroutine(Sleep());
         }
     }
@@ -54,6 +61,7 @@ public class SleepSchedule : MonoBehaviour
 
         _PlayerMovement.enabled = false;
         _InteractableArea.enabled = false;
+        _PlayerRigidbody.isKinematic = true;
 
         yield return new WaitForSeconds(_SleepTime);
 
@@ -61,11 +69,12 @@ public class SleepSchedule : MonoBehaviour
 
         _PlayerMovement.enabled = true;
         _InteractableArea.enabled = true;
+        _PlayerRigidbody.isKinematic = false;
 
         _FloraMaster.Notify();
 
-        _DateTime.AccelerateTime(_NightTime, _TotalTimeToSleep);
+        _GameTime.AccelerateTime(_NightTime, _TotalTimeToSleep);
 
-        _Sleep = false;
+        _Sleeping = false;
     }
 }

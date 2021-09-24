@@ -4,16 +4,9 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
-[System.Serializable]
-public struct KeyValuePair<Key, Value>
-{
-    public Key key;
-    public Value value;
-}
-
 public class FloraMaster : MonoBehaviour
 {
-    [SerializeField] private List<KeyValuePair<string, GameObject>> _FloraPrefabs;
+    [SerializeField] private List<GameObject> _FloraPrefabs;
 
     private Dictionary<string, GameObject> _PrefabsDictionary;
     private List<Flora> _Floras;
@@ -21,7 +14,7 @@ public class FloraMaster : MonoBehaviour
     private void Awake()
     {
         _Floras = new List<Flora>();
-        _PrefabsDictionary = _FloraPrefabs.ToDictionary(key => key.key, value => value.value);
+        _PrefabsDictionary = _FloraPrefabs.ToDictionary(key => key.GetComponent<Flora>().Name, value => value);
     }
 
     private void Start()
@@ -31,7 +24,10 @@ public class FloraMaster : MonoBehaviour
 
     private void Update()
     {
-
+        if (Mouse.current.leftButton.wasPressedThisFrame)
+        {
+            AddFlora("null");
+        }
     }
 
     /// <summary>
@@ -39,20 +35,37 @@ public class FloraMaster : MonoBehaviour
     /// </summary>
     public bool AddFlora(string name)
     {
-        if (GridInteraction.CurrentTile == null)
+        Tile tile = GridInteraction.CurrentTile;
+
+        if (tile == null)
             return false;
 
-        GameObject flora;
-        if ((flora = _PrefabsDictionary[name]) == null)
+        GameObject prefab;
+        if ((prefab = _PrefabsDictionary[name]) == null)
             return false;
 
-        GameObject obj = Instantiate(flora);
+        GameObject obj = Instantiate(prefab);
 
-        if (!GridInteraction.PlaceObject(GridInteraction.CurrentTile, obj))
+        if (!GridInteraction.PlaceObject(tile, obj))
         {
             Destroy(obj);
             return false;
         }
+
+        Flora flora = obj.GetComponent<Flora>();
+        flora.Create(this, tile);
+
+        _Floras.Add(flora);
+
+        return true;
+    }
+
+    public bool RemoveFlora(Flora flora)
+    {
+        if (!_Floras.Contains(flora))
+            return false;
+
+        _Floras.Remove(flora);
 
         return true;
     }
