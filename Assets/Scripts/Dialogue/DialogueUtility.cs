@@ -1,4 +1,3 @@
-using FF.Json;
 using Newtonsoft.Json;
 using System.Collections;
 using System.Collections.Generic;
@@ -6,20 +5,23 @@ using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
 using UnityEngine;
+using UnityEngine.AddressableAssets;
 
 public static class DialogueUtility
 {
     /// <summary>
     /// Deserialize JSON-file already loaded.
     /// </summary>
-    /// <param name="fileName">File name.</param>
+    /// <param name="address">Address.</param>
     /// <returns>Stack of <c>ParagraphAsset</c>.</returns>
-    private static Stack<ParagraphAsset> Deserialize(string fileName)
+    private static Stack<ParagraphAsset> Deserialize(string content)
     {
         // Deserialize the string to an object. 
-        DialogueAsset asset = JsonConvert.DeserializeObject<DialogueAsset>(JsonLoader.GetContent(fileName));
+        DialogueAsset asset = JsonConvert.DeserializeObject<DialogueAsset>(content);
 
         return new Stack<ParagraphAsset>(asset.Dialogues.Reverse());
+
+        throw new System.NotImplementedException();
     }
 
     /// <summary>

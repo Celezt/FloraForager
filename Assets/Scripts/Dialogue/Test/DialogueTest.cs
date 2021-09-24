@@ -5,15 +5,15 @@ using UnityEngine;
 using UnityEngine.UI;
 using Newtonsoft.Json;
 using MyBox;
-using FF.Json;
 using System.Linq;
 using System.Text;
+using UnityEngine.AddressableAssets;
 
 #if UNITY_EDITOR
 public class DialogueTest : MonoBehaviour
 {
     [SerializeField] private TMPro.TextMeshProUGUI _textMesh;
-    [SerializeField] private TextAsset _asset;
+    [SerializeField] private AssetReferenceText _asset;
     [SerializeField] private Button[] _buttons;
 
     private Stack<ParagraphAsset> _dialogueStack;
@@ -31,13 +31,17 @@ public class DialogueTest : MonoBehaviour
     [ButtonMethod]
     private void Deserialize()
     {
-        JsonLoader.HookAndLoad(_asset);
-        DialogueAsset asset = JsonConvert.DeserializeObject<DialogueAsset>(JsonLoader.GetContent(_asset.name));
+        string serializedData = string.Empty;
+        _asset.LoadAssetAsync<TextAsset>().Completed += (handle) =>
+        {
+            serializedData = handle.Result.text;
+            Addressables.Release(handle);
+        };
+
+        DialogueAsset asset = JsonConvert.DeserializeObject<DialogueAsset>(serializedData);
 
         _dialogueStack = new Stack<ParagraphAsset>(asset.Dialogues.Reverse());
         Next();
-
-        JsonLoader.Unhook(_asset.name);
     }
 
     [ButtonMethod]
