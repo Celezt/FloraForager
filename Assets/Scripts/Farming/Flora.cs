@@ -34,18 +34,18 @@ public class Flora : MonoBehaviour, IInteractable
     public string Name => _Name;
     public string Description => _Description;
 
-    private void Awake()
+    public void Initialize(FloraMaster floraMaster, Tile tile)
     {
+        _FloraMaster = floraMaster;
+        _Tile = tile;
+
         _MeshFilter = GetComponent<MeshFilter>();
         _MeshRenderer = GetComponent<MeshRenderer>();
         _Collider = GetComponent<BoxCollider>();
 
         _StagesMeshFilters = System.Array.ConvertAll(_Stages, mf => mf.GetComponent<MeshFilter>()); // extract mesh and materials from objects
         _StagesMeshRenderers = System.Array.ConvertAll(_Stages, mr => mr.GetComponent<MeshRenderer>());
-    }
 
-    private void Start()
-    {
         if (_StagesMeshFilters.Length == 0 || _StagesMeshRenderers.Length == 0)
             Debug.LogError(name + " has no stage variants assigned to it");
 
@@ -54,20 +54,11 @@ public class Flora : MonoBehaviour, IInteractable
 
         _StageUpdate = (_GrowTime + 1) / (float)_Stages.Length;
 
-        _Collider.center = new Vector3(0, 
-            _MeshFilter.sharedMesh.bounds.center.y + 
+        _Collider.center = new Vector3(0,
+            _MeshFilter.sharedMesh.bounds.center.y +
             (_Collider.bounds.size.y - _MeshFilter.sharedMesh.bounds.size.y) / 2.0f, 0);
-    }
 
-    private void Update()
-    {
-        
-    }
-
-    public void Initialize(FloraMaster floraMaster, Tile tile)
-    {
-        _FloraMaster = floraMaster;
-        _Tile = tile;
+        transform.position += Vector3.up * (_MeshFilter.sharedMesh.bounds.size.y / 2.0f);
     }
 
     public void Grow()
