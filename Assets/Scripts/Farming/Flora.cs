@@ -46,6 +46,9 @@ public class Flora : MonoBehaviour, IInteractable
 
     private void Start()
     {
+        if (_StagesMeshFilters.Length == 0 || _StagesMeshRenderers.Length == 0)
+            Debug.LogError(name + " has no stage variants assigned to it");
+
         _MeshFilter.sharedMesh = _StagesMeshFilters[_Mesh].sharedMesh; // set new mesh and materials on this object
         _MeshRenderer.sharedMaterials = _StagesMeshRenderers[_Mesh].sharedMaterials;
 

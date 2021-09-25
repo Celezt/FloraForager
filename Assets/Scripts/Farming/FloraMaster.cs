@@ -6,7 +6,7 @@ using UnityEngine.InputSystem;
 
 public class FloraMaster : MonoBehaviour
 {
-    [SerializeField] private List<GameObject> _FloraPrefabs;
+    [SerializeField] private List<GameObject> _FloraVariants;
 
     private Dictionary<string, GameObject> _PrefabsDictionary;
     private List<Flora> _Floras;
@@ -14,7 +14,7 @@ public class FloraMaster : MonoBehaviour
     private void Awake()
     {
         _Floras = new List<Flora>();
-        _PrefabsDictionary = _FloraPrefabs.ToDictionary(key => key.GetComponent<Flora>().Name, value => value);
+        _PrefabsDictionary = _FloraVariants.ToDictionary(key => key.GetComponent<Flora>().Name, value => value);
     }
 
     private void Start()
@@ -37,7 +37,7 @@ public class FloraMaster : MonoBehaviour
     {
         Tile tile = GridInteraction.CurrentTile;
 
-        if (tile == null)
+        if (tile == null || tile.TileType != TileType.Dirt)
             return false;
 
         GameObject prefab;
