@@ -8,7 +8,6 @@ public class SunControl : MonoBehaviour
     [SerializeField, Range(0.0f, 360.0f)] private float _Yaw = 30.0f;
     [SerializeField, Range(1.0f, 10.0f)] private float _Damping = 4.5f;
 
-    private GameTime _GameTime;
     private SleepSchedule _SleepSchedule;
 
     private float _Pitch;
@@ -20,7 +19,6 @@ public class SunControl : MonoBehaviour
         if (_Sun == null)
             this.enabled = false;
 
-        _GameTime = GetComponent<GameTime>();
         _SleepSchedule = GetComponent<SleepSchedule>();
     }
 
@@ -31,7 +29,7 @@ public class SunControl : MonoBehaviour
 
     private void Update()
     {
-        _Pitch = 360.0f * (_GameTime.CurrentTime / 24.0f) - _MorningOffset;
+        _Pitch = 360.0f * (GameTime.Instance.CurrentTime / 24.0f) - _MorningOffset;
 
         float angleDiff = Mathf.Abs(_NewPitch) - Mathf.Abs(_Pitch);
         _NewPitch = (angleDiff < 10.0f) ? Mathf.SmoothStep(_NewPitch, _Pitch, Time.deltaTime * _Damping) : _Pitch;

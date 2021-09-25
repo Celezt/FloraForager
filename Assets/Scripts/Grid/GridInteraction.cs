@@ -88,6 +88,7 @@ public class GridInteraction : MonoBehaviour, IInteractable
             return false;
 
         obj.transform.position = tile.Middle;
+        obj.transform.position += Vector3.up * obj.GetComponent<MeshFilter>().sharedMesh.bounds.size.y / 2.0f;
 
         return true;
     }

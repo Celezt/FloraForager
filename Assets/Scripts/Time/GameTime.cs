@@ -2,8 +2,9 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEditor;
+using MyBox;
 
-public class GameTime : MonoBehaviour
+public class GameTime : Singleton<GameTime>
 {
     [Space(5), Header("Game")]
     [SerializeField, Min(0)] private float _InGameHour = 60.0f; // how long an in-game hour lasts in seconds
@@ -61,7 +62,7 @@ public class GameTime : MonoBehaviour
         while (true)
         {
             UpdateTime();
-            yield return new WaitForSeconds(1.0f);
+            yield return new WaitForSeconds(0.5f);
         }
     }
 

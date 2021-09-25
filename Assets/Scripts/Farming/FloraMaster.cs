@@ -3,8 +3,9 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.InputSystem;
+using MyBox;
 
-public class FloraMaster : MonoBehaviour
+public class FloraMaster : Singleton<FloraMaster>
 {
     [SerializeField] private List<GameObject> _FloraVariants;
 
@@ -53,7 +54,7 @@ public class FloraMaster : MonoBehaviour
         }
 
         Flora flora = obj.GetComponent<Flora>();
-        flora.Initialize(this, tile);
+        flora.Initialize(tile);
 
         _Floras.Add(flora);
 

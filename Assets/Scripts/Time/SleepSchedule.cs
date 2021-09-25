@@ -10,9 +10,6 @@ public class SleepSchedule : MonoBehaviour
     [Space(5)]
     [SerializeField, Min(0)] private float _SleepTime = 1.0f;
     [SerializeField] private GameObject _Player;
-    [SerializeField] private FloraMaster _FloraMaster;
-
-    private GameTime _GameTime;
 
     private PlayerMovement _PlayerMovement;
     private InteractableArea _InteractableArea;
@@ -30,10 +27,7 @@ public class SleepSchedule : MonoBehaviour
     {
         if (_Player == null)
             Debug.LogError("need reference to current Player in scene");
-        if (_FloraMaster == null)
-            Debug.LogError("need reference to current FloraMaster in scene");
 
-        _GameTime = GetComponent<GameTime>();
         _PlayerMovement = _Player.GetComponent<PlayerMovement>();
         _InteractableArea = _Player.GetComponent<InteractableArea>();
         _PlayerRigidbody = _Player.GetComponent<Rigidbody>();
@@ -46,7 +40,7 @@ public class SleepSchedule : MonoBehaviour
 
     private void Update()
     {
-        if (SleepNow || (!_Sleeping && _GameTime.CurrentTime >= _NightTime))
+        if (SleepNow || (!_Sleeping && GameTime.Instance.CurrentTime >= _NightTime))
         {
             _Sleeping = true;
             SleepNow = false;
@@ -71,9 +65,9 @@ public class SleepSchedule : MonoBehaviour
         _InteractableArea.enabled = true;
         _PlayerRigidbody.isKinematic = false;
 
-        _FloraMaster.Notify();
+        FloraMaster.Instance.Notify();
 
-        _GameTime.AccelerateTime(_NightTime, _TotalTimeToSleep);
+        GameTime.Instance.AccelerateTime(_NightTime, _TotalTimeToSleep);
 
         _Sleeping = false;
     }

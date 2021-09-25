@@ -22,8 +22,7 @@ public class Flora : MonoBehaviour, IInteractable
     private MeshRenderer _MeshRenderer;
     private BoxCollider _Collider;
 
-    private FloraMaster _FloraMaster; // master
-    private Tile _Tile;               // associated tile
+    private Tile _Tile;             // associated tile
 
     private float _StageUpdate = 0; // at what stages to update the mesh
     private int _Stage = 0;         // current stage/day
@@ -34,11 +33,8 @@ public class Flora : MonoBehaviour, IInteractable
     public string Name => _Name;
     public string Description => _Description;
 
-    public void Initialize(FloraMaster floraMaster, Tile tile)
+    private void Awake()
     {
-        _FloraMaster = floraMaster;
-        _Tile = tile;
-
         _MeshFilter = GetComponent<MeshFilter>();
         _MeshRenderer = GetComponent<MeshRenderer>();
         _Collider = GetComponent<BoxCollider>();
@@ -51,14 +47,20 @@ public class Flora : MonoBehaviour, IInteractable
 
         _MeshFilter.sharedMesh = _StagesMeshFilters[_Mesh].sharedMesh; // set new mesh and materials on this object
         _MeshRenderer.sharedMaterials = _StagesMeshRenderers[_Mesh].sharedMaterials;
+    }
 
+    private void Start()
+    {
         _StageUpdate = (_GrowTime + 1) / (float)_Stages.Length;
 
         _Collider.center = new Vector3(0,
             _MeshFilter.sharedMesh.bounds.center.y +
             (_Collider.bounds.size.y - _MeshFilter.sharedMesh.bounds.size.y) / 2.0f, 0);
+    }
 
-        transform.position += Vector3.up * (_MeshFilter.sharedMesh.bounds.size.y / 2.0f);
+    public void Initialize(Tile tile)
+    {
+        _Tile = tile;
     }
 
     public void Grow()
@@ -97,6 +99,6 @@ public class Flora : MonoBehaviour, IInteractable
         }
 
         GridInteraction.RemoveObject(_Tile);
-        _FloraMaster.RemoveFlora(this);
+        FloraMaster.Instance.RemoveFlora(this);
     }
 }
