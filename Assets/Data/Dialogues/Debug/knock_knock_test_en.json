@@ -3,7 +3,7 @@
         {
             "id": "joker_test",
             "text": "<color=red>KNOCK</color>, <b><i>KNOCK</b></i>",
-            "tag": ["audio_test{boom_sound}", "activate_test"]
+            "tag": ["audio{boom_sound}"]
         },
         {
             "id": "victim_test",
@@ -11,8 +11,7 @@
         },
         {
             "id": "joker_test",
-            "text": "<color=orange>D</color><color=#008080ff>e</color><color=purple>e</color>",
-            "tag": ["audio_test{clap_sound}"]
+            "text": "<color=orange>D</color><color=#008080ff>e</color><color=purple>e</color>"
         },
         {
             "id": "victim_test",
@@ -20,19 +19,23 @@
         },
         {
             "id": "joker_test",
-            "text": "<size=50>Deez nuts</size>, haha got em'"
+            "text": "<size=50>Deez nuts</size>, haha got em'",
+            "tag": ["audio{clap_sound}"]
         },
         {
             "id": "victim_test",
             "text": "what will you do?",
-            "tag": ["activate_test"],
             "action": [
                 {
                     "act": "devoure {joker_test}",
                     "dialogues":[
                         {
                             "id": "victim_test",
-                            "text": "<i>You devoures {joker_test}</i>"
+                            "text": "<i>You devoured {joker_test}</i>"
+                        },
+                        {
+                            "id": "victim_test",
+                            "text": "You didn't like the taste"
                         }
                     ]
                 },

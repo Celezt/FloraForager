@@ -1,7 +1,9 @@
 using Newtonsoft.Json;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 using System.Text;
 using System.Text.RegularExpressions;
 using UnityEngine;
@@ -14,14 +16,12 @@ public static class DialogueUtility
     /// </summary>
     /// <param name="address">Address.</param>
     /// <returns>Stack of <c>ParagraphAsset</c>.</returns>
-    private static Stack<ParagraphAsset> Deserialize(string content)
+    public static Stack<ParagraphAsset> Deserialize(string content)
     {
         // Deserialize the string to an object. 
         DialogueAsset asset = JsonConvert.DeserializeObject<DialogueAsset>(content);
 
         return new Stack<ParagraphAsset>(asset.Dialogues.Reverse());
-
-        throw new System.NotImplementedException();
     }
 
     /// <summary>
@@ -45,9 +45,10 @@ public static class DialogueUtility
     /// <summary>
     /// Invoke all actions connected to tags.
     /// </summary>
+    /// <param name="wrap">Wrapped reference.</param>
     /// <param name="tags">Tags.</param>
-    /// <param name="actions">All actions.</param>
-    public static void Tag(IList<string> tags, IDictionary<string, System.Action<string>> actions)
+    /// <param name="tagDictionary">All actions.</param>
+    public static void Tag<T>(T wrap, IList<string> tags, IDictionary<string, System.Action<Taggable, string>> tagDictionary)
     {
         // Invoke all tags.
         if (tags != null)
@@ -55,8 +56,48 @@ public static class DialogueUtility
             {
                 string value = Regex.Match(tags[i], @"(?<=\{).*?(?=\})").Value;        // Match value.
                 string tag = Regex.Match(tags[i], @"\w+(?=(?>[^{}]+|\{|\})*$)").Value; // Match tag name.
+
+                if (!tagDictionary.ContainsKey(tag))
+                {
+                    Debug.LogWarning($"DialogueException: {tag} does not exist");
+                    return;
+                }
                 
-                actions[tag].Invoke(value);
+                tagDictionary[tag].Invoke(Taggable.CreatePackage(wrap), value);
             }
+    }
+
+    /// <summary>
+    /// Reflect all tags inside the assembly.
+    /// </summary>
+    /// <param name="wrap">Wrapped reference.</param>
+    /// <param name="tagDictionary">All actions.</param>
+    public static void InitializeAllTags<T>(T wrap, IDictionary<string, Action<Taggable, string>> tagDictionary)
+    {
+        static string ReplaceLastOccurrence(string source, string find, string replace)
+        {
+            int place = source.LastIndexOf(find);
+
+            if (place == -1)
+                return source;
+
+            string result = source.Remove(place, find.Length).Insert(place, replace);
+            return result;
+        }
+
+        foreach (Type type in ReflectionUtility.GetTypesWithAttribute<CustomTagAttribute>(Assembly.GetExecutingAssembly()))
+        {
+            if (!typeof(ITag).IsAssignableFrom(type))
+            {
+                Debug.LogError($"ReflectException: {type} has no derived {nameof(ITag)}");
+                continue;
+            }
+
+            ITag instance = (ITag)Activator.CreateInstance(type);
+            CustomTagAttribute attribute = (CustomTagAttribute)Attribute.GetCustomAttribute(type, typeof(CustomTagAttribute));
+            
+            instance.Initalize(Taggable.CreatePackage(wrap));
+            tagDictionary.Add(ReplaceLastOccurrence(instance.GetType().Name, "Tag", "").ToLower(), instance.Action);
+        }
     }
 }
