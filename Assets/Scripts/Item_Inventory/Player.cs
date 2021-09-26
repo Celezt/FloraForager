@@ -13,18 +13,12 @@ public class Player : MonoBehaviour
             var item = other.GetComponent<Item>();
             if (item)
             {
-                inventory.AddItem(item.item.item, item.item.amount);
+                inventory.AddItem(item.item);
                 Destroy(other.gameObject);
             }
         }
     }
     
-    public void Update()
-    {
-        
-    }
-    private void OnApplicationQuit()
-    {
-        //inventory.container.Clear();
-    }
+
+
 }

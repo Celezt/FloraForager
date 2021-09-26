@@ -2,37 +2,26 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class InventorySlot : ScriptableObject
+public class InventorySlot
 {
-    public ItemObject item;
-    public int amount;
-    private bool isFull;
+    public ItemAsset item;
+    public bool isFull;
 
-    public bool IsEmpty()
+   
+    public InventorySlot(string ID, int _amount)
     {
-        if (item != null)
-        {
-            return true;
-        }
-        return false;
-    }
-    public InventorySlot(ItemObject _item, int _amount)
-    {
-        item = _item;
+        item.ID = ID;
         AddAmount(_amount);
     }
     public InventorySlot(InventorySlot other)
     {
         item = other.item;
-        amount = other.amount;
         isFull = other.IsFull;
     }
 
     public void RemoveFromSlot() // Removes from slot
     {
-        item = null;
-        amount = 0;
-        isFull = false;
+        
     }
 
     public bool IsFull { get => isFull; }
@@ -40,17 +29,18 @@ public class InventorySlot : ScriptableObject
     public bool AddAmount(int value) // Returns if adding was successful
     {
         bool added = false;
-        if (amount + value < item.maxAmount) // lower than max value
+        if (item.Amount + value < ItemDatabase.Database[item.ID].MaxAmount) // lower than max value
         {
-            amount += value;
+            item.Amount += value;
             added = true;
         }
-        else if (amount + value == item.maxAmount) // Equals max value
+        else if (item.Amount + value == ItemDatabase.Database[item.ID].MaxAmount) // Equals max value
         {
-            amount += value;
+            item.Amount += value;
             isFull = true;
             added = true;
         }
+        
         return added; // Over max value - No Add        
     }
 }

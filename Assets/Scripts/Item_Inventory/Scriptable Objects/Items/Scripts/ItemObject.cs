@@ -2,22 +2,16 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public enum ItemType 
-{
-Food,
-Equipment,
-Default,
-Tool,
-Seed
-}
-public abstract class ItemObject : ScriptableObject
+
+public class ItemObject : MonoBehaviour
 {
     public GameObject prefabOverworld;
     public GameObject prefabInventorySlot;
-    public int maxAmount;
+    public int MaxAmount;
+    public int ID;
     public int buy;
     public int sell;
-    public ItemType type;
+    public List<string> types;
     [TextArea(15, 20)]
     public string description;
 }

@@ -5,44 +5,59 @@ using UnityEngine;
 [CreateAssetMenu(fileName = "New Inventory", menuName = "Inventory System/Inventory")]
 public class InventoryObject : ScriptableObject
 {
-    public List<InventorySlot> container = new List<InventorySlot>();
-
-    public void AddItem(ItemObject _item, int _amount)
-    {        
-        bool hasItem = false;
-        for (int i = 0; i < container.Count; i++)
-        {
-            if (container[i].item = _item)
-            {
-                container[i].AddAmount(_amount);                
-                hasItem = true;
-                break;
-            }
-        }
-        if (!hasItem)
-        {
-            container.Add(new InventorySlot(_item, _amount));
-        }
-    }
-    public void AddItemAtPos(ItemObject _item, int _amount, int _pos)
+    //public List<InventorySlot> container = new List<InventorySlot>();
+    public InventorySlot[] Container = new InventorySlot[32];
+    public bool IsFull { get; set; }
+    public bool AddItem(InventorySlot _item)
     {
-        bool hasItem = false;
-        for (int i = 0; i < container.Count; i++)
+        if (!IsFull)
         {
-            if (container[i].item = _item)
+            bool hasItem = false;
+            for (int i = 0; i < Container.Length; i++)
             {
-                container[i].AddAmount(_amount);
+                if (Container[i].item.ID == _item.item.ID)
+                {
+                    Container[i].AddAmount(_item.item.Amount);
+                    hasItem = true;
+                    break;
+                }
+            }
+            if (!hasItem)
+            {
+                Container[FindFirstEmptySlot()] = new InventorySlot(_item.item.ID, _item.item.Amount);
+            }
+            return true;
+        }
+        else
+        {
 
-                hasItem = true;
-                break;
+        }
+        return false;
+    }
+    public int ExistsAt(string id) 
+    {
+        for (int i = 0; i < Container.Length; i++)
+        {
+            if (Container[i].item.ID == id)
+            {
+                return i;
             }
         }
-        if (!hasItem)
+        return -1;
+    }
+    public int FindFirstEmptySlot() 
+    {
+        for (int i = 0; i < Container.Length; i++)
         {
-            container.Add(new InventorySlot(_item, _amount));
+            if (Container[i] == null)
+            {
+                return i;
+            }
         }
+        return -1;    
     }
 }
+
 /*
 [System.Serializable]
 public class InventorySlot
