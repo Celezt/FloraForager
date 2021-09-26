@@ -15,12 +15,13 @@ public class SleepSchedule : MonoBehaviour
     private InteractableArea _InteractableArea;
     private Rigidbody _PlayerRigidbody;
 
-    private bool _Sleeping = false;      // if the player is currently sleeping
+    private bool _IsSleeping = false;    // if the player is currently sleeping
     private float _TotalTimeToSleep = 0; // total time in hours for player to sleep
 
     public float MorningTime => _MorningTime;
     public float NightTime => _NightTime;
 
+    public bool IsSleeping => _IsSleeping;
     public bool SleepNow { get; set; } = false;
 
     private void Awake()
@@ -40,13 +41,18 @@ public class SleepSchedule : MonoBehaviour
 
     private void Update()
     {
-        if (SleepNow || (!_Sleeping && GameTime.Instance.CurrentTime >= _NightTime))
+        if (SleepNow || (!_IsSleeping && GameTime.Instance.CurrentTime >= _NightTime))
         {
-            _Sleeping = true;
+            _IsSleeping = true;
             SleepNow = false;
 
-            StartCoroutine(Sleep());
+            PerformSleep();
         }
+    }
+
+    public void PerformSleep()
+    {
+        StartCoroutine(Sleep());
     }
 
     private IEnumerator Sleep()
@@ -69,6 +75,6 @@ public class SleepSchedule : MonoBehaviour
 
         GameTime.Instance.AccelerateTime(_NightTime, _TotalTimeToSleep);
 
-        _Sleeping = false;
+        _IsSleeping = false;
     }
 }

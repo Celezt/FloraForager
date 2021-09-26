@@ -1,12 +1,12 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.EventSystems;
 using UnityEngine.InputSystem;
 
 [RequireComponent(typeof(Grid))]
 public class GridInteraction : MonoBehaviour, IInteractable
 {
     [SerializeField] private GameObject _SelectionObject;
+    [SerializeField] private LayerMask _LayerMasks;
 
     private Grid _Grid;
     private MeshFilter _MeshFilter;
@@ -37,7 +37,7 @@ public class GridInteraction : MonoBehaviour, IInteractable
     private void Update()
     {
         Ray ray = Camera.main.ScreenPointToRay(Mouse.current.position.ReadValue());
-        bool collision = Physics.Raycast(ray, out RaycastHit hitInfo, Mathf.Infinity, 1 << LayerMask.NameToLayer("Grid"));
+        bool collision = Physics.Raycast(ray, out RaycastHit hitInfo, Mathf.Infinity, _LayerMasks) && !EventSystem.current.IsPointerOverGameObject();
 
         if (!collision)
         {
@@ -88,7 +88,6 @@ public class GridInteraction : MonoBehaviour, IInteractable
             return false;
 
         obj.transform.position = tile.Middle;
-        obj.transform.position += Vector3.up * obj.GetComponent<MeshFilter>().sharedMesh.bounds.size.y / 2.0f;
 
         return true;
     }
