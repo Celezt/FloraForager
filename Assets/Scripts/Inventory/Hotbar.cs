@@ -5,7 +5,7 @@ using TMPro;
 
 public class Hotbar : MonoBehaviour
 {
-    // Start is called before the first frame update
+
     public int startXPos;
     public int startYPos;
     public int xSPace;

@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class InventorySlot
+public class InventorySlot : ScriptableObject
 {
     public ItemObject item;
     public int amount;
