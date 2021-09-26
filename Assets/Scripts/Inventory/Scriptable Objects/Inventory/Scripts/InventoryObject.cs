@@ -45,49 +45,44 @@ public class InventoryObject : ScriptableObject
         }
     }
 }
-
+/*
 [System.Serializable]
 public class InventorySlot
 {
     public ItemObject item;
     public int amount;
     private bool isFull;
-    private bool isOccupied;
+
+    public bool IsEmpty() 
+    {
+        if (item != null)
+        {
+            return true;
+        }
+        return false;
+    }
     public InventorySlot(ItemObject _item, int _amount)
     {
         item = _item;
         AddAmount(_amount);
-        isOccupied = true;
     }
     public InventorySlot(InventorySlot other)
     {
         item = other.item;
         amount = other.amount;
         isFull = other.IsFull;
-        isOccupied = other.isOccupied;
-    }
-    public void Swap(ref InventorySlot other) 
-    {
-        InventorySlot holder = new InventorySlot(this);
-        item = other.item;
-        amount = other.amount;
-        isFull = other.IsFull;
-        isOccupied = other.isOccupied;
-        other = new InventorySlot(holder);
-    }
+    }    
     
-    public void RemoveFromSlot() 
+    public void RemoveFromSlot() // Removes from slot
     {
         item = null;
-        isOccupied = false;
         amount = 0;
         isFull = false;
     }
 
     public bool IsFull { get => isFull;}
-    public bool IsOccupied { get => isOccupied;}
 
-    public bool AddAmount(int value)
+    public bool AddAmount(int value) // Returns if adding was successful
     {
         bool added = false;
         if (amount + value < item.maxAmount) // lower than max value
@@ -102,5 +97,5 @@ public class InventorySlot
             added = true;
         }
         return added; // Over max value - No Add        
-    }
-}
+    
+}}*/

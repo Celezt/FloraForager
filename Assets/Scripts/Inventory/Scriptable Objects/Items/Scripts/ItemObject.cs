@@ -15,6 +15,8 @@ public abstract class ItemObject : ScriptableObject
     public GameObject prefabOverworld;
     public GameObject prefabInventorySlot;
     public int maxAmount;
+    public int buy;
+    public int sell;
     public ItemType type;
     [TextArea(15, 20)]
     public string description;

@@ -5,6 +5,7 @@ using UnityEngine;
 public class Player : MonoBehaviour
 {
     public PlayerInventoryObject inventory;
+    
     public void OnTriggerEnter(Collider other)
     {
         if (!inventory.IsFull) // Inventory is not full
@@ -12,11 +13,12 @@ public class Player : MonoBehaviour
             var item = other.GetComponent<Item>();
             if (item)
             {
-                inventory.AddItem(item.item, 1);
+                inventory.AddItem(item.item, item.amount);
                 Destroy(other.gameObject);
             }
         }
     }
+    
     public void Update()
     {
         
