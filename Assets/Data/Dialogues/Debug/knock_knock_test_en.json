@@ -1,0 +1,63 @@
+{
+    "dialogues": [
+        {
+            "id": "joker_test",
+            "text": "<speed=0.5><color=red>KNOCK</color></speed>, <speed=4><b><i>KNOCK</b></i></speed>",
+            "tag": ["audio{boom_sound}"]
+        },
+        {
+            "id": "victim_test",
+            "text": "<speed=0.6><i>Who's there?</i></speed>"
+        },
+        {
+            "id": "joker_test",
+            "text": "<color=orange><speed=0.2>D</speed></color><color=#008080ff><speed=0.1>e</speed></color><color=purple><speed=0.5>e</speed></color>"
+        },
+        {
+            "id": "victim_test",
+            "text": "Dee who?"
+        },
+        {
+            "id": "joker_test",
+            "text": "<size=50>Deez nuts</size>, haha got em'",
+            "tag": ["audio{clap_sound}"]
+        },
+        {
+            "id": "victim_test",
+            "text": "what will you do?",
+            "action": [
+                {
+                    "act": "devoure {joker_test}",
+                    "dialogues":[
+                        {
+                            "id": "victim_test",
+                            "text": "<i>You devoured {joker_test}</i>"
+                        },
+                        {
+                            "id": "victim_test",
+                            "text": "You didn't like the taste"
+                        }
+                    ]
+                },
+                {
+                    "act": "run",
+                    "dialogues":[
+                        {
+                            "id": "victim_test",
+                            "text": "<i>{victim_test} runs from {joker_test}</i>"
+                        }
+                    ]
+                },
+                {
+                    "act": "start dancing",
+                    "dialogues":[
+                        {
+                            "id": "victim_test",
+                            "text": "<i>{victim_test} starts to dance</i>"
+                        }
+                    ]
+                }
+            ]
+        }
+    ]
+}

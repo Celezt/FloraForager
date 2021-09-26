@@ -4,7 +4,7 @@ using UnityEngine;
 using UnityEngine.InputSystem;
 
 [RequireComponent(typeof(Grid))]
-public class GridInteraction : MonoBehaviour
+public class GridInteraction : MonoBehaviour, IInteractable
 {
     [SerializeField] private GameObject _SelectionObject;
 
@@ -19,6 +19,8 @@ public class GridInteraction : MonoBehaviour
     public static GridInteraction CurrentGrid { get; private set; } = null;
     public bool MouseCollision => _MouseCollision;
 
+    public int Priority => 0;
+
     private void Awake()
     {
         _Grid = GetComponent<Grid>();
@@ -29,6 +31,8 @@ public class GridInteraction : MonoBehaviour
         float scale = _Selection.transform.localScale.x;
         _Selection.transform.localScale = new Vector3(scale * _Grid.TileSize, scale, scale * _Grid.TileSize);
     }
+
+
 
     private void Update()
     {
@@ -68,22 +72,6 @@ public class GridInteraction : MonoBehaviour
 
             _Selection.transform.position = Vector3.zero;
         }
-
-        if (LeftPressed())
-        {
-            GameObject cube = GameObject.CreatePrimitive(PrimitiveType.Cube);
-
-            cube.transform.localScale = new Vector3(0.5f, 0.5f, 0.5f);
-            cube.transform.position = CurrentTile.Middle;
-            cube.transform.position += new Vector3(0.0f, cube.transform.lossyScale.y / 2.0f, 0.0f);
-
-            if (!PlaceObject(CurrentTile, cube))
-                Destroy(cube);
-        }
-        if (RightPressed())
-        {
-            RemoveObject(CurrentTile);
-        }
     }
 
     /// <summary>
@@ -91,7 +79,7 @@ public class GridInteraction : MonoBehaviour
     /// </summary>
     /// <param name="obj">object to be placed</param>
     /// <returns>false if object cannot be placed</returns>
-    public bool PlaceObject(Tile tile, GameObject obj)
+    public static bool PlaceObject(Tile tile, GameObject obj)
     {
         if (tile == null)
             return false;
@@ -99,14 +87,17 @@ public class GridInteraction : MonoBehaviour
         if (!tile.OccupyTile(obj))
             return false;
 
+        obj.transform.position = tile.Middle;
+        obj.transform.position += Vector3.up * obj.GetComponent<MeshFilter>().sharedMesh.bounds.size.y / 2.0f;
+
         return true;
     }
 
     /// <summary>
-    /// remove object at specified tile
+    /// remove object at specified tile [DESTROYS OBJECT]
     /// </summary>
     /// <returns>false if no object at tile</returns>
-    public bool RemoveObject(Tile tile)
+    public static bool RemoveObject(Tile tile)
     {
         if (tile == null)
             return false;
@@ -148,5 +139,10 @@ public class GridInteraction : MonoBehaviour
         _Grid.Uvs[i * 4 + 3] = new Vector2(proc + tileTexProcRow - dFix, 0.0f + dFix); // bottom-right
 
         _MeshFilter.mesh.uv = _Grid.Uvs;
+    }
+
+    public void OnInteract(InteractContext context)
+    {
+        
     }
 }
