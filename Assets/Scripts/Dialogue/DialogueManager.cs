@@ -170,7 +170,14 @@ public class DialogueManager : Singleton<DialogueManager>
                     Debug.LogError($"{DIALOGUE_EXCEPTION}: {customRichTag.Item1} could not be parsed to float");
                     yield break;
                 }
+
+                if (count < index)
+                {
+                    yield return new WaitForSeconds(_autoTextSpeed / speedMultiplier);
+                }
             }
+            else
+                yield return new WaitForSeconds(_autoTextSpeed);
         }
     }
 }
