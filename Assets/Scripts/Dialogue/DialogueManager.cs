@@ -16,17 +16,22 @@ using System.Threading.Tasks;
 
 public class DialogueManager : Singleton<DialogueManager>
 {
+    private const string DIALOGUE_EXCEPTION = "DialogueException";
+
     [SerializeField] private TextMeshProUGUI _content;
     [SerializeField] private TextMeshProUGUI _namecard;
     [SerializeField] private Transform _buttonParent;
     [SerializeField] private GameObject _buttonType;
 
     private Stack<ParagraphAsset> _paragraphStack;
+    Queue<(string, int)> _customRichTagQueue;
     private List<GameObject> _actions;
     private Dictionary<string, string> _aliases = new Dictionary<string, string>();
     private Dictionary<string, Action<Taggable, string>> _tags = new Dictionary<string, Action<Taggable, string>>();
 
     private Coroutine _autoTypeCoroutine;
+
+    private float _autoTextSpeed = 0.1f;
 
     public void Next()
     {
@@ -40,11 +45,13 @@ public class DialogueManager : Singleton<DialogueManager>
 
         DialogueUtility.Alias(content, _aliases);
         DialogueUtility.Tag(this, paragraph.Tag, _tags);
+        DialogueUtility.ExtractCustomRichTag(content, "speed", out _customRichTagQueue);
 
         _content.text = content.ToString();
 
         if (_aliases.TryGetValue(paragraph.ID, out string alias))
             _namecard.text = _aliases[paragraph.ID];
+
 
         if (_autoTypeCoroutine != null)
             StopCoroutine(_autoTypeCoroutine);
@@ -61,6 +68,13 @@ public class DialogueManager : Singleton<DialogueManager>
 
     private async void Start()
     {
+        Addressables.LoadAssetAsync<TextAsset>("knock_knock_test_en").Completed += (handle) =>
+        {
+            TextAsset text = handle.Result;
+
+            Addressables.Release(handle);
+        };
+
         AsyncOperationHandle<TextAsset> aliasHandle = Addressables.LoadAssetAsync<TextAsset>("name_list_test_en");
         AsyncOperationHandle<TextAsset> dialogueHandle = Addressables.LoadAssetAsync<TextAsset>("knock_knock_test_en");
 
@@ -121,12 +135,42 @@ public class DialogueManager : Singleton<DialogueManager>
 
     private IEnumerator AutoType()
     {
+        int index = 0;
+        float speedMultiplier = 1;
+
+        // Get any speed modifiers.
+        if (_customRichTagQueue.Count > 0)
+        {
+            (string, int) customRichTag = _customRichTagQueue.Dequeue();
+            index = customRichTag.Item2;
+            if (!float.TryParse(customRichTag.Item1, out speedMultiplier))
+            {
+                Debug.LogError($"{DIALOGUE_EXCEPTION}: {customRichTag.Item1} could not be parsed to float");
+                yield break;
+            }
+
+        }
+
         _content.ForceMeshUpdate();
         int maxCount = _content.textInfo.characterCount + 1;
         for (int count = 0; count < maxCount; count++)
         {
             _content.maxVisibleCharacters = count;
-            yield return new WaitForSeconds(0.1f);
+
+            if (count < index)
+            {
+                yield return new WaitForSeconds(_autoTextSpeed / speedMultiplier);
+            }
+            else if (_customRichTagQueue.Count > 0)
+            {
+                (string, int) customRichTag = _customRichTagQueue.Dequeue();
+                index = customRichTag.Item2;
+                if (!float.TryParse(customRichTag.Item1, out speedMultiplier))
+                {
+                    Debug.LogError($"{DIALOGUE_EXCEPTION}: {customRichTag.Item1} could not be parsed to float");
+                    yield break;
+                }
+            }
         }
     }
 }

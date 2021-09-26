@@ -11,6 +11,8 @@ using UnityEngine.AddressableAssets;
 
 public static class DialogueUtility
 {
+    private const string DIALOGUE_EXCEPTION = "DialogueException";
+
     /// <summary>
     /// Deserialize JSON-file already loaded.
     /// </summary>
@@ -27,19 +29,66 @@ public static class DialogueUtility
     /// <summary>
     /// Convert all id to mapped alias.
     /// </summary>
-    /// <param name="content">Text.</param>
+    /// <param name="text">Text.</param>
     /// <param name="aliases">All aliases.</param>
     /// <returns>StringBuilder.</returns>
-    public static StringBuilder Alias(StringBuilder content, IDictionary<string, string> aliases)
+    public static StringBuilder Alias(StringBuilder text, IDictionary<string, string> aliases)
     {
         // Get all aliases inside {alias}.
-        MatchCollection matches = Regex.Matches(content.ToString(), @"(?<=\{).*?(?=\})");
+        MatchCollection matches = Regex.Matches(text.ToString(), @"(?<=\{).*?(?=\})");
 
         // Replace all aliases.
         for (int i = 0; i < matches.Count; i++)
-            content = content.Replace($"{{{matches[i].Value}}}", aliases[matches[i].Value]);
+            text = text.Replace($"{{{matches[i].Value}}}", aliases[matches[i].Value]);
 
-        return content;
+        return text;
+    }
+
+    /// <summary>
+    /// Extract custom rich tag and return a queue with the value and range of effect,
+    /// </summary>
+    /// <param name="text">Text.</param>
+    /// <param name="richTag">RichTag to find.</param>
+    /// <param name="queue">Queue with the value and range of effect.</param>
+    public static void ExtractCustomRichTag(StringBuilder text, string richTag, out Queue<(string, int)> queue)
+    {
+        string copy = text.ToString();
+        queue = new Queue<(string, int)>(); 
+        Regex openRegex = new Regex($"<{richTag}=([\"\'])?((?:.(?!\\1|>))*.?)\\1?");
+        Regex closeRegex = new Regex($"((<\\/){richTag}(>))");
+
+        MatchCollection openMatches = openRegex.Matches(text.ToString());
+        MatchCollection closeMatches = closeRegex.Matches(text.ToString());
+
+        if (openMatches.Count != closeMatches.Count)
+        {
+            Debug.LogError($"{DIALOGUE_EXCEPTION}: Uneven number of open and closed tags");
+            return;
+        }
+
+        for (int i = 0; i < openMatches.Count; i++)
+        {
+            Group openGroup = openMatches[i].Groups[2];
+            Group closeGroup = closeMatches[i].Groups[2];
+
+            bool insideTag = false;
+            int index = 0;
+            for (int j = 0; j < closeGroup.Index; j++)
+            {
+                if (copy[j] == '<')
+                    insideTag = true;
+                else if (copy[j] == '>')
+                    insideTag = false;
+                else if (!insideTag)
+                    index++;
+            }
+
+            queue.Enqueue((openGroup.Value, index));
+
+            // Found no other way to solve this.
+            text.Replace(openMatches[i].Groups[0].Value + ">", "");
+            text.Replace(closeMatches[i].Groups[0].Value, "");
+        }
     }
 
     /// <summary>
@@ -59,7 +108,7 @@ public static class DialogueUtility
 
                 if (!tagDictionary.ContainsKey(tag))
                 {
-                    Debug.LogWarning($"DialogueException: {tag} does not exist");
+                    Debug.LogWarning($"{DIALOGUE_EXCEPTION}: {tag} does not exist");
                     return;
                 }
                 
@@ -89,7 +138,7 @@ public static class DialogueUtility
         {
             if (!typeof(ITag).IsAssignableFrom(type))
             {
-                Debug.LogError($"ReflectException: {type} has no derived {nameof(ITag)}");
+                Debug.LogError($"{DIALOGUE_EXCEPTION}: {type} has no derived {nameof(ITag)}");
                 continue;
             }
 
