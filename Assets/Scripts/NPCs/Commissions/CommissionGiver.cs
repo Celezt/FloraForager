@@ -1,6 +1,3 @@
-using System;
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
@@ -9,13 +6,14 @@ using UnityEngine.InputSystem;
 /// </summary>
 public class CommissionGiver : MonoBehaviour
 {
-    [SerializeField] private CommissionData[] _CommissionsData;
+    [SerializeField] private CommissionData[] _CommissionsData; // data used to create commissions
 
-    private Commission[] _Commissions;
+    private Commission[] _Commissions; // all of the commissions stored in this giver
 
     private NPC _NPC;
 
     public Commission[] Commissions => _Commissions;
+    public NPC NPC => _NPC;
 
     private void Awake()
     {
@@ -24,13 +22,8 @@ public class CommissionGiver : MonoBehaviour
         _Commissions = new Commission[_CommissionsData.Length];
         for (int i = 0; i < _Commissions.Length; ++i)
         {
-            _Commissions[i] = new Commission(_CommissionsData[i]);
+            _Commissions[i] = new Commission(_CommissionsData[i], this);
         }
-    }
-
-    private void Start()
-    {
-
     }
 
     private void Update()

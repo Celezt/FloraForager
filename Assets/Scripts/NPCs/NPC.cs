@@ -10,6 +10,7 @@ using UnityEngine.InputSystem;
 public class NPC : MonoBehaviour, IInteractable
 {
     [SerializeField] private LayerMask _LayerMasks;
+
     /// <summary>
     /// If this NPC is currently selected
     /// </summary>

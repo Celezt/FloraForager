@@ -1,4 +1,3 @@
-using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
@@ -14,20 +13,20 @@ public class CommissionGiverWindow : Singleton<CommissionGiverWindow>
     [SerializeField] private GameObject _CompleteButton;
     [SerializeField] private GameObject _CommissionDescription;
 
-    private Text _DescriptionText;
+    [SerializeField] private Text _Title;
+
+    private Text _Description;
 
     private CanvasGroup _CanvasGroup;
 
-    private CommissionGiver _CommissionGiver;
-
-    private List<GameObject> _CommissionObjects; // objects in the list
-
-    private Commission _SelectedCommission;
+    private CommissionGiver _CommissionGiver; // giver assigned to this window
+    private List<GameObject> _CommissionObjects; // objects in the window list
+    private Commission _SelectedCommission; // selected commission in the window
 
     private void Awake()
     {
         _CanvasGroup = GetComponent<CanvasGroup>();
-        _DescriptionText = _CommissionDescription.GetComponent<Text>();
+        _Description = _CommissionDescription.GetComponent<Text>();
 
         _CommissionObjects = new List<GameObject>();
         _CanvasGroup.alpha = 0.0f;
@@ -36,6 +35,8 @@ public class CommissionGiverWindow : Singleton<CommissionGiverWindow>
     public void ShowCommissions(CommissionGiver commissionGiver)
     {
         _CommissionGiver = commissionGiver;
+
+        _Title.text = commissionGiver.name;
 
         _CommissionObjects.ForEach(o => Destroy(o));
         _CommissionObjects.Clear();
@@ -61,10 +62,9 @@ public class CommissionGiverWindow : Singleton<CommissionGiverWindow>
 
             if (hasCoom && commission.IsCompleted)
             {
-                commText.text += " (C)";
                 commText.color = Color.green;
             }
-            else if (hasCoom)
+            else if (hasCoom) // fade out commissions that are already assigned
             {
                 Color c = commText.color;
                 c.a = 0.5f;
@@ -100,7 +100,18 @@ public class CommissionGiverWindow : Singleton<CommissionGiverWindow>
         }
         objectives += "</size>";
 
-        _DescriptionText.text = string.Format("<b>{0}</b>\n<size=20>{1}</size>\n\n{2}", commission.Title, commission.Description, objectives);
+        string rewards = "<b>Rewards</b>\n<size=20>";
+        foreach (RewardPair<string, int> reward in commission.Rewards)
+        {
+            rewards += reward.Amount + " " + reward.ID + "\n";
+        }
+        rewards += "</size>";
+
+        string giver = "<b>Giver</b>\n<size=20>" + commission.Giver.name + "</size>";
+
+        string completed = commission.IsCompleted ? "<color=green>(Complete)</color>" : string.Empty;
+
+        _Description.text = string.Format("<b>{0}</b>\n<size=20>{1}</size>\n\n{2}\n{3}\n{4}\n\n{5}", commission.Title, commission.Description, objectives, rewards, giver, completed);
     }
 
     public void Open()
@@ -119,12 +130,18 @@ public class CommissionGiverWindow : Singleton<CommissionGiverWindow>
         _CompleteButton.SetActive(false);
     }
 
+    /// <summary>
+    /// Accept a selected commission
+    /// </summary>
     public void Accept()
     {
         CommissionLog.Instance.AcceptCommission(_SelectedCommission);
         Back();
     }
 
+    /// <summary>
+    /// Go back to the commissions list on the commissions giver window
+    /// </summary>
     public void Back()
     {
         _BackButton.SetActive(false);
@@ -134,6 +151,9 @@ public class CommissionGiverWindow : Singleton<CommissionGiverWindow>
         ShowCommissions(_CommissionGiver);
     }
 
+    /// <summary>
+    /// Complete a selected commission in the commissions giver window
+    /// </summary>
     public void Complete()
     {
         if (!_SelectedCommission.IsCompleted)

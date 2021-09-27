@@ -1,24 +1,17 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
 public class CommissionObject : MonoBehaviour
 {
     private Text _Text;
-
-    private bool _MarkedCompleted = false;
+    private Color _NormalColor;
 
     public Commission Commission { get; set; }
 
     private void Awake()
     {
         _Text = GetComponent<Text>();
-    }
-
-    void Update()
-    {
-        
+        _NormalColor = _Text.color;
     }
 
     public void Select()
@@ -29,20 +22,11 @@ public class CommissionObject : MonoBehaviour
 
     public void Deselect()
     {
-        _Text.color = Color.gray;
+        _Text.color = (Commission.IsCompleted) ? Color.green : _NormalColor;
     }
 
     public void IsCompleted()
     {
-        if (Commission.IsCompleted && !_MarkedCompleted)
-        {
-            _MarkedCompleted = true;
-            _Text.text += " (Completed)";
-        }
-        else if (!Commission.IsCompleted)
-        {
-            _MarkedCompleted = false;
-            _Text.text = Commission.Title;
-        }
+        _Text.color = (Commission.IsCompleted) ? Color.green : _NormalColor;
     }
 }

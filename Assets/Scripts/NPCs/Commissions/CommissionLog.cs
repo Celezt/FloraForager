@@ -1,4 +1,3 @@
-using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
@@ -17,7 +16,7 @@ public class CommissionLog : Singleton<CommissionLog>
     private List<CommissionObject> _CommissionObjects;
     private List<Commission> _Commissions;
 
-    private Commission _Selected;
+    private Commission _Selected; // selected commission in the log
 
     private CanvasGroup _CanvasGroup;
 
@@ -49,7 +48,7 @@ public class CommissionLog : Singleton<CommissionLog>
     {
         _Commissions.Add(commission);
 
-        GameObject obj = Instantiate(_CommissionPrefab, _CommissionArea);
+        GameObject obj = Instantiate(_CommissionPrefab, _CommissionArea); // create object to be added to the log list
 
         CommissionObject cs = obj.GetComponent<CommissionObject>();
         commission.Object = cs;
@@ -67,6 +66,9 @@ public class CommissionLog : Singleton<CommissionLog>
         RemoveCommission(_Selected.Object);
     }
 
+    /// <summary>
+    /// remove specified commission from the log
+    /// </summary>
     public void RemoveCommission(CommissionObject commObject)
     {
         if (commObject == null)
@@ -75,7 +77,7 @@ public class CommissionLog : Singleton<CommissionLog>
         _CommissionObjects.Remove(commObject);
         _Commissions.Remove(commObject.Commission);
 
-        Destroy(commObject);
+        Destroy(commObject.gameObject);
 
         if (commObject.Commission == CommissionTracker.Instance.Commission)
             CommissionTracker.Instance.Untrack();
@@ -84,6 +86,9 @@ public class CommissionLog : Singleton<CommissionLog>
         _Selected = null;
     }
 
+    /// <summary>
+    /// track the selected commission
+    /// </summary>
     public void TrackCommission()
     {
         if (_Selected == null)
@@ -114,7 +119,18 @@ public class CommissionLog : Singleton<CommissionLog>
         }
         objectives += "</size>";
 
-        _Description.text = string.Format("<b>{0}</b>\n<size=20>{1}</size>\n\n{2}", commission.Title, commission.Description, objectives);
+        string rewards = "<b>Rewards</b>\n<size=20>";
+        foreach (RewardPair<string, int> reward in commission.Rewards)
+        {
+            rewards += reward.Amount + " " + reward.ID + "\n";
+        }
+        rewards += "</size>";
+
+        string giver = "<b>Giver</b>\n<size=20>" + commission.Giver.name + "</size>";
+
+        string completed = commission.IsCompleted ? "<color=green>(Complete)</color>" : string.Empty;
+
+        _Description.text = string.Format("<b>{0}</b>\n<size=20>{1}</size>\n\n{2}\n{3}\n{4}\n\n{5}", commission.Title, commission.Description, objectives, rewards, giver, completed);
     }
 
     public void CheckCompletion()
@@ -140,8 +156,13 @@ public class CommissionLog : Singleton<CommissionLog>
 
     public void Exit()
     {
+        if (_Selected != null)
+            _Selected.Object.Deselect();
+
         _CanvasGroup.alpha = 0.0f;
         _CanvasGroup.blocksRaycasts = false;
+
+        _Description.text = string.Empty;
     }
 
     public bool HasCommission(Commission commission)

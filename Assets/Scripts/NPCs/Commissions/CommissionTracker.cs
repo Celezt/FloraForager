@@ -26,12 +26,15 @@ public class CommissionTracker : Singleton<CommissionTracker>
         if (_Commission == null)
             return;
 
-        _Title.text = _Commission.Title;
+        _Title.text = _Commission.IsCompleted ? "<color=green>" + _Commission.Title + "</color>" : _Commission.Title;
 
-        string quota = "Quota: ";
+        string quota = string.Empty;
         foreach (Objective objective in _Commission.Objectives)
         {
-            quota += objective.CurrentAmount + "/" + objective.Amount + " " + objective.Type + " : ";
+            quota += objective.CurrentAmount + "/" + objective.Amount + " " + objective.Type;
+
+            if (objective != _Commission.Objectives[_Commission.Objectives.Length - 1])
+                quota += " : ";
         }
 
         _Quota.text = quota;
