@@ -1,0 +1,66 @@
+{
+    "tag": ["speed{1}"],
+    "dialogue": [
+        {
+            "id": "actor_1",
+            "text": "<speed=0.2><color=red>KNOCK</color>,</speed> <speed=4><b><i>KNOCK</b></i></speed>",
+            "tag": ["audio{boom_sound}", "speed{20}"]
+        },
+        {
+            "id": "actor_0",
+            "text": "<speed=0.6><i>Who's there?</i></speed>"
+        },
+        {
+            "id": "actor_1",
+            "text": "<color=orange><speed=0.3>D</speed></color><color=#008080ff><speed=0.1>e</speed></color><color=purple><speed=0.5>e</speed></color>"
+        },
+        {
+            "id": "actor_0",
+            "text": "Dee who?"
+        },
+        {
+            "id": "actor_1",
+            "text": "<size=50>Deez nuts</size>, <speed=0.6>haha got em'</speed>",
+            "tag": ["audio{clap_sound}"]
+        },
+        {
+            "id": "actor_0",
+            "text": "what will you do?",
+            "tag" : ["speed{0.8}"],
+            "action": [
+                {
+                    "tag": ["audio{numnum_sound}", "speed{9}"],
+                    "act": "devoure {actor_1}",
+                    "dialogue":[
+                        {
+                            "id": "actor_0",
+                            "text": "<i>You devoured {actor_1}</i>"
+                        },
+                        {
+                            "id": "actor_0",
+                            "text": "You didn't like the taste"
+                        }
+                    ]
+                },
+                {
+                    "act": "run",
+                    "dialogue":[
+                        {
+                            "id": "actor_0",
+                            "text": "<i>{actor_0} runs from {actor_1}</i>"
+                        }
+                    ]
+                },
+                {
+                    "act": "start dancing",
+                    "dialogue":[
+                        {
+                            "id": "actor_0",
+                            "text": "<i>{actor_0} starts to dance</i>"
+                        }
+                    ]
+                }
+            ]
+        }
+    ]
+}

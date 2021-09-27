@@ -4,6 +4,6 @@ using UnityEngine;
 
 public interface IPackage
 {
-    public void Wrap<T>(T wrapped);
+    public void Wrap<T>(T wrapped, int layer);
     public T Unwrap<T>();
 }
