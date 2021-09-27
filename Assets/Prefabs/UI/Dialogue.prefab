@@ -51,8 +51,12 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _content: {fileID: 256965263086810135}
   _namecard: {fileID: 4515887018542072058}
+  _dialogueUI: {fileID: 6805823675455948448}
   _buttonParent: {fileID: 7571520199593159327}
   _buttonType: {fileID: 5363131741820095788, guid: 8aaffe681e962934cb80961aa31a4da6, type: 3}
+  _aliasLabel:
+    m_LabelString: alias
+  _autoTextSpeed: 0.1
 --- !u!1 &3085050776186547507
 GameObject:
   m_ObjectHideFlags: 0
@@ -1517,6 +1521,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 5fe6d327694e4fc4092d8ca456931a3a, type: 3}
+--- !u!1 &6805823675455948448 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 2903909264330220902, guid: 5fe6d327694e4fc4092d8ca456931a3a, type: 3}
+  m_PrefabInstance: {fileID: 8520782482455438278}
+  m_PrefabAsset: {fileID: 0}
 --- !u!224 &5503904612763275175 stripped
 RectTransform:
   m_CorrespondingSourceObject: {fileID: 4205845901220195425, guid: 5fe6d327694e4fc4092d8ca456931a3a, type: 3}

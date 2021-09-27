@@ -8,23 +8,11 @@ using System.Text;
 using System.Text.RegularExpressions;
 using UnityEngine;
 using UnityEngine.AddressableAssets;
+using UnityEngine.ResourceManagement.AsyncOperations;
 
 public static class DialogueUtility
 {
-    private const string DIALOGUE_EXCEPTION = "DialogueException";
-
-    /// <summary>
-    /// Deserialize JSON-file already loaded.
-    /// </summary>
-    /// <param name="address">Address.</param>
-    /// <returns>Stack of <c>ParagraphAsset</c>.</returns>
-    public static Stack<ParagraphAsset> Deserialize(string content)
-    {
-        // Deserialize the string to an object. 
-        DialogueAsset asset = JsonConvert.DeserializeObject<DialogueAsset>(content);
-
-        return new Stack<ParagraphAsset>(asset.Dialogues.Reverse());
-    }
+    public const string DIALOGUE_EXCEPTION = "DialogueException";
 
     /// <summary>
     /// Convert all id to mapped alias.
@@ -39,9 +27,36 @@ public static class DialogueUtility
 
         // Replace all aliases.
         for (int i = 0; i < matches.Count; i++)
-            text = text.Replace($"{{{matches[i].Value}}}", aliases[matches[i].Value]);
+            if (aliases.TryGetValue(matches[i].Value, out string alias))
+                text = text.Replace($"{{{matches[i].Value}}}", alias);
 
         return text;
+    }
+
+    /// <summary>
+    /// Load all aliases with label.
+    /// </summary>
+    /// <param name="aliasLabel">Label reference.</param>
+    /// <param name="aliases">Aliases.</param>
+    public static async void LoadAliases(AssetLabelReference aliasLabel, IDictionary<string, string> aliases)
+    {
+        AsyncOperationHandle<IList<TextAsset>> aliasHandle = Addressables.LoadAssetsAsync<TextAsset>(aliasLabel,
+            handle =>
+            {
+                Debug.Log($"Loaded: {handle.name}");
+            });
+
+        await aliasHandle.Task;
+
+        IList<TextAsset> assets = aliasHandle.Result;
+
+        for (int i = 0; i < assets.Count; i++)
+        {
+            Dictionary<string, string> dictionary = JsonConvert.DeserializeObject<Dictionary<string, string>>(assets[i].text);
+            foreach (var item in dictionary)
+                if (!aliases.ContainsKey(item.Key))
+                    aliases.Add(item.Key, item.Value);
+        }
     }
 
     /// <summary>
@@ -50,11 +65,11 @@ public static class DialogueUtility
     /// <param name="text">Text.</param>
     /// <param name="richTag">RichTag to find.</param>
     /// <param name="queue">Queue with the value and range of effect.</param>
-    public static void ExtractCustomRichTag(StringBuilder text, string richTag, out Queue<(string, int)> queue)
+    public static void ExtractCustomRichTag(StringBuilder text, string richTag, out Queue<(string, RangeInt)> queue)
     {
         string copy = text.ToString();
-        queue = new Queue<(string, int)>(); 
-        Regex openRegex = new Regex($"<{richTag}=([\"\'])?((?:.(?!\\1|>))*.?)\\1?");
+        queue = new Queue<(string, RangeInt)>(); 
+        Regex openRegex = new Regex($"<{richTag}=([\"\'])?((?:.(?!\\1|>))*.?)\\1?>");
         Regex closeRegex = new Regex($"((<\\/){richTag}(>))");
 
         MatchCollection openMatches = openRegex.Matches(text.ToString());
@@ -72,7 +87,8 @@ public static class DialogueUtility
             Group closeGroup = closeMatches[i].Groups[2];
 
             bool insideTag = false;
-            int index = 0;
+            int closedIndex = 0;
+            int openIndex = 0;
             for (int j = 0; j < closeGroup.Index; j++)
             {
                 if (copy[j] == '<')
@@ -80,13 +96,17 @@ public static class DialogueUtility
                 else if (copy[j] == '>')
                     insideTag = false;
                 else if (!insideTag)
-                    index++;
+                {
+                    closedIndex++;
+
+                    if (j < openGroup.Index)
+                        openIndex++;
+                }
             }
 
-            queue.Enqueue((openGroup.Value, index));
+            queue.Enqueue((openGroup.Value, new RangeInt(openIndex, closedIndex)));
 
-            // Found no other way to solve this.
-            text.Replace(openMatches[i].Groups[0].Value + ">", "");
+            text.Replace(openMatches[i].Groups[0].Value, "");
             text.Replace(closeMatches[i].Groups[0].Value, "");
         }
     }
@@ -95,9 +115,10 @@ public static class DialogueUtility
     /// Invoke all actions connected to tags.
     /// </summary>
     /// <param name="wrap">Wrapped reference.</param>
+    /// <param name="layer">Hierarchy layer.</param>
     /// <param name="tags">Tags.</param>
     /// <param name="tagDictionary">All actions.</param>
-    public static void Tag<T>(T wrap, IList<string> tags, IDictionary<string, System.Action<Taggable, string>> tagDictionary)
+    public static void Tag<T>(T wrap, int layer, IList<string> tags, IDictionary<string, System.Action<Taggable, string>> tagDictionary)
     {
         // Invoke all tags.
         if (tags != null)
@@ -112,7 +133,7 @@ public static class DialogueUtility
                     return;
                 }
                 
-                tagDictionary[tag].Invoke(Taggable.CreatePackage(wrap), value);
+                tagDictionary[tag].Invoke(Taggable.CreatePackage(wrap, layer), value);
             }
     }
 
@@ -120,8 +141,9 @@ public static class DialogueUtility
     /// Reflect all tags inside the assembly.
     /// </summary>
     /// <param name="wrap">Wrapped reference.</param>
+    /// <param name="layer">Hierarchy layer.</param>
     /// <param name="tagDictionary">All actions.</param>
-    public static void InitializeAllTags<T>(T wrap, IDictionary<string, Action<Taggable, string>> tagDictionary)
+    public static void InitializeAllTags<T>(T wrap, int layer, IDictionary<string, Action<Taggable, string>> tagDictionary)
     {
         static string ReplaceLastOccurrence(string source, string find, string replace)
         {
@@ -145,7 +167,7 @@ public static class DialogueUtility
             ITag instance = (ITag)Activator.CreateInstance(type);
             CustomTagAttribute attribute = (CustomTagAttribute)Attribute.GetCustomAttribute(type, typeof(CustomTagAttribute));
             
-            instance.Initalize(Taggable.CreatePackage(wrap));
+            instance.Initalize(Taggable.CreatePackage(wrap, layer));
             tagDictionary.Add(ReplaceLastOccurrence(instance.GetType().Name, "Tag", "").ToLower(), instance.Action);
         }
     }

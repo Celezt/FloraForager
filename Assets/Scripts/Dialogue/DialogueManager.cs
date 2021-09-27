@@ -13,30 +13,100 @@ using UnityEngine.UI;
 using Newtonsoft.Json;
 using UnityEngine.ResourceManagement.AsyncOperations;
 using System.Threading.Tasks;
+using UnityEngine.InputSystem;
+using IngameDebugConsole;
 
 public class DialogueManager : Singleton<DialogueManager>
 {
-    private const string DIALOGUE_EXCEPTION = "DialogueException";
-
     [SerializeField] private TextMeshProUGUI _content;
     [SerializeField] private TextMeshProUGUI _namecard;
+    [SerializeField] private GameObject _dialogueUI;
     [SerializeField] private Transform _buttonParent;
     [SerializeField] private GameObject _buttonType;
+    [SerializeField] private AssetLabelReference _aliasLabel;
+    [SerializeField] private float _autoTextSpeed = 0.1f;
 
     private Stack<ParagraphAsset> _paragraphStack;
-    Queue<(string, int)> _customRichTagQueue;
+    private Queue<(string, RangeInt)> _richTagSpeedMultiplierQueue;
+    private List<float> _speedMultiplierHierarchy;
     private List<GameObject> _actions;
     private Dictionary<string, string> _aliases = new Dictionary<string, string>();
     private Dictionary<string, Action<Taggable, string>> _tags = new Dictionary<string, Action<Taggable, string>>();
 
     private Coroutine _autoTypeCoroutine;
 
-    private float _autoTextSpeed = 0.1f;
+    private int _currentLayer;
+
+    public float GetAutoTextSpeedMultiplier(int layer) => _speedMultiplierHierarchy[layer];
+
+    public float SetAutoTextSpeedMultiplier(int layer, float speed)
+    {
+        while (_speedMultiplierHierarchy.Count <= layer)
+            _speedMultiplierHierarchy.Add(float.NaN);
+
+        return _speedMultiplierHierarchy[layer] = speed;
+    }
+
+    public void StartDialogue(string address, params string[] alias)
+    {
+        Addressables.LoadAssetAsync<TextAsset>(address).Completed += (handle) =>
+        {
+            StartDialogue(handle, alias);
+        };
+    }
+
+    public void StartDialogue(AssetReferenceText assetReference, params string[] alias)
+    {
+        assetReference.LoadAssetAsync<TextAsset>().Completed += (handle) => 
+        {
+            StartDialogue(handle, alias);
+        };
+    }
+
+    public void StartDialogue(AsyncOperationHandle<TextAsset> handle, params string[] alias)
+    {
+        _dialogueUI.SetActive(true);
+
+        _speedMultiplierHierarchy = new List<float>();
+        _currentLayer = 0;
+
+        for (int i = 0; i < alias.Length; i++)
+        {
+            if (_aliases.ContainsKey($"actor_{i}"))
+                _aliases[$"actor_{i}"] = alias[i];
+            else
+                _aliases.Add($"actor_{i}", alias[i]);
+        }
+
+        MyBox.TimeTest.Start("time", true);
+        DialogueAsset asset = JsonConvert.DeserializeObject<DialogueAsset>(handle.Result.text);
+        MyBox.TimeTest.End("time");
+        DialogueUtility.Tag(this, _currentLayer, asset.Tag, _tags);
+        _paragraphStack = new Stack<ParagraphAsset>(asset.Dialogue.Reverse());
+        _currentLayer++;
+        Next();
+
+
+        Addressables.Release(handle);
+    }
+
+    public void CancelDialogue()
+    {
+        _dialogueUI.SetActive(false);
+
+        if (_autoTypeCoroutine != null)
+            StopCoroutine(_autoTypeCoroutine);
+    }
 
     public void Next()
     {
         if (_paragraphStack.IsNullOrEmpty())
+        {
+            if (_actions.IsNullOrEmpty())
+                CancelDialogue();
+
             return;
+        }
 
         DestroyActions();
 
@@ -44,52 +114,38 @@ public class DialogueManager : Singleton<DialogueManager>
         StringBuilder content = new StringBuilder(paragraph.Text.ToString());
 
         DialogueUtility.Alias(content, _aliases);
-        DialogueUtility.Tag(this, paragraph.Tag, _tags);
-        DialogueUtility.ExtractCustomRichTag(content, "speed", out _customRichTagQueue);
+        DialogueUtility.Tag(this, _currentLayer, paragraph.Tag, _tags);
+        DialogueUtility.ExtractCustomRichTag(content, "speed", out _richTagSpeedMultiplierQueue);
 
         _content.text = content.ToString();
 
         if (_aliases.TryGetValue(paragraph.ID, out string alias))
-            _namecard.text = _aliases[paragraph.ID];
-
+            _namecard.text = alias;
+        else
+            _namecard.text = paragraph.ID;
 
         if (_autoTypeCoroutine != null)
             StopCoroutine(_autoTypeCoroutine);
 
-        _autoTypeCoroutine = StartCoroutine(AutoType());
+        _autoTypeCoroutine = StartCoroutine(AutoType(paragraph));
 
         CreateActions(paragraph);
     }
 
     private void Awake()
     {
-        DialogueUtility.InitializeAllTags(this, _tags);
+        DialogueUtility.InitializeAllTags(this, _currentLayer, _tags);
     }
 
-    private async void Start()
+    private void StartDialogueConsole(string address, params string[] alias) => StartDialogue(address, alias);
+
+    private void Start()
     {
-        Addressables.LoadAssetAsync<TextAsset>("knock_knock_test_en").Completed += (handle) =>
-        {
-            TextAsset text = handle.Result;
+        DebugLogConsole.AddCommandInstance("dialogue_cancel", "Cancel current dialogue", nameof(CancelDialogue), this);
+        DebugLogConsole.AddCommandInstance("dialogue_start", "Start dialogue", nameof(StartDialogueConsole), this);
 
-            Addressables.Release(handle);
-        };
-
-        AsyncOperationHandle<TextAsset> aliasHandle = Addressables.LoadAssetAsync<TextAsset>("name_list_test_en");
-        AsyncOperationHandle<TextAsset> dialogueHandle = Addressables.LoadAssetAsync<TextAsset>("knock_knock_test_en");
-
-        await Task.WhenAll(aliasHandle.Task, dialogueHandle.Task);
-
-        Dictionary<string, string> dictionary = JsonConvert.DeserializeObject<Dictionary<string, string>>(aliasHandle.Result.text);
-        foreach (var item in dictionary)
-            _aliases.Add(item.Key, item.Value);
-
-        _paragraphStack = DialogueUtility.Deserialize(dialogueHandle.Result.text);
-
-        Addressables.Release(aliasHandle);
-        Addressables.Release(dialogueHandle);
-
-        Next();
+        _dialogueUI.SetActive(false);
+        DialogueUtility.LoadAliases(_aliasLabel, _aliases);
     }
 
     private void DestroyActions()
@@ -108,6 +164,7 @@ public class DialogueManager : Singleton<DialogueManager>
         if (paragraph.Action != null)
         {
             _actions = new List<GameObject>();
+            _currentLayer++;
 
             for (int i = 0; i < paragraph.Action.Count; i++)
             {
@@ -129,27 +186,30 @@ public class DialogueManager : Singleton<DialogueManager>
 
     private void OnActionClick(int i, ParagraphAsset paragraph)
     {
-        _paragraphStack = new Stack<ParagraphAsset>(paragraph.Action[i].Dialogues.Reverse());
+        _paragraphStack = new Stack<ParagraphAsset>(paragraph.Action[i].Dialogue.Reverse());
+        DialogueUtility.Tag(this, _currentLayer, paragraph.Action[i].Tag, _tags);
+        _currentLayer++;
         Next();
     }
 
-    private IEnumerator AutoType()
+    private IEnumerator AutoType(ParagraphAsset paragraph)
     {
-        int index = 0;
-        float speedMultiplier = 1;
+        RangeInt indexRange = new RangeInt();
+        float richTagSpeedMultiplier = 1;
 
-        // Get any speed modifiers.
-        if (_customRichTagQueue.Count > 0)
+        IEnumerator Dequeue()
         {
-            (string, int) customRichTag = _customRichTagQueue.Dequeue();
-            index = customRichTag.Item2;
-            if (!float.TryParse(customRichTag.Item1, out speedMultiplier))
+            (string, RangeInt) customRichTag = _richTagSpeedMultiplierQueue.Dequeue();
+            indexRange = customRichTag.Item2;
+            if (!float.TryParse(customRichTag.Item1, out richTagSpeedMultiplier))
             {
-                Debug.LogError($"{DIALOGUE_EXCEPTION}: {customRichTag.Item1} could not be parsed to float");
+                Debug.LogError($"{DialogueUtility.DIALOGUE_EXCEPTION}: {customRichTag.Item1} could not be parsed to float");
                 yield break;
             }
-
         }
+
+        if (_richTagSpeedMultiplierQueue.Count > 0)
+            yield return Dequeue();
 
         _content.ForceMeshUpdate();
         int maxCount = _content.textInfo.characterCount + 1;
@@ -157,27 +217,38 @@ public class DialogueManager : Singleton<DialogueManager>
         {
             _content.maxVisibleCharacters = count;
 
-            if (count < index)
+            while (true)
             {
-                yield return new WaitForSeconds(_autoTextSpeed / speedMultiplier);
-            }
-            else if (_customRichTagQueue.Count > 0)
-            {
-                (string, int) customRichTag = _customRichTagQueue.Dequeue();
-                index = customRichTag.Item2;
-                if (!float.TryParse(customRichTag.Item1, out speedMultiplier))
+                if (count >= indexRange.start && count < indexRange.end)
                 {
-                    Debug.LogError($"{DIALOGUE_EXCEPTION}: {customRichTag.Item1} could not be parsed to float");
-                    yield break;
+                    yield return new WaitForSeconds(_autoTextSpeed / richTagSpeedMultiplier);
+                    break;
                 }
+                else if (_richTagSpeedMultiplierQueue.Count > 0)
+                {
+                    yield return Dequeue();
+                }
+                else
+                {
+                    float speedMultiplier = 0;
+                    if (paragraph.Tag != null && paragraph.Tag.Contains("speed"))
+                        speedMultiplier = _speedMultiplierHierarchy.Last();
+                    else
+                    {
+                        int hierarchyCount = _speedMultiplierHierarchy.Count;
+                        for (int i = 1; i < hierarchyCount; i++)
+                        {
+                            speedMultiplier = _speedMultiplierHierarchy[hierarchyCount - i];
 
-                if (count < index)
-                {
+                            if (speedMultiplier != float.NaN)
+                                break;
+                        }
+                    }
+                       
                     yield return new WaitForSeconds(_autoTextSpeed / speedMultiplier);
+                    break;
                 }
             }
-            else
-                yield return new WaitForSeconds(_autoTextSpeed);
         }
     }
 }

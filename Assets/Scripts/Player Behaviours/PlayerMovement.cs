@@ -7,6 +7,8 @@ using IngameDebugConsole;
 
 public class PlayerMovement : MonoBehaviour
 {
+    public PlayerAction Inputs => _inputs;
+
     /// <summary>
     /// Unprocessed input direction.
     /// </summary>
