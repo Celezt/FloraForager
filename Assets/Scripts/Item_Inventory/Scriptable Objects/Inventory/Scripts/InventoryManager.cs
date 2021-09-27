@@ -15,6 +15,7 @@ public class InventoryManager : MonoBehaviour
         {
             slots[i].item = inventory.Container[i];
         }
+
     }
 
     // Update is called once per frame
@@ -22,5 +23,4 @@ public class InventoryManager : MonoBehaviour
     {
         
     }
-    
 }
