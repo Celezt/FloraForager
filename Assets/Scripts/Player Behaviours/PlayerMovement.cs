@@ -112,7 +112,7 @@ public class PlayerMovement : MonoBehaviour
     public void OnRun(InputAction.CallbackContext context)
     {
         float value = context.ReadValue<float>();
-
+        
         _isRunning = value > 0.5f;
     }
 
@@ -123,11 +123,11 @@ public class PlayerMovement : MonoBehaviour
 
     private void Start()
     {
-        DebugLogConsole.AddCommandInstance("player_speed", "Set player's speed value", nameof(SetSpeed), this);
-        DebugLogConsole.AddCommandInstance("player_run", "Set player's run multiplier", nameof(SetRunMultiplier), this);
-        DebugLogConsole.AddCommandInstance("player_drag", "Set player's drag value", nameof(SetDrag), this);
-        DebugLogConsole.AddCommandInstance("player_ground_check_distance", "Set player's ground check distance if on the ground", nameof(SetGroundCheckDistance), this);
-        DebugLogConsole.AddCommandInstance("player_max_slope_angle", "Set player's max slope angle that are possible to move over", nameof(SetMaxSlopeAngle), this);
+        DebugLogConsole.AddCommandInstance("player_speed", "Sets player's speed value", nameof(SetSpeed), this);
+        DebugLogConsole.AddCommandInstance("player_run", "Sets player's run multiplier", nameof(SetRunMultiplier), this);
+        DebugLogConsole.AddCommandInstance("player_drag", "Sets player's drag value", nameof(SetDrag), this);
+        DebugLogConsole.AddCommandInstance("player_ground_check_distance", "Sets player's ground check distance if on the ground", nameof(SetGroundCheckDistance), this);
+        DebugLogConsole.AddCommandInstance("player_max_slope_angle", "Sets player's max slope angle that are possible to move over", nameof(SetMaxSlopeAngle), this);
     }
 
     private void OnEnable()
