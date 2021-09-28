@@ -112,7 +112,7 @@ public class PlayerMovement : MonoBehaviour
     public void OnRun(InputAction.CallbackContext context)
     {
         float value = context.ReadValue<float>();
-
+        
         _isRunning = value > 0.5f;
     }
 
