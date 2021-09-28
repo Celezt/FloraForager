@@ -17,6 +17,7 @@ public readonly struct InteractContext
     public readonly Vector2 textureCoord2;
     public readonly float distance;
     public readonly int triangleIndex;
+    public readonly int playerIndex;
     public readonly bool canceled;
     public readonly bool started;
     public readonly bool performed;
@@ -32,6 +33,7 @@ public readonly struct InteractContext
         Vector2 textureCoord2,
         float distance,
         int triangleIndex,
+        int playerIndex,
         bool canceled, 
         bool started,
         bool performed)
@@ -46,6 +48,7 @@ public readonly struct InteractContext
         this.textureCoord2 = textureCoord2;
         this.distance = distance;
         this.triangleIndex = triangleIndex;
+        this.playerIndex = playerIndex;
         this.canceled = canceled;
         this.started = started;
         this.performed = performed;

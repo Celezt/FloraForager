@@ -3,17 +3,9 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-
-public class Flora : MonoBehaviour, IInteractable
+public class FloraObject : MonoBehaviour, IInteractable
 {
-    [Space(3), Header("Properties")]
-    [SerializeField] private string _Name;
-    [SerializeField, TextArea(3, 10)] private string _Description;
-    //[SerializeField] private List<Item> _Rewards;
-
-    [Space(3), Header("Growth")]
-    [SerializeField, Min(0)] private int _GrowTime = 0; // growth time in days
-    [SerializeField] private GameObject[] _Stages; // Number of visual growth stages this flora has [0 = start, x = final]
+    private FloraData _Flora;
 
     private MeshFilter[] _StagesMeshFilters;
     private MeshRenderer[] _StagesMeshRenderers;
@@ -30,42 +22,35 @@ public class Flora : MonoBehaviour, IInteractable
 
     public int Priority => 1;
 
-    public string Name => _Name;
-    public string Description => _Description;
-
-    private void Awake()
+    public void Initialize(FloraData flora, Tile tile)
     {
+        _Flora = flora;
+        _Tile = tile;
+
         _MeshFilter = GetComponent<MeshFilter>();
         _MeshRenderer = GetComponent<MeshRenderer>();
         _Collider = GetComponent<BoxCollider>();
 
-        _StagesMeshFilters = System.Array.ConvertAll(_Stages, mf => mf.GetComponent<MeshFilter>()); // extract mesh and materials from objects
-        _StagesMeshRenderers = System.Array.ConvertAll(_Stages, mr => mr.GetComponent<MeshRenderer>());
+        _StagesMeshFilters = System.Array.ConvertAll(_Flora.Stages, mf => mf.GetComponent<MeshFilter>()); // extract mesh and materials from objects
+        _StagesMeshRenderers = System.Array.ConvertAll(_Flora.Stages, mr => mr.GetComponent<MeshRenderer>());
 
         if (_StagesMeshFilters.Length == 0 || _StagesMeshRenderers.Length == 0)
             Debug.LogError(name + " has no stage variants assigned to it");
 
-        _MeshFilter.sharedMesh = _StagesMeshFilters[_Mesh].sharedMesh; // set new mesh and materials on this object
-        _MeshRenderer.sharedMaterials = _StagesMeshRenderers[_Mesh].sharedMaterials;
-    }
+        _MeshFilter.mesh = _StagesMeshFilters[_Mesh].sharedMesh; // set new mesh and materials on this object
+        _MeshRenderer.materials = _StagesMeshRenderers[_Mesh].sharedMaterials;
 
-    private void Start()
-    {
-        _StageUpdate = (_GrowTime + 1) / (float)_Stages.Length;
+        _StageUpdate = (_Flora.GrowTime + 1) / (float)_Flora.Stages.Length;
 
+        transform.position += Vector3.up * _MeshFilter.mesh.bounds.size.y / 2.0f;
         _Collider.center = new Vector3(0,
             _MeshFilter.sharedMesh.bounds.center.y +
             (_Collider.bounds.size.y - _MeshFilter.sharedMesh.bounds.size.y) / 2.0f, 0);
     }
 
-    public void Initialize(Tile tile)
-    {
-        _Tile = tile;
-    }
-
     public void Grow()
     {
-        if (_Stage >= _GrowTime)
+        if (_Stage >= _Flora.GrowTime)
             return;
 
         if (++_Stage >= (_StageUpdate + _Mesh))
@@ -89,8 +74,15 @@ public class Flora : MonoBehaviour, IInteractable
         if (!context.performed)
             return;
 
-        if (_Stage >= _GrowTime) // final stage reached
+        if (_Stage >= _Flora.GrowTime) // final stage reached
         {
+            for (int i = 0; i < _Flora.Rewards.Length; ++i)
+            {
+                string itemID = _Flora.Rewards[i].ID;
+                int amount = _Flora.Rewards[i].Amount;
+
+                // access inventory and add rewards
+            }
             Debug.Log("reward"); // access inventory and add rewards
         }
         else

@@ -7,15 +7,16 @@ using MyBox;
 
 public class FloraMaster : Singleton<FloraMaster>
 {
-    [SerializeField] private List<GameObject> _FloraVariants;
+    [SerializeField] private GameObject _FloraPrefab;
+    [SerializeField] private List<FloraData> _FloraVariants;
 
-    private Dictionary<string, GameObject> _PrefabsDictionary;
-    private List<Flora> _Floras;
+    private Dictionary<string, FloraData> _VariantsDictionary;
+    private List<FloraObject> _FloraObjects;
 
     private void Awake()
     {
-        _Floras = new List<Flora>();
-        _PrefabsDictionary = _FloraVariants.ToDictionary(key => key.GetComponent<Flora>().Name, value => value);
+        _FloraObjects = new List<FloraObject>();
+        _VariantsDictionary = _FloraVariants.ToDictionary(key => key.Name.ToLower(), value => value);
     }
 
     private void Start()
@@ -27,7 +28,7 @@ public class FloraMaster : Singleton<FloraMaster>
     {
         if (Mouse.current.leftButton.wasPressedThisFrame)
         {
-            AddFlora("null");
+            AddFlora("Variant");
         }
     }
 
@@ -41,11 +42,12 @@ public class FloraMaster : Singleton<FloraMaster>
         if (tile == null || tile.TileType != TileType.Dirt)
             return false;
 
-        GameObject prefab;
-        if ((prefab = _PrefabsDictionary[name]) == null)
+        string key = name.ToLower();
+
+        if (!_VariantsDictionary.ContainsKey(key))
             return false;
 
-        GameObject obj = Instantiate(prefab);
+        GameObject obj = Instantiate(_FloraPrefab);
 
         if (!GridInteraction.PlaceObject(tile, obj))
         {
@@ -53,26 +55,27 @@ public class FloraMaster : Singleton<FloraMaster>
             return false;
         }
 
-        Flora flora = obj.GetComponent<Flora>();
-        flora.Initialize(tile);
+        FloraObject floraObject = obj.GetComponent<FloraObject>();
 
-        _Floras.Add(flora);
+        floraObject.Initialize(_VariantsDictionary[key], tile);
+
+        _FloraObjects.Add(floraObject);
 
         return true;
     }
 
-    public bool RemoveFlora(Flora flora)
+    public bool RemoveFlora(FloraObject floraObject)
     {
-        if (!_Floras.Contains(flora))
+        if (!_FloraObjects.Contains(floraObject))
             return false;
 
-        _Floras.Remove(flora);
+        _FloraObjects.Remove(floraObject);
 
         return true;
     }
 
     public void Notify()
     {
-        _Floras.ForEach(f => f.Grow());
+        _FloraObjects.ForEach(f => f.Grow());
     }
 }
