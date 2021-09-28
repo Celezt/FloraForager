@@ -15,7 +15,12 @@ public class InventoryManager : MonoBehaviour
         {
             slots[i].item = inventory.Container[i];
         }
-
+        inventory.InventoryAction += (int i)=> 
+        { 
+            slots[i].item = inventory.Container[i];
+            slots[i].TextMesh.text = inventory.Container[i].item.Amount.ToString();
+        
+        };
     }
 
     // Update is called once per frame

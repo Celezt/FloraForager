@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -5,6 +6,7 @@ using UnityEngine;
 [CreateAssetMenu(fileName = "New Inventory", menuName = "Inventory System/Inventory")]
 public class InventoryObject : ScriptableObject
 {
+    public Action<int> InventoryAction = delegate { };
     //public List<InventorySlot> container = new List<InventorySlot>();
     public InventorySlot[] Container = new InventorySlot[32];
     public bool IsFull { get; set; }
@@ -19,12 +21,15 @@ public class InventoryObject : ScriptableObject
                 {
                     Container[i].AddAmount(_item.item.Amount);
                     hasItem = true;
+                    InventoryAction.Invoke(i);
                     break;
                 }
             }
             if (!hasItem)
             {
-                Container[FindFirstEmptySlot()] = new InventorySlot(_item.item.ID, _item.item.Amount);
+                int tmp = FindFirstEmptySlot();                
+                Container[tmp] = new InventorySlot(_item.item.ID, _item.item.Amount);
+                InventoryAction.Invoke(tmp);
             }
             return true;
         }
@@ -34,6 +39,7 @@ public class InventoryObject : ScriptableObject
         }
         return false;
     }
+    
     public int ExistsAt(string id) 
     {
         for (int i = 0; i < Container.Length; i++)
@@ -54,7 +60,7 @@ public class InventoryObject : ScriptableObject
                 return i;
             }
         }
-        return -1;    
+        return -1;
     }
 }
 
