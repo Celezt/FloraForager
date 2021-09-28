@@ -20,7 +20,17 @@ public class FloraObject : MonoBehaviour, IInteractable
     private int _Stage = 0;         // current stage/day
     private int _Mesh = 0;          // current mesh being used
 
+    private bool _Watered;          // if the flora has been watered for this day
+
     public int Priority => 1;
+    public bool Watered
+    {
+        get => _Watered;
+        set
+        {
+            _Tile.TileMap.Grid.UpdateTile((_Watered = value) ? TileType.Soil : TileType.Dirt, _Tile);
+        }
+    }
 
     public void Initialize(FloraData flora, Tile tile)
     {
@@ -53,7 +63,10 @@ public class FloraObject : MonoBehaviour, IInteractable
         if (_Stage >= _Flora.GrowTime)
             return;
 
-        if (++_Stage >= (_StageUpdate + _Mesh))
+        if (!_Watered)
+            return;
+
+        if (++_Stage >= (_StageUpdate + _Mesh)) // update mesh and materials to show new appearance
         {
             ++_Mesh;
 
@@ -67,6 +80,8 @@ public class FloraObject : MonoBehaviour, IInteractable
                 _MeshFilter.sharedMesh.bounds.center.y + 
                 (_Collider.bounds.size.y - _MeshFilter.sharedMesh.bounds.size.y) / 2.0f, 0);
         }
+
+        _Watered = false;
     }
 
     public void OnInteract(InteractContext context)
@@ -89,6 +104,9 @@ public class FloraObject : MonoBehaviour, IInteractable
         {
             Debug.Log("no reward");
         }
+
+        if (_Tile.TileType != TileType.Dirt) // set back to dirt
+            _Tile.TileMap.Grid.UpdateTile(TileType.Dirt, _Tile);
 
         GridInteraction.RemoveObject(_Tile);
         FloraMaster.Instance.RemoveFlora(this);

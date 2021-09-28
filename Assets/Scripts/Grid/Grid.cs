@@ -6,8 +6,8 @@ using UnityEngine;
 public class Grid : MonoBehaviour
 {
     [Space(5), Header("Grid")] 
-    [SerializeField] private int _Width = 100;
-    [SerializeField] private int _Height = 50;
+    [SerializeField] private int _Width = 8;
+    [SerializeField] private int _Height = 8;
     [SerializeField] private float _TileSize = 1.0f;
 
     [Space(5), Header("Texture")]
@@ -21,6 +21,7 @@ public class Grid : MonoBehaviour
     
     private TileMap _TileMap;
 
+    private MeshFilter _MeshFilter;
     private Vector2[] _Uvs;
 
     public TileMap TileMap => _TileMap;
@@ -28,13 +29,9 @@ public class Grid : MonoBehaviour
     public int Height => _Height;
     public float TileSize => _TileSize;
 
-    public int TexTilesPerRow => _TexTilesPerRow;
-    public int TexTilesPerCol => _TexTilesPerCol;
-
-    public Vector2[] Uvs => _Uvs;
-
     private void Awake()
     {
+        _MeshFilter = GetComponent<MeshFilter>();
         BuildMesh();
     }
 
@@ -58,7 +55,7 @@ public class Grid : MonoBehaviour
         int v = 0, t = 0;
         for (int x = 0; x < _Width; ++x)
         {
-            for (int z = 0; z < _Height; z++)
+            for (int z = 0; z < _Height; ++z)
             {
                 Tile tile = _TileMap.Tiles[x + z * _Width];
 
@@ -75,12 +72,12 @@ public class Grid : MonoBehaviour
                 normals[v + 3] = Vector3.up;
 
                 float proc = (int)tile.TileType / (float)_TexTilesPerRow;
-                float dFix = 0.05f; // dilation
+                float dFix = 0.0f; // dilation
 
-                uv[v + 0] = new Vector2(proc + dFix,                  1.0f - dFix); // top-left
-                uv[v + 1] = new Vector2(proc + tileTexProcRow - dFix, 1.0f - dFix); // top-right
-                uv[v + 2] = new Vector2(proc + dFix,                  0.0f + dFix); // bottom-left
-                uv[v + 3] = new Vector2(proc + tileTexProcRow - dFix, 0.0f + dFix); // bottom-right
+                uv[v + 0] = new Vector2(proc + dFix,                  0.0f + dFix); // bottom-left
+                uv[v + 1] = new Vector2(proc + dFix,                  1.0f - dFix); // top-left
+                uv[v + 2] = new Vector2(proc + tileTexProcRow - dFix, 0.0f + dFix); // bottom-right
+                uv[v + 3] = new Vector2(proc + tileTexProcRow - dFix, 1.0f - dFix); // top-right
 
                 triangles[t] = v;
                 triangles[t + 1] = triangles[t + 4] = v + 1;
@@ -106,5 +103,33 @@ public class Grid : MonoBehaviour
 
         meshFilter.mesh = mesh;
         meshCollider.sharedMesh = mesh;
+    }
+
+    /// <summary>
+    /// updates specified tile type and changes texture on grid accordingly
+    /// </summary>
+    /// <param name="tile"></param>
+    /// <param name="type"></param>
+    public void UpdateTile(TileType type, params Tile[] tiles)
+    {
+        foreach (Tile tile in tiles)
+        {
+            tile.UpdateType(type);
+
+            int i = (int)tile.PositionLocal.z + (int)tile.PositionLocal.x * _Height;
+
+            float tileTexProcRow = 1.0f / _TexTilesPerRow;
+            float tileTexProcCol = 1.0f / _TexTilesPerCol;
+
+            float proc = (int)tile.TileType / (float)_TexTilesPerRow;
+            float dFix = 0.00f; // dilation
+
+            _Uvs[i * 4 + 0] = new Vector2(proc + dFix, 0.0f + dFix); // bottom-left
+            _Uvs[i * 4 + 1] = new Vector2(proc + dFix, 1.0f - dFix); // top-left
+            _Uvs[i * 4 + 2] = new Vector2(proc + tileTexProcRow - dFix, 0.0f + dFix); // bottom-right
+            _Uvs[i * 4 + 3] = new Vector2(proc + tileTexProcRow - dFix, 1.0f - dFix); // top-right
+        }
+
+        _MeshFilter.mesh.uv = _Uvs;
     }
 }
