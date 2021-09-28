@@ -19,6 +19,7 @@ using IngameDebugConsole;
 public class DialogueManager : MonoBehaviour
 {
     private static Dictionary<int, DialogueManager> _dialogues = new Dictionary<int, DialogueManager>();
+    private static bool _initializedTags;
 
     /// <summary>
     /// Callback when the current dialogue is completed or canceled.
@@ -228,7 +229,12 @@ public class DialogueManager : MonoBehaviour
         DebugLogConsole.AddCommandInstance("dialogue_speed", "Sets auto text speed", nameof(SetAutoTextSpeedConsole), this);
 
         _dialogueUI.SetActive(false);
-        DialogueUtility.LoadAliases(_aliasLabel, _aliases);
+
+        if (!_initializedTags)  // Prevent loading multiple times
+        {
+            DialogueUtility.LoadAliases(_aliasLabel, _aliases);
+            _initializedTags = true;
+        }
     }
 
     private void StartDialogueConsole(string address, params string[] aliases) => StartDialogue(address, aliases);
