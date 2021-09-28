@@ -81,8 +81,9 @@ public class DialogueManager : Singleton<DialogueManager>
         MyBox.TimeTest.Start("time", true);
         DialogueAsset asset = JsonConvert.DeserializeObject<DialogueAsset>(handle.Result.text);
         MyBox.TimeTest.End("time");
+
         DialogueUtility.Tag(this, _currentLayer, asset.Tag, _tags);
-        _paragraphStack = new Stack<ParagraphAsset>(asset.Dialogue.Reverse());
+        _paragraphStack = new Stack<ParagraphAsset>(asset.Dialogue.Reverse<ParagraphAsset>());
         _currentLayer++;
         Next();
 
@@ -186,7 +187,7 @@ public class DialogueManager : Singleton<DialogueManager>
 
     private void OnActionClick(int i, ParagraphAsset paragraph)
     {
-        _paragraphStack = new Stack<ParagraphAsset>(paragraph.Action[i].Dialogue.Reverse());
+        _paragraphStack = new Stack<ParagraphAsset>(paragraph.Action[i].Dialogue.Reverse<ParagraphAsset>());
         DialogueUtility.Tag(this, _currentLayer, paragraph.Action[i].Tag, _tags);
         _currentLayer++;
         Next();
