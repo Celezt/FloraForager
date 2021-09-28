@@ -1,6 +1,7 @@
 using UnityEngine;
 using UnityEditor;
 
+#if UNITY_EDITOR
 [CustomEditor(typeof(Grid))]
 public class GridInspector : Editor
 {
@@ -18,3 +19,4 @@ public class GridInspector : Editor
         }
     }
 }
+#endif

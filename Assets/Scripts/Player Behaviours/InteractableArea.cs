@@ -6,13 +6,16 @@ using IngameDebugConsole;
 
 public class InteractableArea : MonoBehaviour
 {
-    [SerializeField] SchemeManager _schemeManager;
+    public PlayerAction Inputs => _inputs;
+
     [SerializeField, Min(0)] private float _radius = 3.0f;
     [SerializeField] private LayerMask _interactableLayers;
 
     private Vector2 _screenPosition;
+    private int _playerIndex;
 
     private PlayerAction _inputs;
+    private InputControlScheme _scheme;
 
     private struct InteractableObject
     {
@@ -47,6 +50,7 @@ public class InteractableArea : MonoBehaviour
                         hit.textureCoord2,
                         hit.distance,
                         hit.triangleIndex,
+                        _playerIndex,
                         context.canceled,
                         context.started,
                         context.performed));
@@ -118,14 +122,15 @@ public class InteractableArea : MonoBehaviour
                 hit.textureCoord2,
                 hit.distance,
                 hit.triangleIndex,
+                _playerIndex,
                 context.canceled,
                 context.started,
                 context.performed));
         }
 
-        if (_schemeManager.CurrentScheme == _inputs.KeyboardAndMouseScheme)
+        if (_scheme == _inputs.KeyboardAndMouseScheme)
             InteractAtCursor(context);
-        else if (_schemeManager.CurrentScheme == _inputs.Dualshock4Scheme)
+        else if (_scheme == _inputs.Dualshock4Scheme)
             InteractAtClosest(context);
     }
 
@@ -134,6 +139,12 @@ public class InteractableArea : MonoBehaviour
         Vector2 value = context.ReadValue<Vector2>();
 
         _screenPosition = value;
+    }
+
+    public void ControlsChangedEvent(PlayerInput playerInput)
+    {
+        _playerIndex = playerInput.playerIndex;
+        _scheme = playerInput.user.controlScheme.Value;
     }
 
     public void SetRadius(float radius) => _radius = radius;
