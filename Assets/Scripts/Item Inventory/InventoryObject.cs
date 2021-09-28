@@ -8,7 +8,7 @@ public class InventoryObject : ScriptableObject
 {
     public Action<int> InventoryAction = delegate { };
     //public List<InventorySlot> container = new List<InventorySlot>();
-    public InventorySlot[] Container = new InventorySlot[32];
+    public InventorySlot[] Container = new InventorySlot[8];
     public bool IsFull { get; set; }
     public bool AddItem(InventorySlot _item)
     {
@@ -27,8 +27,8 @@ public class InventoryObject : ScriptableObject
             }
             if (!hasItem)
             {
-                int tmp = FindFirstEmptySlot();                
-                Container[tmp] = new InventorySlot(_item.item.ID, _item.item.Amount);
+                int tmp = FindFirstEmptySlot();
+                Container[8] = new InventorySlot(new ItemAsset { ID = _item.item.ID, Amount =_item.item.Amount});
                 InventoryAction.Invoke(tmp);
             }
             return true;
