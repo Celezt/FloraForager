@@ -43,7 +43,7 @@ public static class DialogueUtility
         AsyncOperationHandle<IList<TextAsset>> aliasHandle = Addressables.LoadAssetsAsync<TextAsset>(aliasLabel,
             handle =>
             {
-                Debug.Log($"Loaded: {handle.name}");
+
             });
 
         await aliasHandle.Task;

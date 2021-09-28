@@ -23,8 +23,12 @@ public class DialogueManager : MonoBehaviour
     /// <summary>
     /// Callback when the current dialogue is completed or canceled.
     /// </summary>
-    public event Action<DialogueManager> Completed = delegate { };  
-    
+    public event Action<DialogueManager> Completed = delegate { };
+    /// <summary>
+    /// Callback when the current dialogue has started a conversation.
+    /// </summary>
+    public event Action<DialogueManager> Started = delegate { };
+
     [SerializeField] private TextMeshProUGUI _content;
     [SerializeField] private TextMeshProUGUI _namecard;
     [SerializeField] private GameObject _dialogueUI;
@@ -44,7 +48,7 @@ public class DialogueManager : MonoBehaviour
     private Coroutine _autoTypeCoroutine;
 
     private int _currentLayer;
-    private bool _isAutoTextDone;
+    private bool _isAutoTextCompleted;
 
     /// <summary>
     /// Return Dialogue Manager based on the player index connected to it.
@@ -85,6 +89,7 @@ public class DialogueManager : MonoBehaviour
 
     public void StartDialogue(AsyncOperationHandle<TextAsset> handle, params string[] aliases)
     {
+        Started.Invoke(this);
         _dialogueUI.SetActive(true);
 
         _speedMultiplierHierarchy = new List<float>();
@@ -106,9 +111,8 @@ public class DialogueManager : MonoBehaviour
         DialogueUtility.Tag(this, _currentLayer, asset.Tag, _tags);
         _paragraphStack = new Stack<ParagraphAsset>(asset.Dialogue.Reverse<ParagraphAsset>());
         _currentLayer++;
-        _isAutoTextDone = true;
+        _isAutoTextCompleted = true;
         Next();
-
 
         Addressables.Release(handle);
     }
@@ -125,12 +129,55 @@ public class DialogueManager : MonoBehaviour
 
     public void Next()
     {
-        if (!_isAutoTextDone)   // Skip auto text if not yet completed.
+        void DestroyActions()
+        {
+            if (_actions.NotNullOrEmpty())
+            {
+                for (int i = 0; i < _actions.Count; i++)
+                    Destroy(_actions[i]);
+
+                _actions = null;
+            }
+        }
+
+        void CreateActions(ParagraphAsset paragraph)
+        {
+            if (paragraph.Action.IsNullOrEmpty())
+                return;
+
+            _actions = new List<GameObject>();
+            _currentLayer++;
+
+            for (int i = 0; i < paragraph.Action.Count; i++)
+            {
+                int index = i;
+                GameObject obj = Instantiate(_buttonType, _buttonParent);
+                Button button = obj.GetComponentInChildren<Button>();
+                TextMeshProUGUI textMesh = obj.GetComponentInChildren<TextMeshProUGUI>();
+
+                StringBuilder act = new StringBuilder(paragraph.Action[i].Act);
+                DialogueUtility.Alias(act, _aliases);
+
+                textMesh.text = act.ToString();
+                button.onClick.AddListener(() =>
+                {
+                    _paragraphStack = new Stack<ParagraphAsset>(paragraph.Action[index].Dialogue.Reverse<ParagraphAsset>());
+                    DialogueUtility.Tag(this, _currentLayer, paragraph.Action[index].Tag, _tags);
+                    _currentLayer++;
+                    _isAutoTextCompleted = true;
+                    Next();
+                });
+
+                _actions.Add(obj);
+            }
+        }
+
+        if (!_isAutoTextCompleted)   // Skip auto text if not yet completed.
         {
             if (_autoTypeCoroutine != null)
                 StopCoroutine(_autoTypeCoroutine);
 
-            _isAutoTextDone = true;
+            _isAutoTextCompleted = true;
             _content.maxVisibleCharacters = int.MaxValue;
             return;
         }
@@ -178,62 +225,20 @@ public class DialogueManager : MonoBehaviour
 
         DebugLogConsole.AddCommandInstance("dialogue_cancel", "Cancel current dialogue", nameof(CancelDialogue), this);
         DebugLogConsole.AddCommandInstance("dialogue_start", "Start dialogue", nameof(StartDialogueConsole), this);
+        DebugLogConsole.AddCommandInstance("dialogue_speed", "Sets auto text speed", nameof(SetAutoTextSpeedConsole), this);
 
         _dialogueUI.SetActive(false);
         DialogueUtility.LoadAliases(_aliasLabel, _aliases);
     }
 
     private void StartDialogueConsole(string address, params string[] aliases) => StartDialogue(address, aliases);
-
-    private void DestroyActions()
-    {
-        if (_actions.NotNullOrEmpty())
-        {
-            for (int i = 0; i < _actions.Count; i++) 
-                Destroy(_actions[i]);
-
-            _actions = null;
-        }
-    }
-
-    private void CreateActions(ParagraphAsset paragraph)
-    {
-        if (paragraph.Action != null)
-        {
-            _actions = new List<GameObject>();
-            _currentLayer++;
-
-            for (int i = 0; i < paragraph.Action.Count; i++)
-            {
-                int index = i;
-                GameObject obj = Instantiate(_buttonType, _buttonParent);
-                Button button = obj.GetComponentInChildren<Button>();
-                TextMeshProUGUI textMesh = obj.GetComponentInChildren<TextMeshProUGUI>();
-
-                StringBuilder act = new StringBuilder(paragraph.Action[i].Act);
-                DialogueUtility.Alias(act, _aliases);
-
-                textMesh.text = act.ToString();
-                button.onClick.AddListener(delegate { OnActionClick(index, paragraph); });
-
-                _actions.Add(obj);
-            }
-        }
-    }
-
-    private void OnActionClick(int i, ParagraphAsset paragraph)
-    {
-        _paragraphStack = new Stack<ParagraphAsset>(paragraph.Action[i].Dialogue.Reverse<ParagraphAsset>());
-        DialogueUtility.Tag(this, _currentLayer, paragraph.Action[i].Tag, _tags);
-        _currentLayer++;
-        Next();
-    }
+    private void SetAutoTextSpeedConsole(float speed) => _autoTextSpeed = speed;
 
     private IEnumerator AutoType(ParagraphAsset paragraph)
     {
         RangeInt indexRange = new RangeInt();
         float richTagSpeedMultiplier = 1;
-        _isAutoTextDone = false;
+        _isAutoTextCompleted = false;
 
         IEnumerator Dequeue()
         {
@@ -289,6 +294,6 @@ public class DialogueManager : MonoBehaviour
             }
         }
 
-        _isAutoTextDone = true;
+        _isAutoTextCompleted = true;
     }
 }
