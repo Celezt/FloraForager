@@ -20,13 +20,15 @@ public class CommissionLog : Singleton<CommissionLog>
 
     private CanvasGroup _CanvasGroup;
 
+    public List<Commission> Commissions => _Commissions;
+
     private void Awake()
     {
         _CanvasGroup = GetComponent<CanvasGroup>();
+        _CanvasGroup.alpha = 0.0f;
 
         _CommissionObjects = new List<CommissionObject>();
         _Commissions = new List<Commission>();
-        _CanvasGroup.alpha = 0.0f;
     }
 
     private void Update()
@@ -115,14 +117,14 @@ public class CommissionLog : Singleton<CommissionLog>
         string objectives = "<b>Objectives</b>\n<size=20>";
         foreach (Objective obj in commission.Objectives)
         {
-            objectives += obj.Type + ": " + obj.CurrentAmount + "/" + obj.Amount + "\n";
+            objectives += obj.ItemID + ": " + obj.CurrentAmount + "/" + obj.Amount + "\n";
         }
         objectives += "</size>";
 
         string rewards = "<b>Rewards</b>\n<size=20>";
         foreach (RewardPair<string, int> reward in commission.Rewards)
         {
-            rewards += reward.Amount + " " + reward.ID + "\n";
+            rewards += reward.Amount + " " + reward.ItemID + "\n";
         }
         rewards += "</size>";
 

@@ -49,7 +49,7 @@ public class Commission
     {
         for (int i = 0; i < _Objectives.Length; ++i)
         {
-            string itemID = _Objectives[i].Type;
+            string itemID = _Objectives[i].ItemID;
             int amount = _Objectives[i].Amount;
 
             // get items and remove
@@ -57,7 +57,7 @@ public class Commission
 
         for (int i = 0; i < _Data.Rewards.Length; ++i)
         {
-            string itemID = _Data.Rewards[i].ID;
+            string itemID = _Data.Rewards[i].ItemID;
             int amount = _Data.Rewards[i].Amount;
 
             // add items to inventory
