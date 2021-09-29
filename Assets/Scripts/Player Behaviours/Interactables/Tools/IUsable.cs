@@ -4,5 +4,5 @@ using UnityEngine;
 
 public interface IUsable : IPlayerInteractable
 {
-    public void OnUse(InteractContext context);
+    public void OnUse(UseContext context);
 }

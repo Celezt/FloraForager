@@ -16,6 +16,7 @@ public readonly struct InteractContext
     public readonly Vector2 textureCoord;
     public readonly Vector2 textureCoord2;
     public readonly float distance;
+    public readonly float rayDistance;
     public readonly int triangleIndex;
     public readonly int playerIndex;
     public readonly bool canceled;
@@ -24,7 +25,7 @@ public readonly struct InteractContext
 
     internal InteractContext(
         Transform playerTransform,
-        Vector3 point,
+        Vector3 worldPosition,
         Vector3 normal,
         Vector3 barycentricCoordinate,
         Vector3 direction,
@@ -32,6 +33,7 @@ public readonly struct InteractContext
         Vector2 textureCoord,
         Vector2 textureCoord2,
         float distance,
+        float rayDistance,
         int triangleIndex,
         int playerIndex,
         bool canceled, 
@@ -39,7 +41,7 @@ public readonly struct InteractContext
         bool performed)
     {
         this.playerTransform = playerTransform;
-        this.worldPosition = point;
+        this.worldPosition = worldPosition;
         this.normal = normal;
         this.barycentricCoordinate = barycentricCoordinate;
         this.direction = direction;
@@ -47,6 +49,7 @@ public readonly struct InteractContext
         this.textureCoord = textureCoord;
         this.textureCoord2 = textureCoord2;
         this.distance = distance;
+        this.rayDistance = rayDistance;
         this.triangleIndex = triangleIndex;
         this.playerIndex = playerIndex;
         this.canceled = canceled;
