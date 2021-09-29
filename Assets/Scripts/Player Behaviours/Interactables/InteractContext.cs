@@ -7,11 +7,11 @@ using UnityEngine;
 /// </summary>
 public readonly struct InteractContext
 {
-    public readonly Collider collider;
-    public readonly Transform transform;
+    public readonly Transform playerTransform;
     public readonly Vector3 worldPosition;
     public readonly Vector3 normal;
     public readonly Vector3 barycentricCoordinate;
+    public readonly Vector3 direction;
     public readonly Vector2 screenPosition;
     public readonly Vector2 textureCoord;
     public readonly Vector2 textureCoord2;
@@ -23,11 +23,11 @@ public readonly struct InteractContext
     public readonly bool performed;
 
     internal InteractContext(
-        Collider collider,
-        Transform transform,
+        Transform playerTransform,
         Vector3 point,
         Vector3 normal,
         Vector3 barycentricCoordinate,
+        Vector3 direction,
         Vector2 screenPosition, 
         Vector2 textureCoord,
         Vector2 textureCoord2,
@@ -38,11 +38,11 @@ public readonly struct InteractContext
         bool started,
         bool performed)
     {
-        this.collider = collider;
-        this.transform = transform;
+        this.playerTransform = playerTransform;
         this.worldPosition = point;
         this.normal = normal;
-        this.barycentricCoordinate = barycentricCoordinate;     
+        this.barycentricCoordinate = barycentricCoordinate;
+        this.direction = direction;
         this.screenPosition = screenPosition;
         this.textureCoord = textureCoord;
         this.textureCoord2 = textureCoord2;

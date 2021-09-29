@@ -12,7 +12,7 @@ public class SleepSchedule : MonoBehaviour
     [SerializeField] private GameObject _Player;
 
     private PlayerMovement _PlayerMovement;
-    private InteractableArea _InteractableArea;
+    private InteractBehaviour _InteractableArea;
     private Rigidbody _PlayerRigidbody;
 
     private bool _IsSleeping = false;    // if the player is currently sleeping
@@ -30,7 +30,7 @@ public class SleepSchedule : MonoBehaviour
             Debug.LogError("need reference to current Player in scene");
 
         _PlayerMovement = _Player.GetComponent<PlayerMovement>();
-        _InteractableArea = _Player.GetComponent<InteractableArea>();
+        _InteractableArea = _Player.GetComponent<InteractBehaviour>();
         _PlayerRigidbody = _Player.GetComponent<Rigidbody>();
     }
 

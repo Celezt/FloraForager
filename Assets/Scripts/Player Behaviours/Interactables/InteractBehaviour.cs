@@ -4,9 +4,9 @@ using UnityEngine;
 using UnityEngine.InputSystem;
 using IngameDebugConsole;
 
-public class InteractableArea : MonoBehaviour
+public class InteractBehaviour : MonoBehaviour
 {
-    public PlayerAction Inputs => _inputs;
+    public PlayerAction Inputs => _playerAction;
 
     [SerializeField, Min(0)] private float _radius = 3.0f;
     [SerializeField] private LayerMask _interactableLayers;
@@ -14,7 +14,7 @@ public class InteractableArea : MonoBehaviour
     private Vector2 _screenPosition;
     private int _playerIndex;
 
-    private PlayerAction _inputs;
+    private PlayerAction _playerAction;
     private InputControlScheme _scheme;
 
     private struct InteractableObject
@@ -27,12 +27,14 @@ public class InteractableArea : MonoBehaviour
 
     public void OnInteract(InputAction.CallbackContext context)
     {
+        Vector3 position = transform.position;
+
         void InteractAtCursor(InputAction.CallbackContext context)
         {
             Ray ray = Camera.main.ScreenPointToRay(_screenPosition);
             if (Physics.Raycast(ray, out RaycastHit hit, Mathf.Infinity, _interactableLayers))
             {
-                if (Vector3.Distance(transform.position, hit.point) <= _radius)
+                if (Vector3.Distance(position, hit.point) <= _radius)
                 {
                     IInteractable interactable = hit.transform.gameObject.GetComponent<IInteractable>();
 
@@ -40,11 +42,11 @@ public class InteractableArea : MonoBehaviour
                         return;
 
                     interactable.OnInteract(new InteractContext(
-                        hit.collider,
-                        hit.transform,
+                        transform,
                         hit.point,
                         hit.normal,
                         hit.barycentricCoordinate,
+                        (position - hit.transform.position).normalized,
                         _screenPosition,
                         hit.textureCoord,
                         hit.textureCoord2,
@@ -53,14 +55,13 @@ public class InteractableArea : MonoBehaviour
                         _playerIndex,
                         context.canceled,
                         context.started,
-                        context.performed));
+                        context.performed));;
                 }
             }
         }
 
         void InteractAtClosest(InputAction.CallbackContext context)
         {
-            Vector3 position = transform.position;
             Collider[] colliders = Physics.OverlapSphere(position, _radius, _interactableLayers);
             List<InteractableObject> interactableObjects = new List<InteractableObject>(colliders.Length);
 
@@ -112,11 +113,11 @@ public class InteractableArea : MonoBehaviour
             interactableObject.Collider.Raycast(ray, out RaycastHit hit, Mathf.Infinity);
 
             interactableObject.Interactable.OnInteract(new InteractContext(
-                interactableObject.Collider,
-                interactableObject.Collider.transform,
+                transform,
                 hit.point,
                 hit.normal,
                 hit.barycentricCoordinate,
+                (position - hit.transform.position).normalized,
                 _screenPosition,
                 hit.textureCoord,
                 hit.textureCoord2,
@@ -128,9 +129,9 @@ public class InteractableArea : MonoBehaviour
                 context.performed));
         }
 
-        if (_scheme == _inputs.KeyboardAndMouseScheme)
+        if (_scheme == _playerAction.KeyboardAndMouseScheme)
             InteractAtCursor(context);
-        else if (_scheme == _inputs.Dualshock4Scheme)
+        else if (_scheme == _playerAction.Dualshock4Scheme)
             InteractAtClosest(context);
     }
 
@@ -151,7 +152,7 @@ public class InteractableArea : MonoBehaviour
 
     private void Awake()
     {
-        _inputs = new PlayerAction();
+        _playerAction = new PlayerAction();
     }
 
     private void Start()
@@ -161,24 +162,24 @@ public class InteractableArea : MonoBehaviour
 
     private void OnEnable()
     {
-        _inputs.Enable();
-        _inputs.Ground.Interact.started += OnInteract;
-        _inputs.Ground.Interact.performed += OnInteract;
-        _inputs.Ground.Interact.canceled += OnInteract;
-        _inputs.Ground.Cursor.started += OnCursor;
-        _inputs.Ground.Cursor.performed += OnCursor;
-        _inputs.Ground.Cursor.canceled += OnCursor;
+        _playerAction.Enable();
+        _playerAction.Ground.Interact.started += OnInteract;
+        _playerAction.Ground.Interact.performed += OnInteract;
+        _playerAction.Ground.Interact.canceled += OnInteract;
+        _playerAction.Ground.Cursor.started += OnCursor;
+        _playerAction.Ground.Cursor.performed += OnCursor;
+        _playerAction.Ground.Cursor.canceled += OnCursor;
     }
 
     private void OnDisable()
     {
-        _inputs.Disable();
-        _inputs.Ground.Interact.started -= OnInteract;
-        _inputs.Ground.Interact.performed -= OnInteract;
-        _inputs.Ground.Interact.canceled -= OnInteract;
-        _inputs.Ground.Cursor.started -= OnCursor;
-        _inputs.Ground.Cursor.performed -= OnCursor;
-        _inputs.Ground.Cursor.canceled -= OnCursor;
+        _playerAction.Disable();
+        _playerAction.Ground.Interact.started -= OnInteract;
+        _playerAction.Ground.Interact.performed -= OnInteract;
+        _playerAction.Ground.Interact.canceled -= OnInteract;
+        _playerAction.Ground.Cursor.started -= OnCursor;
+        _playerAction.Ground.Cursor.performed -= OnCursor;
+        _playerAction.Ground.Cursor.canceled -= OnCursor;
     }
 
     private void OnDrawGizmos()

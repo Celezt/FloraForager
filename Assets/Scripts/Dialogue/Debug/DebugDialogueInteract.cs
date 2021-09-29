@@ -16,7 +16,7 @@ public class DebugDialogueInteract : MonoBehaviour, IInteractable
         {
             PlayerInput playerInput = PlayerInput.GetPlayerByIndex(context.playerIndex);
             PlayerMovement movement = playerInput.GetComponent<PlayerMovement>();
-            InteractableArea interactableArea = playerInput.GetComponent<InteractableArea>();
+            InteractBehaviour interactableArea = playerInput.GetComponent<InteractBehaviour>();
             PlayerActionHandle playerHandle1 = movement.Inputs.AddSharedDisable();
             PlayerActionHandle playerHandle2 = interactableArea.Inputs.AddSharedDisable();
 
