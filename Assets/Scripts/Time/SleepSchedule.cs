@@ -2,8 +2,9 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.InputSystem;
+using MyBox;
 
-public class SleepSchedule : MonoBehaviour
+public class SleepSchedule : Singleton<SleepSchedule>
 {
     [SerializeField, Range(0.0f, 24.0f)] private float _MorningTime = 6.0f; // morning time in 00:00-24:00 range
     [SerializeField, Range(0.0f, 24.0f)] private float _NightTime = 22.0f;
@@ -16,13 +17,13 @@ public class SleepSchedule : MonoBehaviour
     private Rigidbody _PlayerRigidbody;
 
     private bool _IsSleeping = false;    // if the player is currently sleeping
-    private float _TotalTimeToSleep = 0; // total time in hours for player to sleep
+    private float _NightToMorning = 0; // total time in hours for player to sleep
 
     public float MorningTime => _MorningTime;
     public float NightTime => _NightTime;
+    public float NightToMorning => _NightToMorning;
 
     public bool IsSleeping => _IsSleeping;
-    public bool SleepNow { get; set; } = false;
 
     private void Awake()
     {
@@ -36,26 +37,21 @@ public class SleepSchedule : MonoBehaviour
 
     private void Start()
     {
-        _TotalTimeToSleep = (24.0f + (_MorningTime - _NightTime)) % 24.0f;
+        _NightToMorning = (24.0f + (_MorningTime - _NightTime)) % 24.0f;
     }
 
-    private void Update()
+    public bool StartSleeping(PlayerStamina playerStamina, float currentTime)
     {
-        if (SleepNow || (!_IsSleeping && GameTime.Instance.CurrentTime >= _NightTime))
-        {
-            _IsSleeping = true;
-            SleepNow = false;
+        if (_IsSleeping)
+            return false;
 
-            PerformSleep();
-        }
+        _IsSleeping = true;
+        StartCoroutine(Sleep(playerStamina, currentTime));
+
+        return true;
     }
 
-    public void PerformSleep()
-    {
-        StartCoroutine(Sleep());
-    }
-
-    private IEnumerator Sleep()
+    private IEnumerator Sleep(PlayerStamina playerStamina, float currentTime)
     {
         // sleep
 
@@ -71,10 +67,21 @@ public class SleepSchedule : MonoBehaviour
         _InteractableArea.enabled = true;
         _PlayerRigidbody.isKinematic = false;
 
+        playerStamina.Recover();
         FloraMaster.Instance.Notify();
 
-        GameTime.Instance.AccelerateTime(_NightTime, _TotalTimeToSleep);
+        GameTime.Instance.AccelerateTime(currentTime, TimeToMorning(currentTime));
 
         _IsSleeping = false;
+    }
+
+    public float TimeToNight(float time)
+    {
+        return (24.0f + (_NightTime - time)) % 24.0f;
+    }
+
+    public float TimeToMorning(float time)
+    {
+        return (24.0f + (_MorningTime - time)) % 24.0f;
     }
 }
