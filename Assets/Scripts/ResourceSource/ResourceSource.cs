@@ -14,10 +14,13 @@ public class ResourceSource : MonoBehaviour, IInteractable
 
     private PlayerMovement _PlayerMovement;
 
+    private float _CollectionTime;
     private int _CurrentAmount;
     private bool _IsBeingCollected;
     private Coroutine _CollectingCoroutine;
     private Bounds _Bounds;
+
+    public static ResourceSource ResourceBeingCollected = null; // can only collect from one source at a time
 
     public ResourceSourceData Data => _Data;
     public Bounds Bounds => _Bounds;
@@ -31,9 +34,15 @@ public class ResourceSource : MonoBehaviour, IInteractable
         _Bounds = GetComponent<MeshFilter>().mesh.bounds;
     }
 
+    private void Start()
+    {
+        _CollectionTime = _Data.TotalCollectionTime / (_Data.Amount / _Data.AmountPerCollect);
+    }
+
     private void Update()
     {
-        if (_PlayerMovement.Velocity.magnitude > float.Epsilon) // if player moved stop collecting
+        if (_PlayerMovement.Velocity.magnitude > float.Epsilon 
+            || (ResourceBeingCollected != null && ResourceBeingCollected != this)) // stop collecting if player moved or this is not the resouce being collected
         {
             StopCollecting();
         }
@@ -61,6 +70,8 @@ public class ResourceSource : MonoBehaviour, IInteractable
         _CollectingCoroutine = StartCoroutine(Collecting());
 
         _PlayerMovement.Velocity = Vector3.zero; // stops player
+
+        ResourceBeingCollected = this;
         
         return (_IsBeingCollected = true);      
     }
@@ -75,6 +86,9 @@ public class ResourceSource : MonoBehaviour, IInteractable
         StopCoroutine(_CollectingCoroutine);
         _CollectingCoroutine = null;
 
+        if (ResourceBeingCollected == this)
+            ResourceBeingCollected = null;
+
         return !(_IsBeingCollected = false);
     }
 
@@ -82,7 +96,7 @@ public class ResourceSource : MonoBehaviour, IInteractable
     {
         while (true)
         {
-            yield return new WaitForSeconds(_Data.CollectionTime);
+            yield return new WaitForSeconds(_CollectionTime);
 
             int amountToAdd = ((_CurrentAmount + _Data.AmountPerCollect) > _Data.Amount) ? 
                 (_Data.Amount - _CurrentAmount) : _Data.AmountPerCollect;
@@ -105,6 +119,8 @@ public class ResourceSource : MonoBehaviour, IInteractable
                 ResourceSourceUI.Instance.SetActive(null, false);
 
                 Destroy(gameObject);  // simply destroy for now 
+
+                break;
             }
         }
     }
