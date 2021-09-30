@@ -14,23 +14,15 @@ public enum Relation
 
 public class RelationshipManager : MonoBehaviour
 {
-    int RMeter;
 
     private Relation relation;
-    [SerializeField] float minRelation, maxRelation;
+    [SerializeField] float minRelation = -100, maxRelation = 100;
 
     [SerializeField] float curRelation;
 
-    // Update is called once per frame
-    void Update()
-    {
-        if (Keyboard.current.spaceKey.wasPressedThisFrame)
-        {
-            addRelation(10);
-        }
-    }
+    public Relation Relation => relation;
 
-    public void addRelation(float value)
+    public void AddRelation(float value)
     {
         curRelation += value;
 
@@ -40,11 +32,9 @@ public class RelationshipManager : MonoBehaviour
 
         float procentage = temp / difference;
 
-        int enumValue = (int)Mathf.Round(procentage * 5.0f);
+        int enumLength = System.Enum.GetNames(typeof(Relation)).Length - 1;
+        int enumValue = Mathf.RoundToInt(procentage * enumLength);
 
         relation = (Relation)enumValue;
-
-        Debug.Log("The current relation is.. " + relation);
-        Debug.Log(enumValue + ", " + difference + ", " + temp + ", " + procentage);
     }
 }
