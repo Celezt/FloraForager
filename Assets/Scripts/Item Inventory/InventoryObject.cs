@@ -1,3 +1,5 @@
+using MyBox;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -5,43 +7,46 @@ using UnityEngine;
 [CreateAssetMenu(fileName = "New Inventory", menuName = "Inventory System/Inventory")]
 public class InventoryObject : ScriptableObject
 {
+    public event Action<int> InventoryAction = delegate { };
     //public List<InventorySlot> container = new List<InventorySlot>();
-    public InventorySlot[] Container = new InventorySlot[32];
+    public ItemAsset[] Container = new ItemAsset[8];
     public bool IsFull { get; set; }
-    public bool AddItem(InventorySlot _item)
+    public bool AddItem(ItemAsset item)
     {
         if (!IsFull)
-        {
-            bool hasItem = false;
-            for (int i = 0; i < Container.Length; i++)
+        {            
+            int pos = ExistsAt(item.ID);
+            if (pos != -1)
             {
-                if (Container[i].item.ID == _item.item.ID)
-                {
-                    Container[i].AddAmount(_item.item.Amount);
-                    hasItem = true;
-                    break;
-                }
+                Container[pos].Amount += item.Amount;
+                InventoryAction.Invoke(pos);
             }
-            if (!hasItem)
+            else
             {
-                Container[FindFirstEmptySlot()] = new InventorySlot(_item.item.ID, _item.item.Amount);
-            }
+                int tmp = FindFirstEmptySlot();
+                Container[tmp] = item;
+                InventoryAction.Invoke(tmp);
+            }            
             return true;
         }
         else
         {
-
+            // Find Stackables
         }
         return false;
     }
+    
     public int ExistsAt(string id) 
     {
         for (int i = 0; i < Container.Length; i++)
         {
-            if (Container[i].item.ID == id)
+            if (!Container[i].ID.IsNullOrEmpty())
             {
-                return i;
-            }
+                if (Container[i].ID == id)
+                {
+                    return i;
+                }
+            }            
         }
         return -1;
     }
@@ -49,12 +54,12 @@ public class InventoryObject : ScriptableObject
     {
         for (int i = 0; i < Container.Length; i++)
         {
-            if (Container[i] == null)
+            if (!Container[i].ID.IsNullOrEmpty())
             {
                 return i;
             }
         }
-        return -1;    
+        return -1;
     }
 }
 

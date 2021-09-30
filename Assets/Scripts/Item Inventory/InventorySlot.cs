@@ -1,17 +1,17 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-
 public class InventorySlot
 {
+    
     public ItemAsset item;
     public bool isFull;
 
    
-    public InventorySlot(string ID, int _amount)
+
+    public InventorySlot(ItemAsset i)
     {
-        item.ID = ID;
-        AddAmount(_amount);
+        item = i;
     }
     public InventorySlot(InventorySlot other)
     {

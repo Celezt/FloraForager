@@ -2,8 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Item : MonoBehaviour
+public interface IItem
 {
-    public InventorySlot item;
+    public void Something() ;
 }
-
