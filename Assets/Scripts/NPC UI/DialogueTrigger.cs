@@ -10,10 +10,11 @@ public class DialogueTrigger : MonoBehaviour
 
     public void StartDialogue()
     {
-        FindObjectOfType<DialogueManager>().OpenDialogue(messages, actors);
+        FindObjectOfType<DialogueManagerr>().OpenDialogue(messages, actors);
     }
 
 }
+
 
 [System.Serializable]
 public class Message
