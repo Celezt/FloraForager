@@ -26,6 +26,6 @@ public class FloraData : ScriptableObject
 [Serializable]
 public struct RewardPair<T1, T2>
 {
-    public T1 ID;
+    public T1 ItemID;
     public T2 Amount;
 }
