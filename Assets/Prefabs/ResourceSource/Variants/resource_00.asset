@@ -9,14 +9,11 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 4d2bcc035f066ed4598cafbdedd2b7d6, type: 3}
-  m_Name: comm_00
+  m_Script: {fileID: 11500000, guid: 561afb294217d244bb6f2be89389b332, type: 3}
+  m_Name: resource_00
   m_EditorClassIdentifier: 
-  _Title: GET THOSE POTATOES
-  _Description: GEEET DEEEEM POTATOEEEEEEEEEEEES
-  _ObjectivesData:
-  - _ItemID: potato
-    _Amount: 5
-  _Rewards:
-  - ItemID: gold
-    Amount: 1000000
+  _ItemID: stone
+  _RequiredTool: pickaxe
+  _Amount: 10
+  _AmountPerCollect: 2
+  _TotalCollectionTime: 10

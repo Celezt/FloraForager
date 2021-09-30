@@ -31,7 +31,7 @@ public class CommissionTracker : Singleton<CommissionTracker>
         string quota = string.Empty;
         foreach (Objective objective in _Commission.Objectives)
         {
-            quota += objective.CurrentAmount + "/" + objective.Amount + " " + objective.Type;
+            quota += objective.CurrentAmount + "/" + objective.Amount + " " + objective.ItemID;
 
             if (objective != _Commission.Objectives[_Commission.Objectives.Length - 1])
                 quota += " : ";

@@ -96,14 +96,14 @@ public class CommissionGiverWindow : Singleton<CommissionGiverWindow>
         string objectives = "<b>Objectives</b>\n<size=20>";
         foreach (Objective obj in commission.Objectives)
         {
-            objectives += obj.Type + ": " + obj.CurrentAmount + "/" + obj.Amount + "\n";
+            objectives += obj.ItemID + ": " + obj.CurrentAmount + "/" + obj.Amount + "\n";
         }
         objectives += "</size>";
 
         string rewards = "<b>Rewards</b>\n<size=20>";
         foreach (RewardPair<string, int> reward in commission.Rewards)
         {
-            rewards += reward.Amount + " " + reward.ID + "\n";
+            rewards += reward.Amount + " " + reward.ItemID + "\n";
         }
         rewards += "</size>";
 
