@@ -6,17 +6,9 @@ public class PlayerInventoryObject : InventoryObject
 {
     public int gold;
     public InventoryObject inventory;
-    public Item currentSlot;
+    public ItemSlot currentSlot;
     public void UsingHotbarSlot(int pos)
     {
-        currentSlot.item = inventory.Container[pos];        
-    }
-    public void BeginANew() 
-    {
-        for (int i = 0; i < inventory.Container.Length; i++)
-        {
-            inventory.Container[i] = null;
-        }
-        inventory.IsFull = false;
+        currentSlot.item = inventory.Container[pos];
     }
 }

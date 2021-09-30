@@ -1,3 +1,4 @@
+using MyBox;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -6,20 +7,20 @@ using UnityEngine;
 [CreateAssetMenu(fileName = "New Inventory", menuName = "Inventory System/Inventory")]
 public class InventoryObject : ScriptableObject
 {
-    public Action<int> InventoryAction = delegate { };
+    public event Action<int> InventoryAction = delegate { };
     //public List<InventorySlot> container = new List<InventorySlot>();
-    public InventorySlot[] Container = new InventorySlot[8];
+    public ItemAsset[] Container = new ItemAsset[8];
     public bool IsFull { get; set; }
-    public bool AddItem(InventorySlot _item)
+    public bool AddItem(ItemAsset item)
     {
         if (!IsFull)
         {
             bool hasItem = false;
             for (int i = 0; i < Container.Length; i++)
             {
-                if (Container[i].item.ID == _item.item.ID)
+                if (!Container[i].ID.IsNullOrEmpty() && Container[i].ID == item.ID)
                 {
-                    Container[i].AddAmount(_item.item.Amount);
+                    Container[i].Amount +=item.Amount;
                     hasItem = true;
                     InventoryAction.Invoke(i);
                     break;
@@ -28,7 +29,7 @@ public class InventoryObject : ScriptableObject
             if (!hasItem)
             {
                 int tmp = FindFirstEmptySlot();
-                Container[8] = new InventorySlot(new ItemAsset { ID = _item.item.ID, Amount =_item.item.Amount});
+                Container[tmp] = item;
                 InventoryAction.Invoke(tmp);
             }
             return true;
@@ -44,7 +45,7 @@ public class InventoryObject : ScriptableObject
     {
         for (int i = 0; i < Container.Length; i++)
         {
-            if (Container[i].item.ID == id)
+            if (Container[i].ID == id)
             {
                 return i;
             }
@@ -55,7 +56,7 @@ public class InventoryObject : ScriptableObject
     {
         for (int i = 0; i < Container.Length; i++)
         {
-            if (Container[i] == null)
+            if (!Container[i].ID.IsNullOrEmpty())
             {
                 return i;
             }

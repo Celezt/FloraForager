@@ -10,7 +10,7 @@ public class Player : MonoBehaviour
     {
         if (!inventory.IsFull) // Inventory is not full
         {
-            var item = other.GetComponent<Item>();
+            var item = other.GetComponent<ItemSlot>();
             if (item)
             {
                 inventory.AddItem(item.item);

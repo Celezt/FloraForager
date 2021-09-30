@@ -3,11 +3,11 @@ using System.Collections.Generic;
 using UnityEngine;
 using TMPro;
 
-public class Item : MonoBehaviour
+public class ItemSlot : MonoBehaviour
 {
-    public InventorySlot item;
+    public ItemAsset item;
     public TextMeshProUGUI TextMesh;
-    public GameObject prefabInventorySlot;
+    public Sprite image;
     public void CallButton() 
     {
     
