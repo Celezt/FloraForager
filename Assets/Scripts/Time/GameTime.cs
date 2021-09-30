@@ -79,7 +79,7 @@ public class GameTime : Singleton<GameTime>
         _DayCalendar = 1 + Day % _DaysPerMonth;
         _MonthCalendar = 1 + Month % _MonthsPerYear;
 
-        GameTimeWindow.Instance.UpdateText(Date, DigitalTime);
+        GameTimeUI.Instance.UpdateText(Date, DigitalTime);
     }
 
     /// <summary>

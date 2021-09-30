@@ -4,7 +4,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using MyBox;
 
-public class GameTimeWindow : Singleton<GameTimeWindow>
+public class GameTimeUI : Singleton<GameTimeUI>
 {
     [SerializeField] private Text _Date;
     [SerializeField] private Text _Time;

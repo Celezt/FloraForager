@@ -37,7 +37,7 @@ public class GridInteraction : MonoBehaviour, IInteractable
         Ray ray = Camera.main.ScreenPointToRay(Mouse.current.position.ReadValue());
         bool collision = Physics.Raycast(ray, out RaycastHit hitInfo, Mathf.Infinity, _LayerMasks) && !EventSystem.current.IsPointerOverGameObject();
 
-        if (!collision)
+        if (!collision || (collision && !hitInfo.transform.CompareTag("Grid")))
         {
             CurrentTile = null;
             CurrentGrid = null;

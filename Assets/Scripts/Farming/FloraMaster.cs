@@ -19,11 +19,6 @@ public class FloraMaster : Singleton<FloraMaster>
         _VariantsDictionary = _FloraVariants.ToDictionary(key => key.Name.ToLower(), value => value);
     }
 
-    private void Start()
-    {
-        
-    }
-
     private void Update()
     {
         if (Mouse.current.leftButton.wasPressedThisFrame)
@@ -66,8 +61,9 @@ public class FloraMaster : Singleton<FloraMaster>
             return false;
         }
 
-        FloraObject floraObject = obj.GetComponent<FloraObject>();
+        Debug.Log(tile);
 
+        FloraObject floraObject = obj.GetComponent<FloraObject>();
         floraObject.Initialize(_VariantsDictionary[key], tile);
 
         _FloraObjects.Add(floraObject);

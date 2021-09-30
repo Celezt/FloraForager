@@ -93,7 +93,7 @@ public class FloraObject : MonoBehaviour, IInteractable
         {
             for (int i = 0; i < _Flora.Rewards.Length; ++i)
             {
-                string itemID = _Flora.Rewards[i].ID;
+                string itemID = _Flora.Rewards[i].ItemID;
                 int amount = _Flora.Rewards[i].Amount;
 
                 // access inventory and add rewards
