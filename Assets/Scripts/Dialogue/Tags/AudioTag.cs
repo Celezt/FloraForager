@@ -7,7 +7,7 @@ public struct AudioTag : ITag
 {
     public void Initalize(Taggable taggable)
     {
-        Debug.Log("init");
+
     }
 
     public void Action(Taggable taggable, string parameter)

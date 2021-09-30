@@ -16,8 +16,20 @@ using System.Threading.Tasks;
 using UnityEngine.InputSystem;
 using IngameDebugConsole;
 
-public class DialogueManager : Singleton<DialogueManager>
+public class DialogueManager : MonoBehaviour
 {
+    private static Dictionary<int, DialogueManager> _dialogues = new Dictionary<int, DialogueManager>();
+    private static bool _initializedTags;
+
+    /// <summary>
+    /// Callback when the current dialogue is completed or canceled.
+    /// </summary>
+    public event Action<DialogueManager> Completed = delegate { };
+    /// <summary>
+    /// Callback when the current dialogue has started a conversation.
+    /// </summary>
+    public event Action<DialogueManager> Started = delegate { };
+
     [SerializeField] private TextMeshProUGUI _content;
     [SerializeField] private TextMeshProUGUI _namecard;
     [SerializeField] private GameObject _dialogueUI;
@@ -25,6 +37,7 @@ public class DialogueManager : Singleton<DialogueManager>
     [SerializeField] private GameObject _buttonType;
     [SerializeField] private AssetLabelReference _aliasLabel;
     [SerializeField] private float _autoTextSpeed = 0.1f;
+    [SerializeField, Min(0)] private int _playerIndex;
 
     private Stack<ParagraphAsset> _paragraphStack;
     private Queue<(string, RangeInt)> _richTagSpeedMultiplierQueue;
@@ -36,6 +49,14 @@ public class DialogueManager : Singleton<DialogueManager>
     private Coroutine _autoTypeCoroutine;
 
     private int _currentLayer;
+    private bool _isAutoTextCompleted;
+
+    /// <summary>
+    /// Return Dialogue Manager based on the player index connected to it.
+    /// </summary>
+    /// <param name="playerIndex">Index.</param>
+    /// <returns>Dialogue Manager.</returns>
+    public static DialogueManager GetDialogueByIndex(int playerIndex) => _dialogues[playerIndex];
 
     public float GetAutoTextSpeedMultiplier(int layer) => _speedMultiplierHierarchy[layer];
 
@@ -47,46 +68,52 @@ public class DialogueManager : Singleton<DialogueManager>
         return _speedMultiplierHierarchy[layer] = speed;
     }
 
-    public void StartDialogue(string address, params string[] alias)
+    public DialogueManager StartDialogue(string address, params string[] aliases)
     {
         Addressables.LoadAssetAsync<TextAsset>(address).Completed += (handle) =>
         {
-            StartDialogue(handle, alias);
+            StartDialogue(handle, aliases);
         };
+
+        return this;
     }
 
-    public void StartDialogue(AssetReferenceText assetReference, params string[] alias)
+    public DialogueManager StartDialogue(AssetReferenceText assetReference,  params string[] aliases)
     {
         assetReference.LoadAssetAsync<TextAsset>().Completed += (handle) => 
         {
-            StartDialogue(handle, alias);
+            StartDialogue(handle, aliases);
         };
+
+        return this;
     }
 
-    public void StartDialogue(AsyncOperationHandle<TextAsset> handle, params string[] alias)
+    public void StartDialogue(AsyncOperationHandle<TextAsset> handle, params string[] aliases)
     {
+        Started.Invoke(this);
         _dialogueUI.SetActive(true);
 
         _speedMultiplierHierarchy = new List<float>();
         _currentLayer = 0;
 
-        for (int i = 0; i < alias.Length; i++)
+        if (aliases.NotNullOrEmpty())
         {
-            if (_aliases.ContainsKey($"actor_{i}"))
-                _aliases[$"actor_{i}"] = alias[i];
-            else
-                _aliases.Add($"actor_{i}", alias[i]);
+            for (int i = 0; i < aliases.Length; i++)
+            {
+                if (_aliases.ContainsKey($"actor_{i}"))
+                    _aliases[$"actor_{i}"] = aliases[i];
+                else
+                    _aliases.Add($"actor_{i}", aliases[i]);
+            }
+
         }
 
-        MyBox.TimeTest.Start("time", true);
         DialogueAsset asset = JsonConvert.DeserializeObject<DialogueAsset>(handle.Result.text);
-        MyBox.TimeTest.End("time");
-
         DialogueUtility.Tag(this, _currentLayer, asset.Tag, _tags);
         _paragraphStack = new Stack<ParagraphAsset>(asset.Dialogue.Reverse<ParagraphAsset>());
         _currentLayer++;
+        _isAutoTextCompleted = true;
         Next();
-
 
         Addressables.Release(handle);
     }
@@ -97,10 +124,65 @@ public class DialogueManager : Singleton<DialogueManager>
 
         if (_autoTypeCoroutine != null)
             StopCoroutine(_autoTypeCoroutine);
+
+        Completed.Invoke(this);
     }
 
     public void Next()
     {
+        void DestroyActions()
+        {
+            if (_actions.NotNullOrEmpty())
+            {
+                for (int i = 0; i < _actions.Count; i++)
+                    Destroy(_actions[i]);
+
+                _actions = null;
+            }
+        }
+
+        void CreateActions(ParagraphAsset paragraph)
+        {
+            if (paragraph.Action.IsNullOrEmpty())
+                return;
+
+            _actions = new List<GameObject>();
+            _currentLayer++;
+
+            for (int i = 0; i < paragraph.Action.Count; i++)
+            {
+                int index = i;
+                GameObject obj = Instantiate(_buttonType, _buttonParent);
+                Button button = obj.GetComponentInChildren<Button>();
+                TextMeshProUGUI textMesh = obj.GetComponentInChildren<TextMeshProUGUI>();
+
+                StringBuilder act = new StringBuilder(paragraph.Action[i].Act);
+                DialogueUtility.Alias(act, _aliases);
+
+                textMesh.text = act.ToString();
+                button.onClick.AddListener(() =>
+                {
+                    _paragraphStack = new Stack<ParagraphAsset>(paragraph.Action[index].Dialogue.Reverse<ParagraphAsset>());
+                    DialogueUtility.Tag(this, _currentLayer, paragraph.Action[index].Tag, _tags);
+                    _currentLayer++;
+                    _isAutoTextCompleted = true;
+                    Next();
+                });
+
+                _actions.Add(obj);
+            }
+        }
+
+        if (!_isAutoTextCompleted)   // Skip auto text if not yet completed.
+        {
+            if (_autoTypeCoroutine != null)
+                StopCoroutine(_autoTypeCoroutine);
+
+            _isAutoTextCompleted = true;
+            _content.maxVisibleCharacters = int.MaxValue;
+            return;
+        }
+
         if (_paragraphStack.IsNullOrEmpty())
         {
             if (_actions.IsNullOrEmpty())
@@ -138,65 +220,31 @@ public class DialogueManager : Singleton<DialogueManager>
         DialogueUtility.InitializeAllTags(this, _currentLayer, _tags);
     }
 
-    private void StartDialogueConsole(string address, params string[] alias) => StartDialogue(address, alias);
-
     private void Start()
     {
+        _dialogues.Add(_playerIndex, this);
+
         DebugLogConsole.AddCommandInstance("dialogue_cancel", "Cancel current dialogue", nameof(CancelDialogue), this);
         DebugLogConsole.AddCommandInstance("dialogue_start", "Start dialogue", nameof(StartDialogueConsole), this);
+        DebugLogConsole.AddCommandInstance("dialogue_speed", "Sets auto text speed", nameof(SetAutoTextSpeedConsole), this);
 
         _dialogueUI.SetActive(false);
-        DialogueUtility.LoadAliases(_aliasLabel, _aliases);
-    }
 
-    private void DestroyActions()
-    {
-        if (_actions.NotNullOrEmpty())
+        if (!_initializedTags)  // Prevent loading multiple times
         {
-            for (int i = 0; i < _actions.Count; i++) 
-                Destroy(_actions[i]);
-
-            _actions = null;
+            DialogueUtility.LoadAliases(_aliasLabel, _aliases);
+            _initializedTags = true;
         }
     }
 
-    private void CreateActions(ParagraphAsset paragraph)
-    {
-        if (paragraph.Action != null)
-        {
-            _actions = new List<GameObject>();
-            _currentLayer++;
-
-            for (int i = 0; i < paragraph.Action.Count; i++)
-            {
-                int index = i;
-                GameObject obj = Instantiate(_buttonType, _buttonParent);
-                Button button = obj.GetComponentInChildren<Button>();
-                TextMeshProUGUI textMesh = obj.GetComponentInChildren<TextMeshProUGUI>();
-
-                StringBuilder act = new StringBuilder(paragraph.Action[i].Act);
-                DialogueUtility.Alias(act, _aliases);
-
-                textMesh.text = act.ToString();
-                button.onClick.AddListener(delegate { OnActionClick(index, paragraph); });
-
-                _actions.Add(obj);
-            }
-        }
-    }
-
-    private void OnActionClick(int i, ParagraphAsset paragraph)
-    {
-        _paragraphStack = new Stack<ParagraphAsset>(paragraph.Action[i].Dialogue.Reverse<ParagraphAsset>());
-        DialogueUtility.Tag(this, _currentLayer, paragraph.Action[i].Tag, _tags);
-        _currentLayer++;
-        Next();
-    }
+    private void StartDialogueConsole(string address, params string[] aliases) => StartDialogue(address, aliases);
+    private void SetAutoTextSpeedConsole(float speed) => _autoTextSpeed = speed;
 
     private IEnumerator AutoType(ParagraphAsset paragraph)
     {
         RangeInt indexRange = new RangeInt();
         float richTagSpeedMultiplier = 1;
+        _isAutoTextCompleted = false;
 
         IEnumerator Dequeue()
         {
@@ -251,5 +299,7 @@ public class DialogueManager : Singleton<DialogueManager>
                 }
             }
         }
+
+        _isAutoTextCompleted = true;
     }
 }

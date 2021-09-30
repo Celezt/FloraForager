@@ -13,7 +13,7 @@ public class FloraData : ScriptableObject
 
     [Space(3), Header("Growth")]
     [SerializeField, Min(0)] private int _GrowTime = 0; // growth time in days
-    [SerializeField] private GameObject[] _Stages; // Number of visual growth stages this flora has [0 = start, x = final]
+    [SerializeField] private GameObject[] _Stages;      // Number of visual growth stages this flora has [0 = start, x = final]
 
     public string Name => _Name;
     public string Description => _Description;
@@ -26,6 +26,6 @@ public class FloraData : ScriptableObject
 [Serializable]
 public struct RewardPair<T1, T2>
 {
-    public T1 ID;
+    public T1 ItemID;
     public T2 Amount;
 }

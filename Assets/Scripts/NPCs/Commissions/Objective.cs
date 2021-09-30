@@ -8,7 +8,7 @@ public abstract class Objective
 
     private int _CurrentAmount;
 
-    public string Type => _Data.Type;
+    public string ItemID => _Data.ItemID;
     public int Amount => _Data.Amount;
     public int CurrentAmount
     {

@@ -6,6 +6,7 @@ public class TileMap
     private Grid _Grid;
     private Tile[] _Tiles;
 
+    public Grid Grid => _Grid;
     public Tile[] Tiles => _Tiles;
 
     public TileMap(Grid grid, TileType tileType, bool random)
@@ -29,7 +30,7 @@ public class TileMap
 
                 TileType tile = (random) ? (TileType)UnityEngine.Random.Range(0, Enum.GetValues(typeof(TileType)).Length) : tileType;
 
-                _Tiles[x + z * _Grid.Width] = new Tile(posWorld, posLocal, _Grid.TileSize, tile);
+                _Tiles[x + z * _Grid.Width] = new Tile(this, posWorld, posLocal, _Grid.TileSize, tile);
             }
         }
     }

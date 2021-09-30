@@ -96,22 +96,20 @@ public class CommissionGiverWindow : Singleton<CommissionGiverWindow>
         string objectives = "<b>Objectives</b>\n<size=20>";
         foreach (Objective obj in commission.Objectives)
         {
-            objectives += obj.Type + ": " + obj.CurrentAmount + "/" + obj.Amount + "\n";
+            objectives += obj.ItemID + ": " + obj.CurrentAmount + "/" + obj.Amount + "\n";
         }
         objectives += "</size>";
 
         string rewards = "<b>Rewards</b>\n<size=20>";
         foreach (RewardPair<string, int> reward in commission.Rewards)
         {
-            rewards += reward.Amount + " " + reward.ID + "\n";
+            rewards += reward.Amount + " " + reward.ItemID + "\n";
         }
         rewards += "</size>";
 
-        string giver = "<b>Giver</b>\n<size=20>" + commission.Giver.name + "</size>";
-
         string completed = commission.IsCompleted ? "<color=green>(Complete)</color>" : string.Empty;
 
-        _Description.text = string.Format("<b>{0}</b>\n<size=20>{1}</size>\n\n{2}\n{3}\n{4}\n\n{5}", commission.Title, commission.Description, objectives, rewards, giver, completed);
+        _Description.text = string.Format("<b>{0}</b>\n<size=20>{1}</size>\n\n{2}\n{3}\n{4}", commission.Title, commission.Description, objectives, rewards,  completed);
     }
 
     public void Open()
