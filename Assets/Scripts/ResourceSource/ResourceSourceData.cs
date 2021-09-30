@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-[CreateAssetMenu(fileName = "Resource Source", menuName = "Interactable Resources/Resource Source")]
+[CreateAssetMenu(fileName = "Resource Source", menuName = "Scriptable Objects/Resource Source")]
 public class ResourceSourceData : ScriptableObject
 {
     [SerializeField] private string _ItemID;             // item that will be given when harvesting this resource
