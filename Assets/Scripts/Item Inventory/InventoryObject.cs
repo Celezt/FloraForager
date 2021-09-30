@@ -14,29 +14,24 @@ public class InventoryObject : ScriptableObject
     public bool AddItem(ItemAsset item)
     {
         if (!IsFull)
-        {
-            bool hasItem = false;
-            for (int i = 0; i < Container.Length; i++)
+        {            
+            int pos = ExistsAt(item.ID);
+            if (pos != -1)
             {
-                if (!Container[i].ID.IsNullOrEmpty() && Container[i].ID == item.ID)
-                {
-                    Container[i].Amount +=item.Amount;
-                    hasItem = true;
-                    InventoryAction.Invoke(i);
-                    break;
-                }
+                Container[pos].Amount += item.Amount;
+                InventoryAction.Invoke(pos);
             }
-            if (!hasItem)
+            else
             {
                 int tmp = FindFirstEmptySlot();
                 Container[tmp] = item;
                 InventoryAction.Invoke(tmp);
-            }
+            }            
             return true;
         }
         else
         {
-
+            // Find Stackables
         }
         return false;
     }
@@ -45,10 +40,13 @@ public class InventoryObject : ScriptableObject
     {
         for (int i = 0; i < Container.Length; i++)
         {
-            if (Container[i].ID == id)
+            if (!Container[i].ID.IsNullOrEmpty())
             {
-                return i;
-            }
+                if (Container[i].ID == id)
+                {
+                    return i;
+                }
+            }            
         }
         return -1;
     }

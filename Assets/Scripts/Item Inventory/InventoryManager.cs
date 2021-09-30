@@ -39,7 +39,7 @@ public class InventoryManager : MonoBehaviour
                     slots[i].TextMesh.text = inventory.Container[i].Amount.ToString();
                     Debug.Log(inventory.Container[i].Amount);
                 }
-            }            
+            }
             //inventory.AddItem(new ItemAsset { ID = "Loka", Amount = 10});
             Addressables.Release(handle);
         };
