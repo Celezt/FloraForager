@@ -1,5 +1,5 @@
 using UnityEngine;
-public interface IInteractable
+public interface IInteractable : IPlayerInteractable
 {
     /// <summary>
     /// Higher priority will always be prioritized no matter how far away it is compared to lower priorities.

@@ -32,8 +32,6 @@ public class GridInteraction : MonoBehaviour, IInteractable
         _Selection.transform.localScale = new Vector3(scale * _Grid.TileSize, scale, scale * _Grid.TileSize);
     }
 
-
-
     private void Update()
     {
         Ray ray = Camera.main.ScreenPointToRay(Mouse.current.position.ReadValue());
@@ -114,31 +112,6 @@ public class GridInteraction : MonoBehaviour, IInteractable
 
     public bool LeftPressed() => ValidTile(CurrentTile) && Mouse.current.leftButton.wasPressedThisFrame;
     public bool RightPressed() => ValidTile(CurrentTile) && Mouse.current.rightButton.wasPressedThisFrame;
-
-    /// <summary>
-    /// updates specified tile type and changes texture on grid accordingly
-    /// </summary>
-    /// <param name="tile"></param>
-    /// <param name="type"></param>
-    public void UpdateTile(Tile tile, TileType type)
-    {
-        tile.UpdateType(type);
-
-        int i = (int)tile.PositionLocal.z + (int)tile.PositionLocal.x * _Grid.Width;
-
-        float tileTexProcRow = 1.0f / _Grid.TexTilesPerRow;
-        float tileTexProcCol = 1.0f / _Grid.TexTilesPerCol;
-
-        float proc = (int)tile.TileType / (float)_Grid.TexTilesPerRow;
-        float dFix = 0.05f; // dilation
-
-        _Grid.Uvs[i * 4 + 0] = new Vector2(proc + dFix,                  1.0f - dFix); // top-left
-        _Grid.Uvs[i * 4 + 1] = new Vector2(proc + tileTexProcRow - dFix, 1.0f - dFix); // top-right
-        _Grid.Uvs[i * 4 + 2] = new Vector2(proc + dFix,                  0.0f + dFix); // bottom-left
-        _Grid.Uvs[i * 4 + 3] = new Vector2(proc + tileTexProcRow - dFix, 0.0f + dFix); // bottom-right
-
-        _MeshFilter.mesh.uv = _Grid.Uvs;
-    }
 
     public void OnInteract(InteractContext context)
     {

@@ -18,7 +18,30 @@ namespace FF.Json
                 return;
 
             string path = AssetDatabase.GUIDToAssetPath(selectedGUIDs[0]);
-            File.Create($"{path}/new_json.json");
+
+
+            if (File.Exists($"{path}/new_json.json"))
+            {
+                int index = 1;
+                while (true)
+                {
+                    if (!File.Exists($"{path}/new_json_{index}.json"))
+                    {
+                        File.WriteAllText($"{path}/new_json_{index}.json", "{\n\n}");
+                        break;
+                    }
+                    else
+                    {
+                        index++;
+                    }
+                }
+            }
+            else
+            {
+                File.WriteAllText($"{path}/new_json.json", "{\n\n}");
+            }
+
+            AssetDatabase.Refresh();
         }
     }
 }

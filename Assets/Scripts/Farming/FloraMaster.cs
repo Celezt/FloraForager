@@ -28,7 +28,18 @@ public class FloraMaster : Singleton<FloraMaster>
     {
         if (Mouse.current.leftButton.wasPressedThisFrame)
         {
-            AddFlora("Variant");
+            if (!AddFlora("Variant"))
+            {
+                if (GridInteraction.CurrentTile != null && GridInteraction.CurrentTile.HeldObject != null)
+                {
+                    GridInteraction.CurrentTile.HeldObject.TryGetComponent(out FloraObject flora);
+
+                    if (flora != null)
+                    {
+                        flora.Watered = true;
+                    }
+                }
+            }
         }
     }
 

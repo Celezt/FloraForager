@@ -78,6 +78,8 @@ public class GameTime : Singleton<GameTime>
 
         _DayCalendar = 1 + Day % _DaysPerMonth;
         _MonthCalendar = 1 + Month % _MonthsPerYear;
+
+        GameTimeWindow.Instance.UpdateText(Date, DigitalTime);
     }
 
     /// <summary>
@@ -94,14 +96,6 @@ public class GameTime : Singleton<GameTime>
         SetElapsedTime((decimal)acceleratedTime);
         UpdateTime();
     }
-
-#if UNITY_EDITOR
-    private void OnDrawGizmos()
-    {
-        Handles.Label(transform.position + Vector3.up * 3.00f, Date);
-        Handles.Label(transform.position + Vector3.up * 2.60f, DigitalTime);
-    }
-#endif
 
     public void SetElapsedTime(decimal elapsedTime)
     {

@@ -107,11 +107,9 @@ public class CommissionGiverWindow : Singleton<CommissionGiverWindow>
         }
         rewards += "</size>";
 
-        string giver = "<b>Giver</b>\n<size=20>" + commission.Giver.name + "</size>";
-
         string completed = commission.IsCompleted ? "<color=green>(Complete)</color>" : string.Empty;
 
-        _Description.text = string.Format("<b>{0}</b>\n<size=20>{1}</size>\n\n{2}\n{3}\n{4}\n\n{5}", commission.Title, commission.Description, objectives, rewards, giver, completed);
+        _Description.text = string.Format("<b>{0}</b>\n<size=20>{1}</size>\n\n{2}\n{3}\n{4}", commission.Title, commission.Description, objectives, rewards,  completed);
     }
 
     public void Open()
