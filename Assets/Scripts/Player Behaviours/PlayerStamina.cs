@@ -20,7 +20,14 @@ public class PlayerStamina : MonoBehaviour
     private float _Stamina;
     private float _Sleepy; // rate to increase stamina drain rate
 
-    public float Stamina => _Stamina;
+    public float Stamina
+    {
+        get => _Stamina;
+        set
+        {
+            _Stamina = Mathf.Clamp(_Stamina + value, 0.0f, _MaxStamina);
+        }
+    }
 
     private void Awake()
     {
