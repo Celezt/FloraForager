@@ -11,13 +11,16 @@ public class CommissionGiver : MonoBehaviour
     private Commission[] _Commissions; // all of the commissions stored in this giver
 
     private NPC _NPC;
+    private RelationshipManager _Relations;
 
     public Commission[] Commissions => _Commissions;
     public NPC NPC => _NPC;
+    public RelationshipManager Relations => _Relations;
 
     private void Awake()
     {
         _NPC = GetComponent<NPC>();
+        _Relations = GetComponent<RelationshipManager>();
 
         _Commissions = new Commission[_CommissionsData.Length];
         for (int i = 0; i < _Commissions.Length; ++i)

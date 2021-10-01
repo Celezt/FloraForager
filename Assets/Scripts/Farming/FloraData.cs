@@ -3,7 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-[CreateAssetMenu(fileName = "Flora", menuName = "Flora")]
+[CreateAssetMenu(fileName = "Flora", menuName = "Scriptable Objects/Flora")]
 public class FloraData : ScriptableObject
 {
     [Space(3), Header("Properties")]
