@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -10,10 +11,11 @@ public class UseBehaviour : MonoBehaviour
     private PlayerAction _playerAction;
     private PlayerInput _playerInput;
     private InputControlScheme _scheme;
+    private UseContext _useContext;
+    private IUse _use = new ScytheItem();
 
     private int _playerIndex;
 
-    private IUse _use = new ToolScythe();
 
     public void OnUse(InputAction.CallbackContext context)
     {
@@ -21,7 +23,7 @@ public class UseBehaviour : MonoBehaviour
 
         void UseTowardsCursor(InputAction.CallbackContext context)
         {
-            UseContext useContext = new UseContext(
+            _useContext = new UseContext(
                 transform,
                 _playerIndex,
                 context.canceled,
@@ -29,10 +31,7 @@ public class UseBehaviour : MonoBehaviour
                 context.performed
             );
 
-            foreach (var use in _use.OnUse(useContext))
-            {
-                use.OnUse(useContext);
-            }
+            _use.OnUse(_useContext);
         }
 
         UseTowardsCursor(context);
@@ -66,5 +65,10 @@ public class UseBehaviour : MonoBehaviour
         _playerAction.Ground.Use.performed -= OnUse;
         _playerAction.Ground.Use.canceled -= OnUse;
         _playerInput.controlsChangedEvent.RemoveListener(ControlsChangedEvent);
+    }
+
+    private void Update()
+    {
+        _use.OnUpdate(_useContext);
     }
 }

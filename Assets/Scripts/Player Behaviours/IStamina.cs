@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public interface IItem
+public interface IStamina
 {
-    public uint ItemStack { get; set; }
+    public float StaminaChange { get; set; }
 }
