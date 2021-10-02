@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -7,37 +8,33 @@ public class UseBehaviour : MonoBehaviour
 {
     public PlayerAction Inputs => _playerAction;
 
-    [SerializeField] private LayerMask _useLayers;
-
     private PlayerAction _playerAction;
     private PlayerInput _playerInput;
     private InputControlScheme _scheme;
+    private UseContext _useContext;
+    private IUse _use = new ScytheItem();
 
-    private Vector2 _screenPosition;
     private int _playerIndex;
+
 
     public void OnUse(InputAction.CallbackContext context)
     {
-        void InteractAtCursor(InputAction.CallbackContext context)
-        {
-            Ray ray = Camera.main.ScreenPointToRay(_screenPosition);
-            if (Physics.Raycast(ray, out RaycastHit hit, Mathf.Infinity, _useLayers))
-            {
-                IUsable tool = hit.transform.gameObject.GetComponent<IUsable>();
+        Vector3 position = transform.position;
 
-                if (tool == null)
-                    return;
-            }
+        void UseTowardsCursor(InputAction.CallbackContext context)
+        {
+            _useContext = new UseContext(
+                transform,
+                _playerIndex,
+                context.canceled,
+                context.started,
+                context.performed
+            );
+
+            _use.OnUse(_useContext);
         }
 
-        InteractAtCursor(context);
-    }
-
-    public void OnCursor(InputAction.CallbackContext context)
-    {
-        Vector2 value = context.ReadValue<Vector2>();
-
-        _screenPosition = value;
+        UseTowardsCursor(context);
     }
 
     public void ControlsChangedEvent(PlayerInput playerInput)
@@ -46,7 +43,7 @@ public class UseBehaviour : MonoBehaviour
         _scheme = playerInput.user.controlScheme.Value;
     }
 
-    private void Start()
+    private void Awake()
     {
         _playerAction = new PlayerAction();
         _playerInput = GetComponent<PlayerInput>();
@@ -58,9 +55,6 @@ public class UseBehaviour : MonoBehaviour
         _playerAction.Ground.Use.started += OnUse;
         _playerAction.Ground.Use.performed += OnUse;
         _playerAction.Ground.Use.canceled += OnUse;
-        _playerAction.Ground.Cursor.started += OnCursor;
-        _playerAction.Ground.Cursor.performed += OnCursor;
-        _playerAction.Ground.Cursor.canceled += OnCursor;
         _playerInput.controlsChangedEvent.AddListener(ControlsChangedEvent);
     }
 
@@ -70,9 +64,11 @@ public class UseBehaviour : MonoBehaviour
         _playerAction.Ground.Use.started -= OnUse;
         _playerAction.Ground.Use.performed -= OnUse;
         _playerAction.Ground.Use.canceled -= OnUse;
-        _playerAction.Ground.Cursor.started -= OnCursor;
-        _playerAction.Ground.Cursor.performed -= OnCursor;
-        _playerAction.Ground.Cursor.canceled -= OnCursor;
         _playerInput.controlsChangedEvent.RemoveListener(ControlsChangedEvent);
+    }
+
+    private void Update()
+    {
+        _use.OnUpdate(_useContext);
     }
 }

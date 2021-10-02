@@ -107,9 +107,14 @@ public class CommissionGiverWindow : Singleton<CommissionGiverWindow>
         }
         rewards += "</size>";
 
+        string daysLeft = "<b>Time limit</b>\n<size=20>" + commission.DaysLeft.ToString() + " Days</size>";
+
         string completed = commission.IsCompleted ? "<color=green>(Complete)</color>" : string.Empty;
 
-        _Description.text = string.Format("<b>{0}</b>\n<size=20>{1}</size>\n\n{2}\n{3}\n{4}", commission.Title, commission.Description, objectives, rewards,  completed);
+        _Description.text = string.Format("<b>{0}</b>\n<size=20>{1}</size>\n\n{2}\n{3}\n{4}\n\n{5}",
+            commission.Title,
+            commission.Description,
+            objectives, rewards, daysLeft, completed);
     }
 
     public void Open()

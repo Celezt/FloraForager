@@ -34,7 +34,8 @@ public class InteractBehaviour : MonoBehaviour
             Ray ray = Camera.main.ScreenPointToRay(_screenPosition);
             if (Physics.Raycast(ray, out RaycastHit hit, Mathf.Infinity, _interactableLayers))
             {
-                if (Vector3.Distance(position, hit.point) <= _radius)
+                float distance = Vector3.Distance(position, hit.point);
+                if (distance <= _radius)
                 {
                     IInteractable interactable = hit.transform.gameObject.GetComponent<IInteractable>();
 
@@ -50,6 +51,7 @@ public class InteractBehaviour : MonoBehaviour
                         _screenPosition,
                         hit.textureCoord,
                         hit.textureCoord2,
+                        distance,
                         hit.distance,
                         hit.triangleIndex,
                         _playerIndex,
@@ -121,6 +123,7 @@ public class InteractBehaviour : MonoBehaviour
                 _screenPosition,
                 hit.textureCoord,
                 hit.textureCoord2,
+                Vector3.Distance(position, hit.point),
                 hit.distance,
                 hit.triangleIndex,
                 _playerIndex,

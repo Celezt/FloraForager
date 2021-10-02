@@ -4,5 +4,5 @@ using UnityEngine;
 
 public interface IItem
 {
-    public void Something() ;
+    public uint ItemStack { get; set; }
 }

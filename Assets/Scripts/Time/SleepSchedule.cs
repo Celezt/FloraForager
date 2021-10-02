@@ -69,6 +69,7 @@ public class SleepSchedule : Singleton<SleepSchedule>
 
         playerStamina.Recover();
         FloraMaster.Instance.Notify();
+        CommissionLog.Instance.Notify();
 
         GameTime.Instance.AccelerateTime(currentTime, TimeToMorning(currentTime));
 

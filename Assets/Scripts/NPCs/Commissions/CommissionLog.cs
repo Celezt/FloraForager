@@ -128,11 +128,16 @@ public class CommissionLog : Singleton<CommissionLog>
         }
         rewards += "</size>";
 
+        string daysLeft = "<b>Time limit</b>\n<size=20>" + commission.DaysLeft.ToString() + " Days</size>";
+
         string giver = "<b>Giver</b>\n<size=20>" + commission.Giver.name + "</size>";
 
         string completed = commission.IsCompleted ? "<color=green>(Complete)</color>" : string.Empty;
 
-        _Description.text = string.Format("<b>{0}</b>\n<size=20>{1}</size>\n\n{2}\n{3}\n{4}\n\n{5}", commission.Title, commission.Description, objectives, rewards, giver, completed);
+        _Description.text = string.Format("<b>{0}</b>\n<size=20>{1}</size>\n\n{2}\n{3}\n{4}\n\n{5}\n\n{6}", 
+            commission.Title, 
+            commission.Description, 
+            objectives, rewards, daysLeft, giver, completed);
     }
 
     public void CheckCompletion()
@@ -165,6 +170,14 @@ public class CommissionLog : Singleton<CommissionLog>
         _CanvasGroup.blocksRaycasts = false;
 
         _Description.text = string.Empty;
+    }
+
+    /// <summary>
+    /// notify all commissions that a day has passed
+    /// </summary>
+    public void Notify()
+    {
+        _Commissions.ForEach(c => c.DayPassed());
     }
 
     public bool HasCommission(Commission commission)

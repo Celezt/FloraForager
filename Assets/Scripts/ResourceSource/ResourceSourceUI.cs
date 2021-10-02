@@ -25,18 +25,16 @@ public class ResourceSourceUI : Singleton<ResourceSourceUI>
         _CanvasRect = transform.parent.GetComponent<RectTransform>();
     }
 
-    private void Update()
+    private void LateUpdate()
     {
         UpdatePosition();
     }
 
     public void SetActive(ResourceSource resource, bool value)
     {
-        _Resource = resource;
+        _Resource = resource;        
 
-        UpdatePosition();
         UpdateText();
-        
         _CanvasGroup.alpha = value ? 1.0f : 0.0f;
     }
 

@@ -5,11 +5,11 @@ using UnityEngine.InputSystem;
 
 public enum Relation
 {
-    Loved,
-    Liked,
-    Neutral,
-    Disliked,
     Hated,
+    Disliked,
+    Neutral,
+    Liked,
+    Loved
 }
 
 public class RelationshipManager : MonoBehaviour
@@ -25,6 +25,7 @@ public class RelationshipManager : MonoBehaviour
     public void AddRelation(float value)
     {
         curRelation += value;
+        curRelation = Mathf.Clamp(curRelation, minRelation, maxRelation);
 
         float difference = maxRelation - minRelation;
 

@@ -11,8 +11,11 @@ public class Commission
     private CommissionGiver _Giver;  // the NPC who gave out this commission
     private Objective[] _Objectives; // all of the objectives to be fulfilled to complete this commission
 
+    private int _DaysLeft;
+
     public string Title => _Data.Title;
     public string Description => _Data.Description;
+    public int DaysLeft => _DaysLeft;
     public Objective[] Objectives => _Objectives;
     public RewardPair<string, int>[] Rewards => _Data.Rewards;
 
@@ -43,6 +46,8 @@ public class Commission
         {
             _Objectives[i] = new FetchObjective(_Data.ObjectivesData[i]);
         }
+
+        _DaysLeft = _Data.TimeLimit;
     }
 
     public void Complete()
@@ -61,6 +66,17 @@ public class Commission
             int amount = _Data.Rewards[i].Amount;
 
             // add items to inventory
+        }
+
+        _Giver.Relations.AddRelation(_Data.RewardRelations);
+    }
+
+    public void DayPassed()
+    {
+        if (--_DaysLeft <= 0)
+        {
+            _Giver.Relations.AddRelation(_Data.PenaltyRelations);
+            CommissionLog.Instance.RemoveCommission(Object); // TODO: add some heads-up for the player
         }
     }
 }
