@@ -6,6 +6,6 @@ public interface IUse
 {
     public void OnUse(UseContext context);
     public void OnUpdate(UseContext context);
-    public void OnInactive(UseContext context);
-    public void OnActive(UseContext context);
+    public void OnUnequip(UseContext context);
+    public void OnEquip(UseContext context);
 }

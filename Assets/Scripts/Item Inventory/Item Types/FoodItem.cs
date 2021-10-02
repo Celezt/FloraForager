@@ -13,12 +13,12 @@ public struct FoodItem : IUse, IItem, IStamina
     public float StaminaChange { get; set; }
 
 
-    public void OnActive(UseContext context)
+    public void OnEquip(UseContext context)
     {
 
     }
 
-    public void OnInactive(UseContext context)
+    public void OnUnequip(UseContext context)
     {
 
     }

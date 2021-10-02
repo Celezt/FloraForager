@@ -7,30 +7,28 @@ using Sirenix.OdinInspector.Editor;
 using Sirenix.Utilities.Editor;
 using Sirenix.Serialization;
 using System.IO;
-using UnityEngine.AddressableAssets;
 using Newtonsoft.Json;
-using UnityEditor.AddressableAssets.Settings;
-using UnityEditor.AddressableAssets;
-using System.Linq;
 
-public class ItemEditor : OdinMenuEditorWindow
+public class ItemWindow : OdinMenuEditorWindow
 {
     private const string TYPE_PATH = "Assets/Data/Items/Item Types";
     private const string DESCRIPTION_PATH = "Assets/Data/Items/Item Descriptions";
-    private const string DESCRIPTION_LABEL = "item_description";
 
     private CustomItem _customItem;
 
-    [MenuItem("/Tools/Items")]
+    [MenuItem("/Tools/Item Editor")]
     private static void OpenWindow()
     {
-        GetWindow<ItemEditor>().Show();
+        ItemWindow window = GetWindow<ItemWindow>();
+        window.titleContent = new GUIContent("Items");
+        window.Show();
     }
 
 
     protected override OdinMenuTree BuildMenuTree()
     {
         OdinMenuTree tree = new OdinMenuTree();
+        tree.Config.DrawSearchToolbar = true;
 
         _customItem = new CustomItem();
         tree.Add("Create New", _customItem);
@@ -49,7 +47,7 @@ public class ItemEditor : OdinMenuEditorWindow
     protected override void OnBeginDrawEditors()
     {
         OdinMenuTreeSelection selected = MenuTree.Selection;
-
+        
         void Deserialize()
         {
             ItemType asset = selected.SelectedValue as ItemType;
@@ -67,17 +65,6 @@ public class ItemEditor : OdinMenuEditorWindow
                     asset.Description = info.Description;
                 }
             }
-        }
-
-        void Delete()
-        {
-            ItemType asset = selected.SelectedValue as ItemType;
-            string path = AssetDatabase.GetAssetPath(asset);
-            AssetDatabase.DeleteAsset(path);
-            File.Delete($"{DESCRIPTION_PATH}/{asset.ID}_en.json");
-
-            AssetDatabase.SaveAssets();
-            AssetDatabase.Refresh();
         }
 
         void Serialize()
@@ -101,39 +88,59 @@ public class ItemEditor : OdinMenuEditorWindow
             AssetDatabase.Refresh();
         }
 
-        SirenixEditorGUI.BeginHorizontalToolbar();
+        void Delete()
         {
+            ItemType asset = selected.SelectedValue as ItemType;
+            string path = AssetDatabase.GetAssetPath(asset);
+            AssetDatabase.DeleteAsset(path);
+            File.Delete($"{DESCRIPTION_PATH}/{asset.ID}_en.json");
+
+            AssetDatabase.SaveAssets();
+            AssetDatabase.Refresh();
+        }
+
+        void Label()
+        {
+            GetWindow<ItemLabelWindow>(true).Create(ItemTypeSettings.Instance);
+        }
+
+        Rect rect = SirenixEditorGUI.BeginHorizontalToolbar();
+        {
+            if (SirenixEditorGUI.ToolbarButton("Labels"))
+                Label();
+
             if (MenuTree.GetMenuItem("Create New").IsSelected)
             {
                 GUILayout.FlexibleSpace();
 
                 if (SirenixEditorGUI.ToolbarButton("Save"))
                     _customItem.Create();
-
-                SirenixEditorGUI.EndHorizontalToolbar();
             }
             else if (MenuTree.GetMenuItem("Items").IsSelected)
             {
                 GUILayout.FlexibleSpace();
-
-                SirenixEditorGUI.EndHorizontalToolbar();
             }
             else
             {
-                if (SirenixEditorGUI.ToolbarButton("Serialize"))
-                    Serialize();
+                var guiMode = new GUIContent("Convert");
+                Rect rMode = GUILayoutUtility.GetRect(guiMode, EditorStyles.toolbarDropDown);
+                if (EditorGUI.DropdownButton(rMode, guiMode, FocusType.Passive, EditorStyles.toolbarDropDown))
+                {
+                    var menu = new GenericMenu();
+                    menu.AddItem(new GUIContent("Serialize"), false, () => Serialize());
+                    menu.AddItem(new GUIContent("Deserialize"), false, () => Deserialize());
 
-                if (SirenixEditorGUI.ToolbarButton("Deserialize"))
-                    Deserialize();
+                    menu.DropDown(rect);
+                }
 
                 GUILayout.FlexibleSpace();
 
                 if (SirenixEditorGUI.ToolbarButton("Delete"))
                     Delete();
 
-                SirenixEditorGUI.EndHorizontalToolbar();
             }
         }
+        SirenixEditorGUI.EndHorizontalToolbar();
     }
 
     public class CustomItem
@@ -158,7 +165,7 @@ public class ItemEditor : OdinMenuEditorWindow
             _item.Name = _customItem.Name;
             _item.ID = _customItem.ID;
             _item.Description = _customItem.Description;
-            _item.Reference = _customItem.Reference;
+            _item.Behaviour = _customItem.Behaviour;
             _item.Labels = _customItem.Labels;
 
             AssetDatabase.CreateAsset(_item, $"{TYPE_PATH}/{_item.ID}.asset");
@@ -191,8 +198,8 @@ public class ItemEditor : OdinMenuEditorWindow
             public string Description;
             [Required, OdinSerialize, HideLabel, Indent]
             [ListDrawerSettings(Expanded = true)]
-            public IItem Reference;
-            public string[] Labels;
+            public IItem Behaviour;
+            public List<string> Labels;
         }
 
     }

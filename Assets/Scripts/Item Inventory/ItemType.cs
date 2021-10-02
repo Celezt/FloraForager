@@ -9,6 +9,7 @@ using UnityEngine.AddressableAssets;
 using Newtonsoft.Json;
 
 [CreateAssetMenu(fileName = "New ItemType", menuName = "Inventory/ItemType")]
+[System.Serializable]
 public class ItemType : SerializedScriptableObject
 {
     [PreviewField(120), HideLabel]
@@ -22,13 +23,24 @@ public class ItemType : SerializedScriptableObject
     public string Description;
     [Required, OdinSerialize, HideLabel]
     [ListDrawerSettings(Expanded = true)]
-    public IItem Reference;
-    public string[] Labels;
+    public IItem Behaviour;
+    public List<string> Labels;
 
 #if UNITY_EDITOR
-    public void Awake()
+    public void OnValidate()
     {
         ID = Path.GetFileNameWithoutExtension(AssetDatabase.GetAssetPath(this));
     }
 #endif
+
+    private void OnEnable()
+    {
+        ItemTypeSettings.Instance.AddItemType(this);
+    }
+
+    private void OnDisable()
+    {
+        if (ItemTypeSettings.Instance != null)
+            ItemTypeSettings.Instance.RemoveItemType(this);
+    }
 }
