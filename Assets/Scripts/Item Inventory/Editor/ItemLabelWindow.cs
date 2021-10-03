@@ -1,3 +1,4 @@
+using System.Linq;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -25,7 +26,7 @@ public class ItemLabelWindow : EditorWindow
         _settings = settings;
 
         titleContent = new GUIContent("Item Labels");
-        _reorderableLabels = new ReorderableList(_settings.Labels, typeof(string), true, false, true, true);
+        _reorderableLabels = new ReorderableList(new List<string>(_settings.Labels.AsEnumerable()), typeof(string), true, false, true, true);
         _reorderableLabels.drawElementCallback += DrawLabelNameCallback;
         _reorderableLabels.onAddDropdownCallback += OnAddLabelCallback;
         _reorderableLabels.onRemoveCallback += OnRemoveLabelCallback;
@@ -42,6 +43,7 @@ public class ItemLabelWindow : EditorWindow
 
     private void DrawLabelNameCallback(Rect rect, int index, bool isActive, bool isFocused)
     {
+        Debug.Log((_isEditing && index == _activeIndex) + " " + _settings.Labels.Count);
         string oldName = _settings.Labels[index];
 
         if (_isEditing && index == _activeIndex)

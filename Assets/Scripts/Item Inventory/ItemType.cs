@@ -5,42 +5,98 @@ using Sirenix.OdinInspector;
 using Sirenix.Serialization;
 using System.IO;
 using UnityEditor;
-using UnityEngine.AddressableAssets;
 using Newtonsoft.Json;
 
 [CreateAssetMenu(fileName = "New ItemType", menuName = "Inventory/ItemType")]
 [System.Serializable]
 public class ItemType : SerializedScriptableObject
 {
+    public string ID { get; set; }
+
     [PreviewField(120), HideLabel]
     [HorizontalGroup("Group 1", 120)]
     public Sprite Icon;
     [VerticalGroup("Group 1/Right"), LabelWidth(80)]
     public string Name;
-    [VerticalGroup("Group 1/Right"), LabelWidth(80), ReadOnly]
-    public string ID;
+    [SerializeField, VerticalGroup("Group 1/Right"), LabelWidth(80), ReadOnly]
+    private string _id;
     [VerticalGroup("Group 1/Right"), TextArea(5, 30)]
     public string Description;
     [Required, OdinSerialize, HideLabel]
     [ListDrawerSettings(Expanded = true)]
     public IItem Behaviour;
-    public List<string> Labels;
+    [OdinSerialize]
+    public HashSet<string> Labels { get; set; } = new HashSet<string>() { };
 
-#if UNITY_EDITOR
-    public void OnValidate()
+    private bool _initialized;
+
+    public void Create()
     {
-        ID = Path.GetFileNameWithoutExtension(AssetDatabase.GetAssetPath(this));
+        if (_initialized)
+            return;
+
+        if (string.IsNullOrEmpty(ID))
+        {
+            ID = Path.GetFileNameWithoutExtension(AssetDatabase.GetAssetPath(this));
+        }
+
+        if (!string.IsNullOrEmpty(ID))
+        {
+            ItemTypeSettings.Instance.AddItemType(this);
+            _initialized = true;
+        }
     }
-#endif
+
+    public void Remove()
+    {
+        ItemTypeSettings settings = ItemTypeSettings.Instance;
+        if (settings != null)
+        {
+            settings.RemoveItemType(this);
+        }
+    }
+
+    public void Rename()
+    {
+        string oldID = ID;
+        ID = Path.GetFileNameWithoutExtension(AssetDatabase.GetAssetPath(this));
+        _id = ID;
+
+        if (oldID != ID)
+        {
+            ItemTypeSettings.Instance.RenameID(oldID, ID);
+        }
+    }
+
+    private void Awake()
+    {
+        Create();
+
+        if (_initialized)
+            Rename();
+    }
 
     private void OnEnable()
     {
-        ItemTypeSettings.Instance.AddItemType(this);
+        _id = ID;
     }
 
-    private void OnDisable()
+    private void OnDestroy()
     {
-        if (ItemTypeSettings.Instance != null)
-            ItemTypeSettings.Instance.RemoveItemType(this);
+        Remove();
     }
+
+#if UNITY_EDITOR
+    public class DescriptorDeleteDetector : UnityEditor.AssetModificationProcessor
+    {
+        static AssetDeleteResult OnWillDeleteAsset(string path, RemoveAssetOptions opt)
+        {
+            if (AssetDatabase.GetMainAssetTypeAtPath(path) == typeof(ItemType))
+            {
+                ItemTypeSettings.Instance.RemoveItemType(Path.GetFileNameWithoutExtension(path));
+            }
+            return AssetDeleteResult.DidNotDelete;
+        }
+    }
+#endif
 }

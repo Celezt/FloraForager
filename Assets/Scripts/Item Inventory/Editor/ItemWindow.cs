@@ -15,22 +15,25 @@ public class ItemWindow : OdinMenuEditorWindow
     private const string DESCRIPTION_PATH = "Assets/Data/Items/Item Descriptions";
 
     private CustomItem _customItem;
+    private ItemTypeSettings _settings;
 
     [MenuItem("/Tools/Item Editor")]
     private static void OpenWindow()
     {
         ItemWindow window = GetWindow<ItemWindow>();
         window.titleContent = new GUIContent("Items");
-        window.Show();
+        window.Show();        
     }
 
 
     protected override OdinMenuTree BuildMenuTree()
     {
+        _settings = ItemTypeSettings.Instance;
+
         OdinMenuTree tree = new OdinMenuTree();
         tree.Config.DrawSearchToolbar = true;
 
-        _customItem = new CustomItem();
+        _customItem = new CustomItem(_settings);
         tree.Add("Create New", _customItem);
         tree.AddAllAssetsAtPath("Items", TYPE_PATH, typeof(ItemType));
 
@@ -47,11 +50,10 @@ public class ItemWindow : OdinMenuEditorWindow
     protected override void OnBeginDrawEditors()
     {
         OdinMenuTreeSelection selected = MenuTree.Selection;
-        
+        ItemType asset = selected.SelectedValue as ItemType;
+
         void Deserialize()
         {
-            ItemType asset = selected.SelectedValue as ItemType;
-
             string[] files = Directory.GetFiles($"{Application.dataPath}/Data/Items/Item Descriptions/", "*.json", SearchOption.AllDirectories);
             foreach (var file in files)
             {
@@ -69,8 +71,6 @@ public class ItemWindow : OdinMenuEditorWindow
 
         void Serialize()
         {
-            ItemType asset = selected.SelectedValue as ItemType;
-
             string[] files = Directory.GetFiles($"{Application.dataPath}/Data/Items/Item Descriptions/", "*.json", SearchOption.AllDirectories);
             foreach (var file in files)
             {
@@ -90,25 +90,35 @@ public class ItemWindow : OdinMenuEditorWindow
 
         void Delete()
         {
-            ItemType asset = selected.SelectedValue as ItemType;
             string path = AssetDatabase.GetAssetPath(asset);
             AssetDatabase.DeleteAsset(path);
-            File.Delete($"{DESCRIPTION_PATH}/{asset.ID}_en.json");
-
+            AssetDatabase.DeleteAsset($"{DESCRIPTION_PATH}/{asset.ID}_en.json");
             AssetDatabase.SaveAssets();
             AssetDatabase.Refresh();
         }
 
-        void Label()
+        void ManageLabels()
         {
             GetWindow<ItemLabelWindow>(true).Create(ItemTypeSettings.Instance);
         }
 
+        void SetLabel(Rect rect)
+        {
+            Dictionary<string, int> labelCounts = new Dictionary<string, int>();
+
+            foreach (string label in asset.Labels)
+            {
+                int count;
+                labelCounts.TryGetValue(label, out count);
+                count++;
+                labelCounts[label] = count;
+            }
+
+            PopupWindow.Show(rect, new ItemLabelMaskPopupContent(_settings, new List<ItemType>() { asset }, labelCounts));
+        }
+
         Rect rect = SirenixEditorGUI.BeginHorizontalToolbar();
         {
-            if (SirenixEditorGUI.ToolbarButton("Labels"))
-                Label();
-
             if (MenuTree.GetMenuItem("Create New").IsSelected)
             {
                 GUILayout.FlexibleSpace();
@@ -116,22 +126,37 @@ public class ItemWindow : OdinMenuEditorWindow
                 if (SirenixEditorGUI.ToolbarButton("Save"))
                     _customItem.Create();
             }
-            else if (MenuTree.GetMenuItem("Items").IsSelected)
+            else if (selected.Contains(MenuTree.GetMenuItem("Items")))
             {
                 GUILayout.FlexibleSpace();
             }
             else
             {
-                var guiMode = new GUIContent("Convert");
-                Rect rMode = GUILayoutUtility.GetRect(guiMode, EditorStyles.toolbarDropDown);
-                if (EditorGUI.DropdownButton(rMode, guiMode, FocusType.Passive, EditorStyles.toolbarDropDown))
                 {
-                    var menu = new GenericMenu();
-                    menu.AddItem(new GUIContent("Serialize"), false, () => Serialize());
-                    menu.AddItem(new GUIContent("Deserialize"), false, () => Deserialize());
+                    var guiMode = new GUIContent("Labels");
+                    Rect rMode = GUILayoutUtility.GetRect(guiMode, EditorStyles.toolbarDropDown);
+                    if (EditorGUI.DropdownButton(rMode, guiMode, FocusType.Passive, EditorStyles.toolbarDropDown))
+                    {
+                        var menu = new GenericMenu();
+                        menu.AddItem(new GUIContent("set Labels"), false, () => SetLabel(rMode));
+                        menu.AddItem(new GUIContent("Manage Labels"), false, () => ManageLabels());
 
-                    menu.DropDown(rect);
+                        menu.DropDown(rect);
+                    }
                 }
+
+                {
+                    var guiMode = new GUIContent("Convert");
+                    Rect rMode = GUILayoutUtility.GetRect(guiMode, EditorStyles.toolbarDropDown);
+                    if (EditorGUI.DropdownButton(rMode, guiMode, FocusType.Passive, EditorStyles.toolbarDropDown))
+                    {
+                        var menu = new GenericMenu();
+                        menu.AddItem(new GUIContent("Serialize"), false, () => Serialize());
+                        menu.AddItem(new GUIContent("Deserialize"), false, () => Deserialize());
+
+                        menu.DropDown(rect);
+                    }
+                }          
 
                 GUILayout.FlexibleSpace();
 
@@ -151,8 +176,11 @@ public class ItemWindow : OdinMenuEditorWindow
 
         private ItemType _item;
 
-        public CustomItem()
+        private ItemTypeSettings _settings;
+
+        public CustomItem(ItemTypeSettings settings)
         {
+            _settings = settings;
             _customItem = ScriptableObject.CreateInstance<CustomItemType>();
             _customItem.Name = "New Item";
             _customItem.ID = "new_item";
@@ -163,13 +191,13 @@ public class ItemWindow : OdinMenuEditorWindow
             _item = CreateInstance<ItemType>();
             _item.Icon = _customItem.Icon;
             _item.Name = _customItem.Name;
-            _item.ID = _customItem.ID;
+            _item.ID = _settings.GetUniqueID(_customItem.ID);
             _item.Description = _customItem.Description;
             _item.Behaviour = _customItem.Behaviour;
             _item.Labels = _customItem.Labels;
+            _item.Create();
 
             AssetDatabase.CreateAsset(_item, $"{TYPE_PATH}/{_item.ID}.asset");
-
             ItemDescriptionAsset descriptionAsset = new ItemDescriptionAsset { Description = _item.Description, Name = _item.Name };
             string serialized = JsonConvert.SerializeObject(descriptionAsset, Formatting.Indented);
 
@@ -199,7 +227,8 @@ public class ItemWindow : OdinMenuEditorWindow
             [Required, OdinSerialize, HideLabel, Indent]
             [ListDrawerSettings(Expanded = true)]
             public IItem Behaviour;
-            public List<string> Labels;
+            [HideInInspector]
+            public HashSet<string> Labels = new HashSet<string>() { };
         }
 
     }
