@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.InputSystem;
+using MyBox;
 
 public enum Relation
 {
@@ -16,7 +17,7 @@ public class RelationshipManager : MonoBehaviour
 {
 
     private Relation relation;
-    [SerializeField] float minRelation = -100, maxRelation = 100;
+    [SerializeField] MinMaxFloat RelationsRange = new MinMaxFloat(-100, 100);
 
     [SerializeField] float curRelation;
 
@@ -25,11 +26,11 @@ public class RelationshipManager : MonoBehaviour
     public void AddRelation(float value)
     {
         curRelation += value;
-        curRelation = Mathf.Clamp(curRelation, minRelation, maxRelation);
+        curRelation = Mathf.Clamp(curRelation, RelationsRange.Min, RelationsRange.Max);
 
-        float difference = maxRelation - minRelation;
+        float difference = RelationsRange.Length();
 
-        float temp = curRelation - minRelation;
+        float temp = curRelation - RelationsRange.Min;
 
         float procentage = temp / difference;
 
