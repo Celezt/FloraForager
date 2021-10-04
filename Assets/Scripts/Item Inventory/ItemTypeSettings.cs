@@ -21,13 +21,15 @@ public class ItemTypeSettings : SerializedScriptableObject
     public IReadOnlyDictionary<string, Sprite> ItemIconChunk => _itemIconChunk;
 
     [SerializeField, ReadOnly, ListDrawerSettings(Expanded = true)]
-    private List<string> _labels = new List<string>();
+    public List<string> _labels = new List<string>();
     [SerializeField, ReadOnly]
     private Dictionary<string, HashSet<string>> _itemLabelChunk = new Dictionary<string, HashSet<string>>();
     [SerializeField, ReadOnly]
     private Dictionary<string, ItemType> _itemTypeChunk = new Dictionary<string, ItemType>();
     [SerializeField, ReadOnly]
     private Dictionary<string, Sprite> _itemIconChunk = new Dictionary<string, Sprite>();
+
+   
 
     public bool RemoveLabel(string name) => _labels.Remove(name);
 

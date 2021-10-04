@@ -9,8 +9,6 @@ public class ItemLabelMaskPopupContent : PopupWindowContent
     private List<ItemType> _itemTypes;
     private Dictionary<string, int> _labelCount;
 
-    private GUIStyle _toggleMixer;
-
     private int _lastItemCount = -1;
     Vector2 _rect;
     Vector2 _scrollPosition;
@@ -42,7 +40,7 @@ public class ItemLabelMaskPopupContent : PopupWindowContent
             float maxWidht = 0.0f;
             GUIContent content = new GUIContent(maxString);
             GUI.skin.toggle.CalcMinMaxWidth(content, out minWidth, out maxWidht);
-            var height = GUI.skin.toggle.CalcHeight(content, maxWidht) + 3.5f;
+            var height = UnityEngine.GUI.skin.toggle.CalcHeight(content, maxWidht) + 3.5f;
             _rect = new Vector2(Mathf.Clamp(maxWidht + 35, 125, 600), Mathf.Clamp(labels.Count * height + 25, 30, 150));
             _lastItemCount = labels.Count;
         }

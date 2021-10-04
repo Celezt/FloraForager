@@ -26,11 +26,11 @@ public class ItemLabelWindow : EditorWindow
         _settings = settings;
 
         titleContent = new GUIContent("Item Labels");
-        _reorderableLabels = new ReorderableList(new List<string>(_settings.Labels.AsEnumerable()), typeof(string), true, false, true, true);
+        _reorderableLabels = new ReorderableList(_settings._labels, typeof(string), true, false, true, true);
         _reorderableLabels.drawElementCallback += DrawLabelNameCallback;
         _reorderableLabels.onAddDropdownCallback += OnAddLabelCallback;
         _reorderableLabels.onRemoveCallback += OnRemoveLabelCallback;
-        _reorderableLabels.onSelectCallback = list =>
+        _reorderableLabels.onSelectCallback += list =>
         {
             _activeIndex = list.index;
             EndEditMenu();
@@ -43,7 +43,6 @@ public class ItemLabelWindow : EditorWindow
 
     private void DrawLabelNameCallback(Rect rect, int index, bool isActive, bool isFocused)
     {
-        Debug.Log((_isEditing && index == _activeIndex) + " " + _settings.Labels.Count);
         string oldName = _settings.Labels[index];
 
         if (_isEditing && index == _activeIndex)
@@ -69,6 +68,7 @@ public class ItemLabelWindow : EditorWindow
     {
         buttonRect.x = 6;
         buttonRect.y -= 13;
+
         PopupWindow.Show(buttonRect, new LabelNamePopup(position.width, _reorderableLabels.elementHeight, _settings));
     }
 
