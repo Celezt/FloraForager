@@ -7,8 +7,5 @@ public class ItemSlot : MonoBehaviour
 {
     public ItemAsset item;
     public TextMeshProUGUI TextMesh;
-    public void SelectButton() 
-    {
-
-    }
+    public int pos;
 }
