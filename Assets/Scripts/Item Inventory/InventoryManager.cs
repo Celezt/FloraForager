@@ -11,8 +11,7 @@ public class InventoryManager : MonoBehaviour, IDropHandler
 {
     private ItemSlot[] slots;
     public InventoryObject inventory;
-    private ItemSlot selectedSlot;
-    private RectTransform rectTransforms;
+
     GraphicRaycaster m_Raycaster;
     PointerEventData m_PointerEventData;
     EventSystem m_EventSystem;
@@ -39,14 +38,11 @@ public class InventoryManager : MonoBehaviour, IDropHandler
                 inventory.Container[i] = tmp.Items[i];
             }
             slots = GetComponentsInChildren<ItemSlot>();
-            for (int i = 0; i < inventory.Container.Length; i++) // Change this to slots.length // Da faq does this do?
+
+            // Assigns Items to slots
+            for (int i = 0; i < slots.Length; i++) // Assigns Items to slots
             {
-                slots[i].item = inventory.Container[i];
                 slots[i].pos = i;
-            }
-            
-            for (int i = 0; i < 8; i++) // Change this // Assigning Items
-            {
                 if (inventory.Container[i].ID != null)
                 {
                     slots[i].item = inventory.Container[i];
@@ -56,21 +52,15 @@ public class InventoryManager : MonoBehaviour, IDropHandler
                 }
             }
             //inventory.AddItem(new ItemAsset { ID = "Loka", Amount = 10});
-            selectedSlot = slots[0];
             Addressables.Release(handle);
         };
         //selectedSlot = slots[0];
     }
-    public void Update()
-    {
-        
-    }
-    
+
     public void OnDrop(PointerEventData eventData)
     {
         RectTransform uiGrid = transform as RectTransform;
         
-
         if (!RectTransformUtility.RectangleContainsScreenPoint(uiGrid, Mouse.current.position.ReadValue())) // Outside of the ui grid
         {
             Debug.Log("Dropped outside");
@@ -91,11 +81,10 @@ public class InventoryManager : MonoBehaviour, IDropHandler
             m_Raycaster.Raycast(m_PointerEventData, results);
 
             //For every result returned, output the name of the GameObject on the Canvas hit by the Ray
-            int counter = 0;
-            
+            //Find and swap itemslots
             foreach (RaycastResult result in results)
             {
-                Debug.Log("Hit " + result.gameObject.name);
+                //Debug.Log("Hit " + result.gameObject.name);
                 ItemSlot holder = result.gameObject.GetComponent<ItemSlot>();
                 if (holder != null)
                 {
@@ -107,17 +96,8 @@ public class InventoryManager : MonoBehaviour, IDropHandler
                             inventory.Swap(holder.pos,holder2.pos);
                         }
                     }
-                    
                 }
-                
             }
-            Debug.Log(counter.ToString());
-
-            // Find the slot it is being dragged into
-            // Swap with the dragged item's slot
-            
-
-            Debug.Log("Dropped inside");
         }
     }
 }

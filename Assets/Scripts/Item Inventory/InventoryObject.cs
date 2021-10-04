@@ -9,6 +9,8 @@ public class InventoryObject : ScriptableObject
 {
     public event Action<int> InventoryAction = delegate { };
     public ItemAsset[] Container = new ItemAsset[8]; // Change
+    public ItemSlot currentSlot;
+    public int gold;
     public bool IsFull { get; set; }
     public bool AddItem(ItemAsset item)
     {
@@ -41,10 +43,6 @@ public class InventoryObject : ScriptableObject
         Container[pos2] = holder;
         InventoryAction.Invoke(pos);
         InventoryAction.Invoke(pos2);
-    }
-    public void Swap() 
-    {
-    
     }
     public int ExistsAt(string id) 
     {
