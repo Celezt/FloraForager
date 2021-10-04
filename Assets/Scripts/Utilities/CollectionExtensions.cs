@@ -14,4 +14,14 @@ public static class CollectionExtensions
         dict.Add(newKey, value);
         return true;
     }
+
+    public static bool ChangeKey<T>(this ICollection<T> dict, T oldKey, T newKey)
+    {
+        if (!dict.Contains(oldKey))
+            return false;
+
+        dict.Remove(oldKey);
+        dict.Add(newKey);
+        return true;
+    }
 }

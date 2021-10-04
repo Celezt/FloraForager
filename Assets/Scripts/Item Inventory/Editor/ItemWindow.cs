@@ -119,6 +119,7 @@ public class ItemWindow : OdinMenuEditorWindow
                 labelCounts[label] = count;
             }
 
+            FocusWindowIfItsOpen<ItemWindow>();
             rect.x = 180;
             rect.y = 20;
             

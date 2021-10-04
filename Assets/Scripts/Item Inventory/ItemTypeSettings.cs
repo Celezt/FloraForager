@@ -19,6 +19,8 @@ public class ItemTypeSettings : SerializedScriptableObject
     public IReadOnlyList<string> Labels => _labels;
     public IReadOnlyDictionary<string, ItemType> ItemTypeChunk => _itemTypeChunk;
     public IReadOnlyDictionary<string, Sprite> ItemIconChunk => _itemIconChunk;
+    public IReadOnlyDictionary<string, string> ItemNameChunk => _itemNameChunk;
+    public IReadOnlyDictionary<string, HashSet<string>> ItemLabelChunk => _itemLabelChunk;
 
     [SerializeField, ReadOnly, ListDrawerSettings(Expanded = true)]
     public List<string> _labels = new List<string>();
@@ -28,10 +30,8 @@ public class ItemTypeSettings : SerializedScriptableObject
     private Dictionary<string, ItemType> _itemTypeChunk = new Dictionary<string, ItemType>();
     [SerializeField, ReadOnly]
     private Dictionary<string, Sprite> _itemIconChunk = new Dictionary<string, Sprite>();
-
-   
-
-    public bool RemoveLabel(string name) => _labels.Remove(name);
+    [SerializeField, ReadOnly]
+    private Dictionary<string, string> _itemNameChunk = new Dictionary<string, string>();
 
     public int GetIndexOfLabel(string label) => _labels.IndexOf(label);
 
@@ -45,12 +45,32 @@ public class ItemTypeSettings : SerializedScriptableObject
         _itemLabelChunk.Add(id, itemType.Labels);
         _itemTypeChunk.Add(id, itemType);
         _itemIconChunk.Add(id, itemType.Icon);
+        _itemNameChunk.Add(id, itemType.Name);
 
         return true;
     }
 
     public bool RemoveItemType(ItemType itemType) => RemoveItemType(itemType.ID);
-    public bool RemoveItemType(string id) => _itemLabelChunk.Remove(id) && _itemTypeChunk.Remove(id) && _itemIconChunk.Remove(id);
+    public bool RemoveItemType(string id) => 
+        _itemLabelChunk.Remove(id) && 
+        _itemTypeChunk.Remove(id) && 
+        _itemIconChunk.Remove(id) && 
+        _itemNameChunk.Remove(id);
+
+    public bool RemoveLabel(string name)
+    {
+        foreach (KeyValuePair<string, HashSet<string>> labels in _itemLabelChunk)
+        {
+            labels.Value.Remove(name);
+        }
+
+        foreach (KeyValuePair<string, ItemType> item in _itemTypeChunk)
+        {
+            item.Value.Labels.Remove(name);
+        }
+
+        return _labels.Remove(name);
+    }
 
     public bool AddLabel(string name)
     {
@@ -94,12 +114,13 @@ public class ItemTypeSettings : SerializedScriptableObject
             return;
         
         foreach (KeyValuePair<string, HashSet<string>> labels in _itemLabelChunk)
-        {      
-            if (labels.Value.Contains(oldLabelName))
-            {
-                labels.Value.Remove(oldLabelName);
-                labels.Value.Add(newLabelName);
-            }
+        {
+            labels.Value.ChangeKey(oldLabelName, newLabelName);
+        }
+
+        foreach (KeyValuePair<string, ItemType> item in _itemTypeChunk)
+        {
+            item.Value.Labels.ChangeKey(oldLabelName, newLabelName);
         }
 
         RemoveLabel(oldLabelName);
@@ -112,6 +133,7 @@ public class ItemTypeSettings : SerializedScriptableObject
         foreach (ItemType item in itemsTypes)
         {
             item.Labels.Add(label);
+            
         }
     }
 
@@ -141,10 +163,27 @@ public class ItemTypeSettings : SerializedScriptableObject
     {
         _itemTypeChunk.ChangeKey(oldID, newID);
         _itemIconChunk.ChangeKey(oldID, newID);
+        _itemNameChunk.ChangeKey(oldID, newID);
         _itemLabelChunk.ChangeKey(oldID, newID);
 
         AssetDatabase.RenameAsset($"{DESCRIPTION_PATH}/{oldID}_en.json", $"{newID}_en.json");
         AssetDatabase.Refresh();
+    }
+
+    public void ChangeIcon(string id, Sprite newIcon)
+    {
+        if (!_itemIconChunk.ContainsKey(id))
+            return;
+
+        _itemIconChunk[id] = newIcon;
+    }
+
+    public void ChangeName(string id, string newName)
+    {
+        if (!_itemNameChunk.ContainsKey(id))
+            return;
+
+        _itemNameChunk[id] = newName;
     }
 
     private void Awake()

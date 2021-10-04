@@ -84,6 +84,20 @@ public class ItemType : SerializedScriptableObject
     }
 
 #if UNITY_EDITOR
+    private void OnValidate()
+    {
+        ItemTypeSettings settings = ItemTypeSettings.Instance;
+
+        if (settings == null)
+            return;
+
+        if (Icon != null)
+            settings.ChangeIcon(ID, Icon);
+
+        if (!string.IsNullOrEmpty(Name))
+            settings.ChangeName(ID, Name);
+    }
+
     public class DescriptorDeleteDetector : UnityEditor.AssetModificationProcessor
     {
         static AssetDeleteResult OnWillDeleteAsset(string path, RemoveAssetOptions opt)
