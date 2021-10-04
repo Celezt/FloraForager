@@ -7,32 +7,33 @@ using Sirenix.OdinInspector.Editor;
 using Sirenix.Utilities.Editor;
 using Sirenix.Serialization;
 using System.IO;
-using UnityEngine.AddressableAssets;
 using Newtonsoft.Json;
-using UnityEditor.AddressableAssets.Settings;
-using UnityEditor.AddressableAssets;
-using System.Linq;
 
-public class ItemEditor : OdinMenuEditorWindow
+public class ItemWindow : OdinMenuEditorWindow
 {
     private const string TYPE_PATH = "Assets/Data/Items/Item Types";
     private const string DESCRIPTION_PATH = "Assets/Data/Items/Item Descriptions";
-    private const string DESCRIPTION_LABEL = "item_description";
 
     private CustomItem _customItem;
+    private ItemTypeSettings _settings;
 
-    [MenuItem("/Tools/Items")]
+    [MenuItem("/Tools/Item Editor")]
     private static void OpenWindow()
     {
-        GetWindow<ItemEditor>().Show();
+        ItemWindow window = GetWindow<ItemWindow>();
+        window.titleContent = new GUIContent("Items");
+        window.Show();        
     }
 
 
     protected override OdinMenuTree BuildMenuTree()
     {
-        OdinMenuTree tree = new OdinMenuTree();
+        _settings = ItemTypeSettings.Instance;
 
-        _customItem = new CustomItem();
+        OdinMenuTree tree = new OdinMenuTree();
+        tree.Config.DrawSearchToolbar = true;
+
+        _customItem = new CustomItem(_settings);
         tree.Add("Create New", _customItem);
         tree.AddAllAssetsAtPath("Items", TYPE_PATH, typeof(ItemType));
 
@@ -46,14 +47,18 @@ public class ItemEditor : OdinMenuEditorWindow
         _customItem?.Destroy();
     }
 
+    protected override void OnGUI()
+    {
+        base.OnGUI();
+    }
+
     protected override void OnBeginDrawEditors()
     {
         OdinMenuTreeSelection selected = MenuTree.Selection;
+        ItemType asset = selected.SelectedValue as ItemType;
 
         void Deserialize()
         {
-            ItemType asset = selected.SelectedValue as ItemType;
-
             string[] files = Directory.GetFiles($"{Application.dataPath}/Data/Items/Item Descriptions/", "*.json", SearchOption.AllDirectories);
             foreach (var file in files)
             {
@@ -69,21 +74,8 @@ public class ItemEditor : OdinMenuEditorWindow
             }
         }
 
-        void Delete()
-        {
-            ItemType asset = selected.SelectedValue as ItemType;
-            string path = AssetDatabase.GetAssetPath(asset);
-            AssetDatabase.DeleteAsset(path);
-            File.Delete($"{DESCRIPTION_PATH}/{asset.ID}_en.json");
-
-            AssetDatabase.SaveAssets();
-            AssetDatabase.Refresh();
-        }
-
         void Serialize()
         {
-            ItemType asset = selected.SelectedValue as ItemType;
-
             string[] files = Directory.GetFiles($"{Application.dataPath}/Data/Items/Item Descriptions/", "*.json", SearchOption.AllDirectories);
             foreach (var file in files)
             {
@@ -101,7 +93,40 @@ public class ItemEditor : OdinMenuEditorWindow
             AssetDatabase.Refresh();
         }
 
-        SirenixEditorGUI.BeginHorizontalToolbar();
+        void Delete()
+        {
+            string path = AssetDatabase.GetAssetPath(asset);
+            AssetDatabase.DeleteAsset(path);
+            AssetDatabase.DeleteAsset($"{DESCRIPTION_PATH}/{asset.ID}_en.json");
+            AssetDatabase.SaveAssets();
+            AssetDatabase.Refresh();
+        }
+
+        void ManageLabels()
+        {
+            GetWindow<ItemLabelWindow>(true).Create(ItemTypeSettings.Instance);
+        }
+
+        void SetLabel(Rect rect)
+        {
+            Dictionary<string, int> labelCounts = new Dictionary<string, int>();
+
+            foreach (string label in asset.Labels)
+            {
+                int count;
+                labelCounts.TryGetValue(label, out count);
+                count++;
+                labelCounts[label] = count;
+            }
+
+            FocusWindowIfItsOpen<ItemWindow>();
+            rect.x = 180;
+            rect.y = 20;
+            
+            PopupWindow.Show(rect, new ItemLabelMaskPopupContent(_settings, new List<ItemType>() { asset }, labelCounts));
+        }
+
+        Rect rect = SirenixEditorGUI.BeginHorizontalToolbar();
         {
             if (MenuTree.GetMenuItem("Create New").IsSelected)
             {
@@ -109,31 +134,47 @@ public class ItemEditor : OdinMenuEditorWindow
 
                 if (SirenixEditorGUI.ToolbarButton("Save"))
                     _customItem.Create();
-
-                SirenixEditorGUI.EndHorizontalToolbar();
             }
-            else if (MenuTree.GetMenuItem("Items").IsSelected)
+            else if (selected.Contains(MenuTree.GetMenuItem("Items")))
             {
                 GUILayout.FlexibleSpace();
-
-                SirenixEditorGUI.EndHorizontalToolbar();
             }
             else
             {
-                if (SirenixEditorGUI.ToolbarButton("Serialize"))
-                    Serialize();
+                {
+                    var guiMode = new GUIContent("Labels");
+                    Rect rMode = GUILayoutUtility.GetRect(guiMode, EditorStyles.toolbarDropDown);
+                    if (EditorGUI.DropdownButton(rMode, guiMode, FocusType.Passive, EditorStyles.toolbarDropDown))
+                    {
+                        var menu = new GenericMenu();
+                        menu.AddItem(new GUIContent("set Labels"), false, () => SetLabel(rMode));
+                        menu.AddItem(new GUIContent("Manage Labels"), false, () => ManageLabels());
 
-                if (SirenixEditorGUI.ToolbarButton("Deserialize"))
-                    Deserialize();
+                        menu.DropDown(rect);
+                    }
+                }
+
+                {
+                    var guiMode = new GUIContent("Convert");
+                    Rect rMode = GUILayoutUtility.GetRect(guiMode, EditorStyles.toolbarDropDown);
+                    if (EditorGUI.DropdownButton(rMode, guiMode, FocusType.Passive, EditorStyles.toolbarDropDown))
+                    {
+                        var menu = new GenericMenu();
+                        menu.AddItem(new GUIContent("Serialize"), false, () => Serialize());
+                        menu.AddItem(new GUIContent("Deserialize"), false, () => Deserialize());
+
+                        menu.DropDown(rect);
+                    }
+                }          
 
                 GUILayout.FlexibleSpace();
 
                 if (SirenixEditorGUI.ToolbarButton("Delete"))
                     Delete();
 
-                SirenixEditorGUI.EndHorizontalToolbar();
             }
         }
+        SirenixEditorGUI.EndHorizontalToolbar();
     }
 
     public class CustomItem
@@ -144,8 +185,11 @@ public class ItemEditor : OdinMenuEditorWindow
 
         private ItemType _item;
 
-        public CustomItem()
+        private ItemTypeSettings _settings;
+
+        public CustomItem(ItemTypeSettings settings)
         {
+            _settings = settings;
             _customItem = ScriptableObject.CreateInstance<CustomItemType>();
             _customItem.Name = "New Item";
             _customItem.ID = "new_item";
@@ -156,13 +200,13 @@ public class ItemEditor : OdinMenuEditorWindow
             _item = CreateInstance<ItemType>();
             _item.Icon = _customItem.Icon;
             _item.Name = _customItem.Name;
-            _item.ID = _customItem.ID;
+            _item.ID = _settings.GetUniqueID(_customItem.ID);
             _item.Description = _customItem.Description;
-            _item.Reference = _customItem.Reference;
+            _item.Behaviour = _customItem.Behaviour;
             _item.Labels = _customItem.Labels;
+            _item.Create();
 
             AssetDatabase.CreateAsset(_item, $"{TYPE_PATH}/{_item.ID}.asset");
-
             ItemDescriptionAsset descriptionAsset = new ItemDescriptionAsset { Description = _item.Description, Name = _item.Name };
             string serialized = JsonConvert.SerializeObject(descriptionAsset, Formatting.Indented);
 
@@ -191,8 +235,9 @@ public class ItemEditor : OdinMenuEditorWindow
             public string Description;
             [Required, OdinSerialize, HideLabel, Indent]
             [ListDrawerSettings(Expanded = true)]
-            public IItem Reference;
-            public string[] Labels;
+            public IItem Behaviour;
+            [HideInInspector]
+            public HashSet<string> Labels = new HashSet<string>() { };
         }
 
     }

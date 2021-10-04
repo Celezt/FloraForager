@@ -10,12 +10,12 @@ public struct ScytheItem : IUse, IItem
     [OdinSerialize]
     public uint ItemStack { get; set; }
 
-    public void OnActive(UseContext context)
+    public void OnEquip(UseContext context)
     {
 
     }
 
-    public void OnInactive(UseContext context)
+    public void OnUnequip(UseContext context)
     {
 
     }

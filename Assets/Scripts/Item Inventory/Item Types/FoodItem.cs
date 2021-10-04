@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using Sirenix.Serialization;
+using MyBox;
 
 public struct FoodItem : IUse, IItem, IStamina
 {
@@ -12,13 +13,12 @@ public struct FoodItem : IUse, IItem, IStamina
     [OdinSerialize]
     public float StaminaChange { get; set; }
 
-
-    public void OnActive(UseContext context)
+    public void OnEquip(UseContext context)
     {
 
     }
 
-    public void OnInactive(UseContext context)
+    public void OnUnequip(UseContext context)
     {
 
     }
