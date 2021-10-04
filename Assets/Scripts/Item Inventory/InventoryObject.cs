@@ -8,13 +8,12 @@ using UnityEngine;
 public class InventoryObject : ScriptableObject
 {
     public event Action<int> InventoryAction = delegate { };
-    //public List<InventorySlot> container = new List<InventorySlot>();
     public ItemAsset[] Container = new ItemAsset[8];
     public bool IsFull { get; set; }
     public bool AddItem(ItemAsset item)
     {
         if (!IsFull)
-        {            
+        {
             int pos = ExistsAt(item.ID);
             if (pos != -1)
             {
@@ -35,7 +34,12 @@ public class InventoryObject : ScriptableObject
         }
         return false;
     }
-    
+    public void Swap(int pos, int pos2)
+    {
+        ItemAsset holder = Container[pos];
+        Container[pos] = Container[pos2];
+        Container[pos2] = holder;
+    }
     public int ExistsAt(string id) 
     {
         for (int i = 0; i < Container.Length; i++)
@@ -62,58 +66,3 @@ public class InventoryObject : ScriptableObject
         return -1;
     }
 }
-
-/*
-[System.Serializable]
-public class InventorySlot
-{
-    public ItemObject item;
-    public int amount;
-    private bool isFull;
-
-    public bool IsEmpty() 
-    {
-        if (item != null)
-        {
-            return true;
-        }
-        return false;
-    }
-    public InventorySlot(ItemObject _item, int _amount)
-    {
-        item = _item;
-        AddAmount(_amount);
-    }
-    public InventorySlot(InventorySlot other)
-    {
-        item = other.item;
-        amount = other.amount;
-        isFull = other.IsFull;
-    }    
-    
-    public void RemoveFromSlot() // Removes from slot
-    {
-        item = null;
-        amount = 0;
-        isFull = false;
-    }
-
-    public bool IsFull { get => isFull;}
-
-    public bool AddAmount(int value) // Returns if adding was successful
-    {
-        bool added = false;
-        if (amount + value < item.maxAmount) // lower than max value
-        {
-            amount += value;
-            added = true;
-        }
-        else if (amount + value == item.maxAmount) // Equals max value
-        {
-            amount += value;
-            isFull = true;
-            added = true;
-        }
-        return added; // Over max value - No Add        
-    
-}}*/
