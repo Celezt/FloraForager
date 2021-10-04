@@ -58,7 +58,7 @@ public class ItemLabelMaskPopupContent : PopupWindowContent
             GUIContent content = new GUIContent(maxString);
 
             GUI.skin.toggle.CalcMinMaxWidth(content, out minWidth, out maxWidht);
-            var height = GUI.skin.toggle.CalcHeight(content, maxWidht) + 3.5f;
+            var height = GUI.skin.toggle.CalcHeight(content, maxWidht) + 8.5f;
             _rect = new Vector2(Mathf.Clamp(maxWidht + 35, 125, 600), Mathf.Clamp(labels.Count * height + 25, 30, 150));
             _lastItemCount = labels.Count;
         }

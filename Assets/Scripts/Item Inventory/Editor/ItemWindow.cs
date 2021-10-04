@@ -47,6 +47,11 @@ public class ItemWindow : OdinMenuEditorWindow
         _customItem?.Destroy();
     }
 
+    protected override void OnGUI()
+    {
+        base.OnGUI();
+    }
+
     protected override void OnBeginDrawEditors()
     {
         OdinMenuTreeSelection selected = MenuTree.Selection;
@@ -114,7 +119,9 @@ public class ItemWindow : OdinMenuEditorWindow
                 labelCounts[label] = count;
             }
 
-
+            rect.x = 180;
+            rect.y = 20;
+            
             PopupWindow.Show(rect, new ItemLabelMaskPopupContent(_settings, new List<ItemType>() { asset }, labelCounts));
         }
 

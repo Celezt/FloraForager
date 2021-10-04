@@ -45,6 +45,8 @@ public class ItemType : SerializedScriptableObject
             ItemTypeSettings.Instance.AddItemType(this);
             _initialized = true;
         }
+
+        _id = ID;
     }
 
     public void Remove()
@@ -74,11 +76,6 @@ public class ItemType : SerializedScriptableObject
 
         if (_initialized)
             Rename();
-    }
-
-    private void OnEnable()
-    {
-        _id = ID;
     }
 
     private void OnDestroy()
