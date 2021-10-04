@@ -114,6 +114,7 @@ public class ItemWindow : OdinMenuEditorWindow
                 labelCounts[label] = count;
             }
 
+
             PopupWindow.Show(rect, new ItemLabelMaskPopupContent(_settings, new List<ItemType>() { asset }, labelCounts));
         }
 
@@ -138,7 +139,7 @@ public class ItemWindow : OdinMenuEditorWindow
                     if (EditorGUI.DropdownButton(rMode, guiMode, FocusType.Passive, EditorStyles.toolbarDropDown))
                     {
                         var menu = new GenericMenu();
-                        menu.AddItem(new GUIContent("set Labels"), false, () => SetLabel(rect));
+                        menu.AddItem(new GUIContent("set Labels"), false, () => SetLabel(rMode));
                         menu.AddItem(new GUIContent("Manage Labels"), false, () => ManageLabels());
 
                         menu.DropDown(rect);

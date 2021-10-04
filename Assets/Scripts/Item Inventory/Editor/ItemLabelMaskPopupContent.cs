@@ -10,7 +10,7 @@ public class ItemLabelMaskPopupContent : PopupWindowContent
     private Dictionary<string, int> _labelCount;
 
     private int _lastItemCount = -1;
-    Vector2 _rect;
+    Vector2 _rect = new Vector2(100, 200);
     Vector2 _scrollPosition;
 
     public ItemLabelMaskPopupContent(ItemTypeSettings settings, List<ItemType> itemTypes, Dictionary<string, int> labelCount)
@@ -22,29 +22,6 @@ public class ItemLabelMaskPopupContent : PopupWindowContent
 
     public override Vector2 GetWindowSize()
     {
-        IReadOnlyList<string> labels = _settings.Labels;
-        if (_lastItemCount != labels.Count)
-        {
-            int maxLength = 0;
-            string maxString = "";
-            for (int i = 0; i < labels.Count; i++)
-            {
-                int length = labels[i].Length;
-                if (length > maxLength)
-                {
-                    maxLength = length;
-                    maxString = labels[i];
-                }
-            }
-            float minWidth = 0.0f;
-            float maxWidht = 0.0f;
-            GUIContent content = new GUIContent(maxString);
-            GUI.skin.toggle.CalcMinMaxWidth(content, out minWidth, out maxWidht);
-            var height = UnityEngine.GUI.skin.toggle.CalcHeight(content, maxWidht) + 3.5f;
-            _rect = new Vector2(Mathf.Clamp(maxWidht + 35, 125, 600), Mathf.Clamp(labels.Count * height + 25, 30, 150));
-            _lastItemCount = labels.Count;
-        }
-
         return _rect;
     }
 
@@ -62,10 +39,32 @@ public class ItemLabelMaskPopupContent : PopupWindowContent
 
     public override void OnGUI(Rect rect)
     {
+        IReadOnlyList<string> labels = _settings.Labels;
+        if (_lastItemCount != labels.Count)
+        {
+            int maxLength = 0;
+            string maxString = "";
+            for (int i = 0; i < labels.Count; i++)
+            {
+                int length = labels[i].Length;
+                if (length > maxLength)
+                {
+                    maxLength = length;
+                    maxString = labels[i];
+                }
+            }
+            float minWidth;
+            float maxWidht;
+            GUIContent content = new GUIContent(maxString);
+
+            GUI.skin.toggle.CalcMinMaxWidth(content, out minWidth, out maxWidht);
+            var height = GUI.skin.toggle.CalcHeight(content, maxWidht) + 3.5f;
+            _rect = new Vector2(Mathf.Clamp(maxWidht + 35, 125, 600), Mathf.Clamp(labels.Count * height + 25, 30, 150));
+            _lastItemCount = labels.Count;
+        }
+
         if (_itemTypes.Count == 0)
             return;
-
-        IReadOnlyList<string> labels = _settings.Labels;
 
         var areaRect = new Rect(rect.xMin + 3, rect.yMin + 3, rect.width - 6, rect.height - 6);
         GUILayout.BeginArea(areaRect);
