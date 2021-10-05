@@ -4,6 +4,7 @@ using UnityEngine.InputSystem;
 /// <summary>
 /// entity who gives out commissions to the player (attach to NPC)
 /// </summary>
+[RequireComponent(typeof(NPC), typeof(RelationshipManager))]
 public class CommissionGiver : MonoBehaviour
 {
     [SerializeField] private CommissionData[] _CommissionsData; // data used to create commissions
