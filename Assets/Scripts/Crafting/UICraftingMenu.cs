@@ -47,7 +47,7 @@ public class UICraftingMenu : Singleton<UICraftingMenu>
 
     public void CraftItem()
     {
-        if (_SelectedItem == null && CanCraft(_SelectedItem))
+        if (_SelectedItem == null || !CanCraft(_SelectedItem))
             return;
 
         string itemID = string.Empty;
@@ -61,6 +61,7 @@ public class UICraftingMenu : Singleton<UICraftingMenu>
         }
 
         itemID = _SelectedItem.ItemID; // add this item to player's inventory
+
 
     }
 
