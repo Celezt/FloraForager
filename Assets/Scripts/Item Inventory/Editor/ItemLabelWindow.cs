@@ -26,7 +26,7 @@ public class ItemLabelWindow : EditorWindow
         _settings = settings;
 
         titleContent = new GUIContent("Item Labels");
-        _reorderableLabels = new ReorderableList(_settings._labels, typeof(string), true, false, true, true);
+        _reorderableLabels = new ReorderableList(_settings._labelData.Label, typeof(string), true, false, true, true);
         _reorderableLabels.drawElementCallback += DrawLabelNameCallback;
         _reorderableLabels.onAddDropdownCallback += OnAddLabelCallback;
         _reorderableLabels.onRemoveCallback += OnRemoveLabelCallback;
@@ -68,7 +68,7 @@ public class ItemLabelWindow : EditorWindow
     {
         buttonRect.x = 6;
         buttonRect.y -= 13;
-
+        
         PopupWindow.Show(buttonRect, new LabelNamePopup(position.width, _reorderableLabels.elementHeight, _settings));
     }
 

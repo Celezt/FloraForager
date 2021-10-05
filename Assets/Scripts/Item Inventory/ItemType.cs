@@ -26,7 +26,7 @@ public class ItemType : SerializedScriptableObject
     [ListDrawerSettings(Expanded = true)]
     public IItem Behaviour;
     [OdinSerialize]
-    public HashSet<string> Labels { get; set; } = new HashSet<string>() { };
+    public HashSet<string> Labels { get; set; } = new HashSet<string>();
 
     private bool _initialized;
 

@@ -28,6 +28,7 @@ public class ItemLabelMaskPopupContent : PopupWindowContent
     private void AttachLabelForItem(string label)
     {
         _settings.AttachLabelForItemType(_itemTypes, label);
+
         _labelCount[label] = _itemTypes.Count;
     }
 

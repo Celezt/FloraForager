@@ -10,7 +10,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 00a108d415261c34b9fe06714b46e722, type: 3}
-  m_Name: carrot_item
+  m_Name: new_item
   m_EditorClassIdentifier: 
   serializationData:
     SerializedFormat: 2
@@ -26,7 +26,13 @@ MonoBehaviour:
       Data: 0|System.Collections.Generic.HashSet`1[[System.String, mscorlib]], System.Core
     - Name: 
       Entry: 12
-      Data: 0
+      Data: 2
+    - Name: 
+      Entry: 1
+      Data: food
+    - Name: 
+      Entry: 1
+      Data: vegetable
     - Name: 
       Entry: 13
       Data: 
@@ -34,18 +40,9 @@ MonoBehaviour:
       Entry: 8
       Data: 
     - Name: Behaviour
-      Entry: 7
-      Data: 1|FoodItem, Assembly-CSharp
-    - Name: ItemStack
-      Entry: 3
-      Data: 20
-    - Name: StaminaChange
-      Entry: 4
-      Data: 10
-    - Name: 
-      Entry: 8
+      Entry: 6
       Data: 
   Icon: {fileID: 0}
-  Name: Carrot
-  _id: carrot_item
-  Description: Carrot
+  Name: New Item
+  _id: new_item
+  Description: Hello

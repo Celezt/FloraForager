@@ -5,6 +5,7 @@ using Sirenix.OdinInspector;
 using Sirenix.Serialization;
 using UnityEditor;
 using System.IO;
+using System;
 
 [CreateAssetMenu(fileName = "ItemTypeSettings", menuName = "Inventory/ItemTypeSettings")]
 [System.Serializable]
@@ -16,15 +17,21 @@ public class ItemTypeSettings : SerializedScriptableObject
 
     private static ItemTypeSettings _instance;
 
-    public IReadOnlyList<string> Labels => _labels;
+    public event Action<ItemType> OnAddItemTypeCallback = delegate { };
+    public event Action<string> OnRemoveItemTypeCallback = delegate { };
+    public event Action<string> OnAddLabelCallback = delegate { };
+    public event Action<string> OnRemoveLabelCallback = delegate { };
+
+    public IReadOnlyList<string> Labels => _labelData.Label;
     public IReadOnlyDictionary<string, ItemType> ItemTypeChunk => _itemTypeChunk;
     public IReadOnlyDictionary<string, Sprite> ItemIconChunk => _itemIconChunk;
     public IReadOnlyDictionary<string, string> ItemNameChunk => _itemNameChunk;
     public IReadOnlyDictionary<string, HashSet<string>> ItemLabelChunk => _itemLabelChunk;
 
-    [SerializeField, ReadOnly, ListDrawerSettings(Expanded = true)]
-    public List<string> _labels = new List<string>();
-    [SerializeField, ReadOnly]
+    //[SerializeField, ReadOnly, ListDrawerSettings(Expanded = true)]
+    //public List<string> _labels = new List<string>();
+    public LabelData _labelData;
+    [OdinSerialize, ReadOnly]
     private Dictionary<string, HashSet<string>> _itemLabelChunk = new Dictionary<string, HashSet<string>>();
     [SerializeField, ReadOnly]
     private Dictionary<string, ItemType> _itemTypeChunk = new Dictionary<string, ItemType>();
@@ -33,8 +40,13 @@ public class ItemTypeSettings : SerializedScriptableObject
     [SerializeField, ReadOnly]
     private Dictionary<string, string> _itemNameChunk = new Dictionary<string, string>();
 
-    public int GetIndexOfLabel(string label) => _labels.IndexOf(label);
+    public int GetIndexOfLabel(string label) => _labelData.Label.IndexOf(label);
 
+    /// <summary>
+    /// Add new <see cref="ItemType"/> to all chunks.
+    /// </summary>
+    /// <param name="itemType">To add.</param>
+    /// <returns>If not already existing.</returns>
     public bool AddItemType(ItemType itemType)
     {
         string id = itemType.ID;
@@ -47,18 +59,43 @@ public class ItemTypeSettings : SerializedScriptableObject
         _itemIconChunk.Add(id, itemType.Icon);
         _itemNameChunk.Add(id, itemType.Name);
 
+        OnAddItemTypeCallback.Invoke(itemType);
+
         return true;
     }
 
+    /// <summary>
+    /// Remove <see cref="ItemType"/> to all chunks.
+    /// </summary>
+    /// <param name="itemType">To remove.</param>
+    /// <returns>If exist.</returns>
     public bool RemoveItemType(ItemType itemType) => RemoveItemType(itemType.ID);
-    public bool RemoveItemType(string id) => 
-        _itemLabelChunk.Remove(id) && 
-        _itemTypeChunk.Remove(id) && 
-        _itemIconChunk.Remove(id) && 
+
+    /// <summary>
+    /// Remove <see cref="ItemType"/> to all chunks.
+    /// </summary>
+    /// <param name="id">To remove.</param>
+    /// <returns>If exist.</returns>
+    public bool RemoveItemType(string id)
+    {
+        if (!_itemTypeChunk.ContainsKey(id))
+            return false;
+
+        OnRemoveItemTypeCallback.Invoke(id);
+
+        _itemLabelChunk.Remove(id);
+        _itemTypeChunk.Remove(id);
+        _itemIconChunk.Remove(id);
         _itemNameChunk.Remove(id);
+
+        return true;
+    }
 
     public bool RemoveLabel(string name)
     {
+        if (!_labelData.Label.Contains(name))
+            return false;
+
         foreach (KeyValuePair<string, HashSet<string>> labels in _itemLabelChunk)
         {
             labels.Value.Remove(name);
@@ -69,34 +106,64 @@ public class ItemTypeSettings : SerializedScriptableObject
             item.Value.Labels.Remove(name);
         }
 
-        return _labels.Remove(name);
+        OnRemoveLabelCallback.Invoke(name);
+
+        // Remove label at index.
+        SerializedObject so = new SerializedObject(_labelData);
+        SerializedProperty labelArray = so.FindProperty(nameof(_labelData.Label));
+        labelArray.DeleteArrayElementAtIndex(_labelData.Label.IndexOf(name));
+        so.ApplyModifiedProperties();
+
+        return true;
     }
 
     public bool AddLabel(string name)
     {
-        if (_labels.Contains(name))
+        if (_labelData.Label.Contains(name))
             return false;
 
-        _labels.Add(name);
+        // Add new label at the end of the list.
+        SerializedObject so = new SerializedObject(_labelData); 
+        SerializedProperty labelArray = so.FindProperty(nameof(_labelData.Label));
+        labelArray.InsertArrayElementAtIndex(labelArray.arraySize);
+        SerializedProperty toChange = labelArray.GetArrayElementAtIndex(labelArray.arraySize - 1);
+        toChange.stringValue = name;
+        so.ApplyModifiedProperties();
+
+        OnAddLabelCallback.Invoke(name);
+
         return true;
     }
 
     public bool AddLabel(string name, int index)
     {
-        if (_labels.Contains(name))
+        if (_labelData.Label.Contains(name))
             return false;
 
-        _labels.Insert(index, name);
+        // Add new label at index.
+        SerializedObject so = new SerializedObject(_labelData);
+        SerializedProperty labelArray = so.FindProperty(nameof(_labelData.Label));
+        SerializedProperty toChange = labelArray.GetArrayElementAtIndex(index);
+        toChange.stringValue = name;
+        so.ApplyModifiedProperties();
+
+        OnAddLabelCallback.Invoke(name);
+
         return true;
     }
 
+    /// <summary>
+    /// Get unique label name by adding a number at the end.
+    /// </summary>
+    /// <param name="name">To uniquify.</param>
+    /// <returns>Empty <see cref="string"/> if not successful.</returns>
     public string GetUniqueLabel(string name)
     {
         var newName = name;
         int counter = 1;
         while (counter < 100)
         {
-            if (!_labels.Contains(newName))
+            if (!_labelData.Label.Contains(newName))
                 return newName;
             newName = name + counter;
             counter++;
@@ -133,7 +200,6 @@ public class ItemTypeSettings : SerializedScriptableObject
         foreach (ItemType item in itemsTypes)
         {
             item.Labels.Add(label);
-            
         }
     }
 
@@ -145,6 +211,11 @@ public class ItemTypeSettings : SerializedScriptableObject
         }
     }
 
+    /// <summary>
+    /// Get unique <see cref="ItemType"/> id by adding a number at the end.
+    /// </summary>
+    /// <param name="id">To uniquify.</param>
+    /// <returns>Empty <see cref="string"/> if not successful.</returns>
     public string GetUniqueID(string id)
     {
         string newId = id;
@@ -172,16 +243,22 @@ public class ItemTypeSettings : SerializedScriptableObject
 
     public void ChangeIcon(string id, Sprite newIcon)
     {
-        if (!_itemIconChunk.ContainsKey(id))
+        if (string.IsNullOrEmpty(id))
             return;
+
+        if (!_itemIconChunk.ContainsKey(id))
+            _itemIconChunk.Add(id, newIcon);
 
         _itemIconChunk[id] = newIcon;
     }
 
     public void ChangeName(string id, string newName)
     {
-        if (!_itemNameChunk.ContainsKey(id))
+        if (string.IsNullOrEmpty(id))
             return;
+
+        if (!_itemNameChunk.ContainsKey(id))
+            _itemNameChunk.Add(id, newName);
 
         _itemNameChunk[id] = newName;
     }

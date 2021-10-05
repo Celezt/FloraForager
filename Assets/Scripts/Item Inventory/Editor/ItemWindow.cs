@@ -30,13 +30,25 @@ public class ItemWindow : OdinMenuEditorWindow
     {
         _settings = ItemTypeSettings.Instance;
 
-        OdinMenuTree tree = new OdinMenuTree();
+        OdinMenuTree tree = new OdinMenuTree(false);
         tree.Config.DrawSearchToolbar = true;
 
         _customItem = new CustomItem(_settings);
         tree.Add("Create New", _customItem);
-        tree.AddAllAssetsAtPath("Items", TYPE_PATH, typeof(ItemType));
 
+        List<ItemType> itemTypes = new List<ItemType>();
+        ObjectExtensions.TryGetObjectsOfTypeFromPath<ItemType>(TYPE_PATH, itemTypes);
+        foreach (ItemType itemType in itemTypes)
+        {
+            if (itemType.Labels.Count == 0)
+                tree.AddMenuItemAtPath("Default", new OdinMenuItem(tree, itemType.Name, itemType));
+            else
+            {
+                foreach (string label in itemType.Labels)
+                    tree.AddMenuItemAtPath(label.FirstCharToUpper(), new OdinMenuItem(tree, itemType.Name, itemType));
+            }
+        }
+        
         return tree;
     }
 
