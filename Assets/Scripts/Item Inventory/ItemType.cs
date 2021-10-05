@@ -25,8 +25,8 @@ public class ItemType : SerializedScriptableObject
     [Required, OdinSerialize, HideLabel]
     [ListDrawerSettings(Expanded = true)]
     public IItem Behaviour;
-    [OdinSerialize]
-    public HashSet<string> Labels { get; set; } = new HashSet<string>();
+
+    public List<string> Labels = new List<string>();
 
     private bool _initialized;
 

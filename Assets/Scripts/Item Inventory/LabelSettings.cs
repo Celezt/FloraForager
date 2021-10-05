@@ -6,8 +6,8 @@ using Sirenix.Serialization;
 using UnityEditor;
 
 [CreateAssetMenu(fileName = "LabelData", menuName = "Inventory/LabelData")]
-public class LabelData : ScriptableObject
+public class LabelSettings : ScriptableObject
 {
     [SerializeField]
-    public List<string> Label = new List<string>();
+    public List<string> Labels = new List<string>();
 }

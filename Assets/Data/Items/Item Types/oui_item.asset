@@ -10,7 +10,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 00a108d415261c34b9fe06714b46e722, type: 3}
-  m_Name: new_item
+  m_Name: oui_item
   m_EditorClassIdentifier: 
   serializationData:
     SerializedFormat: 2
@@ -22,11 +22,21 @@ MonoBehaviour:
     PrefabModifications: []
     SerializationNodes:
     - Name: Behaviour
-      Entry: 6
+      Entry: 7
+      Data: 0|FoodItem, Assembly-CSharp
+    - Name: ItemStack
+      Entry: 3
+      Data: 232
+    - Name: StaminaChange
+      Entry: 4
+      Data: 3.16
+    - Name: 
+      Entry: 8
       Data: 
-  Icon: {fileID: 21300000, guid: c104d0e1877c90746ad2cf714ed93af7, type: 3}
-  Name: New Item
-  _id: new_item
-  Description: 
+  Icon: {fileID: 21300000, guid: b44330d65ac262b4d80c147d02dd0c94, type: 3}
+  Name: OUI!
+  _id: oui_item
+  Description: OUI!
   Labels:
   - wood
+  - vegetable

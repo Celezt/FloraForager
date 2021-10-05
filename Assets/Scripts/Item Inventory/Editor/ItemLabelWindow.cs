@@ -26,7 +26,7 @@ public class ItemLabelWindow : EditorWindow
         _settings = settings;
 
         titleContent = new GUIContent("Item Labels");
-        _reorderableLabels = new ReorderableList(_settings._labelData.Label, typeof(string), true, false, true, true);
+        _reorderableLabels = new ReorderableList(_settings._labelSettings.Labels, typeof(string), true, false, true, true);
         _reorderableLabels.drawElementCallback += DrawLabelNameCallback;
         _reorderableLabels.onAddDropdownCallback += OnAddLabelCallback;
         _reorderableLabels.onRemoveCallback += OnRemoveLabelCallback;

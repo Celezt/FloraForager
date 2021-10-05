@@ -13,22 +13,15 @@ public class ItemTypeSettings : SerializedScriptableSingleton<ItemTypeSettings>
 {
     private const string DESCRIPTION_PATH = "Assets/Data/Items/Item Descriptions";
 
-    public event Action<ItemType> OnAddItemTypeCallback = delegate { };
-    public event Action<string> OnRemoveItemTypeCallback = delegate { };
-    public event Action<string> OnAddLabelCallback = delegate { };
-    public event Action<string> OnRemoveLabelCallback = delegate { };
-
-    public IReadOnlyList<string> Labels => _labelData.Label;
+    public IReadOnlyList<string> Labels => _labelSettings.Labels;
     public IReadOnlyDictionary<string, ItemType> ItemTypeChunk => _itemTypeChunk;
     public IReadOnlyDictionary<string, Sprite> ItemIconChunk => _itemIconChunk;
     public IReadOnlyDictionary<string, string> ItemNameChunk => _itemNameChunk;
-    public IReadOnlyDictionary<string, HashSet<string>> ItemLabelChunk => _itemLabelChunk;
+    public IReadOnlyDictionary<string, List<string>> ItemLabelChunk => _itemLabelChunk;
 
-    //[SerializeField, ReadOnly, ListDrawerSettings(Expanded = true)]
-    //public List<string> _labels = new List<string>();
-    public LabelData _labelData;
-    [OdinSerialize, ReadOnly]
-    private Dictionary<string, HashSet<string>> _itemLabelChunk = new Dictionary<string, HashSet<string>>();
+    public LabelSettings _labelSettings;
+    [SerializeField, ReadOnly]
+    private Dictionary<string, List<string>> _itemLabelChunk = new Dictionary<string, List<string>>();
     [SerializeField, ReadOnly]
     private Dictionary<string, ItemType> _itemTypeChunk = new Dictionary<string, ItemType>();
     [SerializeField, ReadOnly]
@@ -36,7 +29,7 @@ public class ItemTypeSettings : SerializedScriptableSingleton<ItemTypeSettings>
     [SerializeField, ReadOnly]
     private Dictionary<string, string> _itemNameChunk = new Dictionary<string, string>();
 
-    public int GetIndexOfLabel(string label) => _labelData.Label.IndexOf(label);
+    public int GetIndexOfLabel(string label) => _labelSettings.Labels.IndexOf(label);
 
     /// <summary>
     /// Get unique <see cref="ItemType"/> id by adding a number at the end.
@@ -68,7 +61,7 @@ public class ItemTypeSettings : SerializedScriptableSingleton<ItemTypeSettings>
         int counter = 1;
         while (counter < 100)
         {
-            if (!_labelData.Label.Contains(newName))
+            if (!_labelSettings.Labels.Contains(newName))
                 return newName;
             newName = name + counter;
             counter++;
@@ -77,6 +70,11 @@ public class ItemTypeSettings : SerializedScriptableSingleton<ItemTypeSettings>
     }
 
 #if UNITY_EDITOR
+    public event Action<ItemType> OnAddItemTypeCallback = delegate { };
+    public event Action<string> OnRemoveItemTypeCallback = delegate { };
+    public event Action<string> OnAddLabelCallback = delegate { };
+    public event Action<string> OnRemoveLabelCallback = delegate { };
+
     /// <summary>
     /// Add new <see cref="ItemType"/> to all chunks.
     /// </summary>
@@ -128,10 +126,10 @@ public class ItemTypeSettings : SerializedScriptableSingleton<ItemTypeSettings>
 
     public bool RemoveLabel(string name)
     {
-        if (!_labelData.Label.Contains(name))
+        if (!_labelSettings.Labels.Contains(name))
             return false;
 
-        foreach (KeyValuePair<string, HashSet<string>> labels in _itemLabelChunk)
+        foreach (KeyValuePair<string, List<string>> labels in _itemLabelChunk)
         {
             labels.Value.Remove(name);
         }
@@ -144,9 +142,9 @@ public class ItemTypeSettings : SerializedScriptableSingleton<ItemTypeSettings>
         OnRemoveLabelCallback.Invoke(name);
 
         // Remove label at index.
-        SerializedObject so = new SerializedObject(_labelData);
-        SerializedProperty labelArray = so.FindProperty(nameof(_labelData.Label));
-        labelArray.DeleteArrayElementAtIndex(_labelData.Label.IndexOf(name));
+        SerializedObject so = new SerializedObject(_labelSettings);
+        SerializedProperty labelArray = so.FindProperty(nameof(_labelSettings.Labels));
+        labelArray.DeleteArrayElementAtIndex(_labelSettings.Labels.IndexOf(name));
         so.ApplyModifiedProperties();
 
         return true;
@@ -154,12 +152,12 @@ public class ItemTypeSettings : SerializedScriptableSingleton<ItemTypeSettings>
 
     public bool AddLabel(string name)
     {
-        if (_labelData.Label.Contains(name))
+        if (_labelSettings.Labels.Contains(name))
             return false;
 
         // Add new label at the end of the list.
-        SerializedObject so = new SerializedObject(_labelData); 
-        SerializedProperty labelArray = so.FindProperty(nameof(_labelData.Label));
+        SerializedObject so = new SerializedObject(_labelSettings); 
+        SerializedProperty labelArray = so.FindProperty(nameof(_labelSettings.Labels));
         labelArray.InsertArrayElementAtIndex(labelArray.arraySize);
         SerializedProperty toChange = labelArray.GetArrayElementAtIndex(labelArray.arraySize - 1);
         toChange.stringValue = name;
@@ -172,12 +170,12 @@ public class ItemTypeSettings : SerializedScriptableSingleton<ItemTypeSettings>
 
     public bool AddLabel(string name, int index)
     {
-        if (_labelData.Label.Contains(name))
+        if (_labelSettings.Labels.Contains(name))
             return false;
 
         // Add new label at index.
-        SerializedObject so = new SerializedObject(_labelData);
-        SerializedProperty labelArray = so.FindProperty(nameof(_labelData.Label));
+        SerializedObject so = new SerializedObject(_labelSettings);
+        SerializedProperty labelArray = so.FindProperty(nameof(_labelSettings.Labels));
         SerializedProperty toChange = labelArray.GetArrayElementAtIndex(index);
         toChange.stringValue = name;
         so.ApplyModifiedProperties();
@@ -196,7 +194,7 @@ public class ItemTypeSettings : SerializedScriptableSingleton<ItemTypeSettings>
         if (!AddLabel(newLabelName, index))
             return;
         
-        foreach (KeyValuePair<string, HashSet<string>> labels in _itemLabelChunk)
+        foreach (KeyValuePair<string, List<string>> labels in _itemLabelChunk)
         {
             labels.Value.ChangeKey(oldLabelName, newLabelName);
         }
@@ -215,7 +213,16 @@ public class ItemTypeSettings : SerializedScriptableSingleton<ItemTypeSettings>
 
         foreach (ItemType item in itemsTypes)
         {
-            item.Labels.Add(label);
+            if (item.Labels.Contains(label))
+                continue;
+
+            // Add new label at the end of the list.
+            SerializedObject so = new SerializedObject(item);
+            SerializedProperty labelArray = so.FindProperty(nameof(item.Labels));
+            labelArray.InsertArrayElementAtIndex(labelArray.arraySize);
+            SerializedProperty toChange = labelArray.GetArrayElementAtIndex(labelArray.arraySize - 1);
+            toChange.stringValue = label;
+            so.ApplyModifiedProperties();
         }
     }
 
@@ -223,7 +230,14 @@ public class ItemTypeSettings : SerializedScriptableSingleton<ItemTypeSettings>
     {
         foreach (ItemType item in itemsTypes)
         {
-            item.Labels.Remove(label);
+            if (!item.Labels.Contains(label))
+                continue;
+
+            // Remove label at index.
+            SerializedObject so = new SerializedObject(item);
+            SerializedProperty labelArray = so.FindProperty(nameof(item.Labels));
+            labelArray.DeleteArrayElementAtIndex(item.Labels.IndexOf(label));
+            so.ApplyModifiedProperties();
         }
     }
 
@@ -235,6 +249,7 @@ public class ItemTypeSettings : SerializedScriptableSingleton<ItemTypeSettings>
         _itemLabelChunk.ChangeKey(oldID, newID);
 
         AssetDatabase.RenameAsset($"{DESCRIPTION_PATH}/{oldID}_en.json", $"{newID}_en.json");
+        AssetDatabase.SaveAssets();
         AssetDatabase.Refresh();
     }
 
@@ -257,6 +272,7 @@ public class ItemTypeSettings : SerializedScriptableSingleton<ItemTypeSettings>
         if (!_itemNameChunk.ContainsKey(id))
             _itemNameChunk.Add(id, newName);
 
+        string oldName = _itemNameChunk[id];
         _itemNameChunk[id] = newName;
     }
 #endif

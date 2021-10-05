@@ -25,11 +25,13 @@ public class ItemWindow : OdinMenuEditorWindow
         window.Show();        
     }
 
+    protected override void Initialize()
+    {
+        _settings = ItemTypeSettings.Instance;
+    }
 
     protected override OdinMenuTree BuildMenuTree()
     {
-        _settings = ItemTypeSettings.Instance;
-
         OdinMenuTree tree = new OdinMenuTree(false);
         tree.Config.DrawSearchToolbar = true;
 
@@ -249,7 +251,7 @@ public class ItemWindow : OdinMenuEditorWindow
             [ListDrawerSettings(Expanded = true)]
             public IItem Behaviour;
             [HideInInspector]
-            public HashSet<string> Labels = new HashSet<string>() { };
+            public List<string> Labels = new List<string>() { };
         }
 
     }
