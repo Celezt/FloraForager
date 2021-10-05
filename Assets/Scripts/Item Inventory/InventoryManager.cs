@@ -15,14 +15,26 @@ public class InventoryManager : MonoBehaviour, IDropHandler
     GraphicRaycaster m_Raycaster;
     PointerEventData m_PointerEventData;
     EventSystem m_EventSystem;
+    ItemTypeSettings settings;
 
-    // Start is called before the first frame update
     void Start()
     {
         inventory.InventoryAction += (int i) =>
         {
-            slots[i].item = inventory.Container[i];
-            slots[i].TextMesh.text = inventory.Container[i].Amount.ToString();
+            if (!(i >= slots.Length))
+            {
+                slots[i].item = inventory.Container[i];
+                if (settings.ItemIconChunk.TryGetValue(slots[i].item.ID, out Sprite sprite))
+                {
+                    slots[i].image.sprite = sprite;
+                }
+                else
+                {
+                    slots[i].image.sprite = null;
+                }
+                slots[i].TextMesh.text = inventory.Container[i].Amount.ToString();
+            }
+            
             //Debug.Log(inventory.Container[i].Amount.ToString());
         };
         //Fetch the Raycaster from the GameObject (the Canvas)
@@ -32,6 +44,7 @@ public class InventoryManager : MonoBehaviour, IDropHandler
 
         Addressables.LoadAssetAsync<TextAsset>("inventory").Completed +=(handle)=>
         {
+            settings = ItemTypeSettings.Instance;
             InventoryAsset tmp = JsonConvert.DeserializeObject<InventoryAsset>(handle.Result.text);
             for (int i = 0; i < tmp.Items.Length; i++)
             {
@@ -46,7 +59,10 @@ public class InventoryManager : MonoBehaviour, IDropHandler
                 if (inventory.Container[i].ID != null)
                 {
                     slots[i].item = inventory.Container[i];
-                    
+                    if (settings.ItemIconChunk.TryGetValue(slots[i].item.ID, out Sprite sprite))
+                    {
+                        slots[i].image.sprite = sprite;
+                    }
                     slots[i].TextMesh.text = inventory.Container[i].Amount.ToString(); // Can use slot instead?
                     //Debug.Log(inventory.Container[i].Amount);
                 }
