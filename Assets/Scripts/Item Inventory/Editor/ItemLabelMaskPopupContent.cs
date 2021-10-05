@@ -27,14 +27,14 @@ public class ItemLabelMaskPopupContent : PopupWindowContent
 
     private void AttachLabelForItem(string label)
     {
-        _settings.AttachLabelForItemType(_itemTypes, label);
+        _settings.AttachLabelForItemTypes(_itemTypes, label);
 
         _labelCount[label] = _itemTypes.Count;
     }
 
     private void DetachLabelForItem(string label)
     {
-        _settings.DetachLabelFromItemType(_itemTypes, label);
+        _settings.DetachLabelFromItemTypes(_itemTypes, label);
         _labelCount[label] = 0;
     }
 

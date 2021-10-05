@@ -212,7 +212,7 @@ public class ItemTypeSettings : SerializedScriptableSingleton<ItemTypeSettings>
         RemoveLabel(oldLabelName);
     }
 
-    public void AttachLabelForItemType(List<ItemType> itemsTypes, string label)
+    public void AttachLabelForItemTypes(List<ItemType> itemsTypes, string label)
     {
         AddLabel(label);
 
@@ -237,7 +237,7 @@ public class ItemTypeSettings : SerializedScriptableSingleton<ItemTypeSettings>
         }
     }
 
-    public void DetachLabelFromItemType(List<ItemType> itemsTypes, string label)
+    public void DetachLabelFromItemTypes(List<ItemType> itemsTypes, string label)
     {
         foreach (ItemType item in itemsTypes)
         {

@@ -47,6 +47,7 @@ public class UseBehaviour : MonoBehaviour
     {
         _playerAction = new PlayerAction();
         _playerInput = GetComponent<PlayerInput>();
+        _use = (IUse)ItemTypeSettings.Instance.ItemTypeChunk["sycthe"].Behaviour;
     }
 
     private void OnEnable()

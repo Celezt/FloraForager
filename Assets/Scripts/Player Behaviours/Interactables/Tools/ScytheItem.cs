@@ -7,6 +7,7 @@ using Sirenix.Serialization;
 
 public struct ScytheItem : IUse, IItem
 {
+    int s;
     [OdinSerialize]
     public uint ItemStack { get; set; }
 
@@ -22,6 +23,7 @@ public struct ScytheItem : IUse, IItem
 
     public void OnUse(UseContext context)
     {
+        Debug.Log(s++);
         if (context.started)
         {
             Collider[] colliders = PhysicsC.OverlapArc(context.playerTransform.position, context.playerTransform.forward, Vector3.up, 4, 0.5f, LayerMask.NameToLayer("default"));
