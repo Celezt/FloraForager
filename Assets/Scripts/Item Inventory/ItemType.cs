@@ -30,6 +30,17 @@ public class ItemType : SerializedScriptableObject
 
     private bool _initialized;
 
+    private void Awake()
+    {
+#if UNITY_EDITOR
+        Create();
+
+        if (_initialized)
+            Rename();
+#endif
+    }
+
+#if UNITY_EDITOR
     public void Create()
     {
         if (_initialized)
@@ -49,15 +60,6 @@ public class ItemType : SerializedScriptableObject
         _id = ID;
     }
 
-    public void Remove()
-    {
-        ItemTypeSettings settings = ItemTypeSettings.Instance;
-        if (settings != null)
-        {
-            settings.RemoveItemType(this);
-        }
-    }
-
     public void Rename()
     {
         string oldID = ID;
@@ -69,21 +71,6 @@ public class ItemType : SerializedScriptableObject
             ItemTypeSettings.Instance.RenameID(oldID, ID);
         }
     }
-
-    private void Awake()
-    {
-        Create();
-
-        if (_initialized)
-            Rename();
-    }
-
-    private void OnDestroy()
-    {
-        Remove();
-    }
-
-#if UNITY_EDITOR
     private void OnValidate()
     {
         ItemTypeSettings settings = ItemTypeSettings.Instance;

@@ -9,13 +9,9 @@ using System;
 
 [CreateAssetMenu(fileName = "ItemTypeSettings", menuName = "Inventory/ItemTypeSettings")]
 [System.Serializable]
-public class ItemTypeSettings : SerializedScriptableObject
+public class ItemTypeSettings : SerializedScriptableSingleton<ItemTypeSettings>
 {
     private const string DESCRIPTION_PATH = "Assets/Data/Items/Item Descriptions";
-
-    public static ItemTypeSettings Instance => _instance;
-
-    private static ItemTypeSettings _instance;
 
     public event Action<ItemType> OnAddItemTypeCallback = delegate { };
     public event Action<string> OnRemoveItemTypeCallback = delegate { };
@@ -42,6 +38,45 @@ public class ItemTypeSettings : SerializedScriptableObject
 
     public int GetIndexOfLabel(string label) => _labelData.Label.IndexOf(label);
 
+    /// <summary>
+    /// Get unique <see cref="ItemType"/> id by adding a number at the end.
+    /// </summary>
+    /// <param name="id">To uniquify.</param>
+    /// <returns>Empty <see cref="string"/> if not successful.</returns>
+    public string GetUniqueID(string id)
+    {
+        string newId = id;
+        int counter = 1;
+        while (counter < 100)
+        {
+            if (!_itemTypeChunk.ContainsKey(newId))
+                return newId;
+            newId = id + "_" + counter;
+            counter++;
+        }
+        return string.Empty;
+    }
+
+    /// <summary>
+    /// Get unique label name by adding a number at the end.
+    /// </summary>
+    /// <param name="name">To uniquify.</param>
+    /// <returns>Empty <see cref="string"/> if not successful.</returns>
+    public string GetUniqueLabel(string name)
+    {
+        var newName = name;
+        int counter = 1;
+        while (counter < 100)
+        {
+            if (!_labelData.Label.Contains(newName))
+                return newName;
+            newName = name + counter;
+            counter++;
+        }
+        return string.Empty;
+    }
+
+#if UNITY_EDITOR
     /// <summary>
     /// Add new <see cref="ItemType"/> to all chunks.
     /// </summary>
@@ -152,25 +187,6 @@ public class ItemTypeSettings : SerializedScriptableObject
         return true;
     }
 
-    /// <summary>
-    /// Get unique label name by adding a number at the end.
-    /// </summary>
-    /// <param name="name">To uniquify.</param>
-    /// <returns>Empty <see cref="string"/> if not successful.</returns>
-    public string GetUniqueLabel(string name)
-    {
-        var newName = name;
-        int counter = 1;
-        while (counter < 100)
-        {
-            if (!_labelData.Label.Contains(newName))
-                return newName;
-            newName = name + counter;
-            counter++;
-        }
-        return string.Empty;
-    }
-
     public void RenameLabel(string oldLabelName, string newLabelName)
     {
         int index = GetIndexOfLabel(oldLabelName);
@@ -211,25 +227,6 @@ public class ItemTypeSettings : SerializedScriptableObject
         }
     }
 
-    /// <summary>
-    /// Get unique <see cref="ItemType"/> id by adding a number at the end.
-    /// </summary>
-    /// <param name="id">To uniquify.</param>
-    /// <returns>Empty <see cref="string"/> if not successful.</returns>
-    public string GetUniqueID(string id)
-    {
-        string newId = id;
-        int counter = 1;
-        while (counter < 100)
-        {
-            if (!_itemTypeChunk.ContainsKey(newId))
-                return newId;
-            newId = id + "_" + counter;
-            counter++;
-        }
-        return string.Empty;
-    }
-
     public void RenameID(string oldID, string newID)
     {
         _itemTypeChunk.ChangeKey(oldID, newID);
@@ -262,21 +259,5 @@ public class ItemTypeSettings : SerializedScriptableObject
 
         _itemNameChunk[id] = newName;
     }
-
-    private void Awake()
-    {
-        if (_instance == null)
-            _instance = this;
-    }
-
-    private void OnEnable()
-    {
-        if (_instance == null)
-            _instance = this;
-    }
-
-    private void OnDestroy()
-    {
-        _instance = null;
-    }
+#endif
 }
