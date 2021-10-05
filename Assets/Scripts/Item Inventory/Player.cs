@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class Player : MonoBehaviour
 {
-    public PlayerInventoryObject inventory;
+    public InventoryObject inventory;
     
     public void OnTriggerEnter(Collider other)
     {
@@ -18,7 +18,4 @@ public class Player : MonoBehaviour
             }
         }
     }
-    
-
-
 }
