@@ -71,6 +71,15 @@ public partial class @PlayerAction : IInputActionCollection2, IDisposable
                     ""processors"": """",
                     ""interactions"": """",
                     ""initialStateCheck"": true
+                },
+                {
+                    ""name"": ""Inventory"",
+                    ""type"": ""Button"",
+                    ""id"": ""df7bab96-1949-484f-a018-7206483fba4a"",
+                    ""expectedControlType"": ""Button"",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
                 }
             ],
             ""bindings"": [
@@ -216,6 +225,17 @@ public partial class @PlayerAction : IInputActionCollection2, IDisposable
                     ""action"": ""Interact"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""7e5ffe30-7151-414f-9d53-3f26cf839f64"",
+                    ""path"": ""<Keyboard>/e"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": ""KeyboardAndMouse"",
+                    ""action"": ""Inventory"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
                 }
             ]
         }
@@ -257,6 +277,7 @@ public partial class @PlayerAction : IInputActionCollection2, IDisposable
         m_Ground_Use = m_Ground.FindAction("Use", throwIfNotFound: true);
         m_Ground_Interact = m_Ground.FindAction("Interact", throwIfNotFound: true);
         m_Ground_Cursor = m_Ground.FindAction("Cursor", throwIfNotFound: true);
+        m_Ground_Inventory = m_Ground.FindAction("Inventory", throwIfNotFound: true);
     }
 
     public void Dispose()
@@ -321,6 +342,7 @@ public partial class @PlayerAction : IInputActionCollection2, IDisposable
     private readonly InputAction m_Ground_Use;
     private readonly InputAction m_Ground_Interact;
     private readonly InputAction m_Ground_Cursor;
+    private readonly InputAction m_Ground_Inventory;
     public struct GroundActions
     {
         private @PlayerAction m_Wrapper;
@@ -330,6 +352,7 @@ public partial class @PlayerAction : IInputActionCollection2, IDisposable
         public InputAction @Use => m_Wrapper.m_Ground_Use;
         public InputAction @Interact => m_Wrapper.m_Ground_Interact;
         public InputAction @Cursor => m_Wrapper.m_Ground_Cursor;
+        public InputAction @Inventory => m_Wrapper.m_Ground_Inventory;
         public InputActionMap Get() { return m_Wrapper.m_Ground; }
         public void Enable() { Get().Enable(); }
         public void Disable() { Get().Disable(); }
@@ -354,6 +377,9 @@ public partial class @PlayerAction : IInputActionCollection2, IDisposable
                 @Cursor.started -= m_Wrapper.m_GroundActionsCallbackInterface.OnCursor;
                 @Cursor.performed -= m_Wrapper.m_GroundActionsCallbackInterface.OnCursor;
                 @Cursor.canceled -= m_Wrapper.m_GroundActionsCallbackInterface.OnCursor;
+                @Inventory.started -= m_Wrapper.m_GroundActionsCallbackInterface.OnInventory;
+                @Inventory.performed -= m_Wrapper.m_GroundActionsCallbackInterface.OnInventory;
+                @Inventory.canceled -= m_Wrapper.m_GroundActionsCallbackInterface.OnInventory;
             }
             m_Wrapper.m_GroundActionsCallbackInterface = instance;
             if (instance != null)
@@ -373,6 +399,9 @@ public partial class @PlayerAction : IInputActionCollection2, IDisposable
                 @Cursor.started += instance.OnCursor;
                 @Cursor.performed += instance.OnCursor;
                 @Cursor.canceled += instance.OnCursor;
+                @Inventory.started += instance.OnInventory;
+                @Inventory.performed += instance.OnInventory;
+                @Inventory.canceled += instance.OnInventory;
             }
         }
     }
@@ -402,5 +431,6 @@ public partial class @PlayerAction : IInputActionCollection2, IDisposable
         void OnUse(InputAction.CallbackContext context);
         void OnInteract(InputAction.CallbackContext context);
         void OnCursor(InputAction.CallbackContext context);
+        void OnInventory(InputAction.CallbackContext context);
     }
 }

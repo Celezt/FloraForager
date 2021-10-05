@@ -8,7 +8,7 @@ using UnityEngine;
 public class InventoryObject : ScriptableObject
 {
     public event Action<int> InventoryAction = delegate { };
-    public ItemAsset[] Container = new ItemAsset[8]; // Change
+    public ItemAsset[] Container = new ItemAsset[32]; // Change
     public ItemSlot currentSlot;
     public int gold;
     public bool IsFull { get; set; }
