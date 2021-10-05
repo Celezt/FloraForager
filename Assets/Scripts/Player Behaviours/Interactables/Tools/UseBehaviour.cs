@@ -12,7 +12,8 @@ public class UseBehaviour : MonoBehaviour
     private PlayerInput _playerInput;
     private InputControlScheme _scheme;
     private UseContext _useContext;
-    private IUse _use = new ScytheItem();
+    private IUse _use;
+    private ItemType _itemType;
 
     private int _playerIndex;
 
@@ -24,7 +25,11 @@ public class UseBehaviour : MonoBehaviour
         void UseTowardsCursor(InputAction.CallbackContext context)
         {
             _useContext = new UseContext(
+                _use,
+                _itemType.Labels,
                 transform,
+                _itemType.Name,
+                _itemType.ID,
                 _playerIndex,
                 context.canceled,
                 context.started,
@@ -47,7 +52,8 @@ public class UseBehaviour : MonoBehaviour
     {
         _playerAction = new PlayerAction();
         _playerInput = GetComponent<PlayerInput>();
-        _use = (IUse)ItemTypeSettings.Instance.ItemTypeChunk["sycthe"].Behaviour;
+        _itemType = ItemTypeSettings.Instance.ItemTypeChunk["sycthe"];
+        _use = (IUse)_itemType.Behaviour;
     }
 
     private void OnEnable()

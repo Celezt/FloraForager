@@ -5,11 +5,14 @@ using UnityEngine;
 using Sirenix.OdinInspector;
 using Sirenix.Serialization;
 
-public struct ScytheItem : IUse, IItem
+public class ScytheItem : IUse, IItem, IDestructor
 {
-    int s;
     [OdinSerialize]
-    public uint ItemStack { get; set; }
+    public uint ItemStack { get; set; } = 1;
+    [OdinSerialize]
+    public float Strength { get; set; } = DurabilityStrengths.BRITTLE_STONE;
+    [OdinSerialize]
+    public float Damage { get; set; } = 2.0f;
 
     public void OnEquip(UseContext context)
     {
@@ -23,7 +26,6 @@ public struct ScytheItem : IUse, IItem
 
     public void OnUse(UseContext context)
     {
-        Debug.Log(s++);
         if (context.started)
         {
             Collider[] colliders = PhysicsC.OverlapArc(context.playerTransform.position, context.playerTransform.forward, Vector3.up, 4, 0.5f, LayerMask.NameToLayer("default"));

@@ -21,13 +21,13 @@ public class ItemTypeSettings : SerializedScriptableSingleton<ItemTypeSettings>
     public IReadOnlyDictionary<string, List<string>> ItemLabelChunk => _itemLabelChunk;
 
     public LabelSettings _labelSettings;
-    [OdinSerialize, ReadOnly]
+    [OdinSerialize]
     private Dictionary<string, List<string>> _itemLabelChunk = new Dictionary<string, List<string>>();
-    [OdinSerialize, ReadOnly]
+    [OdinSerialize]
     private Dictionary<string, ItemType> _itemTypeChunk = new Dictionary<string, ItemType>();
-    [OdinSerialize, ReadOnly]
+    [OdinSerialize]
     private Dictionary<string, Sprite> _itemIconChunk = new Dictionary<string, Sprite>();
-    [OdinSerialize, ReadOnly]
+    [OdinSerialize]
     private Dictionary<string, string> _itemNameChunk = new Dictionary<string, string>();
 
     public int GetIndexOfLabel(string label) => _labelSettings.Labels.IndexOf(label);

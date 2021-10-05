@@ -3,12 +3,16 @@ using System.Collections.Generic;
 using UnityEngine;
 using Sirenix.OdinInspector;
 
-public class DebugUseArea : MonoBehaviour, IUsable
+public class DebugUseArea : MonoBehaviour, IUsable, IDestructable
 {
-    public int Priority => 0;
+    public float Strength { get; set; } = DurabilityStrengths.UNARMED;
+    public float Durability { get; set; } = 10;
 
     public void OnUse(UseContext context)
     {
-        Debug.Log("slam");
+        if (context.used is IDestructor)
+        {
+            
+        }
     }
 }
