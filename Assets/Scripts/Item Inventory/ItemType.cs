@@ -24,13 +24,14 @@ public class ItemType : SerializedScriptableObject
     [ListDrawerSettings(Expanded = true)]
     public IItem Behaviour;
 
+    [HideInInspector]
     public List<string> Labels = new List<string>();
-
-    private bool _initialized;
 
     private void Awake()
     {
 #if UNITY_EDITOR
+        _initialized = false;
+
         Create();
 
         if (_initialized)
@@ -39,6 +40,7 @@ public class ItemType : SerializedScriptableObject
     }
 
 #if UNITY_EDITOR
+    private bool _initialized;
 
     private SerializedObject _serializedObject;
     private SerializedProperty _idProperty;

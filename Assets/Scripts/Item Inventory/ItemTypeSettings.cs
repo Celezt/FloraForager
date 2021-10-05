@@ -6,6 +6,7 @@ using Sirenix.Serialization;
 using UnityEditor;
 using System.IO;
 using System;
+using System.Linq;
 
 [CreateAssetMenu(fileName = "ItemTypeSettings", menuName = "Inventory/ItemTypeSettings")]
 [System.Serializable]
@@ -20,13 +21,13 @@ public class ItemTypeSettings : SerializedScriptableSingleton<ItemTypeSettings>
     public IReadOnlyDictionary<string, List<string>> ItemLabelChunk => _itemLabelChunk;
 
     public LabelSettings _labelSettings;
-    [SerializeField, ReadOnly]
+    [OdinSerialize, ReadOnly]
     private Dictionary<string, List<string>> _itemLabelChunk = new Dictionary<string, List<string>>();
-    [SerializeField, ReadOnly]
+    [OdinSerialize, ReadOnly]
     private Dictionary<string, ItemType> _itemTypeChunk = new Dictionary<string, ItemType>();
-    [SerializeField, ReadOnly]
+    [OdinSerialize, ReadOnly]
     private Dictionary<string, Sprite> _itemIconChunk = new Dictionary<string, Sprite>();
-    [SerializeField, ReadOnly]
+    [OdinSerialize, ReadOnly]
     private Dictionary<string, string> _itemNameChunk = new Dictionary<string, string>();
 
     public int GetIndexOfLabel(string label) => _labelSettings.Labels.IndexOf(label);
@@ -87,13 +88,17 @@ public class ItemTypeSettings : SerializedScriptableSingleton<ItemTypeSettings>
         if (_itemTypeChunk.ContainsKey(id))
             return false;
         
-        _itemLabelChunk.Add(id, itemType.Labels);
         _itemTypeChunk.Add(id, itemType);
-        _itemIconChunk.Add(id, itemType.Icon);
-        _itemNameChunk.Add(id, itemType.Name);
+
+        if (!_itemLabelChunk.ContainsKey(id))
+            _itemLabelChunk.Add(id, itemType.Labels.Select(item => (string)item.Clone()).ToList());
+        if (!_itemIconChunk.ContainsKey(id))
+            _itemIconChunk.Add(id, itemType.Icon);
+        if (!_itemNameChunk.ContainsKey(id))
+            _itemNameChunk.Add(id, itemType.Name);
 
         OnAddItemTypeCallback.Invoke(itemType);
-
+        
         return true;
     }
 
@@ -115,7 +120,7 @@ public class ItemTypeSettings : SerializedScriptableSingleton<ItemTypeSettings>
             return false;
 
         OnRemoveItemTypeCallback.Invoke(id);
-
+        
         _itemLabelChunk.Remove(id);
         _itemTypeChunk.Remove(id);
         _itemIconChunk.Remove(id);
@@ -216,6 +221,12 @@ public class ItemTypeSettings : SerializedScriptableSingleton<ItemTypeSettings>
             if (item.Labels.Contains(label))
                 continue;
 
+            foreach (KeyValuePair<string, List<string>> labels in _itemLabelChunk)
+            {
+                if (!labels.Value.Contains(label))
+                    labels.Value.Add(label);
+            }
+
             // Add new label at the end of the list.
             SerializedObject so = new SerializedObject(item);
             SerializedProperty labelArray = so.FindProperty(nameof(item.Labels));
@@ -233,6 +244,11 @@ public class ItemTypeSettings : SerializedScriptableSingleton<ItemTypeSettings>
             if (!item.Labels.Contains(label))
                 continue;
 
+            foreach (KeyValuePair<string, List<string>> labels in _itemLabelChunk)
+            {
+                labels.Value.Remove(label);
+            }
+
             // Remove label at index.
             SerializedObject so = new SerializedObject(item);
             SerializedProperty labelArray = so.FindProperty(nameof(item.Labels));
@@ -248,6 +264,7 @@ public class ItemTypeSettings : SerializedScriptableSingleton<ItemTypeSettings>
         _itemNameChunk.ChangeKey(oldID, newID);
         _itemLabelChunk.ChangeKey(oldID, newID);
 
+        EditorUtility.SetDirty(this);
         AssetDatabase.RenameAsset($"{DESCRIPTION_PATH}/{oldID}_en.json", $"{newID}_en.json");
         AssetDatabase.SaveAssets();
         AssetDatabase.Refresh();
