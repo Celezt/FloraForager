@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-[CustomTag]
+[CustomDialogueTag]
 public struct SpeedTag : ITag
 {
     public void Action(Taggable taggable, string parameter)

@@ -11,15 +11,13 @@ using Newtonsoft.Json;
 [System.Serializable]
 public class ItemType : SerializedScriptableObject
 {
-    public string ID { get; set; }
-
     [PreviewField(120), HideLabel]
     [HorizontalGroup("Group 1", 120)]
     public Sprite Icon;
     [VerticalGroup("Group 1/Right"), LabelWidth(80)]
     public string Name;
     [SerializeField, VerticalGroup("Group 1/Right"), LabelWidth(80), ReadOnly]
-    private string _id;
+    public string ID;
     [VerticalGroup("Group 1/Right"), TextArea(5, 30)]
     public string Description;
     [Required, OdinSerialize, HideLabel]
@@ -41,14 +39,21 @@ public class ItemType : SerializedScriptableObject
     }
 
 #if UNITY_EDITOR
+
+    private SerializedObject _serializedObject;
+    private SerializedProperty _idProperty;
+
     public void Create()
     {
         if (_initialized)
             return;
 
+        _serializedObject = new SerializedObject(this);
+        _idProperty = _serializedObject.FindProperty(nameof(ID));
+
         if (string.IsNullOrEmpty(ID))
         {
-            ID = Path.GetFileNameWithoutExtension(AssetDatabase.GetAssetPath(this));
+            _idProperty.stringValue = Path.GetFileNameWithoutExtension(AssetDatabase.GetAssetPath(this));
         }
 
         if (!string.IsNullOrEmpty(ID))
@@ -57,19 +62,28 @@ public class ItemType : SerializedScriptableObject
             _initialized = true;
         }
 
-        _id = ID;
+        _serializedObject.ApplyModifiedProperties();
     }
 
     public void Rename()
     {
-        string oldID = ID;
-        ID = Path.GetFileNameWithoutExtension(AssetDatabase.GetAssetPath(this));
-        _id = ID;
-
-        if (oldID != ID)
+        if (_serializedObject == null)
         {
-            ItemTypeSettings.Instance.RenameID(oldID, ID);
+            _serializedObject = new SerializedObject(this);
+            _idProperty = _serializedObject.FindProperty(nameof(ID));
         }
+        else
+            _serializedObject.Update();
+
+        string oldID = _idProperty.stringValue;
+        _idProperty.stringValue = Path.GetFileNameWithoutExtension(AssetDatabase.GetAssetPath(this));
+
+        if (oldID != _idProperty.stringValue)
+        {
+            ItemTypeSettings.Instance.RenameID(oldID, _idProperty.stringValue);
+        }
+
+        _serializedObject.ApplyModifiedProperties();
     }
     private void OnValidate()
     {
