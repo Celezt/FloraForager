@@ -22,11 +22,20 @@ public class RelationshipManager : MonoBehaviour
 
     public Relation Relation => relation;
 
+    private void Start()
+    {
+        UpdateEnum();
+    }
+
     public void AddRelation(float value)
     {
-        curRelation += value;
-        curRelation = Mathf.Clamp(curRelation, minRelation, maxRelation);
+        curRelation = Mathf.Clamp(curRelation + value, minRelation, maxRelation);
 
+        UpdateEnum();
+    }
+
+    private void UpdateEnum()
+    {
         float difference = maxRelation - minRelation;
 
         float temp = curRelation - minRelation;
