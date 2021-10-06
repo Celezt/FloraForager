@@ -12,6 +12,7 @@ public class PlayerInventoryUI : MonoBehaviour
     {
         playerAction = new PlayerAction();
     }
+
     public void OnEnable()
     {
         playerAction.Enable();
@@ -25,20 +26,30 @@ public class PlayerInventoryUI : MonoBehaviour
 
     public void OnInventory(InputAction.CallbackContext context) 
     {
+        
         if (UIActive)
         {
-            canvasGroup.alpha = 0f;
-            canvasGroup.interactable = false;
-            canvasGroup.blocksRaycasts = false;
             UIActive = false;
         }
         else
         {
+            UIActive = true;
+        }
+        UIActivation();
+    }
+    public void UIActivation() 
+    {
+        if (UIActive)
+        {
             canvasGroup.alpha = 1f;
             canvasGroup.interactable = true;
             canvasGroup.blocksRaycasts = true;
-            UIActive = true;
         }
-
+        else
+        {
+            canvasGroup.alpha = 0f;
+            canvasGroup.interactable = false;
+            canvasGroup.blocksRaycasts = false;            
+        }
     }
 }
