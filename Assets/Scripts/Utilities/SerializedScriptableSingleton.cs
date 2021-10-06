@@ -15,8 +15,7 @@ public class SerializedScriptableSingleton<T> : SerializedScriptableObject where
         {
             if (_instance == null)
             {
-                T[] assets = Resources.FindObjectsOfTypeAll<T>();
-
+                T[] assets = Resources.LoadAll<T>("");
                 if (assets == null | (assets != null && assets.Length < 1))
                     throw new Exception($"Could not find any singleton serialized scriptable object instances of type {typeof(T)}.");
                 else if (assets.Length > 1)
