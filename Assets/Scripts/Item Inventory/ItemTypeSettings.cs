@@ -7,6 +7,7 @@ using UnityEditor;
 using System.IO;
 using System;
 using System.Linq;
+using Sirenix.OdinInspector.Editor;
 
 [CreateAssetMenu(fileName = "ItemTypeSettings", menuName = "Inventory/ItemTypeSettings")]
 [System.Serializable]
@@ -198,10 +199,51 @@ public class ItemTypeSettings : SerializedScriptableSingleton<ItemTypeSettings>
 
         if (!AddLabel(newLabelName, index))
             return;
-        
-        foreach (KeyValuePair<string, List<string>> labels in _itemLabelChunk)
+
         {
-            labels.Value.ChangeKey(oldLabelName, newLabelName);
+            // Serialize and Rename label inside of _itemLabelChunk.
+            SerializedObject so = new SerializedObject(this);
+            SerializedProperty serializationData = so.FindProperty("serializationData");
+            SerializedProperty serializationNodes = serializationData.FindPropertyRelative("SerializationNodes");
+            int length = serializationNodes.arraySize;
+            for (int i = 0; i < length; i++)
+            {
+                if (serializationNodes.GetArrayElementAtIndex(i).FindPropertyRelative("Name").stringValue == nameof(_itemLabelChunk))
+                {
+                    int j = i + 4;
+                    while(j < length)
+                    {
+                        SerializedProperty element = serializationNodes.GetArrayElementAtIndex(j);
+                        SerializedProperty dictionaryData = element.FindPropertyRelative("Data");
+                        SerializedProperty dictionaryName = element.FindPropertyRelative("Name");
+
+                        // If next serialized data outside of _itemLabelChunk was found.
+                        if (!string.IsNullOrEmpty(dictionaryName.stringValue))
+                            if (dictionaryName.stringValue[0] != '$')
+                                break;
+
+                        // If id exist inside of _itemLabelChunk.
+                        if (_itemLabelChunk.ContainsKey(dictionaryData.stringValue))
+                        {
+                            int listLength = int.Parse(serializationNodes.GetArrayElementAtIndex(j + 2).FindPropertyRelative("Data").stringValue);
+                            for (int k = j + 3; k <= j + 2 + listLength; k++)
+                            {
+                                SerializedProperty listData = serializationNodes.GetArrayElementAtIndex(k).FindPropertyRelative("Data");
+                                if (listData.stringValue == oldLabelName)
+                                {
+                                    listData.stringValue = newLabelName;
+                                    j += 2 + listLength;
+                                    break;
+                                }
+                            }
+                        }
+                        j++;
+                    }
+                    break;
+                }
+            }
+
+            so.ApplyModifiedProperties();
         }
 
         foreach (KeyValuePair<string, ItemType> item in _itemTypeChunk)
@@ -210,6 +252,13 @@ public class ItemTypeSettings : SerializedScriptableSingleton<ItemTypeSettings>
         }
 
         RemoveLabel(oldLabelName);
+    }
+
+    struct a
+    {
+        public string Name;
+        public int Entry;
+        public string Data;
     }
 
     public void AttachLabelForItemTypes(List<ItemType> itemsTypes, string label)
@@ -221,19 +270,51 @@ public class ItemTypeSettings : SerializedScriptableSingleton<ItemTypeSettings>
             if (item.Labels.Contains(label))
                 continue;
 
-            foreach (KeyValuePair<string, List<string>> labels in _itemLabelChunk)
+            string id = item.ID;
+
+            if (!_itemLabelChunk[id].Contains(label))
+                _itemLabelChunk[id].Add(label);
+
             {
-                if (!labels.Value.Contains(label))
-                    labels.Value.Add(label);
+                // Serialize and add label inside of _itemLabelChunk.
+                SerializedObject so = new SerializedObject(this);
+                SerializedProperty serializationData = so.FindProperty("serializationData");
+                SerializedProperty serializationNodes = serializationData.FindPropertyRelative("SerializationNodes");
+                int length = serializationNodes.arraySize;
+                for (int i = 0; i < length; i++)
+                {
+                    if (serializationNodes.GetArrayElementAtIndex(i).FindPropertyRelative("Name").stringValue == nameof(_itemLabelChunk))
+                    {
+                        for (int j = i + 4; j < length; j++)
+                        {
+                            if (serializationNodes.GetArrayElementAtIndex(j).FindPropertyRelative("Data").stringValue == id)
+                            {
+                                int listLength = int.Parse(serializationNodes.GetArrayElementAtIndex(j + 2).FindPropertyRelative("Data").stringValue);
+                                serializationNodes.InsertArrayElementAtIndex(j + 2 + listLength);
+
+                                SerializedProperty element = serializationNodes.GetArrayElementAtIndex(j + 2 + listLength);
+                                element.FindPropertyRelative("Name").stringValue = "";
+                                element.FindPropertyRelative("Entry").intValue = 1;
+                                element.FindPropertyRelative("Data").stringValue = label;
+                                break;
+                            }
+                        }
+                        break;
+                    }
+                }
+
+                so.ApplyModifiedProperties();
             }
 
-            // Add new label at the end of the list.
-            SerializedObject so = new SerializedObject(item);
-            SerializedProperty labelArray = so.FindProperty(nameof(item.Labels));
-            labelArray.InsertArrayElementAtIndex(labelArray.arraySize);
-            SerializedProperty toChange = labelArray.GetArrayElementAtIndex(labelArray.arraySize - 1);
-            toChange.stringValue = label;
-            so.ApplyModifiedProperties();
+            {
+                // Add new label at the end of the list.
+                SerializedObject so = new SerializedObject(item);
+                SerializedProperty labelArray = so.FindProperty(nameof(item.Labels));
+                labelArray.InsertArrayElementAtIndex(labelArray.arraySize);
+                SerializedProperty toChange = labelArray.GetArrayElementAtIndex(labelArray.arraySize - 1);
+                toChange.stringValue = label;
+                so.ApplyModifiedProperties();
+            }
         }
     }
 
@@ -244,16 +325,52 @@ public class ItemTypeSettings : SerializedScriptableSingleton<ItemTypeSettings>
             if (!item.Labels.Contains(label))
                 continue;
 
-            foreach (KeyValuePair<string, List<string>> labels in _itemLabelChunk)
+            string id = item.ID;
+
+            if (_itemLabelChunk[id].Contains(label))
+                _itemLabelChunk[id].Remove(label);
+
             {
-                labels.Value.Remove(label);
+                // Serialize and remove label inside of _itemLabelChunk.
+                SerializedObject so = new SerializedObject(this);
+                SerializedProperty serializationData = so.FindProperty("serializationData");
+                SerializedProperty serializationNodes = serializationData.FindPropertyRelative("SerializationNodes");
+                int length = serializationNodes.arraySize;
+                for (int i = 0; i < length; i++)
+                {
+                    if (serializationNodes.GetArrayElementAtIndex(i).FindPropertyRelative("Name").stringValue == nameof(_itemLabelChunk))
+                    {
+                        for (int j = i + 4; j < length; j++)
+                        {
+                            if (serializationNodes.GetArrayElementAtIndex(j).FindPropertyRelative("Data").stringValue == id)
+                            {
+                                int listLength = int.Parse(serializationNodes.GetArrayElementAtIndex(j + 2).FindPropertyRelative("Data").stringValue);
+
+                                for (int k = j + 3; k < j + 2 + listLength; k++)
+                                {
+                                    if (serializationNodes.GetArrayElementAtIndex(k).FindPropertyRelative("Data").stringValue == label)
+                                    {
+                                        serializationNodes.DeleteArrayElementAtIndex(k);
+                                        break;
+                                    }
+                                }
+                                break;
+                            }
+                        }
+                        break;
+                    }
+                }
+
+                so.ApplyModifiedProperties();
             }
 
-            // Remove label at index.
-            SerializedObject so = new SerializedObject(item);
-            SerializedProperty labelArray = so.FindProperty(nameof(item.Labels));
-            labelArray.DeleteArrayElementAtIndex(item.Labels.IndexOf(label));
-            so.ApplyModifiedProperties();
+            {
+                // Remove label at index.
+                SerializedObject so = new SerializedObject(item);
+                SerializedProperty labelArray = so.FindProperty(nameof(item.Labels));
+                labelArray.DeleteArrayElementAtIndex(item.Labels.IndexOf(label));
+                so.ApplyModifiedProperties();
+            }
         }
     }
 

@@ -255,5 +255,4 @@ public class ItemWindow : OdinMenuEditorWindow
         }
 
     }
-
 }
