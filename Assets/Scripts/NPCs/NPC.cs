@@ -11,16 +11,23 @@ public class NPC : MonoBehaviour, IInteractable
 {
     [SerializeField] private LayerMask _LayerMasks;
 
+    private RelationshipManager _Relations;
+    private Bounds _Bounds;
+
     /// <summary>
     /// If this NPC is currently selected
     /// </summary>
     public bool Selected { get; private set; }
 
+    public RelationshipManager Relations => _Relations;
+    public Bounds Bounds => _Bounds;
+
     public int Priority => 2;
 
-    private void Start()
+    private void Awake()
     {
-        
+        _Relations = GetComponent<RelationshipManager>();
+        _Bounds = GetComponent<MeshFilter>().mesh.bounds;
     }
 
     // Update is called once per frame
@@ -30,6 +37,15 @@ public class NPC : MonoBehaviour, IInteractable
         bool collision = Physics.Raycast(ray, out RaycastHit hitInfo, Mathf.Infinity, _LayerMasks) && !EventSystem.current.IsPointerOverGameObject();
 
         Selected = collision && hitInfo.transform.gameObject == gameObject;
+
+        if (collision && hitInfo.transform.gameObject == gameObject)
+        {
+            NPCUI.Instance.SetActive(this, true);
+        }
+        else if ((collision && !hitInfo.transform.CompareTag("NPC")) || !collision)
+        {
+            NPCUI.Instance.SetActive(null, false);
+        }
     }
 
     public void OnInteract(InteractContext context)

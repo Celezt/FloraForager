@@ -68,14 +68,14 @@ public class Commission
             // add items to inventory
         }
 
-        _Giver.Relations.AddRelation(_Data.RewardRelations);
+        _Giver.NPC.Relations.AddRelation(_Data.RewardRelations);
     }
 
     public void DayPassed()
     {
         if (--_DaysLeft <= 0)
         {
-            _Giver.Relations.AddRelation(_Data.PenaltyRelations);
+            _Giver.NPC.Relations.AddRelation(_Data.PenaltyRelations);
             CommissionLog.Instance.RemoveCommission(Object); // TODO: add some heads-up for the player
         }
     }
