@@ -24,14 +24,22 @@ public class InventoryManager : MonoBehaviour, IDropHandler
             if (!(i >= slots.Length))
             {
                 slots[i].item = inventory.Container[i];
-                if (settings.ItemIconChunk.TryGetValue(slots[i].item.ID, out Sprite sprite))
+                if (slots[i].item.ID != null)
                 {
-                    slots[i].image.sprite = sprite;
+                    if (settings.ItemIconChunk.TryGetValue(slots[i].item.ID, out Sprite sprite))
+                    {
+                        slots[i].image.sprite = sprite;
+                    }
+                    else
+                    {
+                        slots[i].image.sprite = null;
+                    }
                 }
                 else
                 {
                     slots[i].image.sprite = null;
                 }
+                
                 slots[i].TextMesh.text = inventory.Container[i].Amount.ToString();
             }
             
@@ -45,6 +53,7 @@ public class InventoryManager : MonoBehaviour, IDropHandler
         Addressables.LoadAssetAsync<TextAsset>("inventory").Completed +=(handle)=>
         {
             settings = ItemTypeSettings.Instance;
+            inventory.Container = new ItemAsset[32];
             InventoryAsset tmp = JsonConvert.DeserializeObject<InventoryAsset>(handle.Result.text);
             for (int i = 0; i < tmp.Items.Length; i++)
             {
