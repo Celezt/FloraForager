@@ -61,8 +61,6 @@ public class FloraMaster : Singleton<FloraMaster>
             return false;
         }
 
-        Debug.Log(tile);
-
         FloraObject floraObject = obj.GetComponent<FloraObject>();
         floraObject.Initialize(_VariantsDictionary[key], tile);
 
