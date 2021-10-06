@@ -4,11 +4,11 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-[CreateAssetMenu(fileName = "New Inventory", menuName = "Inventory System/Inventory")]
-public class InventoryObject : ScriptableObject
+//[CreateAssetMenu(fileName = "New Inventory", menuName = "Inventory System/Inventory")]
+public class InventoryObject : MonoBehaviour
 {
     public event Action<int> InventoryAction = delegate { };
-    public ItemAsset[] Container = new ItemAsset[32]; // Change
+    public ItemAsset[] Container; // Change
     public ItemSlot currentSlot;
     public int gold;
     public bool IsFull { get; set; }
