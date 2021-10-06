@@ -9,7 +9,7 @@ public class DebugUseArea : MonoBehaviour, IUsable, IDestructable
     public float Strength { get; set; } = DurabilityStrengths.UNARMED;
     public float Durability { get; set; } = 10;
 
-    public IList<string> Filter(ItemLabels labels) => new List<string> { labels.CROP };
+    public IList<string> Filter(ItemLabels labels) => new List<string> { labels.SCYTHE };
 
     public void OnUse(UseContext context)
     {

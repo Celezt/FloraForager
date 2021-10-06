@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using MyBox;
+using IngameDebugConsole;
 
 public class SleepSchedule : Singleton<SleepSchedule>
 {
@@ -12,6 +13,7 @@ public class SleepSchedule : Singleton<SleepSchedule>
     [SerializeField, Min(0)] private float _SleepTime = 1.0f;
     [SerializeField] private GameObject _Player;
 
+    private PlayerStamina _PlayerStamina;
     private PlayerMovement _PlayerMovement;
     private InteractBehaviour _InteractableArea;
     private Rigidbody _PlayerRigidbody;
@@ -31,6 +33,7 @@ public class SleepSchedule : Singleton<SleepSchedule>
             Debug.LogError("need reference to current Player in scene");
 
         _PlayerMovement = _Player.GetComponent<PlayerMovement>();
+        _PlayerStamina = _Player.GetComponent<PlayerStamina>();
         _InteractableArea = _Player.GetComponent<InteractBehaviour>();
         _PlayerRigidbody = _Player.GetComponent<Rigidbody>();
     }
@@ -38,20 +41,23 @@ public class SleepSchedule : Singleton<SleepSchedule>
     private void Start()
     {
         _NightToMorning = (24.0f + (_MorningTime - _NightTime)) % 24.0f;
+
+        DebugLogConsole.AddCommandInstance("player_sleep", "Activate sleep mode", nameof(ConsoleStartSleeping), this);
     }
 
-    public bool StartSleeping(PlayerStamina playerStamina, float currentTime)
+    private void ConsoleStartSleeping() => StartSleeping();
+    public bool StartSleeping()
     {
         if (_IsSleeping)
             return false;
 
         _IsSleeping = true;
-        StartCoroutine(Sleep(playerStamina, currentTime));
+        StartCoroutine(Sleep(GameTime.Instance.CurrentTime));
 
         return true;
     }
 
-    private IEnumerator Sleep(PlayerStamina playerStamina, float currentTime)
+    private IEnumerator Sleep(float currentTime)
     {
         // sleep
 
@@ -67,7 +73,7 @@ public class SleepSchedule : Singleton<SleepSchedule>
         _InteractableArea.enabled = true;
         _PlayerRigidbody.isKinematic = false;
 
-        playerStamina.Recover();
+        _PlayerStamina.Recover();
         FloraMaster.Instance.Notify();
         CommissionLog.Instance.Notify();
 

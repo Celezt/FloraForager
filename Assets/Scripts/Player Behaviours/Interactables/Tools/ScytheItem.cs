@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using Sirenix.OdinInspector;
 using Sirenix.Serialization;
+using System.Linq;
 
 public class ScytheItem : IUse, IItem, IDestructor
 {
@@ -33,6 +34,13 @@ public class ScytheItem : IUse, IItem, IDestructor
             {
                 if (colliders[i].TryGetComponent(out IUsable usable))
                 {
+                    foreach(var label in usable.Filter(new ItemLabels()))
+                    {
+                        Debug.Log(label);
+                        //if (context.labels.Contains(label))
+                            
+                    }
+
                     usable.OnUse(context);
                 }
             }

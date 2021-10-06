@@ -190,7 +190,7 @@ namespace UnityConstantsGenerator
 
         private static void PublicClass(CodeTypeDeclaration type)
         {
-            type.TypeAttributes |= TypeAttributes.Public;
+            type.TypeAttributes |= TypeAttributes.AnsiClass;
 
             type.Members.Add(new CodeConstructor
             {
