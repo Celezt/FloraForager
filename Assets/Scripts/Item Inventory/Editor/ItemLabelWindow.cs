@@ -8,6 +8,8 @@ using Sirenix.OdinInspector;
 using Sirenix.OdinInspector.Editor;
 using Sirenix.Utilities.Editor;
 using Sirenix.Serialization;
+using UnityConstantsGenerator;
+using System.IO;
 
 public class ItemLabelWindow : EditorWindow
 {
@@ -20,6 +22,7 @@ public class ItemLabelWindow : EditorWindow
     private bool _isEditing = false;
     private string _currentEdit;
     private string _oldName;
+    private bool _labelsChanged;
 
     public void Create(ItemTypeSettings settings)
     {
@@ -69,12 +72,13 @@ public class ItemLabelWindow : EditorWindow
         buttonRect.x = 6;
         buttonRect.y -= 13;
         
-        PopupWindow.Show(buttonRect, new LabelNamePopup(position.width, _reorderableLabels.elementHeight, _settings));
+        PopupWindow.Show(buttonRect, new LabelNamePopup(position.width, _reorderableLabels.elementHeight, _settings, this));
     }
 
     private void OnRemoveLabelCallback(ReorderableList list)
     {
         _settings.RemoveLabel(_settings.Labels[_reorderableLabels.index]);
+        _labelsChanged = true;
     }
 
     private void OnGUI()
@@ -109,26 +113,36 @@ public class ItemLabelWindow : EditorWindow
         else if (_isEditing && (current.keyCode == KeyCode.Return || current.keyCode == KeyCode.KeypadEnter))
         {
             _settings.RenameLabel(_oldName, _currentEdit);
+            _labelsChanged = true;
             EndEditMenu();
         }
         else if (current.type == EventType.MouseDown && _isEditing)
             EndEditMenu();
     }
 
+    private void OnDestroy()
+    {
+        if (_labelsChanged)
+            ConstantsGenerator.GenerateAndImport("", Path.Combine("Assets/Data", "Generated", "ItemLabels.cs"), false, () => _settings.Labels.AsEnumerable());
+    }
+
     private class LabelNamePopup : PopupWindowContent
     {
+        private ItemLabelWindow _itemLabelWindow;
         private ItemTypeSettings _settings;
         private float _windowWidth;
         private float _rowHeight;
         private string _name;
         private bool _needsFocus = true;
+        private bool _labelsChanged;
 
-        public LabelNamePopup(float windowWidth, float rowHeight, ItemTypeSettings settings)
+        public LabelNamePopup(float windowWidth, float rowHeight, ItemTypeSettings settings, ItemLabelWindow itemLabelWindow)
         {
             _settings = settings;
             _windowWidth = windowWidth;
             _rowHeight = rowHeight;
             _name = _settings.GetUniqueLabel("New Label");
+            _itemLabelWindow = itemLabelWindow;
         }
 
         public override Vector2 GetWindowSize() => new Vector2(_windowWidth - 13.0f, _rowHeight * 2.25f);
@@ -158,6 +172,7 @@ public class ItemLabelWindow : EditorWindow
                 else
                 {
                     _settings.AddLabel(_name);
+                    _itemLabelWindow._labelsChanged = true;
                 }
 
                 editorWindow.Close();

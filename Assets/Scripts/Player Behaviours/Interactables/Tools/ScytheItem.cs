@@ -5,10 +5,14 @@ using UnityEngine;
 using Sirenix.OdinInspector;
 using Sirenix.Serialization;
 
-public struct ScytheItem : IUse, IItem
+public class ScytheItem : IUse, IItem, IDestructor
 {
     [OdinSerialize]
-    public uint ItemStack { get; set; }
+    public uint ItemStack { get; set; } = 1;
+    [OdinSerialize]
+    public float Strength { get; set; } = DurabilityStrengths.BRITTLE_STONE;
+    [OdinSerialize]
+    public float Damage { get; set; } = 2.0f;
 
     public void OnEquip(UseContext context)
     {
