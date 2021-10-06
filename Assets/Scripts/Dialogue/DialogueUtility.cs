@@ -156,7 +156,7 @@ public static class DialogueUtility
             return result;
         }
 
-        foreach (Type type in ReflectionUtility.GetTypesWithAttribute<CustomTagAttribute>(Assembly.GetExecutingAssembly()))
+        foreach (Type type in ReflectionUtility.GetTypesWithAttribute<CustomDialogueTagAttribute>(Assembly.GetExecutingAssembly()))
         {
             if (!typeof(ITag).IsAssignableFrom(type))
             {
@@ -165,7 +165,7 @@ public static class DialogueUtility
             }
 
             ITag instance = (ITag)Activator.CreateInstance(type);
-            CustomTagAttribute attribute = (CustomTagAttribute)Attribute.GetCustomAttribute(type, typeof(CustomTagAttribute));
+            CustomDialogueTagAttribute attribute = (CustomDialogueTagAttribute)Attribute.GetCustomAttribute(type, typeof(CustomDialogueTagAttribute));
             
             instance.Initalize(Taggable.CreatePackage(wrap, layer));
             tagDictionary.Add(ReplaceLastOccurrence(instance.GetType().Name, "Tag", "").ToLower(), instance.Action);

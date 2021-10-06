@@ -8,7 +8,9 @@ using UnityEngine;
 public class InventoryObject : ScriptableObject
 {
     public event Action<int> InventoryAction = delegate { };
-    public ItemAsset[] Container = new ItemAsset[8];
+    public ItemAsset[] Container = new ItemAsset[32]; // Change
+    public ItemSlot currentSlot;
+    public int gold;
     public bool IsFull { get; set; }
     public bool AddItem(ItemAsset item)
     {
@@ -39,6 +41,8 @@ public class InventoryObject : ScriptableObject
         ItemAsset holder = Container[pos];
         Container[pos] = Container[pos2];
         Container[pos2] = holder;
+        InventoryAction.Invoke(pos);
+        InventoryAction.Invoke(pos2);
     }
     public int ExistsAt(string id) 
     {

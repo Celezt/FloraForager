@@ -7,7 +7,7 @@ using UnityEngine;
 /// Create custom tag to be used in dialogue.
 /// </summary>
 [AttributeUsage(AttributeTargets.Class | AttributeTargets.Struct, AllowMultiple = false, Inherited = false)]
-public class CustomTagAttribute : Attribute
+public class CustomDialogueTagAttribute : Attribute
 {
 
 }
