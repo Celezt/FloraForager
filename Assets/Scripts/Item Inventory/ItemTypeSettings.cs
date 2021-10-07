@@ -7,7 +7,6 @@ using UnityEditor;
 using System.IO;
 using System;
 using System.Linq;
-using Sirenix.OdinInspector.Editor;
 
 [CreateAssetMenu(fileName = "ItemTypeSettings", menuName = "Inventory/ItemTypeSettings")]
 [System.Serializable]

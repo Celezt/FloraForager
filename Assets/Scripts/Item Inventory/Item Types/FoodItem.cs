@@ -5,13 +5,18 @@ using UnityEngine;
 using Sirenix.Serialization;
 using MyBox;
 
-public struct FoodItem : IUse, IItem, IStamina
+public class FoodItem : IUse, IItem, IStamina
 {
     [OdinSerialize]
     public uint ItemStack { get; set; }
 
     [OdinSerialize]
     public float StaminaChange { get; set; }
+
+    public void Initialize(UseContext context)
+    {
+       
+    }
 
     public void OnEquip(UseContext context)
     {
@@ -28,8 +33,8 @@ public struct FoodItem : IUse, IItem, IStamina
 
     }
 
-    public void OnUse(UseContext context)
+    public IEnumerable<IUsable> OnUse(UseContext context)
     {
-
+        yield break;
     }
 }

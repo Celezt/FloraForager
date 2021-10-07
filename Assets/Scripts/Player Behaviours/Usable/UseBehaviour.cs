@@ -14,9 +14,9 @@ public class UseBehaviour : MonoBehaviour
     private UseContext _useContext;
     private IUse _use;
     private ItemType _itemType;
+    private ItemLabels _itemLabels = new ItemLabels();
 
     private int _playerIndex;
-
 
     public void OnUse(InputAction.CallbackContext context)
     {
@@ -28,6 +28,7 @@ public class UseBehaviour : MonoBehaviour
                 _use,
                 _itemType.Labels,
                 transform,
+                this,
                 _itemType.Name,
                 _itemType.ID,
                 _playerIndex,
@@ -35,8 +36,14 @@ public class UseBehaviour : MonoBehaviour
                 context.started,
                 context.performed
             );
-
-            _use.OnUse(_useContext);
+            
+            foreach (IUsable usable in _use.OnUse(_useContext))
+                foreach (string label in _useContext.labels)
+                    if (usable.Filter(_itemLabels).Contains(label))
+                    {
+                        usable.OnUse(_useContext);
+                        break;
+                    }
         }
 
         UseTowardsCursor(context);
@@ -54,6 +61,26 @@ public class UseBehaviour : MonoBehaviour
         _playerInput = GetComponent<PlayerInput>();
         _itemType = ItemTypeSettings.Instance.ItemTypeChunk["sycthe"];
         _use = (IUse)_itemType.Behaviour;
+
+        _useContext = new UseContext(
+            _use,
+            _itemType.Labels,
+            transform,
+            this,
+            _itemType.Name,
+            _itemType.ID,
+            _playerIndex,
+            false,
+            false,
+            false
+        );
+
+        _itemType.Behaviour.Initialize(_useContext);
+    }
+
+    private void Start()
+    {
+        _use.OnEquip(_useContext);
     }
 
     private void OnEnable()
@@ -72,6 +99,8 @@ public class UseBehaviour : MonoBehaviour
         _playerAction.Ground.Use.performed -= OnUse;
         _playerAction.Ground.Use.canceled -= OnUse;
         _playerInput.controlsChangedEvent.RemoveListener(ControlsChangedEvent);
+
+        _use.OnUnequip(_useContext);
     }
 
     private void Update()

@@ -5,4 +5,6 @@ using UnityEngine;
 public interface IItem
 {
     public uint ItemStack { get; set; }
+
+    public void Initialize(UseContext context);
 }

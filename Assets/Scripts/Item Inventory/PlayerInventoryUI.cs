@@ -11,6 +11,9 @@ public class PlayerInventoryUI : MonoBehaviour
     public void Awake()
     {
         playerAction = new PlayerAction();
+        canvasGroup.alpha = 0f;
+        canvasGroup.interactable = false;
+        canvasGroup.blocksRaycasts = false;
     }
 
     public void OnEnable()
