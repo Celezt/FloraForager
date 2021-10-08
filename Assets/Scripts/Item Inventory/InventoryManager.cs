@@ -11,7 +11,7 @@ public class InventoryManager : MonoBehaviour, IDropHandler
 {
     private ItemSlot[] slots;
     public InventoryObject inventory;
-
+    public string inventoryID;
     GraphicRaycaster m_Raycaster;
     PointerEventData m_PointerEventData;
     EventSystem m_EventSystem;
@@ -50,7 +50,9 @@ public class InventoryManager : MonoBehaviour, IDropHandler
         //Fetch the Event System from the Scene
         m_EventSystem = GetComponent<EventSystem>();
 
-        Addressables.LoadAssetAsync<TextAsset>("inventory").Completed +=(handle)=>
+
+        // This occurs 2 time for hud and player inv!!!
+        Addressables.LoadAssetAsync<TextAsset>(inventoryID).Completed +=(handle)=>
         {
             settings = ItemTypeSettings.Instance;
             inventory.Container = new ItemAsset[32];

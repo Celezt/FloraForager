@@ -17,8 +17,9 @@ public class InventoryObject : MonoBehaviour
         if (!IsFull)
         {
             int pos = ExistsAt(item.ID);
-            if (pos != -1)
+            if (pos != -1) // It exists
             {
+                // Check if new amount > max amount
                 Container[pos].Amount += item.Amount;
                 InventoryAction.Invoke(pos);
             }
@@ -27,12 +28,40 @@ public class InventoryObject : MonoBehaviour
                 int tmp = FindFirstEmptySlot();
                 Container[tmp] = item;
                 InventoryAction.Invoke(tmp);
-            }            
+            }
             return true;
         }
         else
         {
-            // Find Stackables
+            /*
+            if (stackable)
+            {
+                Find all slots of the same id that are not empty
+                if(Found stackables)
+            }
+            {
+            
+            }
+            else
+            {
+            return false;
+            }
+             else
+            {
+            return false;
+            }
+             */
+        }
+        return false;
+    }
+
+    public bool RemoveAt(int pos) 
+    {
+        if (pos < Container.Length)
+        {
+            Container[pos] = new ItemAsset();
+            InventoryAction.Invoke(pos);
+            return true;
         }
         return false;
     }

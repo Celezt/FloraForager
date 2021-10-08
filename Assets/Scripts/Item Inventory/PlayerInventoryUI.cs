@@ -52,4 +52,18 @@ public class PlayerInventoryUI : MonoBehaviour
             canvasGroup.blocksRaycasts = false;            
         }
     }
+    public void Hide() 
+    {
+        canvasGroup.alpha = 0f;
+        canvasGroup.interactable = false;
+        canvasGroup.blocksRaycasts = false;
+        UIActive = false;
+    }
+    public void UnHide() 
+    {
+        canvasGroup.alpha = 1f;
+        canvasGroup.interactable = true;
+        canvasGroup.blocksRaycasts = true;
+        UIActive = true;
+    }
 }
