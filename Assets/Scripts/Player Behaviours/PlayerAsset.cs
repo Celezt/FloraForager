@@ -3,7 +3,8 @@ using System.Collections.Generic;
 using UnityEngine;
 
 [System.Serializable]
-public struct InventoryAsset
+public struct PlayerAsset
 {
-    public ItemAsset[] Items;
+    public int currency;
+    public float stamina;
 }

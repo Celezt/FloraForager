@@ -3,10 +3,13 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.InputSystem;
+using Celezt.Time;
 
 public class UseBehaviour : MonoBehaviour
 {
     public PlayerAction Inputs => _playerAction;
+
+    private readonly ItemLabels _itemLabels = new ItemLabels();
 
     private PlayerAction _playerAction;
     private PlayerInput _playerInput;
@@ -14,47 +17,53 @@ public class UseBehaviour : MonoBehaviour
     private ItemContext _itemContext;
     private IUse _use;
     private ItemType _itemType;
-    private ItemLabels _itemLabels = new ItemLabels();
+    private Duration _cooldown;
 
     private int _playerIndex;
 
     public void OnUse(InputAction.CallbackContext context)
     {
-        void UseTowardsCursor(InputAction.CallbackContext context)
+        if (!_cooldown.IsActive)
         {
-            UseContext useContext = new UseContext(
-                _itemType.Labels,
-                transform,
-                this,
-                _itemType.Name,
-                _itemType.ID,
-                _playerIndex,
-                context.canceled,
-                context.started,
-                context.performed
-            );
-            
-            foreach (IUsable usable in _use.OnUse(useContext))
-                foreach (string label in useContext.labels)
-                    if (usable.Filter(_itemLabels).Contains(label))
-                    {
-                        usable.OnUse(new UsedContext(
-                                _use,
-                                _itemType.Labels,
-                                transform,
-                                this,
-                                _itemType.Name,
-                                _itemType.ID,
-                                _playerIndex,
-                                context.canceled,
-                                context.started,
-                                context.performed
-                            ));
-                        break;
-                    }
-        }
+            if (context.started)
+                _cooldown = new Duration(_use.Cooldown);
 
-        UseTowardsCursor(context);
+            void UseTowardsCursor()
+            {
+                UseContext useContext = new UseContext(
+                    _itemType.Labels,
+                    transform,
+                    this,
+                    _itemType.Name,
+                    _itemType.ID,
+                    _playerIndex,
+                    context.canceled,
+                    context.started,
+                    context.performed
+                );
+
+                foreach (IUsable usable in _use.OnUse(useContext))
+                    foreach (string label in useContext.labels)
+                        if (usable.Filter(_itemLabels).Contains(label))
+                        {
+                            usable.OnUse(new UsedContext(
+                                    _use,
+                                    _itemType.Labels,
+                                    transform,
+                                    this,
+                                    _itemType.Name,
+                                    _itemType.ID,
+                                    _playerIndex,
+                                    context.canceled,
+                                    context.started,
+                                    context.performed
+                                ));
+                            break;
+                        }
+            }
+
+            UseTowardsCursor();
+        }
     }
 
     public void ControlsChangedEvent(PlayerInput playerInput)

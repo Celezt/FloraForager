@@ -15,11 +15,14 @@ public class FoodItem : IUse, IItem, IStamina
     [SerializeField]
     private float _staminaChange;
 
+    private PlayerStamina _stamina;
+
     float IStamina.OnStaminaChange(float currentStamina) => currentStamina + _staminaChange;
 
     void IItem.Initialize(ItemContext context)
     {
-       
+        _stamina = context.playerTransform.GetComponent<PlayerStamina>();
+
     }
 
     void IItem.OnEquip(ItemContext context)

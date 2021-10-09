@@ -5,6 +5,6 @@ using UnityEngine;
 [System.Serializable]
 public struct ItemAsset
 {
-    public string ID { get; set; }
-    public int Amount { get; set; }
+    public string ID;
+    public int Amount;
 }
