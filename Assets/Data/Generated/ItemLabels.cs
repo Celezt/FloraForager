@@ -14,6 +14,8 @@ public class ItemLabels {
     
     public readonly string WOOD = "wood";
     
+    public readonly string STONE = "stone";
+    
     public readonly string FOOD = "food";
     
     public readonly string VEGETABLE = "vegetable";
@@ -21,6 +23,22 @@ public class ItemLabels {
     public readonly string FISH = "fish";
     
     public readonly string CROP = "crop";
+    
+    public readonly string SEED = "seed";
+    
+    public readonly string ROOT_FRUIT = "root_fruit";
+    
+    public readonly string ANIMAL_PRODUCT = "animal_product";
+    
+    public readonly string SCYTHE = "scythe";
+    
+    public readonly string AXE = "axe";
+    
+    public readonly string PICKAXE = "pickaxe";
+    
+    public readonly string HOE = "hoe";
+    
+    public readonly string WATERING_CAN = "watering_can";
     
     public ItemLabels() {
     }

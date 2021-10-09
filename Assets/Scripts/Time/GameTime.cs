@@ -2,6 +2,7 @@ using System.Collections;
 using UnityEngine;
 using UnityEditor;
 using MyBox;
+using IngameDebugConsole;
 
 public class GameTime : Singleton<GameTime>
 {
@@ -49,6 +50,8 @@ public class GameTime : Singleton<GameTime>
     private void Start()
     {
         StartCoroutine(UpdateTimeLoop());
+
+        DebugLogConsole.AddCommandInstance("time_skip", "Accelerates time from point in current day by given amount in hours", nameof(AccelerateTime), this);
     }
 
     private void Update()

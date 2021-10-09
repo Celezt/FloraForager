@@ -6,8 +6,8 @@ using Newtonsoft.Json;
 [System.Serializable]
 public struct DialogueAsset
 {
-    public List<string> Tag { get; set; }
-    public string Act { get; set; }
+    public List<string> Tag;
+    public string Act;
     [JsonProperty(Required = Required.Always)]
-    public List<ParagraphAsset> Dialogue { get; set; }
+    public List<ParagraphAsset> Dialogue;
 }

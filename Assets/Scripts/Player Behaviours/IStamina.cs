@@ -4,5 +4,10 @@ using UnityEngine;
 
 public interface IStamina
 {
-    public float StaminaChange { get; set; }
+    /// <summary>
+    /// Modify player's stamina.
+    /// </summary>
+    /// <param name="currentStamina">Current player stamina.</param>
+    /// <returns>Changed stamina.</returns>
+    public float OnStaminaChange(float currentStamina);
 }
