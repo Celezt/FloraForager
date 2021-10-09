@@ -5,7 +5,7 @@ using UnityEngine;
 using Sirenix.Serialization;
 using MyBox;
 
-public class FoodItem : IUse, IItem, IStamina
+public class FoodItem : IUse, IItem
 {
     [OdinSerialize]
     public uint ItemStack { get; set; } = 64;
@@ -15,14 +15,11 @@ public class FoodItem : IUse, IItem, IStamina
     [SerializeField]
     private float _staminaChange;
 
-    private PlayerStamina _stamina;
-
-    float IStamina.OnStaminaChange(float currentStamina) => currentStamina + _staminaChange;
+    private PlayerStamina _playerStamina;
 
     void IItem.Initialize(ItemContext context)
     {
-        _stamina = context.playerTransform.GetComponent<PlayerStamina>();
-
+        _playerStamina = context.playerTransform.GetComponent<PlayerStamina>();
     }
 
     void IItem.OnEquip(ItemContext context)
@@ -42,6 +39,11 @@ public class FoodItem : IUse, IItem, IStamina
 
     IEnumerable<IUsable> IUse.OnUse(UseContext context)
     {
+        if (context.started)
+        {
+            _playerStamina.Stamina = _staminaChange;
+        }
+
         yield break;
     }
 }

@@ -21,7 +21,7 @@ public class PlayerMovement : MonoBehaviour
     /// <summary>
     /// Current player speed including when the player is running.
     /// </summary>
-    public float CurrentSpeed => _isRunning ? _speed * _runningSpeedMultiplier : _speed;
+    public float CurrentSpeed => _isRunning ? _speed * _speedMultiplier * _runningSpeedMultiplier : _speed * _speedMultiplier;
     /// <summary>
     /// Normal speed of the player.
     /// </summary>
@@ -31,7 +31,15 @@ public class PlayerMovement : MonoBehaviour
         set => _speed = value;
     }
     /// <summary>
-    /// Running multiplier on the current speed if running.
+    /// Speed multiplier.
+    /// </summary>
+    public float SpeedMultiplier
+    {
+        get => _speedMultiplier;
+        set => _speedMultiplier = value;
+    }
+    /// <summary>
+    /// Running multiplier.
     /// </summary>
     public float RunningSpeedMultiplier
     {
@@ -104,6 +112,7 @@ public class PlayerMovement : MonoBehaviour
     private Quaternion _rawRotation;
     private Quaternion _rotation;
     private float _groundAngle;
+    private float _speedMultiplier = 1;
     private bool _isRunning;
     private bool _isGrounded;
     private bool _isOnLedge;
@@ -233,7 +242,7 @@ public class PlayerMovement : MonoBehaviour
             if (_groundAngle >= _maxSlopeAngle)
                 return;
 
-            _rawVelocity = _slopeForward * ((_isRunning) ? _speed * _runningSpeedMultiplier : _speed) * fixedDeltaTime;
+            _rawVelocity = _slopeForward * ((_isRunning) ? _speed * _speedMultiplier * _runningSpeedMultiplier : _speed * _speedMultiplier) * fixedDeltaTime;
             _velocity = Vector3.Lerp(_velocity, _rawVelocity, _drag * fixedDeltaTime);
             _rigidbody.MovePosition(position + _velocity);
         }
