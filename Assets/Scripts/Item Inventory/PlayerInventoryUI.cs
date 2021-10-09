@@ -6,8 +6,9 @@ public class PlayerInventoryUI : MonoBehaviour
 {
     public CanvasGroup canvasGroup;
     public bool UIActive;
-
-    public PlayerAction playerAction;
+    
+    private PlayerAction playerAction;
+    public PlayerAction PlayerAction { get => playerAction; set => playerAction = value; }
     public void Awake()
     {
         playerAction = new PlayerAction();

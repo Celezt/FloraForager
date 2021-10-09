@@ -4,13 +4,15 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-//[CreateAssetMenu(fileName = "New Inventory", menuName = "Inventory System/Inventory")]
-public class InventoryObject : MonoBehaviour
+[CreateAssetMenu(fileName = "New Inventory", menuName = "Inventory System/Inventory")]
+public class InventoryObject : ScriptableObject
 {
-    public event Action<int> InventoryAction = delegate { };
-    public ItemAsset[] Container; // Change
+    public event Action<int> OnItemChangeCallback = delegate { };
+    public event Action<int,ItemAsset> OnAddItemCallback = delegate { };
+    public event Action<int, ItemAsset> OnRemoveItemCallback = delegate { };
+    [NonSerialized]
+    public List<ItemAsset> Container = new List<ItemAsset>(); // Change
     public ItemSlot currentSlot;
-    public int gold;
     public bool IsFull { get; set; }
     public bool AddItem(ItemAsset item)
     {
@@ -19,15 +21,19 @@ public class InventoryObject : MonoBehaviour
             int pos = ExistsAt(item.ID);
             if (pos != -1) // It exists
             {
+                ItemAsset tmp = Container[pos];
                 // Check if new amount > max amount
-                Container[pos].Amount += item.Amount;
-                InventoryAction.Invoke(pos);
+                tmp.Amount += item.Amount;
+                Container[pos] = tmp;
+                OnAddItemCallback.Invoke(pos,tmp);
+                OnItemChangeCallback.Invoke(pos);
             }
             else
             {
                 int tmp = FindFirstEmptySlot();
                 Container[tmp] = item;
-                InventoryAction.Invoke(tmp);
+                OnAddItemCallback.Invoke(tmp,item);
+                OnItemChangeCallback.Invoke(pos);
             }
             return true;
         }
@@ -57,10 +63,11 @@ public class InventoryObject : MonoBehaviour
 
     public bool RemoveAt(int pos) 
     {
-        if (pos < Container.Length)
+        if (pos < Container.Count)
         {
+            OnRemoveItemCallback.Invoke(pos, Container[pos]);
             Container[pos] = new ItemAsset();
-            InventoryAction.Invoke(pos);
+            OnItemChangeCallback.Invoke(pos);
             return true;
         }
         return false;
@@ -70,26 +77,69 @@ public class InventoryObject : MonoBehaviour
         ItemAsset holder = Container[pos];
         Container[pos] = Container[pos2];
         Container[pos2] = holder;
-        InventoryAction.Invoke(pos);
-        InventoryAction.Invoke(pos2);
+        OnItemChangeCallback.Invoke(pos);
+        OnItemChangeCallback.Invoke(pos2);
     }
-    public int ExistsAt(string id) 
+    public int ExistsAt(string ID) 
     {
-        for (int i = 0; i < Container.Length; i++)
+        for (int i = 0; i < Container.Count; i++)
         {
             if (!Container[i].ID.IsNullOrEmpty())
             {
-                if (Container[i].ID == id)
+                if (Container[i].ID == ID)
                 {
                     return i;
                 }
-            }            
+            }
         }
         return -1;
     }
+    public List<(int,int)> FindAll(string ID) // pos, amount
+    {
+        List<(int, int)> tmp = new List<(int, int)>();
+        for (int i = 0; i < Container.Count; i++)
+        {
+            if (Container[i].ID != null && Container[i].ID == ID)
+            {
+                tmp.Add((i, Container[i].Amount));
+            }
+        }
+        return tmp;
+
+    }
+    public bool Find(string ID) 
+    {
+        for (int i = 0; i < Container.Count; i++)
+        {
+            if (!Container[i].ID.IsNullOrEmpty())
+            {
+                if (Container[i].ID == ID)
+                {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+    public int FindAmount(string ID) 
+    {
+        int tmp = 0;
+        for (int i = 0; i < Container.Count; i++)
+        {
+            if (Container[i].ID != null && Container[i].ID == ID)
+            {
+                tmp+=Container[i].Amount;
+            }
+        }
+        return tmp;
+    }
+    public bool FindEnough(string ID, int amount) 
+    {        
+        return amount <= FindAmount(ID);
+    }
     public int FindFirstEmptySlot() 
     {
-        for (int i = 0; i < Container.Length; i++)
+        for (int i = 0; i < Container.Count; i++)
         {
             if (!Container[i].ID.IsNullOrEmpty())
             {
@@ -98,4 +148,5 @@ public class InventoryObject : MonoBehaviour
         }
         return -1;
     }
+
 }

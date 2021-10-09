@@ -19,7 +19,7 @@ public class InventoryManager : MonoBehaviour, IDropHandler
 
     void Start()
     {
-        inventory.InventoryAction += (int i) =>
+        inventory.OnItemChangeCallback += (int i) =>
         {
             if (!(i >= slots.Length))
             {
@@ -54,18 +54,19 @@ public class InventoryManager : MonoBehaviour, IDropHandler
         // This occurs 2 time for hud and player inv!!!
         Addressables.LoadAssetAsync<TextAsset>(inventoryID).Completed +=(handle)=>
         {
+            
             settings = ItemTypeSettings.Instance;
-            inventory.Container = new ItemAsset[32];
+            
             InventoryAsset tmp = JsonConvert.DeserializeObject<InventoryAsset>(handle.Result.text);
-            for (int i = 0; i < tmp.Items.Length; i++)
-            {
-                inventory.Container[i] = tmp.Items[i];
-            }
             slots = GetComponentsInChildren<ItemSlot>();
 
+            //inventory.Container.Capacity = slots.Length;
+            
             // Assigns Items to slots
             for (int i = 0; i < slots.Length; i++) // Assigns Items to slots
             {
+                
+                inventory.Container.Add(tmp.Items.Length > i ? tmp.Items[i]: new ItemAsset());
                 slots[i].pos = i;
                 if (inventory.Container[i].ID != null)
                 {
@@ -83,7 +84,7 @@ public class InventoryManager : MonoBehaviour, IDropHandler
         };
         //selectedSlot = slots[0];
     }
-
+    
     public void OnDrop(PointerEventData eventData)
     {
         RectTransform uiGrid = transform as RectTransform;
