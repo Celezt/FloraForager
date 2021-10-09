@@ -2,6 +2,7 @@ using System.Linq;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.InputSystem;
 
 public class FloraObject : MonoBehaviour, IInteractable
 {
@@ -95,6 +96,10 @@ public class FloraObject : MonoBehaviour, IInteractable
             {
                 string itemID = _Flora.Rewards[i].ItemID;
                 int amount = _Flora.Rewards[i].Amount;
+
+                GameObject player = PlayerInput.GetPlayerByIndex(context.playerIndex).gameObject;
+
+                
 
                 // access inventory and add rewards
             }

@@ -7,11 +7,11 @@ using UnityEngine.InputSystem;
 public class ResourceSource : MonoBehaviour, IInteractable
 {
     [SerializeField] private ResourceSourceData _Data;
-    [SerializeField] private GameObject _Player;
     [SerializeField] private LayerMask _LayerMasks;
 
     public UnityEvent OnQuantityChanged;
 
+    private GameObject _Player;
     private PlayerMovement _PlayerMovement;
 
     private float _CollectionTime;
@@ -30,7 +30,9 @@ public class ResourceSource : MonoBehaviour, IInteractable
 
     private void Awake()
     {
+        _Player = PlayerInput.GetPlayerByIndex(0).gameObject;
         _PlayerMovement = _Player.GetComponent<PlayerMovement>();
+
         _Bounds = GetComponent<MeshFilter>().mesh.bounds;
     }
 
@@ -129,8 +131,6 @@ public class ResourceSource : MonoBehaviour, IInteractable
     {
         if (!context.performed)
             return;
-
-        // TODO: check if the player is holding the right tool
 
         if (!_IsBeingCollected)
             StartCollecting();

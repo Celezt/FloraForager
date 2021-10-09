@@ -8,8 +8,9 @@ public class PlayerStamina : MonoBehaviour
 {
     [SerializeField] private GameObject _StaminaSlider;
     [SerializeField] private float _MaxStamina = 100.0f;
-    [SerializeField] private float _StmMovementDrain = 0.04f;  // amount stamina drained every second
-    [SerializeField] private float _StmActionDrain = 0.05f;
+    [SerializeField] private float _StmWalkingDrain = 0.04f;  // amount stamina drained every second
+    [SerializeField] private float _StmRunningDrain = 0.09f;
+    [SerializeField] private float _StmActionDrain = 0.07f;
     [SerializeField] private float _StmNightDrain = 7.5f;
 
     public UnityEvent OnStaminaDrained;
@@ -39,8 +40,22 @@ public class PlayerStamina : MonoBehaviour
     {
         _Stamina = _MaxStamina;
 
-        OnStaminaDrained.AddListener(MovementDrain);
         OnStaminaDrained.AddListener(NightDrain);
+        OnStaminaDrained.AddListener(WalkingDrain);
+
+        _PlayerMovement.OnPlayerRunCallback += (speed, isRunning) =>
+        {
+            if (!isRunning)
+            {
+                OnStaminaDrained.RemoveListener(RunningDrain);
+                OnStaminaDrained.AddListener(WalkingDrain);
+            }
+            else
+            {
+                OnStaminaDrained.AddListener(RunningDrain);
+                OnStaminaDrained.RemoveListener(WalkingDrain);
+            }
+        };
     }
 
     private void Update()
@@ -57,10 +72,14 @@ public class PlayerStamina : MonoBehaviour
         _Slider.value = (_Stamina / _MaxStamina);
     }
 
-    private void MovementDrain()
+    private void WalkingDrain()
     {
-        float playerSpeed = (_PlayerMovement.RawVelocity.magnitude / (_PlayerMovement.Speed * Time.fixedDeltaTime));
-        Drain(_StmMovementDrain * playerSpeed);
+        Drain(_StmWalkingDrain * ((_PlayerMovement.Velocity.magnitude > float.Epsilon) ? 1.0f : 0.0f));
+    }
+
+    private void RunningDrain()
+    {
+        Drain(_StmRunningDrain * ((_PlayerMovement.Velocity.magnitude > float.Epsilon) ? 1.0f : 0.0f));
     }
 
     private void NightDrain()
