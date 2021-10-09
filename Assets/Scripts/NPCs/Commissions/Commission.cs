@@ -3,6 +3,7 @@ using System.Linq;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.InputSystem;
 using UnityEngine.Events;
 
 public class Commission
@@ -52,6 +53,8 @@ public class Commission
 
     public void Complete()
     {
+        GameObject player = PlayerInput.GetPlayerByIndex(0).gameObject;
+
         for (int i = 0; i < _Objectives.Length; ++i)
         {
             string itemID = _Objectives[i].ItemID;
