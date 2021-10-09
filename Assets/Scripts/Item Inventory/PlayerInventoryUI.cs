@@ -6,8 +6,9 @@ public class PlayerInventoryUI : MonoBehaviour
 {
     public CanvasGroup canvasGroup;
     public bool UIActive;
-
-    public PlayerAction playerAction;
+    
+    private PlayerAction playerAction;
+    public PlayerAction PlayerAction { get => playerAction; set => playerAction = value; }
     public void Awake()
     {
         playerAction = new PlayerAction();
@@ -54,5 +55,19 @@ public class PlayerInventoryUI : MonoBehaviour
             canvasGroup.interactable = false;
             canvasGroup.blocksRaycasts = false;            
         }
+    }
+    public void Hide() 
+    {
+        canvasGroup.alpha = 0f;
+        canvasGroup.interactable = false;
+        canvasGroup.blocksRaycasts = false;
+        UIActive = false;
+    }
+    public void UnHide() 
+    {
+        canvasGroup.alpha = 1f;
+        canvasGroup.interactable = true;
+        canvasGroup.blocksRaycasts = true;
+        UIActive = true;
     }
 }
