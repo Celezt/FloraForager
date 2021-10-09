@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.Events;
+using IngameDebugConsole;
 
 public class PlayerStamina : MonoBehaviour
 {
@@ -33,6 +34,8 @@ public class PlayerStamina : MonoBehaviour
     {
         _PlayerMovement = GetComponent<PlayerMovement>();
         _Slider = _StaminaSlider.GetComponentInChildren<Slider>();
+
+        DebugLogConsole.AddCommandInstance("player_stamina_change", "Change player's stamina", nameof(ChangeStamina), this);
     }
 
     private void Start()
@@ -80,6 +83,8 @@ public class PlayerStamina : MonoBehaviour
             Drain(_StmNightDrain * sleepy);
         }
     }
+
+    public void ChangeStamina(float change) => Stamina = change;
 
     public void Drain(float staminaDrain)
     {

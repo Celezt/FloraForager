@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using Newtonsoft.Json;
 using UnityEngine.AddressableAssets;
+using UnityEngine.InputSystem;
 
 [CreateAssetMenu(fileName = "PlayerData", menuName = "Scriptable Objects/Player Data")]
 [System.Serializable]
@@ -14,7 +15,6 @@ public class PlayerData : ScriptableObject
     {
         Addressables.LoadAssetAsync<TextAsset>("player").Completed += (handle) =>
         {
-            Debug.Log(handle.Result.text);
             Data = JsonConvert.DeserializeObject<PlayerAsset>(handle.Result.text);
         };
     }

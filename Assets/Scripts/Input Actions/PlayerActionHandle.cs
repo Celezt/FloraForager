@@ -5,7 +5,11 @@ using UnityEngine;
 
 public struct PlayerActionHandle
 {
+    public bool IsEmpty => _id == 0;
+
     private int _id;
+
+    public void Clear() => _id = 0;
 
     public static PlayerActionHandle Create()
     {
