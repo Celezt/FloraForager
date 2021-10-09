@@ -5,5 +5,5 @@ using UnityEngine;
 [System.Serializable]
 public struct InventoryAsset
 {
-    public ItemAsset[] Items { get; set; }
+    public ItemAsset[] Items;
 }

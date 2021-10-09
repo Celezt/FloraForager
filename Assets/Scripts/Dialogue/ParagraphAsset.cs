@@ -7,9 +7,9 @@ using Newtonsoft.Json;
 public struct ParagraphAsset
 {
     [JsonProperty(Required = Required.Always)]
-    public string ID { get; set; }
+    public string ID;
     [JsonProperty(Required = Required.Always)]
-    public string Text { get; set; }
-    public List<string> Tag { get; set; }
-    public List<DialogueAsset> Action { get; set; }
+    public string Text;
+    public List<string> Tag;
+    public List<DialogueAsset> Action;
 }

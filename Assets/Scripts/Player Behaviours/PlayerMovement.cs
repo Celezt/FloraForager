@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -18,12 +19,24 @@ public class PlayerMovement : MonoBehaviour
     /// </summary>
     public Vector3 SlopeForward => _slopeForward;
     /// <summary>
-    /// Current speed of the player.
+    /// Current player speed including when the player is running.
+    /// </summary>
+    public float CurrentSpeed => _isRunning ? _speed * _runningSpeedMultiplier : _speed;
+    /// <summary>
+    /// Normal speed of the player.
     /// </summary>
     public float Speed
     {
         get => _speed;
         set => _speed = value;
+    }
+    /// <summary>
+    /// Running multiplier on the current speed if running.
+    /// </summary>
+    public float RunningSpeedMultiplier
+    {
+        get => _runningSpeedMultiplier;
+        set => _runningSpeedMultiplier = value;
     }
     /// <summary>
     /// Unlerped velocity.
@@ -57,6 +70,11 @@ public class PlayerMovement : MonoBehaviour
     /// If currently touching the ground.
     /// </summary>
     public bool IsGrounded => _isGrounded;
+
+    /// <summary>
+    /// Callback for when player's running state has changed (current speed, ).
+    /// </summary>
+    public event Action<float, bool> OnPlayerRunCallback = delegate { };
 
     [SerializeField] private Rigidbody _rigidbody;
     [SerializeField] private PivotMode _pivotMode;
@@ -112,8 +130,12 @@ public class PlayerMovement : MonoBehaviour
     public void OnRun(InputAction.CallbackContext context)
     {
         float value = context.ReadValue<float>();
-        
+        bool oldIsRunning = _isRunning;
+
         _isRunning = value > 0.5f;
+
+        if (oldIsRunning != _isRunning)
+            OnPlayerRunCallback.Invoke(CurrentSpeed, _isRunning);
     }
 
     private void Awake()

@@ -4,8 +4,8 @@ using System.Collections.Generic;
 using UnityEngine;
 
 [Serializable]
-public struct InfoAsset
+public struct ItemInfoAsset
 {
-    public string Name { get; set; }
-    public string Description { get; set; }
+    public string Name;
+    public string Description;
 }
