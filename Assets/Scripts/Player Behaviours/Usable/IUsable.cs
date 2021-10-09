@@ -4,7 +4,7 @@ using UnityEngine;
 
 public interface IUsable : IPlayerInteractable
 {
-    public void OnUse(UseContext context);
+    public void OnUse(UsedContext context);
 
     /// <summary>
     /// Whitelist users with label.

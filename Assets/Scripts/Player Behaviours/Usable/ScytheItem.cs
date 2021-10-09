@@ -11,12 +11,15 @@ public class ScytheItem : IUse, IItem, IDestructor
     [OdinSerialize]
     public uint ItemStack { get; set; } = 1;
     [OdinSerialize]
+    public float Cooldown { get; set; } = 0.5f;
+    [OdinSerialize]
     public float Strength { get; set; } = DurabilityStrengths.BRITTLE_STONE;
     [OdinSerialize]
     public float Damage { get; set; } = 2.0f;
 
     [SerializeField, AssetsOnly]
     private GameObject _modelPrefab { get; set; }
+
     [SerializeField]
     private float _radius = 3f;
     [SerializeField]
@@ -25,7 +28,12 @@ public class ScytheItem : IUse, IItem, IDestructor
     private Transform _scytheTransform;
     private Animator _animator;
 
-    public void OnEquip(UseContext context)
+    void IItem.Initialize(ItemContext context)
+    {
+
+    }
+
+    void IItem.OnEquip(ItemContext context)
     {
         _scytheTransform = GameObject.Instantiate(_modelPrefab, context.playerTransform.position, Quaternion.identity).transform;
         _scytheTransform.parent = context.playerTransform;
@@ -33,12 +41,17 @@ public class ScytheItem : IUse, IItem, IDestructor
         _animator = _scytheTransform.GetComponent<Animator>();
     }
 
-    public void OnUnequip(UseContext context)
+    void IItem.OnUnequip(ItemContext context)
     {
         GameObject.Destroy(_scytheTransform);
     }
 
-    public IEnumerable<IUsable> OnUse(UseContext context)
+    void IItem.OnUpdate(ItemContext context)
+    {
+
+    }
+
+    IEnumerable<IUsable> IUse.OnUse(UseContext context)
     {
         if (!context.started)
             yield break;
@@ -49,15 +62,5 @@ public class ScytheItem : IUse, IItem, IDestructor
         for (int i = 0; i < colliders.Length; i++)
             if (colliders[i].TryGetComponent(out IUsable usable))
                 yield return usable;
-    }
-
-    public void OnUpdate(UseContext context)
-    {
-
-    }
-
-    public void Initialize(UseContext context)
-    {
-
     }
 }

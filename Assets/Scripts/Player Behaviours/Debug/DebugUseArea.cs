@@ -18,7 +18,7 @@ public class DebugUseArea : MonoBehaviour, IUsable, IDestructable
 
     public IList<string> Filter(ItemLabels labels) => new List<string> { labels.SCYTHE };
 
-    public void OnUse(UseContext context)
+    public void OnUse(UsedContext context)
     {
         if (context.used is IDestructor)
         {

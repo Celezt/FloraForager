@@ -6,5 +6,8 @@ public interface IItem
 {
     public uint ItemStack { get; set; }
 
-    public void Initialize(UseContext context);
+    public void Initialize(ItemContext context);
+    public void OnUpdate(ItemContext context);
+    public void OnUnequip(ItemContext context);
+    public void OnEquip(ItemContext context);
 }

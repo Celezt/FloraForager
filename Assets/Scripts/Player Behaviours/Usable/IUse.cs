@@ -4,8 +4,6 @@ using UnityEngine;
 
 public interface IUse
 {
+    public float Cooldown { get; set; }
     public IEnumerable<IUsable> OnUse(UseContext context);
-    public void OnUpdate(UseContext context);
-    public void OnUnequip(UseContext context);
-    public void OnEquip(UseContext context);
 }

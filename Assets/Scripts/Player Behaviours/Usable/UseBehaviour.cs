@@ -11,7 +11,7 @@ public class UseBehaviour : MonoBehaviour
     private PlayerAction _playerAction;
     private PlayerInput _playerInput;
     private InputControlScheme _scheme;
-    private UseContext _useContext;
+    private ItemContext _itemContext;
     private IUse _use;
     private ItemType _itemType;
     private ItemLabels _itemLabels = new ItemLabels();
@@ -20,12 +20,9 @@ public class UseBehaviour : MonoBehaviour
 
     public void OnUse(InputAction.CallbackContext context)
     {
-        Vector3 position = transform.position;
-
         void UseTowardsCursor(InputAction.CallbackContext context)
         {
-            _useContext = new UseContext(
-                _use,
+            UseContext useContext = new UseContext(
                 _itemType.Labels,
                 transform,
                 this,
@@ -37,11 +34,22 @@ public class UseBehaviour : MonoBehaviour
                 context.performed
             );
             
-            foreach (IUsable usable in _use.OnUse(_useContext))
-                foreach (string label in _useContext.labels)
+            foreach (IUsable usable in _use.OnUse(useContext))
+                foreach (string label in useContext.labels)
                     if (usable.Filter(_itemLabels).Contains(label))
                     {
-                        usable.OnUse(_useContext);
+                        usable.OnUse(new UsedContext(
+                                _use,
+                                _itemType.Labels,
+                                transform,
+                                this,
+                                _itemType.Name,
+                                _itemType.ID,
+                                _playerIndex,
+                                context.canceled,
+                                context.started,
+                                context.performed
+                            ));
                         break;
                     }
         }
@@ -62,25 +70,21 @@ public class UseBehaviour : MonoBehaviour
         _itemType = ItemTypeSettings.Instance.ItemTypeChunk["sycthe"];
         _use = (IUse)_itemType.Behaviour;
 
-        _useContext = new UseContext(
-            _use,
+        _itemContext = new ItemContext(
             _itemType.Labels,
             transform,
             this,
             _itemType.Name,
             _itemType.ID,
-            _playerIndex,
-            false,
-            false,
-            false
+            _playerIndex
         );
 
-        _itemType.Behaviour.Initialize(_useContext);
+        _itemType.Behaviour.Initialize(_itemContext);
     }
 
     private void Start()
     {
-        _use.OnEquip(_useContext);
+        _itemType.Behaviour.OnEquip(_itemContext);
     }
 
     private void OnEnable()
@@ -100,11 +104,20 @@ public class UseBehaviour : MonoBehaviour
         _playerAction.Ground.Use.canceled -= OnUse;
         _playerInput.controlsChangedEvent.RemoveListener(ControlsChangedEvent);
 
-        _use.OnUnequip(_useContext);
+        _itemType.Behaviour.OnUnequip(_itemContext);
     }
 
     private void Update()
     {
-        _use.OnUpdate(_useContext);
+        _itemContext = new ItemContext(
+            _itemType.Labels,
+            transform,
+            this,
+            _itemType.Name,
+            _itemType.ID,
+            _playerIndex
+            );
+
+        _itemType.Behaviour.OnUpdate(_itemContext);
     }
 }

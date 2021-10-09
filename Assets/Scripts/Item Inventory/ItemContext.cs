@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public readonly struct UseContext
+public readonly struct ItemContext
 {
     public readonly List<string> labels;
     public readonly UseBehaviour useBehaviour;
@@ -10,20 +10,14 @@ public readonly struct UseContext
     public readonly string name;
     public readonly string id;
     public readonly int playerIndex;
-    public readonly bool canceled;
-    public readonly bool started;
-    public readonly bool performed;
 
-    internal UseContext(
+    internal ItemContext(
         List<string> labels,
         Transform playerTransform,
         UseBehaviour useBehaviour,
         string name,
         string id,
-        int playerIndex,
-        bool canceled,
-        bool started,
-        bool performed)
+        int playerIndex)
     {
         this.labels = labels;
         this.playerTransform = playerTransform;
@@ -31,8 +25,5 @@ public readonly struct UseContext
         this.name = name;
         this.id = id;
         this.playerIndex = playerIndex;
-        this.canceled = canceled;
-        this.started = started;
-        this.performed = performed;
     }
 }

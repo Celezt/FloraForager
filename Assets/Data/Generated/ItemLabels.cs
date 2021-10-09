@@ -24,6 +24,10 @@ public class ItemLabels {
     
     public readonly string CROP = "crop";
     
+    public readonly string SEED = "seed";
+    
+    public readonly string ROOT_FRUIT = "root_fruit";
+    
     public readonly string ANIMAL_PRODUCT = "animal_product";
     
     public readonly string SCYTHE = "scythe";
