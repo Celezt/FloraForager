@@ -30,10 +30,6 @@ public class DebugManager : Singleton<DebugManager>
 
     private InputField _inputField;
 
-    private PlayerActionHandle _playerHandle1;
-    private PlayerActionHandle _playerHandle2;
-    private PlayerActionHandle _playerHandle3;
-
     private bool _isFocus;
 
     private void Awake()
@@ -65,6 +61,9 @@ public class DebugManager : Singleton<DebugManager>
         PlayerMovement movement = playerInput.GetComponent<PlayerMovement>();
         InteractBehaviour interactableBehaviour = playerInput.GetComponent<InteractBehaviour>();
         UseBehaviour useBehaviour = playerInput.GetComponent<UseBehaviour>();
+        PlayerInventoryUI[] playerInventoryUI = FindObjectsOfType<PlayerInventoryUI>();
+
+        PlayerActionHandle[] playerHandles = new PlayerActionHandle[playerInventoryUI.Length + 3];
 
         while (DebugMode)
         {
@@ -77,17 +76,19 @@ public class DebugManager : Singleton<DebugManager>
                     if (!_isFocus)
                     {
                         _isFocus = true;
-                        _playerHandle1 = movement.Inputs.AddSharedDisable();
-                        _playerHandle2 = interactableBehaviour.Inputs.AddSharedDisable();
-                        _playerHandle3 = useBehaviour.Inputs.AddSharedDisable();
+                        playerHandles[0] = movement.Inputs.AddSharedDisable();
+                        playerHandles[1] = interactableBehaviour.Inputs.AddSharedDisable();
+                        playerHandles[2] = useBehaviour.Inputs.AddSharedDisable();
+                        for (int i = 0; i < playerInventoryUI.Length; i++)
+                            playerHandles[i + 3] = playerInventoryUI[i].PlayerAction.AddSharedDisable();
                     }
                 }
                 else
                 {
                     _isFocus = false;
-                    movement.Inputs.RemoveSharedDisable(_playerHandle1);
-                    interactableBehaviour.Inputs.RemoveSharedDisable(_playerHandle2);
-                    useBehaviour.Inputs.RemoveSharedDisable(_playerHandle3);
+                    for (int i = 0; i < playerHandles.Length; i++)
+                        if(!playerHandles[0].IsEmpty)
+                            playerHandles[i].RemoveSharedDisable();
                 }
             }
 
@@ -96,8 +97,8 @@ public class DebugManager : Singleton<DebugManager>
             yield return null;
         }
 
-        movement.Inputs.RemoveSharedDisable(_playerHandle1);
-        interactableBehaviour.Inputs.RemoveSharedDisable(_playerHandle2);
-        useBehaviour.Inputs.RemoveSharedDisable(_playerHandle3);
+        for (int i = 0; i < playerHandles.Length; i++)
+            if (!playerHandles[0].IsEmpty)
+                playerHandles[i].RemoveSharedDisable();
     }
 }
