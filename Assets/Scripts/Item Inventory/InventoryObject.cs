@@ -3,6 +3,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using Sirenix.OdinInspector;
 
 [CreateAssetMenu(fileName = "New Inventory", menuName = "Inventory System/Inventory")]
 public class InventoryObject : ScriptableObject
@@ -10,7 +11,7 @@ public class InventoryObject : ScriptableObject
     public event Action<int> OnItemChangeCallback = delegate { };
     public event Action<int,ItemAsset> OnAddItemCallback = delegate { };
     public event Action<int, ItemAsset> OnRemoveItemCallback = delegate { };
-    [NonSerialized]
+    [NonSerialized, ShowInInspector]
     public List<ItemAsset> Container = new List<ItemAsset>(); // Change
     public ItemSlot currentSlot;
     public bool IsFull { get; set; }
@@ -71,6 +72,27 @@ public class InventoryObject : ScriptableObject
             return true;
         }
         return false;
+    }
+    public void Remove(string id, int amount)
+    {
+        List<(int, int)> items = FindAll(id);
+        int amountToRemove = amount;
+
+        for (int i = items.Count - 1; i >= 0; --i)
+        {
+            if (items[i].Item2 - amountToRemove <= 0)
+            {
+                amountToRemove -= items[i].Item2;
+                RemoveAt(items[i].Item1);
+            }
+            else
+            {
+                ItemAsset itemAsset = Container[items[i].Item1];
+                itemAsset.Amount -= amountToRemove;
+                Container[items[i].Item1] = itemAsset;
+                OnItemChangeCallback.Invoke(items[i].Item1);
+            }
+        }
     }
     public void Swap(int pos, int pos2)
     {
