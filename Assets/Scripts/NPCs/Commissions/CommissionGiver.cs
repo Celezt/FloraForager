@@ -5,16 +5,17 @@ using UnityEngine.InputSystem;
 /// entity who gives out commissions to the player (attach to NPC)
 /// </summary>
 [RequireComponent(typeof(NPC), typeof(RelationshipManager))]
-public class CommissionGiver : MonoBehaviour
+public class CommissionGiver : MonoBehaviour, IInteractable
 {
     [SerializeField] private CommissionData[] _CommissionsData; // data used to create commissions
 
     private Commission[] _Commissions; // all of the commissions stored in this giver
-
     private NPC _NPC;
 
     public Commission[] Commissions => _Commissions;
     public NPC NPC => _NPC;
+
+    public int Priority => 0;
 
     private void Awake()
     {
@@ -27,15 +28,24 @@ public class CommissionGiver : MonoBehaviour
         }
     }
 
-    private void Update()
+    private void Start()
     {
-        if (Mouse.current.leftButton.wasPressedThisFrame)
+        InventoryObject inventory = PlayerInput.GetPlayerByIndex(0).GetComponent<PlayerInfo>().Inventory;
+        foreach (Commission commission in _Commissions)
         {
-            if (_NPC.Selected)
+            foreach (Objective objective in commission.Objectives)
             {
-                CommissionGiverWindow.Instance.ShowCommissions(this);
-                CommissionGiverWindow.Instance.Open();
+                inventory.OnItemChangeCallback += objective.UpdateAmount;
             }
         }
+    }
+
+    public void OnInteract(InteractContext context)
+    {
+        if (!context.performed)
+            return;
+
+        CommissionGiverWindow.Instance.ShowCommissions(this);
+        CommissionGiverWindow.Instance.Open();
     }
 }

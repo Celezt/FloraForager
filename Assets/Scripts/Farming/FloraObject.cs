@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
-public class FloraObject : MonoBehaviour, IInteractable
+public class FloraObject : MonoBehaviour, IUsable, IDestructable
 {
     private FloraData _Flora;
 
@@ -32,6 +32,9 @@ public class FloraObject : MonoBehaviour, IInteractable
             _Tile.TileMap.Grid.UpdateTile((_Watered = value) ? TileType.Soil : TileType.Dirt, _Tile);
         }
     }
+
+    public float Strength { get; set; } = 1;
+    public float Durability { get; set; } = 1;
 
     public void Initialize(FloraData flora, Tile tile)
     {
@@ -85,25 +88,26 @@ public class FloraObject : MonoBehaviour, IInteractable
         _Watered = false;
     }
 
-    public void OnInteract(InteractContext context)
+    public void OnUse(UsedContext context)
     {
         if (!context.performed)
             return;
 
         if (_Stage >= _Flora.GrowTime) // final stage reached
         {
+            InventoryObject inventory = PlayerInput.GetPlayerByIndex(context.playerIndex).GetComponent<PlayerInfo>().Inventory;
+
             for (int i = 0; i < _Flora.Rewards.Length; ++i)
             {
                 string itemID = _Flora.Rewards[i].ItemID;
                 int amount = _Flora.Rewards[i].Amount;
 
-                GameObject player = PlayerInput.GetPlayerByIndex(context.playerIndex).gameObject;
-
-                
-
-                // access inventory and add rewards
+                inventory.AddItem(new ItemAsset
+                {
+                    ID = itemID,
+                    Amount = amount
+                });
             }
-            Debug.Log("reward"); // access inventory and add rewards
         }
         else
         {
@@ -116,4 +120,6 @@ public class FloraObject : MonoBehaviour, IInteractable
         GridInteraction.RemoveObject(_Tile);
         FloraMaster.Instance.RemoveFlora(this);
     }
+
+    public IList<string> Filter(ItemLabels labels) => new List<string> { labels.SCYTHE };
 }

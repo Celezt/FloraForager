@@ -1,40 +1,39 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.InputSystem;
 
 public abstract class Objective
 {
     private ObjectiveData _Data;
 
-    private int _CurrentAmount;
+    public int CurrentAmount { get; set; }
 
     public string ItemID => _Data.ItemID;
     public int Amount => _Data.Amount;
-    public int CurrentAmount
-    {
-        get => _CurrentAmount;
-        set => _CurrentAmount = value;
-    }
-    public bool IsCompleted => (_CurrentAmount >= _Data.Amount);
+
+    public bool IsCompleted => (CurrentAmount >= _Data.Amount);
 
     public Objective(ObjectiveData data)
     {
         _Data = data;
     }
+
+    public abstract void UpdateAmount(int pos);
 }
 
 public class FetchObjective : Objective
 {
+    private InventoryObject _Inventory;
+
     public FetchObjective(ObjectiveData data) : base(data)
     {
-        
+        _Inventory = PlayerInput.GetPlayerByIndex(0).GetComponent<PlayerInfo>().Inventory;
     }
 
-    public void UpdateItemCount()
+    public override void UpdateAmount(int pos)
     {
-        // CurrentAmount = Inventory.Instance.GetItemCount(Type);
-
-        ++CurrentAmount;
+        CurrentAmount = _Inventory.FindAmount(ItemID);
 
         CommissionLog.Instance.UpdateSelected();
         CommissionLog.Instance.CheckCompletion();
