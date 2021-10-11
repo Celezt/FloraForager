@@ -17,6 +17,8 @@ GameObject:
   - component: {fileID: 2616486780325099183}
   - component: {fileID: 6098485419816427265}
   - component: {fileID: 2280982920848057557}
+  - component: {fileID: 7641041535583446093}
+  - component: {fileID: 6333730084197885922}
   m_Layer: 0
   m_Name: PlayerActor
   m_TagString: Untagged
@@ -242,6 +244,41 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8c475b4449161c84f886e2cb2aec01b8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!114 &7641041535583446093
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1114366716177447940}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 693ae75940fef8c49ae0b265687be59b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _StaminaSlider: {fileID: 0}
+  _MaxStamina: 100
+  _StmWalkingDrain: 0.04
+  _StmRunningDrain: 0.09
+  _StmActionDrain: 0.07
+  _StmNightDrain: 7.5
+  OnStaminaDrained:
+    m_PersistentCalls:
+      m_Calls: []
+--- !u!114 &6333730084197885922
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1114366716177447940}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a5242c5c185084c48af25fb662a5a7db, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _inventory: {fileID: 11400000, guid: 33d168e8181e5fd469cf3f018b0c7d5b, type: 2}
+  _playerData: {fileID: 11400000, guid: 8e38f09bfbc2c2f4fade0b50315538de, type: 2}
 --- !u!1 &5178136194200900361
 GameObject:
   m_ObjectHideFlags: 0
