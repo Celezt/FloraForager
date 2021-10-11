@@ -38,6 +38,8 @@ public class ItemLabels {
     
     public readonly string HOE = "hoe";
     
+    public readonly string ROD = "rod";
+    
     public readonly string WATERING_CAN = "watering_can";
     
     public ItemLabels() {

@@ -1,19 +1,30 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using Sirenix.Serialization;
+using Sirenix.OdinInspector;
 
-public class FishType : IItem
+public class FishItem : IItem
 {
+    public FishData Data => _fish;
+
     [OdinSerialize]
     uint IItem.ItemStack { get; set; } = 64;
 
-    private struct Fish
+    [SerializeField]
+    private FishData _fish;
+
+    [Serializable, HideLabel]
+    public struct FishData
     {
-        [Tooltip("Preferred height [0,1]"), Range(0, 1)]
+        [Tooltip("Preferred height [0,1]."), Range(0, 1)]
         public float Height;
+        [Tooltip("Swim speed."), Min(0)]
         public float Haste;
+        [Tooltip("Swim frequency."), Min(0)]
         public float Calmness;
+        [Tooltip("Randomness multiplier.")]
         public float Randomness;
     }
 

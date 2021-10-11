@@ -10,7 +10,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 00a108d415261c34b9fe06714b46e722, type: 3}
-  m_Name: floatish
+  m_Name: simple_rod
   m_EditorClassIdentifier: 
   serializationData:
     SerializedFormat: 2
@@ -23,38 +23,25 @@ MonoBehaviour:
     SerializationNodes:
     - Name: Behaviour
       Entry: 7
-      Data: 0|FishItem, Assembly-CSharp
+      Data: 0|RodItem, Assembly-CSharp
     - Name: IItem.ItemStack
       Entry: 3
-      Data: 64
-    - Name: _fish
-      Entry: 7
-      Data: FishItem+FishData, Assembly-CSharp
-    - Name: Height
+      Data: 1
+    - Name: IUse.Cooldown
       Entry: 4
-      Data: 0
-    - Name: Haste
+      Data: 1
+    - Name: _proficiency
       Entry: 4
-      Data: 0
-    - Name: Calmness
+      Data: 1
+    - Name: _catchSize
       Entry: 4
-      Data: 0
-    - Name: Randomness
-      Entry: 4
-      Data: 0
-    - Name: 
-      Entry: 8
-      Data: 
+      Data: 0.026
     - Name: 
       Entry: 8
       Data: 
   Icon: {fileID: 0}
-  Name: Floatish
-  ID: floatish
-  Description: 'Floatish are the most common fishes. These fishes don''t take a lot
-    of energy to fish. The fish is relatively small, and is red, pink and white.
-    The fish is shaped as heart pointed in 90 degrees and has a tail which is also
-    shaped like a heart. '
+  Name: Simple Rod
+  ID: simple_rod
+  Description: 
   Labels:
-  - food
-  - fish
+  - rod

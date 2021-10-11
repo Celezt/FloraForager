@@ -5,7 +5,7 @@ using UnityEngine;
 using Sirenix.Serialization;
 using MyBox;
 
-public class FoodType : IUse, IItem
+public class FoodItem : IUse, IItem
 {
     [OdinSerialize]
     public uint ItemStack { get; set; } = 64;

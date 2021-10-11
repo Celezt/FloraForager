@@ -12,7 +12,7 @@ GameObject:
   - component: {fileID: 1844656071559398433}
   - component: {fileID: 552703914601528191}
   m_Layer: 5
-  m_Name: FocusArea
+  m_Name: CatchArea
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -25,17 +25,17 @@ RectTransform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1354401507924401027}
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
-  m_Father: {fileID: 8564914868500951826}
+  m_Father: {fileID: 9183530757815748870}
   m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: 0.00012207031, y: 0}
-  m_SizeDelta: {x: 0, y: -314.2413}
+  m_AnchoredPosition: {x: 0.00014400482, y: 0}
+  m_SizeDelta: {x: 35.534702, y: 111.75873}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &1844656071559398433
 CanvasRenderer:
@@ -75,6 +75,81 @@ MonoBehaviour:
   m_FillOrigin: 0
   m_UseSpriteMesh: 0
   m_PixelsPerUnitMultiplier: 1.46
+--- !u!1 &2348322385186360857
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 886179229261901650}
+  - component: {fileID: 4659870686356254969}
+  - component: {fileID: 5880881489287951696}
+  m_Layer: 5
+  m_Name: Fish
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!224 &886179229261901650
+RectTransform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2348322385186360857}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 9183530757815748870}
+  m_RootOrder: 2
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_AnchorMin: {x: 0.5, y: 0.5}
+  m_AnchorMax: {x: 0.5, y: 1}
+  m_AnchoredPosition: {x: 0, y: 239}
+  m_SizeDelta: {x: 35.535, y: 35.805405}
+  m_Pivot: {x: 0.5, y: 0.5}
+--- !u!222 &4659870686356254969
+CanvasRenderer:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2348322385186360857}
+  m_CullTransparentMesh: 1
+--- !u!114 &5880881489287951696
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2348322385186360857}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fe87c0e1cc204ed48ad3b37840f39efc, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_Material: {fileID: 0}
+  m_Color: {r: 1, g: 1, b: 1, a: 1}
+  m_RaycastTarget: 1
+  m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
+  m_Maskable: 1
+  m_OnCullStateChanged:
+    m_PersistentCalls:
+      m_Calls: []
+  m_Sprite: {fileID: 21300000, guid: b44330d65ac262b4d80c147d02dd0c94, type: 3}
+  m_Type: 0
+  m_PreserveAspect: 0
+  m_FillCenter: 1
+  m_FillMethod: 4
+  m_FillAmount: 1
+  m_FillClockwise: 1
+  m_FillOrigin: 0
+  m_UseSpriteMesh: 0
+  m_PixelsPerUnitMultiplier: 1
 --- !u!1 &4180826016232595288
 GameObject:
   m_ObjectHideFlags: 0
@@ -86,7 +161,7 @@ GameObject:
   - component: {fileID: 8662761120316123389}
   - component: {fileID: 7960963778911009110}
   - component: {fileID: 941852618735952022}
-  m_Layer: 0
+  m_Layer: 5
   m_Name: FishArea
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -104,13 +179,13 @@ RectTransform:
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
-  m_Father: {fileID: 8564914868500951826}
+  m_Father: {fileID: 9183530757815748870}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 0, y: 0}
+  m_AnchoredPosition: {x: 0, y: 0.000061035156}
+  m_SizeDelta: {x: 35.535, y: 611}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &7960963778911009110
 CanvasRenderer:
@@ -160,7 +235,7 @@ GameObject:
   m_Component:
   - component: {fileID: 3969407280374261604}
   - component: {fileID: 8094074074998984658}
-  m_Layer: 0
+  m_Layer: 5
   m_Name: UIFishing
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -178,7 +253,7 @@ RectTransform:
   m_LocalPosition: {x: 0, y: 0, z: -125.71872}
   m_LocalScale: {x: 1.2203391, y: 1.2203391, z: 1.2203391}
   m_Children:
-  - {fileID: 8564914868500951826}
+  - {fileID: 9183530757815748870}
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -199,10 +274,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 81fa7cb8b60f91341bbcbb1e397816e8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _fishArea: {fileID: 8564914868500951826}
-  _focusArea: {fileID: 7796492784955713917}
-  _fishHeight: 368
---- !u!1001 &1521248848183791315
+  _fishArea: {fileID: 8662761120316123389}
+  _catchArea: {fileID: 7796492784955713917}
+  _fishPoint: {fileID: 886179229261901650}
+  _fishHeight: 611
+  _playerIndex: 0
+--- !u!1001 &2067798623923025095
 PrefabInstance:
   m_ObjectHideFlags: 0
   serializedVersion: 2
@@ -223,27 +300,27 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 7187814780625911233, guid: 9d75c6149eb0d0f449a9d2597baefb65, type: 3}
       propertyPath: m_AnchorMax.x
-      value: 0.5
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 7187814780625911233, guid: 9d75c6149eb0d0f449a9d2597baefb65, type: 3}
       propertyPath: m_AnchorMax.y
-      value: 0.5
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 7187814780625911233, guid: 9d75c6149eb0d0f449a9d2597baefb65, type: 3}
       propertyPath: m_AnchorMin.x
-      value: 0.5
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 7187814780625911233, guid: 9d75c6149eb0d0f449a9d2597baefb65, type: 3}
       propertyPath: m_AnchorMin.y
-      value: 0.5
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 7187814780625911233, guid: 9d75c6149eb0d0f449a9d2597baefb65, type: 3}
       propertyPath: m_SizeDelta.x
-      value: 35.5347
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 7187814780625911233, guid: 9d75c6149eb0d0f449a9d2597baefb65, type: 3}
       propertyPath: m_SizeDelta.y
-      value: 368
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 7187814780625911233, guid: 9d75c6149eb0d0f449a9d2597baefb65, type: 3}
       propertyPath: m_LocalPosition.x
@@ -299,8 +376,8 @@ PrefabInstance:
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 9d75c6149eb0d0f449a9d2597baefb65, type: 3}
---- !u!224 &8564914868500951826 stripped
+--- !u!224 &9183530757815748870 stripped
 RectTransform:
   m_CorrespondingSourceObject: {fileID: 7187814780625911233, guid: 9d75c6149eb0d0f449a9d2597baefb65, type: 3}
-  m_PrefabInstance: {fileID: 1521248848183791315}
+  m_PrefabInstance: {fileID: 2067798623923025095}
   m_PrefabAsset: {fileID: 0}

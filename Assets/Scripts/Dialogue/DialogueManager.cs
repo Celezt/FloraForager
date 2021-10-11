@@ -56,7 +56,7 @@ public class DialogueManager : MonoBehaviour
     /// </summary>
     /// <param name="playerIndex">Index.</param>
     /// <returns>Dialogue Manager.</returns>
-    public static DialogueManager GetDialogueByIndex(int playerIndex) => _dialogues[playerIndex];
+    public static DialogueManager GetByIndex(int playerIndex) => _dialogues[playerIndex];
 
     public float GetAutoTextSpeedMultiplier(int layer) => _speedMultiplierHierarchy[layer];
 
@@ -235,6 +235,11 @@ public class DialogueManager : MonoBehaviour
             DialogueUtility.LoadAliases(_aliasLabel, _aliases);
             _initializedTags = true;
         }
+    }
+
+    private void OnDestroy()
+    {
+        _dialogues.Remove(_playerIndex);
     }
 
     private void StartDialogueConsole(string address, params string[] aliases) => StartDialogue(address, aliases);

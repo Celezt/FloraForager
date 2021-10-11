@@ -258,6 +258,34 @@ public partial class @PlayerAction : IInputActionCollection2, IDisposable
                     ""isPartOfComposite"": false
                 }
             ]
+        },
+        {
+            ""name"": ""Fishing"",
+            ""id"": ""a12fe125-2eab-47f6-8d25-e21db59e10f2"",
+            ""actions"": [
+                {
+                    ""name"": ""Drag"",
+                    ""type"": ""Value"",
+                    ""id"": ""869d4ea3-7a43-428a-b480-496a98c690a7"",
+                    ""expectedControlType"": ""Button"",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": true
+                }
+            ],
+            ""bindings"": [
+                {
+                    ""name"": """",
+                    ""id"": ""4865e0c7-f556-43d0-8925-b63d7155cb34"",
+                    ""path"": ""<Mouse>/leftButton"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": ""KeyboardAndMouse"",
+                    ""action"": ""Drag"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                }
+            ]
         }
     ],
     ""controlSchemes"": [
@@ -299,6 +327,9 @@ public partial class @PlayerAction : IInputActionCollection2, IDisposable
         m_Ground_Cursor = m_Ground.FindAction("Cursor", throwIfNotFound: true);
         m_Ground_Inventory = m_Ground.FindAction("Inventory", throwIfNotFound: true);
         m_Ground_CommissionLog = m_Ground.FindAction("CommissionLog", throwIfNotFound: true);
+        // Fishing
+        m_Fishing = asset.FindActionMap("Fishing", throwIfNotFound: true);
+        m_Fishing_Drag = m_Fishing.FindAction("Drag", throwIfNotFound: true);
     }
 
     public void Dispose()
@@ -435,6 +466,39 @@ public partial class @PlayerAction : IInputActionCollection2, IDisposable
         }
     }
     public GroundActions @Ground => new GroundActions(this);
+
+    // Fishing
+    private readonly InputActionMap m_Fishing;
+    private IFishingActions m_FishingActionsCallbackInterface;
+    private readonly InputAction m_Fishing_Drag;
+    public struct FishingActions
+    {
+        private @PlayerAction m_Wrapper;
+        public FishingActions(@PlayerAction wrapper) { m_Wrapper = wrapper; }
+        public InputAction @Drag => m_Wrapper.m_Fishing_Drag;
+        public InputActionMap Get() { return m_Wrapper.m_Fishing; }
+        public void Enable() { Get().Enable(); }
+        public void Disable() { Get().Disable(); }
+        public bool enabled => Get().enabled;
+        public static implicit operator InputActionMap(FishingActions set) { return set.Get(); }
+        public void SetCallbacks(IFishingActions instance)
+        {
+            if (m_Wrapper.m_FishingActionsCallbackInterface != null)
+            {
+                @Drag.started -= m_Wrapper.m_FishingActionsCallbackInterface.OnDrag;
+                @Drag.performed -= m_Wrapper.m_FishingActionsCallbackInterface.OnDrag;
+                @Drag.canceled -= m_Wrapper.m_FishingActionsCallbackInterface.OnDrag;
+            }
+            m_Wrapper.m_FishingActionsCallbackInterface = instance;
+            if (instance != null)
+            {
+                @Drag.started += instance.OnDrag;
+                @Drag.performed += instance.OnDrag;
+                @Drag.canceled += instance.OnDrag;
+            }
+        }
+    }
+    public FishingActions @Fishing => new FishingActions(this);
     private int m_KeyboardAndMouseSchemeIndex = -1;
     public InputControlScheme KeyboardAndMouseScheme
     {
@@ -462,5 +526,9 @@ public partial class @PlayerAction : IInputActionCollection2, IDisposable
         void OnCursor(InputAction.CallbackContext context);
         void OnInventory(InputAction.CallbackContext context);
         void OnCommissionLog(InputAction.CallbackContext context);
+    }
+    public interface IFishingActions
+    {
+        void OnDrag(InputAction.CallbackContext context);
     }
 }

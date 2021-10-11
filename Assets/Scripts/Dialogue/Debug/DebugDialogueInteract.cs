@@ -22,7 +22,7 @@ public class DebugDialogueInteract : MonoBehaviour, IInteractable
             PlayerActionHandle playerHandle2 = interactableArea.Inputs.AddSharedDisable();
             PlayerActionHandle playerHandle3 = useBehaviour.Inputs.AddSharedDisable();
 
-            DialogueManager.GetDialogueByIndex(context.playerIndex).StartDialogue(_asset, "You", "Joker").Completed += (handle) => 
+            DialogueManager.GetByIndex(context.playerIndex).StartDialogue(_asset, "You", "Joker").Completed += (handle) => 
             {
                 movement.Inputs.RemoveSharedDisable(playerHandle1);
                 interactableArea.Inputs.RemoveSharedDisable(playerHandle2);

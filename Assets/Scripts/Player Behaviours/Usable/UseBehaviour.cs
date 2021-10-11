@@ -76,7 +76,7 @@ public class UseBehaviour : MonoBehaviour
     {
         _playerAction = new PlayerAction();
         _playerInput = GetComponent<PlayerInput>();
-        _itemType = ItemTypeSettings.Instance.ItemTypeChunk["porock"];
+        _itemType = ItemTypeSettings.Instance.ItemTypeChunk["simple_rod"];
         _use = (IUse)_itemType.Behaviour;
 
         _itemContext = new ItemContext(
