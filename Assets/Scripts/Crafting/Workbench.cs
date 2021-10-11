@@ -27,7 +27,7 @@ public class Workbench : MonoBehaviour, IInteractable
 
     private void Update()
     {
-        if (UICraftingMenu.Instance.Workbench == null)
+        if (UICraftingMenu.Instance.Workbench == null || _Player == null)
             return;
 
         float distance = Vector3.Distance(transform.position, _Player.transform.position);
@@ -41,7 +41,7 @@ public class Workbench : MonoBehaviour, IInteractable
     {
         if (!context.performed)
             return;
-        
+
         _Player = PlayerInput.GetPlayerByIndex(context.playerIndex).gameObject;
 
         UICraftingMenu.Instance.ShowCraftableItems(this);

@@ -11,7 +11,6 @@ public class PlayerStamina : MonoBehaviour
     [SerializeField] private float _MaxStamina = 100.0f;
     [SerializeField] private float _StmWalkingDrain = 0.04f;  // amount stamina drained every second
     [SerializeField] private float _StmRunningDrain = 0.09f;
-    [SerializeField] private float _StmActionDrain = 0.07f;
     [SerializeField] private float _StmNightDrain = 7.5f;
 
     public UnityEvent OnStaminaDrained;

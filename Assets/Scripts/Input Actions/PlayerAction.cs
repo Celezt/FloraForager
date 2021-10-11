@@ -80,6 +80,15 @@ public partial class @PlayerAction : IInputActionCollection2, IDisposable
                     ""processors"": """",
                     ""interactions"": """",
                     ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""CommissionLog"",
+                    ""type"": ""Button"",
+                    ""id"": ""bb111f06-1961-4f94-a2be-8a97dec5aab0"",
+                    ""expectedControlType"": ""Button"",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
                 }
             ],
             ""bindings"": [
@@ -236,6 +245,17 @@ public partial class @PlayerAction : IInputActionCollection2, IDisposable
                     ""action"": ""Inventory"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""8d850fe6-726e-44f3-816c-fb0a02a39915"",
+                    ""path"": ""<Keyboard>/c"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": ""KeyboardAndMouse"",
+                    ""action"": ""CommissionLog"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
                 }
             ]
         }
@@ -278,6 +298,7 @@ public partial class @PlayerAction : IInputActionCollection2, IDisposable
         m_Ground_Interact = m_Ground.FindAction("Interact", throwIfNotFound: true);
         m_Ground_Cursor = m_Ground.FindAction("Cursor", throwIfNotFound: true);
         m_Ground_Inventory = m_Ground.FindAction("Inventory", throwIfNotFound: true);
+        m_Ground_CommissionLog = m_Ground.FindAction("CommissionLog", throwIfNotFound: true);
     }
 
     public void Dispose()
@@ -343,6 +364,7 @@ public partial class @PlayerAction : IInputActionCollection2, IDisposable
     private readonly InputAction m_Ground_Interact;
     private readonly InputAction m_Ground_Cursor;
     private readonly InputAction m_Ground_Inventory;
+    private readonly InputAction m_Ground_CommissionLog;
     public struct GroundActions
     {
         private @PlayerAction m_Wrapper;
@@ -353,6 +375,7 @@ public partial class @PlayerAction : IInputActionCollection2, IDisposable
         public InputAction @Interact => m_Wrapper.m_Ground_Interact;
         public InputAction @Cursor => m_Wrapper.m_Ground_Cursor;
         public InputAction @Inventory => m_Wrapper.m_Ground_Inventory;
+        public InputAction @CommissionLog => m_Wrapper.m_Ground_CommissionLog;
         public InputActionMap Get() { return m_Wrapper.m_Ground; }
         public void Enable() { Get().Enable(); }
         public void Disable() { Get().Disable(); }
@@ -380,6 +403,9 @@ public partial class @PlayerAction : IInputActionCollection2, IDisposable
                 @Inventory.started -= m_Wrapper.m_GroundActionsCallbackInterface.OnInventory;
                 @Inventory.performed -= m_Wrapper.m_GroundActionsCallbackInterface.OnInventory;
                 @Inventory.canceled -= m_Wrapper.m_GroundActionsCallbackInterface.OnInventory;
+                @CommissionLog.started -= m_Wrapper.m_GroundActionsCallbackInterface.OnCommissionLog;
+                @CommissionLog.performed -= m_Wrapper.m_GroundActionsCallbackInterface.OnCommissionLog;
+                @CommissionLog.canceled -= m_Wrapper.m_GroundActionsCallbackInterface.OnCommissionLog;
             }
             m_Wrapper.m_GroundActionsCallbackInterface = instance;
             if (instance != null)
@@ -402,6 +428,9 @@ public partial class @PlayerAction : IInputActionCollection2, IDisposable
                 @Inventory.started += instance.OnInventory;
                 @Inventory.performed += instance.OnInventory;
                 @Inventory.canceled += instance.OnInventory;
+                @CommissionLog.started += instance.OnCommissionLog;
+                @CommissionLog.performed += instance.OnCommissionLog;
+                @CommissionLog.canceled += instance.OnCommissionLog;
             }
         }
     }
@@ -432,5 +461,6 @@ public partial class @PlayerAction : IInputActionCollection2, IDisposable
         void OnInteract(InputAction.CallbackContext context);
         void OnCursor(InputAction.CallbackContext context);
         void OnInventory(InputAction.CallbackContext context);
+        void OnCommissionLog(InputAction.CallbackContext context);
     }
 }
