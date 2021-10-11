@@ -4,23 +4,22 @@ using UnityEngine;
 
 public class FishingManager : MonoBehaviour
 {
-    [SerializeField] private RectTransform _mainPanel;
-    [SerializeField, Min(0)] private int _width = 500;
+    [SerializeField] private RectTransform _fishArea;
+    [SerializeField] private RectTransform _focusArea;
+    [SerializeField, Min(0)] private int _fishHeight = 500;
 
     private void Start()
     {
-        SetWidth();
+        SetHeight();
     }
 
-    private void SetWidth()
+    private void SetHeight()
     {
-        Rect rect = _mainPanel.rect;
-        rect.width = _width;
-        _mainPanel.sizeDelta = new Vector2(_width, _mainPanel.rect.height);
+        _fishArea.sizeDelta = new Vector2(_fishArea.rect.width, _fishHeight);
     }
 
 #if UNITY_EDITOR
-    private int _oldWidth;
+    private int _oldHeight;
 
     private void OnValidate() { UnityEditor.EditorApplication.delayCall += _OnValidate; }
     private void _OnValidate()
@@ -28,10 +27,10 @@ public class FishingManager : MonoBehaviour
         if (this == null)
             return;
 
-        if (_oldWidth != _width)
-            SetWidth();
+        if (_oldHeight != _fishHeight)
+            SetHeight();
 
-        _oldWidth = _width;
+        _oldHeight = _fishHeight;
     }
 #endif
 }

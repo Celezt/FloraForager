@@ -6,7 +6,7 @@ using Sirenix.OdinInspector;
 using Sirenix.Serialization;
 using System.Linq;
 
-public class ScytheItem : IUse, IItem, IDestructor
+public class ScytheType : IUse, IItem, IDestructor
 {
     [OdinSerialize]
     public uint ItemStack { get; set; } = 1;
