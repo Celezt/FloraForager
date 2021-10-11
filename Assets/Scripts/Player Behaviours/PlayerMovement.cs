@@ -85,6 +85,7 @@ public class PlayerMovement : MonoBehaviour
     public event Action<float, bool> OnPlayerRunCallback = delegate { };
 
     [SerializeField] private Rigidbody _rigidbody;
+    [SerializeField] private Collider _collider;
     [SerializeField] private PivotMode _pivotMode;
     [SerializeField, ConditionalField(nameof(_pivotMode), false, PivotMode.Camera)] private Camera _camera;
     [SerializeField, ConditionalField(nameof(_pivotMode), false, PivotMode.Target)] private Transform _pivot;
@@ -95,6 +96,8 @@ public class PlayerMovement : MonoBehaviour
     [SerializeField] private LayerMask _groundLayer;
     [SerializeField] private float _groundCheckDistance = 1.5f;
     [SerializeField, Tooltip("In degrees."), Range(0, 180)] private float _maxSlopeAngle = 45.0f;
+    [SerializeField] private PhysicMaterial _groundPhysicMaterial;
+    [SerializeField] private PhysicMaterial _fallPhysicMaterial;
 
     private enum PivotMode
     {
@@ -129,6 +132,7 @@ public class PlayerMovement : MonoBehaviour
     {
         Vector2 value = context.ReadValue<Vector2>();
         _rawDirection = new Vector3(value.x, 0, value.y);
+        _rigidbody.velocity = new Vector3(0, _rigidbody.velocity.y, 0);
 
         if (context.canceled)
         {
@@ -189,113 +193,119 @@ public class PlayerMovement : MonoBehaviour
     {
         Vector3 position = transform.position;
 
-        Movement(position);
-        SlopeMovement(position);
-    }
-
-    private void Movement(Vector3 position)
-    {
-        float fixedDeltaTime = Time.fixedDeltaTime;
-        _rawRotation = _rigidbody.rotation;
-
-        void GetDirection(Vector3 pivotForward, Vector3 pivotRight)
+        void Movement()
         {
-            pivotForward.y = 0f;
-            pivotRight.y = 0f;
+            float fixedDeltaTime = Time.fixedDeltaTime;
+            _rawRotation = _rigidbody.rotation;
 
-            _forward = (pivotForward * _rawDirection.z + pivotRight * _rawDirection.x).normalized;
+            void GetDirection(Vector3 pivotForward, Vector3 pivotRight)
+            {
+                pivotForward.y = 0f;
+                pivotRight.y = 0f;
 
-            if (_rawDirection != Vector3.zero)
-                _relativeForward = _forward;
-        }
+                _forward = (pivotForward * _rawDirection.z + pivotRight * _rawDirection.x).normalized;
 
-        Vector3 pivotForward = Vector3.zero;
-        Vector3 pivotRight = Vector3.zero;
-        switch (_pivotMode)
-        {
-            case PivotMode.Camera:
-                if (_camera == null)
-                    _camera = Camera.main;
-
-                Transform cameraTransform = _camera.transform;
-                pivotForward = cameraTransform.forward;
-                pivotRight = cameraTransform.right;
-
-                GetDirection(pivotForward, pivotRight);
-                break;
-            case PivotMode.Target:
-                pivotForward = _pivot.forward;
-                pivotRight = _pivot.right;
-
-                GetDirection(pivotForward, pivotRight);
-                break;
-            default:
                 if (_rawDirection != Vector3.zero)
-                    _relativeForward = _rawDirection;
-
-                _forward = _rawDirection;
-                break;
-        }
-
-        void FixedMove()
-        {
-            if (_groundAngle >= _maxSlopeAngle)
-                return;
-
-            _rawVelocity = _slopeForward * ((_isRunning) ? _speed * _speedMultiplier * _runningSpeedMultiplier : _speed * _speedMultiplier) * fixedDeltaTime;
-            _velocity = Vector3.Lerp(_velocity, _rawVelocity, _drag * fixedDeltaTime);
-            _rigidbody.MovePosition(position + _velocity);
-        }
-
-        void FixedRotate()
-        {
-            _rotation = Quaternion.Slerp(_rawRotation, Quaternion.LookRotation(_relativeForward, Vector3.up), _angularDrag * fixedDeltaTime);
-            _rigidbody.MoveRotation(_rotation);
-        }
-
-        FixedMove();
-        FixedRotate();
-    }
-
-    private void SlopeMovement(Vector3 position)
-    {
-        RaycastHit hit = new RaycastHit();
-
-        void CheckGround()
-        {
-            _isGrounded = Physics.Raycast(position, -Vector3.up, out hit, _groundCheckDistance, _groundLayer);
-        }
-
-        void ForwardSlope()
-        {
-            if (!_isGrounded)
-            {
-                _slopeForward = _forward;
-                return;
+                    _relativeForward = _forward;
             }
 
-            _slopeForward = Vector3.Cross(Vector3.Cross(Vector3.up, _forward), hit.normal).normalized;
-        };
+            Vector3 pivotForward = Vector3.zero;
+            Vector3 pivotRight = Vector3.zero;
+            switch (_pivotMode)
+            {
+                case PivotMode.Camera:
+                    if (_camera == null)
+                        _camera = Camera.main;
 
-        void GroundAngle()
-        {
-            _groundAngle = Vector3.Angle(hit.normal, _forward) - 90.0f;
+                    Transform cameraTransform = _camera.transform;
+                    pivotForward = cameraTransform.forward;
+                    pivotRight = cameraTransform.right;
+
+                    GetDirection(pivotForward, pivotRight);
+                    break;
+                case PivotMode.Target:
+                    pivotForward = _pivot.forward;
+                    pivotRight = _pivot.right;
+
+                    GetDirection(pivotForward, pivotRight);
+                    break;
+                default:
+                    if (_rawDirection != Vector3.zero)
+                        _relativeForward = _rawDirection;
+
+                    _forward = _rawDirection;
+                    break;
+            }
+
+            void FixedMove()
+            {
+                if (_groundAngle >= _maxSlopeAngle)
+                    return;
+
+                _rawVelocity = _slopeForward * ((_isRunning) ? _speed * _speedMultiplier * _runningSpeedMultiplier : _speed * _speedMultiplier) * fixedDeltaTime;
+                _velocity = Vector3.Lerp(_velocity, _rawVelocity, _drag * fixedDeltaTime);
+                _rigidbody.MovePosition(position + _velocity);
+            }
+
+            void FixedRotate()
+            {
+                _rotation = Quaternion.Slerp(_rawRotation, Quaternion.LookRotation(_relativeForward, Vector3.up), _angularDrag * fixedDeltaTime);
+                _rigidbody.MoveRotation(_rotation);
+            }
+
+            FixedMove();
+            FixedRotate();
         }
 
-        void DrawDebugLines()
+        void SlopeMovement()
         {
+            RaycastHit hit = new RaycastHit();
+
+            void CheckGround()
+            {
+                _isGrounded = Physics.Raycast(position, -Vector3.up, out hit, _groundCheckDistance, _groundLayer);
+            }
+
+            void ForwardSlope()
+            {
+                if (!_isGrounded)
+                {
+                    _slopeForward = _forward;
+                    return;
+                }
+
+                _slopeForward = Vector3.Cross(Vector3.Cross(Vector3.up, _forward), hit.normal).normalized;
+            };
+
+            void GroundAngle()
+            {
+                _groundAngle = Vector3.Angle(hit.normal, _forward) - 90.0f;
+            }
+
+            void DrawDebugLines()
+            {
 #if UNITY_EDITOR
-            if (DebugManager.DebugMode)
-            {
-                Debug.DrawLine(position, position + _slopeForward * _groundCheckDistance * 2, Color.blue);
-                Debug.DrawLine(position, position - Vector3.up * _groundCheckDistance, Color.green);
-            }
+                if (DebugManager.DebugMode)
+                {
+                    Debug.DrawLine(position, position + _slopeForward * _groundCheckDistance * 2, Color.blue);
+                    Debug.DrawLine(position, position - Vector3.up * _groundCheckDistance, Color.green);
+                }
 #endif
+            }
+
+            CheckGround();
+            ForwardSlope();
+            GroundAngle();
+            DrawDebugLines();
         }
 
-        CheckGround();
-        ForwardSlope();
-        GroundAngle();
-        DrawDebugLines();
+        void PhysicMaterialToUse()
+        {
+            _collider.material = _isGrounded ? _groundPhysicMaterial : _fallPhysicMaterial;
+        }
+
+        Movement();
+        SlopeMovement();
+        PhysicMaterialToUse();
     }
 }

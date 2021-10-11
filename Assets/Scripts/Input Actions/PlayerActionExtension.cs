@@ -9,7 +9,7 @@ public partial class PlayerAction
 
     public PlayerActionHandle AddSharedDisable()
     {
-        PlayerActionHandle handle = PlayerActionHandle.Create();
+        PlayerActionHandle handle = PlayerActionHandle.Create(this);
         
         _sharedDisable.Add(handle);
 
