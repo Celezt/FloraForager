@@ -13,7 +13,6 @@ public class InventoryObject : ScriptableObject
     public event Action<int, ItemAsset> OnRemoveItemCallback = delegate { };
     [NonSerialized, ShowInInspector]
     public List<ItemAsset> Container = new List<ItemAsset>(); // Change
-    public ItemSlot currentSlot;
     public bool IsFull { get; set; }
     public bool AddItem(ItemAsset item)
     {
