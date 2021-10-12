@@ -12,8 +12,11 @@ public class FishingManager : MonoBehaviour
     [SerializeField] private RectTransform _fishArea;
     [SerializeField] private RectTransform _catchArea;
     [SerializeField] private RectTransform _fishPoint;
+    [SerializeField] private RectTransform _toggle;
     [SerializeField, Min(0)] private int _fishHeight = 500;
     [SerializeField, Min(0)] private int _playerIndex;
+    [SerializeField, Min(0)] private float _gravity = 9.82f;
+    [SerializeField, Tooltip("If the point should dynamically move separate from the catch are or not")] private bool _dynamicPoint = true;
 
     private Coroutine _playFishingCoroutine;
     private PlayerAction _inputs;
@@ -64,10 +67,20 @@ public class FishingManager : MonoBehaviour
         
         FishItem fishItem = (FishItem)item.Behaviour;
 
+        _toggle.gameObject.SetActive(true);
+
         if (_playFishingCoroutine != null)
             StopCoroutine(_playFishingCoroutine);
 
         _playFishingCoroutine = StartCoroutine(PlayFishing(fishItem, rodItem));
+    }
+
+    public void StopFishing()
+    {
+        if (_playFishingCoroutine != null)
+            StopCoroutine(_playFishingCoroutine);
+
+        _toggle.gameObject.SetActive(false);
     }
 
     private void Awake()
@@ -79,6 +92,8 @@ public class FishingManager : MonoBehaviour
     {
         _fishings.Add(_playerIndex, this);
         SetHeight();
+
+        _toggle.gameObject.SetActive(false);
 
         DebugLogConsole.AddCommandInstance("fishing_start", "Start fish game.", nameof(StartFishing), this);
     }
@@ -113,7 +128,17 @@ public class FishingManager : MonoBehaviour
     {
         MinMaxFloat catchRange = new MinMaxFloat(0, Mathf.Clamp01(rodItem.CatchSize));
 
-        void SetCatchArea(float point)
+        float timeStart = Time.time;
+        float dragVelocity = rodItem.DragVelocity;
+        float dragAcceleration = rodItem.DragAcceleration;
+        float dragWeight = rodItem.DragWeight;
+        float bounciness = rodItem.Bounciness;
+        float gravityForce = _gravity * dragWeight;
+        float dragForce = 0;
+        float velocity = 0;
+        float point = 0;
+
+        void SetCatchArea()
         {
             point = Mathf.Clamp01(point);
 
@@ -130,6 +155,14 @@ public class FishingManager : MonoBehaviour
             catchRange.Max = point + halfLength + offset;
         }
 
+        void SetBouncing()
+        {
+            if (point > 1)
+                velocity = 0;
+            else if (point < 0)
+                velocity *= -bounciness;
+        }
+
         void ConvertToPixels()
         {
             Rect catchArea = _catchArea.rect;
@@ -138,15 +171,19 @@ public class FishingManager : MonoBehaviour
             _catchArea.offsetMax = new Vector2(catchArea.xMax, fishArea.yMin + _fishHeight * catchRange.Max);
         }
 
-        float timeStart = Time.time;
-        float point = 0;
-
-       
         while (true)
         {
-            point = Mathf.PingPong(Time.time * 0.1f, 1);
-            SetCatchArea(point);
+            float deltaTime = Time.deltaTime;
+
+            dragForce = _drag > 0.5f ? Mathf.Lerp(dragForce, dragVelocity, dragAcceleration * deltaTime) : 0;
+            float acceleration = (-gravityForce + dragForce) / dragWeight;
+            velocity += acceleration * deltaTime;
+            point += 0.1f * (velocity * deltaTime + (acceleration * deltaTime * deltaTime) / 2);
+
+            SetBouncing();
+            SetCatchArea();
             ConvertToPixels();
+
             yield return null;
         }     
     }
