@@ -27,24 +27,29 @@ public class ResourceSourceUI : Singleton<ResourceSourceUI>
 
     private void LateUpdate()
     {
-        UpdatePosition();
-    }
-
-    public void SetActive(ResourceSource resource, bool value)
-    {
-        _Resource = resource;        
-
-        UpdateText();
-        _CanvasGroup.alpha = value ? 1.0f : 0.0f;
-    }
-
-    private void UpdatePosition()
-    {
         if (_Resource == null)
             return;
 
         transform.position = CanvasUtility.WorldToCanvasPosition(_Canvas, _CanvasRect, Camera.main,
             _Resource.transform.position + Vector3.up * _Resource.Bounds.size.y * _HeightOffset);
+    }
+
+    public void SetActive(ResourceSource resource, bool active)
+    {
+        if (active)
+        {
+            _Resource = resource;
+            _Resource.OnQuantityChanged += UpdateText;
+
+            UpdateText();
+        }
+        else if (_Resource != null)
+        {
+            _Resource.OnQuantityChanged -= UpdateText;
+            _Resource = resource;
+        }
+
+        _CanvasGroup.alpha = active ? 1.0f : 0.0f;
     }
 
     public void UpdateText()
