@@ -26,7 +26,7 @@ public class FloraWindow : OdinMenuEditorWindow
         _CustomFlora = new CustomFlora();
 
         tree.Add("Create New", _CustomFlora);
-        tree.AddAllAssetsAtPath("Flora Types", TYPE_PATH, typeof(FloraData));
+        tree.AddAllAssetsAtPath("Flora", TYPE_PATH, typeof(FloraData));
 
         return tree;
     }

@@ -59,7 +59,6 @@ public class CommissionGiverWindow : Singleton<CommissionGiverWindow>
             _CommissionObjects.Add(obj);
 
             bool hasCoom = CommissionLog.Instance.HasCommission(commission);
-
             if (hasCoom && commission.IsCompleted)
             {
                 commText.color = Color.green;
@@ -69,6 +68,11 @@ public class CommissionGiverWindow : Singleton<CommissionGiverWindow>
                 Color c = commText.color;
                 c.a = 0.5f;
                 commText.color = c;
+            }
+
+            foreach (Objective objective in commission.Objectives)
+            {
+                objective.UpdateAmount(0);
             }
         }
     }

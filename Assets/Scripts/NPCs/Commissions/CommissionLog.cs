@@ -50,6 +50,12 @@ public class CommissionLog : Singleton<CommissionLog>
     {
         _Commissions.Add(commission);
 
+        InventoryObject inventory = PlayerInput.GetPlayerByIndex(0).GetComponent<PlayerInfo>().Inventory;
+        foreach (Objective objective in commission.Objectives)
+        {
+            inventory.OnItemChangeCallback += objective.UpdateAmount;
+        }
+
         GameObject obj = Instantiate(_CommissionPrefab, _CommissionArea); // create object to be added to the log list
 
         CommissionObject cs = obj.GetComponent<CommissionObject>();
