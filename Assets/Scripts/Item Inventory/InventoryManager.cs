@@ -21,6 +21,7 @@ public class InventoryManager : MonoBehaviour, IDropHandler
     public void SelectItem(ItemSlot itemSlot) 
     {
         currentSlot = itemSlot;
+        inventory.SelectedItem = itemSlot.item;
         //Debug.Log("Selected Item is " + currentSlot.item.ID);
     }
 
