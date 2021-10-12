@@ -16,6 +16,14 @@ public class InventoryManager : MonoBehaviour, IDropHandler
     PointerEventData m_PointerEventData;
     EventSystem m_EventSystem;
     ItemTypeSettings settings;
+    public ItemSlot currentSlot;
+
+    public void SelectItem(ItemSlot itemSlot) 
+    {
+        currentSlot = itemSlot;
+        inventory.SelectedItem = itemSlot.item;
+        //Debug.Log("Selected Item is " + currentSlot.item.ID);
+    }
 
     void Start()
     {
