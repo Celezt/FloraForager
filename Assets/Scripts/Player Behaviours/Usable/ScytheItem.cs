@@ -28,11 +28,6 @@ public class ScytheItem : IUse, IItem, IDestructor
     private Transform _scytheTransform;
     private Animator _animator;
 
-    void IItem.Initialize(ItemContext context)
-    {
-
-    }
-
     void IItem.OnEquip(ItemContext context)
     {
         _scytheTransform = GameObject.Instantiate(_modelPrefab, context.playerTransform.position, Quaternion.identity).transform;

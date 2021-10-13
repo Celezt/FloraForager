@@ -8,8 +8,6 @@ using IngameDebugConsole;
 
 public class PlayerMovement : MonoBehaviour
 {
-    public PlayerAction Inputs => _inputs;
-
     /// <summary>
     /// Unprocessed input direction.
     /// </summary>
@@ -119,7 +117,8 @@ public class PlayerMovement : MonoBehaviour
     private bool _isRunning;
     private bool _isGrounded;
     private bool _isOnLedge;
-    private PlayerAction _inputs;
+
+    private PlayerInput _playerInput;
 
     public void SetSpeed(float speed) => _speed = speed;
     public void SetRunMultiplier(float multiplier) => _runningSpeedMultiplier = multiplier;
@@ -134,10 +133,8 @@ public class PlayerMovement : MonoBehaviour
         _rawDirection = new Vector3(value.x, 0, value.y);
         _rigidbody.velocity = new Vector3(0, _rigidbody.velocity.y, 0);
 
-        if (context.canceled)
-        {
-            _inputs.Ground.Run.Reset();
-        }
+        //if (context.canceled)
+        //    _playerInput.actions["Run"].Reset();
     }
 
     public void OnRun(InputAction.CallbackContext context)
@@ -153,7 +150,8 @@ public class PlayerMovement : MonoBehaviour
 
     private void Awake()
     {
-        _inputs = new PlayerAction();
+        _playerInput = GetComponent<PlayerInput>();
+        _relativeForward = transform.forward;
     }
 
     private void Start()
@@ -163,30 +161,6 @@ public class PlayerMovement : MonoBehaviour
         DebugLogConsole.AddCommandInstance("player.drag", "Sets player's drag value", nameof(SetDrag), this);
         DebugLogConsole.AddCommandInstance("player.ground_check_distance", "Sets player's ground check distance if on the ground", nameof(SetGroundCheckDistance), this);
         DebugLogConsole.AddCommandInstance("player.max_slope_angle", "Sets player's max slope angle that are possible to move over", nameof(SetMaxSlopeAngle), this);
-    }
-
-    private void OnEnable()
-    {
-        _inputs.Enable();
-        _inputs.Ground.Move.started += OnMove;
-        _inputs.Ground.Move.performed += OnMove;
-        _inputs.Ground.Move.canceled += OnMove;
-        _inputs.Ground.Run.started += OnRun;
-        _inputs.Ground.Run.performed += OnRun;
-        _inputs.Ground.Run.canceled += OnRun;
-
-        _relativeForward = transform.forward;
-    }
-
-    private void OnDisable()
-    {
-        _inputs.Disable();
-        _inputs.Ground.Move.started -= OnMove;
-        _inputs.Ground.Move.performed -= OnMove;
-        _inputs.Ground.Move.canceled -= OnMove;
-        _inputs.Ground.Run.started -= OnRun;
-        _inputs.Ground.Run.performed -= OnRun;
-        _inputs.Ground.Run.canceled -= OnRun;
     }
 
     private void FixedUpdate()

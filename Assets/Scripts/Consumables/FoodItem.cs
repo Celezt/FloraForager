@@ -18,14 +18,9 @@ public class FoodItem : IUse, IItem
 
     private PlayerStamina _playerStamina;
 
-    void IItem.Initialize(ItemContext context)
-    {
-        _playerStamina = context.playerTransform.GetComponent<PlayerStamina>();
-    }
-
     void IItem.OnEquip(ItemContext context)
     {
-
+        _playerStamina = context.playerTransform.GetComponent<PlayerStamina>();
     }
 
     void IItem.OnUnequip(ItemContext context)

@@ -7,11 +7,10 @@ using Celezt.Time;
 
 public class UseBehaviour : MonoBehaviour
 {
-    public PlayerAction Inputs => _playerAction;
+    [SerializeField] private PlayerInfo _playerInfo;
 
     private readonly ItemLabels _itemLabels = new ItemLabels();
 
-    private PlayerAction _playerAction;
     private PlayerInput _playerInput;
     private InputControlScheme _scheme;
     private ItemContext _itemContext;
@@ -74,59 +73,30 @@ public class UseBehaviour : MonoBehaviour
 
     private void Awake()
     {
-        _playerAction = new PlayerAction();
         _playerInput = GetComponent<PlayerInput>();
-        _itemType = ItemTypeSettings.Instance.ItemTypeChunk["simple_rod"];
-        _use = (IUse)_itemType.Behaviour;
 
-        _itemContext = new ItemContext(
-            _itemType.Labels,
-            transform,
-            this,
-            _itemType.Name,
-            _itemType.ID,
-            _playerIndex
-        );
+        _playerInfo.Inventory.OnSelectItemCallback += asset =>
+        {
+            _itemType?.Behaviour?.OnUnequip(_itemContext);  // Unequip current item.
 
-        _itemType.Behaviour.Initialize(_itemContext);
-    }
+            _itemType = ItemTypeSettings.Instance.ItemTypeChunk[asset.ID];
+            _use = (IUse)_itemType.Behaviour;
 
-    private void Start()
-    {
-        _itemType.Behaviour.OnEquip(_itemContext);
-    }
-
-    private void OnEnable()
-    {
-        _playerAction.Enable();
-        _playerAction.Ground.Use.started += OnUse;
-        _playerAction.Ground.Use.performed += OnUse;
-        _playerAction.Ground.Use.canceled += OnUse;
-        _playerInput.controlsChangedEvent.AddListener(ControlsChangedEvent);
-    }
-
-    private void OnDisable()
-    {
-        _playerAction.Disable();
-        _playerAction.Ground.Use.started -= OnUse;
-        _playerAction.Ground.Use.performed -= OnUse;
-        _playerAction.Ground.Use.canceled -= OnUse;
-        _playerInput.controlsChangedEvent.RemoveListener(ControlsChangedEvent);
-
-        _itemType.Behaviour.OnUnequip(_itemContext);
+            _itemContext = new ItemContext(
+                _itemType.Labels,
+                transform,
+                this,
+                _itemType.Name,
+                _itemType.ID,
+                _playerInput.playerIndex
+            );
+            
+            _itemType.Behaviour.OnEquip(_itemContext);
+        };
     }
 
     private void Update()
     {
-        _itemContext = new ItemContext(
-            _itemType.Labels,
-            transform,
-            this,
-            _itemType.Name,
-            _itemType.ID,
-            _playerIndex
-            );
-
-        _itemType.Behaviour.OnUpdate(_itemContext);
+        _itemType?.Behaviour?.OnUpdate(_itemContext);
     }
 }

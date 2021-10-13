@@ -6,8 +6,6 @@ using IngameDebugConsole;
 
 public class InteractBehaviour : MonoBehaviour
 {
-    public PlayerAction Inputs => _playerAction;
-
     [SerializeField, Min(0)] private float _radius = 3.0f;
     [SerializeField] private LayerMask _interactableLayers;
 
@@ -161,28 +159,6 @@ public class InteractBehaviour : MonoBehaviour
     private void Start()
     {
         DebugLogConsole.AddCommandInstance("player.interact_radius", "Set player's interactable radius", nameof(SetRadius), this);
-    }
-
-    private void OnEnable()
-    {
-        _playerAction.Enable();
-        _playerAction.Ground.Interact.started += OnInteract;
-        _playerAction.Ground.Interact.performed += OnInteract;
-        _playerAction.Ground.Interact.canceled += OnInteract;
-        _playerAction.Ground.Cursor.started += OnCursor;
-        _playerAction.Ground.Cursor.performed += OnCursor;
-        _playerAction.Ground.Cursor.canceled += OnCursor;
-    }
-
-    private void OnDisable()
-    {
-        _playerAction.Disable();
-        _playerAction.Ground.Interact.started -= OnInteract;
-        _playerAction.Ground.Interact.performed -= OnInteract;
-        _playerAction.Ground.Interact.canceled -= OnInteract;
-        _playerAction.Ground.Cursor.started -= OnCursor;
-        _playerAction.Ground.Cursor.performed -= OnCursor;
-        _playerAction.Ground.Cursor.canceled -= OnCursor;
     }
 
     private void OnDrawGizmos()

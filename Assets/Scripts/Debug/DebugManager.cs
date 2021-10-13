@@ -58,12 +58,6 @@ public class DebugManager : Singleton<DebugManager>
     {
         bool oldIsFocused = !_inputField.isFocused;
         PlayerInput playerInput = PlayerInput.GetPlayerByIndex(0);
-        PlayerMovement movement = playerInput.GetComponent<PlayerMovement>();
-        InteractBehaviour interactableBehaviour = playerInput.GetComponent<InteractBehaviour>();
-        UseBehaviour useBehaviour = playerInput.GetComponent<UseBehaviour>();
-        PlayerInventoryUI[] playerInventoryUI = FindObjectsOfType<PlayerInventoryUI>();
-
-        PlayerActionHandle[] playerHandles = new PlayerActionHandle[playerInventoryUI.Length + 3];
 
         while (DebugMode)
         {
@@ -76,19 +70,13 @@ public class DebugManager : Singleton<DebugManager>
                     if (!_isFocus)
                     {
                         _isFocus = true;
-                        playerHandles[0] = movement.Inputs.AddSharedDisable();
-                        playerHandles[1] = interactableBehaviour.Inputs.AddSharedDisable();
-                        playerHandles[2] = useBehaviour.Inputs.AddSharedDisable();
-                        for (int i = 0; i < playerInventoryUI.Length; i++)
-                            playerHandles[i + 3] = playerInventoryUI[i].PlayerAction.AddSharedDisable();
+                        playerInput.DeactivateInput();
                     }
                 }
                 else
                 {
                     _isFocus = false;
-                    for (int i = 0; i < playerHandles.Length; i++)
-                        if(!playerHandles[0].IsEmpty)
-                            playerHandles[i].RemoveSharedDisable();
+                    playerInput.ActivateInput();
                 }
             }
 
@@ -97,8 +85,8 @@ public class DebugManager : Singleton<DebugManager>
             yield return null;
         }
 
-        for (int i = 0; i < playerHandles.Length; i++)
-            if (!playerHandles[0].IsEmpty)
-                playerHandles[i].RemoveSharedDisable();
+        playerInput.ActivateInput();
+
+        yield break;
     }
 }
