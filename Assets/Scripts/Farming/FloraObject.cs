@@ -55,14 +55,6 @@ public class FloraObject : MonoBehaviour, IUsable, IDestructable
             (_Collider.bounds.size.y - _MeshFilter.sharedMesh.bounds.size.y) / 2.0f, 0);
     }
 
-    public void Update()
-    {
-        if (Mouse.current.rightButton.wasPressedThisFrame)
-        {
-            Flora.HarvestMethod.Harvest(Flora, 0);
-        }
-    }
-
     public IList<string> Filter(ItemLabels labels) => Flora.HarvestMethod.Filter(labels);
     public void OnUse(UsedContext context)
     {

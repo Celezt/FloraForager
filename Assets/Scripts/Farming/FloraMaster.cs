@@ -21,23 +21,6 @@ public class FloraMaster : Singleton<FloraMaster>
         _FloraDictionary = _FloraVariants.ToDictionary(key => key.Name.ToLower(), value => value);
     }
 
-    public void Update()
-    {
-        if (Mouse.current.leftButton.wasPressedThisFrame)
-        {
-            if (GridInteraction.CurrentTile != null && GridInteraction.CurrentTile.HeldObject != null)
-            {
-                GridInteraction.CurrentTile.HeldObject.TryGetComponent(out FloraObject flora);
-
-                if (flora != null)
-                {
-                    flora.Flora.Watered = true;
-                }
-            }
-            Add("Variant");
-        }
-    }
-
     /// <summary>
     /// creates a flora at currently selected tile based on its name
     /// </summary>
