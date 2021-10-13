@@ -5,6 +5,9 @@ using UnityEngine;
 using UnityEngine.InputSystem;
 using MyBox;
 
+/// <summary>
+/// Manages all of the flora in this region
+/// </summary>
 public class FloraMaster : Singleton<FloraMaster>
 {
     [SerializeField] private GameObject _FloraPrefab;

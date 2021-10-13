@@ -11,6 +11,7 @@ public class InventoryObject : ScriptableObject
     public event Action<int> OnItemChangeCallback = delegate { };
     public event Action<int,ItemAsset> OnAddItemCallback = delegate { };
     public event Action<int, ItemAsset> OnRemoveItemCallback = delegate { };
+    public event Action<ItemAsset> OnSelectItemCallback = delegate { };
     public ItemAsset SelectedItem;
     [NonSerialized, ShowInInspector]
     public List<ItemAsset> Container = new List<ItemAsset>(); // Change
@@ -18,6 +19,7 @@ public class InventoryObject : ScriptableObject
     public void SetSelectedItem(ItemAsset item) 
     {
         SelectedItem = item;
+        OnSelectItemCallback.Invoke(item);
     }
     public bool IsFull { get; set; }
     public bool AddItem(ItemAsset item)

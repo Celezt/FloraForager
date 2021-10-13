@@ -9,8 +9,8 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 37a39a7257414d146b726e1e7280830b, type: 3}
-  m_Name: ci_00
+  m_Script: {fileID: 11500000, guid: 561afb294217d244bb6f2be89389b332, type: 3}
+  m_Name: resource_01
   m_EditorClassIdentifier: 
   serializationData:
     SerializedFormat: 2
@@ -23,28 +23,13 @@ MonoBehaviour:
     SerializationNodes:
     - Name: _ItemID
       Entry: 1
-      Data: porock
-    - Name: _ResourceReqs
-      Entry: 7
-      Data: 0|ResourceRequirement[], Assembly-CSharp
-    - Name: 
-      Entry: 12
-      Data: 1
-    - Name: 
-      Entry: 7
-      Data: ResourceRequirement, Assembly-CSharp
-    - Name: ItemID
-      Entry: 1
-      Data: pepsi
-    - Name: Amount
+      Data: stone
+    - Name: _Amount
       Entry: 3
-      Data: 5
-    - Name: 
-      Entry: 8
-      Data: 
-    - Name: 
-      Entry: 13
-      Data: 
-    - Name: 
-      Entry: 8
-      Data: 
+      Data: 20
+    - Name: _AmountPerCollect
+      Entry: 3
+      Data: 3
+    - Name: _TotalCollectionTime
+      Entry: 4
+      Data: 10

@@ -28,18 +28,6 @@ public class CommissionGiver : MonoBehaviour, IInteractable
         }
     }
 
-    private void Start()
-    {
-        InventoryObject inventory = PlayerInput.GetPlayerByIndex(0).GetComponent<PlayerInfo>().Inventory;
-        foreach (Commission commission in _Commissions)
-        {
-            foreach (Objective objective in commission.Objectives)
-            {
-                inventory.OnItemChangeCallback += objective.UpdateAmount;
-            }
-        }
-    }
-
     public void OnInteract(InteractContext context)
     {
         if (!context.performed)
