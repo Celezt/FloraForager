@@ -4,12 +4,13 @@ using System.Collections.Generic;
 using UnityEngine;
 using Sirenix.Serialization;
 using MyBox;
+using Sirenix.OdinInspector;
 
 public class FoodItem : IUse, IItem
 {
-    [OdinSerialize]
+    [OdinSerialize, PropertyOrder(-2)]
     public uint ItemStack { get; set; } = 64;
-    [OdinSerialize]
+    [OdinSerialize, PropertyOrder(-1)]
     public float Cooldown { get; set; } = 2;
 
     [SerializeField]

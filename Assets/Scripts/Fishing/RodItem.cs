@@ -2,31 +2,34 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using Sirenix.Serialization;
+using Sirenix.OdinInspector;
 
-public class RodItem : IItem, IUse
+public class RodItem : IItem, IUse, IStar, IValue
 {
-    public float Proficiency => _proficiency;
     public float CatchSize => _catchSize;
-    public float DragVelocity => _dragVelocity;
-    public float DragAcceleration => _dragAcceleration;
+    public float DragForce => _dragForce;
+    public float DragDamp => _dragDamp;
     public float DragWeight => _weight;
     public float Bounciness => _bounciness;
 
-    [OdinSerialize]
+    [OdinSerialize, PropertyOrder(int.MinValue)]
     uint IItem.ItemStack { get; set; } = 1;
-    [OdinSerialize]
+    [OdinSerialize, PropertyOrder(int.MinValue + 1)]
     float IUse.Cooldown { get; set; } = 1;
+    [OdinSerialize, PropertyOrder(int.MinValue + 2)]
+    Stars IStar.Star { get; set; }
+    [OdinSerialize, PropertyOrder(int.MinValue + 3)]
+    int IValue.BaseValue { get; set; }
 
+    [Title("Rod Behaviour")]
     [SerializeField, Range(0, 1)]
     private float _catchSize = 0.2f;
     [SerializeField]
-    private float _proficiency = 1;
-    [SerializeField]
     private float _weight = 6.0f;
     [SerializeField]
-    private float _dragVelocity = 100.0f;
+    private float _dragForce = 100.0f;
     [SerializeField]
-    private float _dragAcceleration = 10.0f;
+    private float _dragDamp = 10.0f;
     [SerializeField]
     private float _bounciness = 0.5f;
 

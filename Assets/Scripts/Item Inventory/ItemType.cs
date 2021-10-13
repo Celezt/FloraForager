@@ -20,8 +20,7 @@ public class ItemType : SerializedScriptableObject
     public string ID;
     [VerticalGroup("Group 1/Right"), TextArea(5, 30)]
     public string Description;
-    [Required, OdinSerialize, HideLabel]
-    [ListDrawerSettings(Expanded = true)]
+    [OdinSerialize, HideLabel, InlineProperty]
     public IItem Behaviour;
 
     [HideInInspector]

@@ -4,19 +4,23 @@ using UnityEngine;
 using UnityEngine.InputSystem;
 using IngameDebugConsole;
 using MyBox;
+using UnityEngine.UI;
+using Sirenix.OdinInspector;
 
 public class FishingManager : MonoBehaviour
 {
     private static Dictionary<int, FishingManager> _fishings = new Dictionary<int, FishingManager>();
 
-    [SerializeField] private RectTransform _fishArea;
-    [SerializeField] private RectTransform _catchArea;
-    [SerializeField] private RectTransform _fishPoint;
-    [SerializeField] private RectTransform _toggle;
-    [SerializeField, Min(0)] private int _fishHeight = 500;
+    [SerializeField] private RectTransform _fishAreaTransform;
+    [SerializeField] private RectTransform _catchAreaTransform;
+    [SerializeField] private RectTransform _catchPointTransform;
+    [SerializeField] private RectTransform _fishPointTransform;
+    [SerializeField] private RectTransform _toggleTransform;
+    [SerializeField] private Slider _progressBar;
+    [SerializeField, Min(0), OnValueChanged(nameof(OnHeightChange))] private int _barHeight = 500;
     [SerializeField, Min(0)] private int _playerIndex;
     [SerializeField, Min(0)] private float _gravity = 9.82f;
-    [SerializeField, Tooltip("If the point should dynamically move separate from the catch are or not")] private bool _dynamicPoint = true;
+    [SerializeField, Min(0)] private float _progressSpeed = 5f;
 
     private Coroutine _playFishingCoroutine;
     private PlayerAction _inputs;
@@ -67,7 +71,7 @@ public class FishingManager : MonoBehaviour
         
         FishItem fishItem = (FishItem)item.Behaviour;
 
-        _toggle.gameObject.SetActive(true);
+        _toggleTransform.gameObject.SetActive(true);
 
         if (_playFishingCoroutine != null)
             StopCoroutine(_playFishingCoroutine);
@@ -80,7 +84,7 @@ public class FishingManager : MonoBehaviour
         if (_playFishingCoroutine != null)
             StopCoroutine(_playFishingCoroutine);
 
-        _toggle.gameObject.SetActive(false);
+        _toggleTransform.gameObject.SetActive(false);
     }
 
     private void Awake()
@@ -93,9 +97,10 @@ public class FishingManager : MonoBehaviour
         _fishings.Add(_playerIndex, this);
         SetHeight();
 
-        _toggle.gameObject.SetActive(false);
+        _toggleTransform.gameObject.SetActive(false);
 
-        DebugLogConsole.AddCommandInstance("fishing_start", "Start fish game.", nameof(StartFishing), this);
+        DebugLogConsole.AddCommandInstance("fishing.start", "Start fish game.", nameof(StartFishing), this);
+        DebugLogConsole.AddCommandInstance("fishing.stop", "Stop fish game.", nameof(StopFishing), this);
     }
 
     private void OnEnable()
@@ -121,67 +126,136 @@ public class FishingManager : MonoBehaviour
 
     private void SetHeight()
     {
-        _fishArea.sizeDelta = new Vector2(_fishArea.rect.width, _fishHeight);
+        _fishAreaTransform.sizeDelta = new Vector2(_fishAreaTransform.rect.width, _barHeight);
+        ((RectTransform)_progressBar.transform).sizeDelta = new Vector2(((RectTransform)_progressBar.transform).rect.width, _barHeight);
     }
 
     private IEnumerator PlayFishing(FishItem fishItem, RodItem rodItem)
     {
         MinMaxFloat catchRange = new MinMaxFloat(0, Mathf.Clamp01(rodItem.CatchSize));
 
-        float timeStart = Time.time;
-        float dragVelocity = rodItem.DragVelocity;
-        float dragAcceleration = rodItem.DragAcceleration;
+        float timer = 0;
+        float dragForce = rodItem.DragForce;
+        float dragDamp = rodItem.DragDamp;
         float dragWeight = rodItem.DragWeight;
         float bounciness = rodItem.Bounciness;
         float gravityForce = _gravity * dragWeight;
-        float dragForce = 0;
-        float velocity = 0;
-        float point = 0;
+        float rodStar = (int)((IStar)rodItem).Star;
+        float catchForce = 0;
+        float CatchVelocity = 0;
+        float catchPoint = 0;
+
+        float fishLastChangeTime = 0;
+        float fishPoint = 0;
+        float fishPointSnapshot = 0;
+        float fishPointPostProcessed = 0;
+        AnimationCurve[] fishUpPatterns = fishItem.UpPatterns;
+        AnimationCurve[] fishIdlePatterns = fishItem.IdlePatterns;
+        AnimationCurve[] fishDownPatterns = fishItem.DownPatterns;
+        AnimationCurve currentPattern = fishUpPatterns[Random.Range(0, fishUpPatterns.Length - 1)];   // Always start swimming up.
+        int fishStar = (int)((IStar)fishItem).Star;
+        float fishHaste = fishItem.Haste;
+        float fishCalmness = fishItem.Calmness;
+        float fishRandomness = fishItem.Randomness;
+        
+        float progressValue = 0;
+        float deltaTime = 0;
+        float randomValue = Random.value;
+
+        void CatchPhysics()
+        {
+            catchForce = _drag > 0.5f ? Mathf.Lerp(catchForce, dragForce, dragDamp * deltaTime) : 0;    // Player input.
+            float acceleration = (-gravityForce + catchForce) / dragWeight;
+            CatchVelocity += acceleration * deltaTime;
+            catchPoint += 0.1f * (CatchVelocity * deltaTime + (acceleration * deltaTime * deltaTime) / 2);
+        }
+
+        void SetBouncing()
+        {
+            if (catchPoint > 1)
+                CatchVelocity = 0;
+            else if (catchPoint < 0)
+                CatchVelocity *= -bounciness;
+        }
 
         void SetCatchArea()
         {
-            point = Mathf.Clamp01(point);
+            catchPoint = Mathf.Clamp01(catchPoint);
 
             float length = catchRange.Length();
             float halfLength = length / 2;
             float offset = 0;
 
-            if (point - halfLength < 0)         // Too low.
-                offset = halfLength - point;
-            else if (point + halfLength > 1)    // Too high.
-                offset = (1 - point) - halfLength;
+            if (catchPoint - halfLength < 0)         // Too low.
+                offset = halfLength - catchPoint;
+            else if (catchPoint + halfLength > 1)    // Too high.
+                offset = (1 - catchPoint) - halfLength;
 
-            catchRange.Min = point - halfLength + offset;
-            catchRange.Max = point + halfLength + offset;
+            catchRange.Min = catchPoint - halfLength + offset;
+            catchRange.Max = catchPoint + halfLength + offset;
         }
 
-        void SetBouncing()
+        void SetProgressBar()
         {
-            if (point > 1)
-                velocity = 0;
-            else if (point < 0)
-                velocity *= -bounciness;
+            MinMaxFloat roundedCatchRange = new MinMaxFloat(Mathf.Round(catchRange.Min * 100.0f) / 100.0f, 
+                                                            Mathf.Round(catchRange.Max * 100.0f) / 100.0f);
+            if (roundedCatchRange.IsInRange(fishPointPostProcessed))
+                progressValue += (rodStar >= fishStar ? ((fishStar + rodStar / 5) / fishStar) * 1.5f : ((rodStar + fishStar / 5) / fishStar) * 1.5f) * (_progressSpeed / 100) * deltaTime;
+            else
+                progressValue -= (rodStar >= fishStar ? (rodStar + fishStar / 5) / rodStar  : (fishStar + rodStar / 5) / rodStar) * (_progressSpeed / 100) * deltaTime;
+
+            progressValue = Mathf.Clamp01(progressValue);
+
+            _progressBar.value = progressValue;
+        }
+
+        void FishBehaviour()
+        {
+            if (timer > fishLastChangeTime + randomValue * 2 + fishCalmness * 2)
+            {
+                fishLastChangeTime = timer;
+                fishPointSnapshot = fishPoint;
+                randomValue = Random.value;
+
+                currentPattern = new System.Func<AnimationCurve>(() =>
+                {
+                    if (randomValue > 0.5f + fishCalmness / 2)      // Up
+                        return fishUpPatterns[Random.Range(0, fishUpPatterns.Length - 1)];
+                    else if (randomValue < 0.5f - fishCalmness / 2) // Down
+                        return fishDownPatterns[Random.Range(0, fishDownPatterns.Length - 1)];
+                    else                                            // Idle
+                        return fishIdlePatterns[Random.Range(0, fishIdlePatterns.Length - 1)];
+                })();
+
+                currentPattern.keys[0].value = 0;   // Fist key will always start at zero.
+            }
+
+            float noise = fishRandomness * (0.5f - Mathf.PerlinNoise(timer * fishHaste / 2, 0)) / 10;
+            fishPoint = Mathf.Clamp01(fishPointSnapshot + currentPattern.Evaluate(fishHaste * (timer - fishLastChangeTime) / 10));
+            fishPointPostProcessed = Mathf.Clamp01(fishPoint + noise);
         }
 
         void ConvertToPixels()
         {
-            Rect catchArea = _catchArea.rect;
-            Rect fishArea = _fishArea.rect;
-            _catchArea.offsetMin = new Vector2(catchArea.xMin, fishArea.yMin + _fishHeight  * catchRange.Min);
-            _catchArea.offsetMax = new Vector2(catchArea.xMax, fishArea.yMin + _fishHeight * catchRange.Max);
+            Rect catchArea = _catchAreaTransform.rect;
+            Rect fishArea = _fishAreaTransform.rect;
+            _catchAreaTransform.offsetMin = new Vector2(catchArea.xMin, fishArea.yMin + _barHeight * catchRange.Min);
+            _catchAreaTransform.offsetMax = new Vector2(catchArea.xMax, fishArea.yMin + _barHeight * catchRange.Max);
+
+            _catchPointTransform.SetPositionY(fishArea.yMin + _barHeight * catchPoint);
+            _fishPointTransform.SetPositionY(fishArea.yMin + _barHeight * fishPointPostProcessed);
         }
 
         while (true)
         {
-            float deltaTime = Time.deltaTime;
+            deltaTime = Time.deltaTime;
+            timer += deltaTime;
 
-            dragForce = _drag > 0.5f ? Mathf.Lerp(dragForce, dragVelocity, dragAcceleration * deltaTime) : 0;
-            float acceleration = (-gravityForce + dragForce) / dragWeight;
-            velocity += acceleration * deltaTime;
-            point += 0.1f * (velocity * deltaTime + (acceleration * deltaTime * deltaTime) / 2);
-
+            CatchPhysics();
             SetBouncing();
             SetCatchArea();
+            SetProgressBar();
+            FishBehaviour();
             ConvertToPixels();
 
             yield return null;
@@ -189,18 +263,6 @@ public class FishingManager : MonoBehaviour
     }
 
 #if UNITY_EDITOR
-    private int _oldHeight;
-
-    private void OnValidate() { UnityEditor.EditorApplication.delayCall += _OnValidate; }
-    private void _OnValidate()
-    {
-        if (this == null)
-            return;
-
-        if (_oldHeight != _fishHeight)
-            SetHeight();
-
-        _oldHeight = _fishHeight;
-    }
+    private void OnHeightChange() => SetHeight();
 #endif
 }
