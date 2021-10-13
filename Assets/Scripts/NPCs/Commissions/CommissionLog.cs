@@ -128,7 +128,7 @@ public class CommissionLog : Singleton<CommissionLog>
         objectives += "</size>";
 
         string rewards = "<b>Rewards</b>\n<size=20>";
-        foreach (RewardPair<string, int> reward in commission.Rewards)
+        foreach (RewardPair reward in commission.Rewards)
         {
             rewards += reward.Amount + " " + reward.ItemID + "\n";
         }

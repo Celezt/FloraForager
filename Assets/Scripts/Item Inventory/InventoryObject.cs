@@ -41,7 +41,7 @@ public class InventoryObject : ScriptableObject
                 int tmp = FindFirstEmptySlot();
                 Container[tmp] = item;
                 OnAddItemCallback.Invoke(tmp,item);
-                OnItemChangeCallback.Invoke(pos);
+                OnItemChangeCallback.Invoke(tmp);
             }
             return true;
         }

@@ -13,7 +13,8 @@ public class PlayerStamina : MonoBehaviour
     [SerializeField] private float _StmRunningDrain = 0.09f;
     [SerializeField] private float _StmNightDrain = 7.5f;
 
-    public UnityEvent OnStaminaDrained;
+    public System.Action OnStaminaDrained = delegate { };
+    public System.Action OnStaminaEmptied = delegate { };
 
     private PlayerMovement _PlayerMovement;
     private Slider _Slider;
@@ -42,20 +43,20 @@ public class PlayerStamina : MonoBehaviour
     {
         _Stamina = _MaxStamina;
 
-        OnStaminaDrained.AddListener(NightDrain);
-        OnStaminaDrained.AddListener(WalkingDrain);
+        OnStaminaDrained += NightDrain;
+        OnStaminaDrained += WalkingDrain;
 
         _PlayerMovement.OnPlayerRunCallback += (speed, isRunning) =>
         {
             if (!isRunning)
             {
-                OnStaminaDrained.RemoveListener(RunningDrain);
-                OnStaminaDrained.AddListener(WalkingDrain);
+                OnStaminaDrained -= RunningDrain;
+                OnStaminaDrained += WalkingDrain;
             }
             else
             {
-                OnStaminaDrained.AddListener(RunningDrain);
-                OnStaminaDrained.RemoveListener(WalkingDrain);
+                OnStaminaDrained -= WalkingDrain;
+                OnStaminaDrained += RunningDrain;
             }
         };
     }
@@ -65,6 +66,7 @@ public class PlayerStamina : MonoBehaviour
         OnStaminaDrained.Invoke();
         if (_Stamina <= 0.0f && !SleepSchedule.Instance.IsSleeping)
         {
+            OnStaminaEmptied.Invoke();
             SleepSchedule.Instance.StartSleeping();
         }
     }
@@ -76,12 +78,12 @@ public class PlayerStamina : MonoBehaviour
 
     private void WalkingDrain()
     {
-        Drain(_StmWalkingDrain * ((_PlayerMovement.Velocity.magnitude > float.Epsilon) ? 1.0f : 0.0f));
+        Drain(_StmWalkingDrain * ((_PlayerMovement.Velocity.magnitude > 0.01f) ? 1.0f : 0.0f));
     }
 
     private void RunningDrain()
     {
-        Drain(_StmRunningDrain * ((_PlayerMovement.Velocity.magnitude > float.Epsilon) ? 1.0f : 0.0f));
+        Drain(_StmRunningDrain * ((_PlayerMovement.Velocity.magnitude > 0.01f) ? 1.0f : 0.0f));
     }
 
     private void NightDrain()
