@@ -40,7 +40,7 @@ public class SleepSchedule : Singleton<SleepSchedule>
     {
         _NightToMorning = (24.0f + (_MorningTime - _NightTime)) % 24.0f;
 
-        DebugLogConsole.AddCommandInstance("player_sleep", "Activate sleep mode", nameof(ConsoleStartSleeping), this);
+        DebugLogConsole.AddCommandInstance("player.sleep", "Activate sleep mode", nameof(ConsoleStartSleeping), this);
     }
 
     private void ConsoleStartSleeping() => StartSleeping();

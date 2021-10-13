@@ -160,7 +160,7 @@ public class InteractBehaviour : MonoBehaviour
 
     private void Start()
     {
-        DebugLogConsole.AddCommandInstance("player_interact_radius", "Set player's interactable radius", nameof(SetRadius), this);
+        DebugLogConsole.AddCommandInstance("player.interact_radius", "Set player's interactable radius", nameof(SetRadius), this);
     }
 
     private void OnEnable()

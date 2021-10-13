@@ -35,7 +35,7 @@ public class PlayerStamina : MonoBehaviour
         _PlayerMovement = GetComponent<PlayerMovement>();
         _Slider = _StaminaSlider.GetComponentInChildren<Slider>();
 
-        DebugLogConsole.AddCommandInstance("player_stamina_change", "Change player's stamina", nameof(ChangeStamina), this);
+        DebugLogConsole.AddCommandInstance("player.stamina_change", "Change player's stamina", nameof(ChangeStamina), this);
     }
 
     private void Start()
