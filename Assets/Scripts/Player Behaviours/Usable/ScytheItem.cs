@@ -38,7 +38,7 @@ public class ScytheItem : IUse, IItem, IDestructor
 
     void IItem.OnUnequip(ItemContext context)
     {
-        GameObject.Destroy(_scytheTransform);
+        GameObject.Destroy(_scytheTransform.gameObject);
     }
 
     void IItem.OnUpdate(ItemContext context)

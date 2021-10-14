@@ -16,7 +16,8 @@ public class UseBehaviour : MonoBehaviour
     private ItemContext _itemContext;
     private IUse _use;
     private ItemType _itemType;
-    private Duration _cooldown;
+
+    private Dictionary<int, Duration> _cooldowns = new Dictionary<int, Duration>();
 
     private int _playerIndex;
     private int _slotIndex;
@@ -32,10 +33,13 @@ public class UseBehaviour : MonoBehaviour
         if (_itemType == null || _use == null)
             return;
 
-        if (!_cooldown.IsActive)
+        if (!_cooldowns.ContainsKey(_slotIndex))
+            _cooldowns.Add(_slotIndex, Duration.Empty);
+
+        if (!_cooldowns[_slotIndex].IsActive)
         {
             if (context.started)
-                _cooldown = new Duration(_use.Cooldown);
+                _cooldowns[_slotIndex] = new Duration(_use.Cooldown);
 
             void UseTowardsCursor()
             {
@@ -113,10 +117,11 @@ public class UseBehaviour : MonoBehaviour
 
         _playerInfo.Inventory.OnRemoveItemCallback += (index, asset) =>
         {
+            if (asset.Amount == 0 && _cooldowns.ContainsKey(index))
+                _cooldowns.Remove(index);
+
             if (index == _slotIndex)
-            {
                 _amount = asset.Amount;
-            }
         };
     }
 
