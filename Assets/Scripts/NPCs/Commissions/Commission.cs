@@ -19,7 +19,7 @@ public class Commission
     public float PenaltyRelation => _Data.PenaltyRelations;
     public int DaysLeft => _DaysLeft;
     public Objective[] Objectives => _Objectives;
-    public RewardPair<string, int>[] Rewards => _Data.Rewards;
+    public RewardPair[] Rewards => _Data.Rewards;
 
     public CommissionGiver Giver => _Giver;
 

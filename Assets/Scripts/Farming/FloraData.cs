@@ -13,11 +13,13 @@ public class FloraData : SerializedScriptableObject
     [OdinSerialize, VerticalGroup, TextArea(5, 30)] 
     private string _Description;
 
-    [Title("Rewards"), PropertySpace(15)]
-    [OdinSerialize, VerticalGroup, ListDrawerSettings(Expanded = true)] 
-    private RewardPair<string, int>[] _Rewards = new RewardPair<string, int>[1];
+    [Title("Harvesting")]
+    [OdinSerialize, VerticalGroup]
+    private IHarvest _HarvestMethod;
+    [OdinSerialize, VerticalGroup, PropertySpace(10), ListDrawerSettings(Expanded = true)] 
+    private RewardPair[] _Rewards = new RewardPair[1];
 
-    [Title("Growth"), PropertySpace(15)]
+    [Title("Growth")]
     [OdinSerialize, VerticalGroup, MinValue(0)] 
     private int _GrowTime = 0; // growth time in days
     [OdinSerialize, VerticalGroup, AssetSelector(Paths = "Assets/Models/Flora"), ListDrawerSettings(Expanded = true)] 
@@ -25,15 +27,9 @@ public class FloraData : SerializedScriptableObject
 
     public string Name => _Name;
     public string Description => _Description;
-    public RewardPair<string, int>[] Rewards => _Rewards;
+    public IHarvest HarvestMethod => _HarvestMethod;
+    public RewardPair[] Rewards => _Rewards;
     
     public int GrowTime => _GrowTime;
     public GameObject[] Stages => _Stages;
-}
-
-[Serializable]
-public struct RewardPair<T1, T2>
-{
-    public T1 ItemID;
-    public T2 Amount;
 }

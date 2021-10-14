@@ -13,7 +13,7 @@ public class CommissionData : ScriptableObject
     [SerializeField] private float _RewardRelations;
     [SerializeField] private float _PenaltyRelations;
     [SerializeField] private ObjectiveData[] _ObjectivesData;
-    [SerializeField] private RewardPair<string, int>[] _Rewards;
+    [SerializeField] private RewardPair[] _Rewards;
 
     public string Title => _Title;
     public string Description => _Description;
@@ -22,5 +22,5 @@ public class CommissionData : ScriptableObject
     public float RewardRelations => _RewardRelations;
     public float PenaltyRelations => _PenaltyRelations;
     public ObjectiveData[] ObjectivesData => _ObjectivesData;
-    public RewardPair<string, int>[] Rewards => _Rewards;
+    public RewardPair[] Rewards => _Rewards;
 }
