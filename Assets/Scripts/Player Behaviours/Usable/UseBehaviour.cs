@@ -22,6 +22,9 @@ public class UseBehaviour : MonoBehaviour
 
     public void OnUse(InputAction.CallbackContext context)
     {
+        if (_itemType == null)
+            return;
+
         if (!_cooldown.IsActive)
         {
             if (context.started)
