@@ -19,6 +19,13 @@ public class UseBehaviour : MonoBehaviour
     private Duration _cooldown;
 
     private int _playerIndex;
+    private int _slotIndex;
+    private int _amount;
+
+    public void ConsumeCurrentItem(int amount)
+    {
+        _playerInfo.Inventory.RemoveAt(_slotIndex, amount);
+    }
 
     public void OnUse(InputAction.CallbackContext context)
     {
@@ -39,6 +46,8 @@ public class UseBehaviour : MonoBehaviour
                     _itemType.Name,
                     _itemType.ID,
                     _playerIndex,
+                    _slotIndex,
+                    _amount,
                     context.canceled,
                     context.started,
                     context.performed
@@ -78,8 +87,11 @@ public class UseBehaviour : MonoBehaviour
     {
         _playerInput = GetComponent<PlayerInput>();
 
-        _playerInfo.Inventory.OnSelectItemCallback += asset =>
+        _playerInfo.Inventory.OnSelectItemCallback += (index, asset) =>
         {
+            _slotIndex = index;
+            _amount = asset.Amount;
+
             _itemType?.Behaviour?.OnUnequip(_itemContext);  // Unequip current item.
 
             _itemType = ItemTypeSettings.Instance.ItemTypeChunk[asset.ID];
@@ -91,15 +103,39 @@ public class UseBehaviour : MonoBehaviour
                 this,
                 _itemType.Name,
                 _itemType.ID,
-                _playerInput.playerIndex
+                _playerInput.playerIndex,
+                _slotIndex,
+                _amount
             );
             
             _itemType?.Behaviour?.OnEquip(_itemContext);
+        };
+
+        _playerInfo.Inventory.OnRemoveItemCallback += (index, asset) =>
+        {
+            if (index == _slotIndex)
+            {
+                _amount = asset.Amount;
+            }
         };
     }
 
     private void Update()
     {
+        if (_itemType == null)
+            return;
+
+        _itemContext = new ItemContext(
+            _itemType.Labels,
+            transform,
+            this,
+            _itemType.Name,
+            _itemType.ID,
+            _playerInput.playerIndex,
+            _slotIndex,
+            _amount
+        );
+
         _itemType?.Behaviour?.OnUpdate(_itemContext);
     }
 }

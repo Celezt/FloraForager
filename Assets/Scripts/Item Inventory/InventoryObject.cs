@@ -11,15 +11,15 @@ public class InventoryObject : ScriptableObject
     public event Action<int> OnItemChangeCallback = delegate { };
     public event Action<int,ItemAsset> OnAddItemCallback = delegate { };
     public event Action<int, ItemAsset> OnRemoveItemCallback = delegate { };
-    public event Action<ItemAsset> OnSelectItemCallback = delegate { };
+    public event Action<int, ItemAsset> OnSelectItemCallback = delegate { };
     public ItemAsset SelectedItem;
     [NonSerialized, ShowInInspector]
     public List<ItemAsset> Container = new List<ItemAsset>(); // Change
 
-    public void SetSelectedItem(ItemAsset item) 
+    public void SetSelectedItem(int position, ItemAsset item) 
     {
         SelectedItem = item;
-        OnSelectItemCallback.Invoke(item);
+        OnSelectItemCallback.Invoke(position, item);
     }
     public bool IsFull { get; set; }
     public bool AddItem(ItemAsset item)
@@ -69,11 +69,27 @@ public class InventoryObject : ScriptableObject
         return false;
     }
 
-    public bool RemoveAt(int pos) 
+    public bool RemoveAt(int pos, int amount) 
     {
         if (pos < Container.Count)
         {
-            OnRemoveItemCallback.Invoke(pos, Container[pos]);
+            ItemAsset itemAsset = Container[pos];
+            if (amount <= itemAsset.Amount)
+            {
+                itemAsset.Amount -= amount;
+                OnRemoveItemCallback.Invoke(pos, itemAsset);
+                Container[pos] = itemAsset;
+                OnItemChangeCallback.Invoke(pos);
+                return true;
+            }
+        }
+        return false;
+    }
+    public bool RemoveAt(int pos)
+    {
+        if (pos < Container.Count)
+        {
+            OnRemoveItemCallback.Invoke(pos, new ItemAsset { ID = Container[pos].ID, Amount = 0});
             Container[pos] = new ItemAsset();
             OnItemChangeCallback.Invoke(pos);
             return true;
@@ -96,6 +112,7 @@ public class InventoryObject : ScriptableObject
             {
                 ItemAsset itemAsset = Container[items[i].Item1];
                 itemAsset.Amount -= amountToRemove;
+                OnRemoveItemCallback.Invoke(items[i].Item1, itemAsset);
                 Container[items[i].Item1] = itemAsset;
                 OnItemChangeCallback.Invoke(items[i].Item1);
             }

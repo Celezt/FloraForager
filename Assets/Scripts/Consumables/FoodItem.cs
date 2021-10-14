@@ -25,7 +25,7 @@ public class FoodItem : IUse, IItem
 
     void IItem.OnUnequip(ItemContext context)
     {
-
+        
     }
 
     void IItem.OnUpdate(ItemContext context)
@@ -38,6 +38,7 @@ public class FoodItem : IUse, IItem
         if (context.started)
         {
             _playerStamina.Stamina = _staminaChange;
+            context.Consume();
         }
 
         yield break;

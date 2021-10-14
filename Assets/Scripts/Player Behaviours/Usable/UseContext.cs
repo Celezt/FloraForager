@@ -10,6 +10,8 @@ public readonly struct UseContext
     public readonly string name;
     public readonly string id;
     public readonly int playerIndex;
+    public readonly int slotIndex;
+    public readonly int amount;
     public readonly bool canceled;
     public readonly bool started;
     public readonly bool performed;
@@ -21,6 +23,8 @@ public readonly struct UseContext
         string name,
         string id,
         int playerIndex,
+        int slotIndex,
+        int amount,
         bool canceled,
         bool started,
         bool performed)
@@ -31,8 +35,18 @@ public readonly struct UseContext
         this.name = name;
         this.id = id;
         this.playerIndex = playerIndex;
+        this.slotIndex = slotIndex;
+        this.amount = amount;
         this.canceled = canceled;
         this.started = started;
         this.performed = performed;
+    }
+
+    /// <summary>
+    /// Consume the current item
+    /// </summary>
+    public void Consume(int amount = 1)
+    {
+        useBehaviour.ConsumeCurrentItem(amount);
     }
 }
