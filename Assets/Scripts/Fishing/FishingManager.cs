@@ -216,16 +216,13 @@ public class FishingManager : MonoBehaviour
                 fishLastChangeTime = timer;
                 fishPointSnapshot = fishPoint;
                 randomValue = Random.value;
-                Debug.Log(randomValue);
+
                 currentPattern = new System.Func<AnimationCurve>(() =>
                 {
                     if (randomValue > 0.5f + fishCalmness / 2)      // Up
                         return fishUpPatterns[Random.Range(0, fishUpPatterns.Length - 1)];
                     else if (randomValue < 0.5f - fishCalmness / 2) // Down
-                    {
-                        Debug.Log("down");
                         return fishDownPatterns[Random.Range(0, fishDownPatterns.Length - 1)];
-                    }
                     else                                            // Idle
                         return fishIdlePatterns[Random.Range(0, fishIdlePatterns.Length - 1)];
                 })();

@@ -22,7 +22,7 @@ public class UseBehaviour : MonoBehaviour
 
     public void OnUse(InputAction.CallbackContext context)
     {
-        if (_itemType == null)
+        if (_itemType == null || _use == null)
             return;
 
         if (!_cooldown.IsActive)
@@ -80,7 +80,6 @@ public class UseBehaviour : MonoBehaviour
 
         _playerInfo.Inventory.OnSelectItemCallback += asset =>
         {
-            Debug.Log("hej");
             _itemType?.Behaviour?.OnUnequip(_itemContext);  // Unequip current item.
 
             _itemType = ItemTypeSettings.Instance.ItemTypeChunk[asset.ID];
@@ -95,7 +94,7 @@ public class UseBehaviour : MonoBehaviour
                 _playerInput.playerIndex
             );
             
-            _itemType.Behaviour.OnEquip(_itemContext);
+            _itemType?.Behaviour?.OnEquip(_itemContext);
         };
     }
 
