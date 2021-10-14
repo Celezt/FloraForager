@@ -5,6 +5,8 @@ using UnityEngine;
 using UnityEngine.InputSystem;
 using MyBox;
 using IngameDebugConsole;
+using Celezt.Time;
+using System.Linq;
 
 public class PlayerMovement : MonoBehaviour
 {
@@ -19,23 +21,25 @@ public class PlayerMovement : MonoBehaviour
     /// <summary>
     /// Current player speed including when the player is running.
     /// </summary>
-    public float CurrentSpeed => _isRunning ? _speed * _speedMultiplier * _runningSpeedMultiplier : _speed * _speedMultiplier;
-    /// <summary>
-    /// Normal speed of the player.
-    /// </summary>
-    public float Speed
+    public float CurrentSpeed
     {
-        get => _speed;
-        set => _speed = value;
+        get
+        {
+            float totalMultiplier = 1;
+            foreach (KeyValuePair<Duration, float> mutliplier in _speedMultipliers)
+                totalMultiplier += mutliplier.Value;
+
+            return _isRunning ? _baseSpeed * totalMultiplier * _runningSpeedMultiplier : _baseSpeed * totalMultiplier;
+        }
     }
     /// <summary>
-    /// Speed multiplier.
+    /// Base speed of the player.
     /// </summary>
-    public float SpeedMultiplier
-    {
-        get => _speedMultiplier;
-        set => _speedMultiplier = value;
-    }
+    public float BaseSpeed => _baseSpeed;
+    /// <summary>
+    /// Speed multipliers affecting the player.
+    /// </summary>
+    public IReadOnlyDictionary<Duration, float> SpeedMultipliers => _speedMultipliers;
     /// <summary>
     /// Running multiplier.
     /// </summary>
@@ -87,7 +91,7 @@ public class PlayerMovement : MonoBehaviour
     [SerializeField] private PivotMode _pivotMode;
     [SerializeField, ConditionalField(nameof(_pivotMode), false, PivotMode.Camera)] private Camera _camera;
     [SerializeField, ConditionalField(nameof(_pivotMode), false, PivotMode.Target)] private Transform _pivot;
-    [SerializeField] private float _speed = 6.0f;
+    [SerializeField] private float _baseSpeed = 6.0f;
     [SerializeField, Min(0)] private float _runningSpeedMultiplier = 2.0f;
     [SerializeField] private float _drag = 8.0f;
     [SerializeField] private float _angularDrag = 5.0f;
@@ -104,6 +108,8 @@ public class PlayerMovement : MonoBehaviour
         Target,
     }
 
+    private Dictionary<Duration, float> _speedMultipliers = new Dictionary<Duration, float>();
+
     private Vector3 _slopeForward;
     private Vector3 _rawDirection;
     private Vector3 _rawVelocity;
@@ -113,14 +119,43 @@ public class PlayerMovement : MonoBehaviour
     private Quaternion _rawRotation;
     private Quaternion _rotation;
     private float _groundAngle;
-    private float _speedMultiplier = 1;
     private bool _isRunning;
     private bool _isGrounded;
     private bool _isOnLedge;
 
     private PlayerInput _playerInput;
 
-    public void SetSpeed(float speed) => _speed = speed;
+    /// <summary>
+    /// Stack different speed multipliers without overriding any other multiplier. 
+    /// </summary>
+    /// <param name="multiplier">Speed multiplier.</param>
+    /// <param name="duration">Time the multiplier last.</param>
+    /// <returns>Identifier.</returns>
+    public Duration AddSpeedMultiplier(float multiplier, Duration duration)
+    {
+        _speedMultipliers.Add(duration, multiplier);
+        return duration;
+    }
+    /// <summary>
+    /// Stack different speed multipliers without overriding any other multiplier. 
+    /// </summary>
+    /// <param name="multiplier">Speed multiplier.</param>
+    /// <param name="duration">Time the multiplier last.</param>
+    /// <returns>Identifier.</returns>
+    public Duration AddSpeedMultiplier(float multiplier, float duration) => AddSpeedMultiplier(multiplier, new Duration(duration));
+    /// <summary>
+    /// Stack different speed multipliers without overriding any other multiplier. 
+    /// </summary>
+    /// <param name="multiplier">Speed multiplier.</param>
+    /// <returns>Identifier.</returns>
+    public Duration AddSpeedMultiplier(float multiplier) => AddSpeedMultiplier(multiplier, Duration.Infinity);
+    /// <summary>
+    /// Remove existing multiplier.
+    /// </summary>
+    /// <param name="identifier">Duration as a identifier.</param>
+    /// <returns>If exist.</returns>
+    public bool RemoveSpeedMultiplier(Duration identifier) => _speedMultipliers.Remove(identifier);
+    public void ClearSpeedMultiplier() => _speedMultipliers.Clear();
     public void SetRunMultiplier(float multiplier) => _runningSpeedMultiplier = multiplier;
     public void SetDrag(float drag) => _drag = drag;
     public void SetAngularDrag(float angularDrag) => _angularDrag = angularDrag;
@@ -156,7 +191,7 @@ public class PlayerMovement : MonoBehaviour
 
     private void Start()
     {
-        DebugLogConsole.AddCommandInstance("player.speed", "Sets player's speed value", nameof(SetSpeed), this);
+        DebugLogConsole.AddCommandInstance("player.speed", "Sets player's base speed value", nameof(SetBaseSpeed), this);
         DebugLogConsole.AddCommandInstance("player.run", "Sets player's run multiplier", nameof(SetRunMultiplier), this);
         DebugLogConsole.AddCommandInstance("player.drag", "Sets player's drag value", nameof(SetDrag), this);
         DebugLogConsole.AddCommandInstance("player.ground_check_distance", "Sets player's ground check distance if on the ground", nameof(SetGroundCheckDistance), this);
@@ -216,7 +251,7 @@ public class PlayerMovement : MonoBehaviour
                 if (_groundAngle >= _maxSlopeAngle)
                     return;
 
-                _rawVelocity = _slopeForward * ((_isRunning) ? _speed * _speedMultiplier * _runningSpeedMultiplier : _speed * _speedMultiplier) * fixedDeltaTime;
+                _rawVelocity = _slopeForward * CurrentSpeed * fixedDeltaTime;
                 _velocity = Vector3.Lerp(_velocity, _rawVelocity, _drag * fixedDeltaTime);
                 _rigidbody.MovePosition(position + _velocity);
             }
@@ -278,8 +313,18 @@ public class PlayerMovement : MonoBehaviour
             _collider.material = _isGrounded ? _groundPhysicMaterial : _fallPhysicMaterial;
         }
 
+        void updateSpeedMultipliers()
+        {
+            foreach (KeyValuePair<Duration, float> multiplier in _speedMultipliers.ToList())
+                if (!multiplier.Key.IsActive)
+                    _speedMultipliers.Remove(multiplier.Key);
+        }
+
+        updateSpeedMultipliers();
         Movement();
         SlopeMovement();
         PhysicMaterialToUse();
     }
+
+    private void SetBaseSpeed(float speed) => _baseSpeed = speed;
 }
