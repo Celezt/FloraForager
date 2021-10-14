@@ -6,10 +6,15 @@ using IngameDebugConsole;
 using MyBox;
 using UnityEngine.UI;
 using Sirenix.OdinInspector;
+using Celezt.Time;
 
 public class FishingManager : MonoBehaviour
 {
     private static Dictionary<int, FishingManager> _fishings = new Dictionary<int, FishingManager>();
+
+    public event System.Action OnPlayCallback = delegate { };
+    public event System.Action OnCatchCallback = delegate { };
+    public event System.Action OnFleeCallback = delegate { };
 
     [SerializeField] private RectTransform _fishAreaTransform;
     [SerializeField] private RectTransform _catchAreaTransform;
@@ -21,6 +26,7 @@ public class FishingManager : MonoBehaviour
     [SerializeField, Min(0)] private int _playerIndex;
     [SerializeField, Min(0)] private float _gravity = 9.82f;
     [SerializeField, Min(0)] private float _progressSpeed = 5f;
+    [SerializeField, Min(0)] private float _startInvisibilityFrame = 4;
 
     private Coroutine _playFishingCoroutine;
     private PlayerAction _inputs;
@@ -90,6 +96,15 @@ public class FishingManager : MonoBehaviour
     private void Awake()
     {
         _inputs = new PlayerAction();
+
+        OnFleeCallback += () => 
+        {
+            StopFishing();
+        };
+        OnCatchCallback += () =>
+        {
+            StopFishing();
+        };
     }
 
     private void Start()
@@ -132,6 +147,8 @@ public class FishingManager : MonoBehaviour
 
     private IEnumerator PlayFishing(FishItem fishItem, RodItem rodItem)
     {
+        OnPlayCallback.Invoke();
+
         MinMaxFloat catchRange = new MinMaxFloat(0, Mathf.Clamp01(rodItem.CatchSize));
 
         float timer = 0;
@@ -161,6 +178,7 @@ public class FishingManager : MonoBehaviour
         float progressValue = 0;
         float deltaTime = 0;
         float randomValue = Random.value;
+        Duration invisibilityFrame = new Duration(_startInvisibilityFrame);   // Invisibility frame at the beginning of the game.
 
         void CatchPhysics()
         {
@@ -250,6 +268,20 @@ public class FishingManager : MonoBehaviour
         {
             deltaTime = Time.deltaTime;
             timer += deltaTime;
+
+            if (progressValue <= 0)
+            {
+                if (!invisibilityFrame.IsActive)    // Lost.
+                {
+                    OnFleeCallback.Invoke();
+                    yield break;
+                }
+            }
+            else if (progressValue >= 1)            // Won.
+            {
+                OnCatchCallback.Invoke();
+                yield break;
+            }
 
             CatchPhysics();
             SetBouncing();
