@@ -67,21 +67,20 @@ public class InventoryManager : MonoBehaviour, IDropHandler
             
             InventoryAsset tmp = JsonConvert.DeserializeObject<InventoryAsset>(handle.Result.text);
             slots = GetComponentsInChildren<ItemSlot>();
-
-            //inventory.Container.Capacity = slots.Length;
             
             // Assigns Items to slots
             for (int i = 0; i < slots.Length; i++) // Assigns Items to slots
-            {
-                
+            {                
                 inventory.Container.Add(tmp.Items.Length > i ? tmp.Items[i]: new ItemAsset());
                 slots[i].pos = i;
+                slots[i].GetComponent<ItemSlotButton>().inventoryManager = this;
                 if (inventory.Container[i].ID != null)
                 {
                     slots[i].item = inventory.Container[i];
                     if (settings.ItemIconChunk.TryGetValue(slots[i].item.ID, out Sprite sprite))
                     {
                         slots[i].image.sprite = sprite;
+                        
                     }
                     slots[i].TextMesh.text = inventory.Container[i].Amount.ToString(); // Can use slot instead?
                     //Debug.Log(inventory.Container[i].Amount);
