@@ -16,14 +16,9 @@ public class SeedItem : IUse, IItem
 
     private InventoryObject _Inventory;
 
-    public void Initialize(ItemContext context)
-    {
-        _Inventory = context.playerTransform.GetComponent<PlayerInfo>().Inventory;
-    }
-
     public void OnEquip(ItemContext context)
     {
-
+        _Inventory = context.playerTransform.GetComponent<PlayerInfo>().Inventory;
     }
 
     public void OnUnequip(ItemContext context)
