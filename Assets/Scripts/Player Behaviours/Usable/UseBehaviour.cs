@@ -80,6 +80,7 @@ public class UseBehaviour : MonoBehaviour
 
         _playerInfo.Inventory.OnSelectItemCallback += asset =>
         {
+            Debug.Log("hej");
             _itemType?.Behaviour?.OnUnequip(_itemContext);  // Unequip current item.
 
             _itemType = ItemTypeSettings.Instance.ItemTypeChunk[asset.ID];

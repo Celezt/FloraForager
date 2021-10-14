@@ -200,7 +200,7 @@ public class FishingManager : MonoBehaviour
             MinMaxFloat roundedCatchRange = new MinMaxFloat(Mathf.Round(catchRange.Min * 100.0f) / 100.0f, 
                                                             Mathf.Round(catchRange.Max * 100.0f) / 100.0f);
             if (roundedCatchRange.IsInRange(fishPointPostProcessed))
-                progressValue += (rodStar >= fishStar ? ((fishStar + rodStar / 5) / fishStar) * 1.5f : ((rodStar + fishStar / 5) / fishStar) * 1.5f) * (_progressSpeed / 100) * deltaTime;
+                progressValue += (rodStar >= fishStar ? ((fishStar + rodStar / 5) / fishStar) * 2f : ((rodStar + fishStar / 5) / fishStar) * 2f) * (_progressSpeed / 100) * deltaTime;
             else
                 progressValue -= (rodStar >= fishStar ? (rodStar + fishStar / 5) / rodStar  : (fishStar + rodStar / 5) / rodStar) * (_progressSpeed / 100) * deltaTime;
 
@@ -216,13 +216,16 @@ public class FishingManager : MonoBehaviour
                 fishLastChangeTime = timer;
                 fishPointSnapshot = fishPoint;
                 randomValue = Random.value;
-
+                Debug.Log(randomValue);
                 currentPattern = new System.Func<AnimationCurve>(() =>
                 {
                     if (randomValue > 0.5f + fishCalmness / 2)      // Up
                         return fishUpPatterns[Random.Range(0, fishUpPatterns.Length - 1)];
                     else if (randomValue < 0.5f - fishCalmness / 2) // Down
+                    {
+                        Debug.Log("down");
                         return fishDownPatterns[Random.Range(0, fishDownPatterns.Length - 1)];
+                    }
                     else                                            // Idle
                         return fishIdlePatterns[Random.Range(0, fishIdlePatterns.Length - 1)];
                 })();
