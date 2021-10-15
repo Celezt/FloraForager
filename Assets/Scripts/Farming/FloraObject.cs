@@ -47,7 +47,7 @@ public class FloraObject : MonoBehaviour, IUsable, IDestructable
         _MeshFilter.sharedMesh = _Flora.CurrentMeshFilter.sharedMesh;
         _MeshRenderer.sharedMaterials = _Flora.CurrentMeshRenderer.sharedMaterials;
 
-        transform.position = _Flora.Tile.Middle;
+        transform.position = _Flora.Cell.Middle;
         transform.position += Vector3.up * (_MeshFilter.sharedMesh.bounds.size.y / 2.0f);
 
         _Collider.center = new Vector3(0, 

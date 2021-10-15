@@ -26,9 +26,9 @@ public class FloraMaster : Singleton<FloraMaster>
     /// </summary>
     public bool Add(string name)
     {
-        Tile tile = GridInteraction.CurrentTile;
+        Cell cell = Grid.Instance.HoveredCell;
 
-        if (tile == null || tile.TileType != TileType.Dirt)
+        if (cell == null || cell.Type != CellType.Dirt)
             return false;
 
         string key = name.ToLower();
@@ -36,9 +36,9 @@ public class FloraMaster : Singleton<FloraMaster>
         if (!_FloraDictionary.ContainsKey(key))
             return false;
 
-        Flora flora = new Flora(_FloraDictionary[key], tile);
+        Flora flora = new Flora(_FloraDictionary[key], cell);
 
-        if (!Create(flora, tile))
+        if (!Create(flora, cell))
             return false;
 
         _Florae.Add(flora);
@@ -46,11 +46,11 @@ public class FloraMaster : Singleton<FloraMaster>
         return true;
     }
 
-    public bool Create(Flora flora, Tile tile)
+    public bool Create(Flora flora, Cell cell)
     {
         GameObject obj = Instantiate(_FloraPrefab);
 
-        if (!GridInteraction.PlaceObject(tile, obj))
+        if (!Grid.Instance.OccupyCell(cell, obj))
         {
             Destroy(obj);
             return false;

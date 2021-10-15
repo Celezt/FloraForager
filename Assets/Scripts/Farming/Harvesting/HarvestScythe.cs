@@ -26,7 +26,7 @@ public class HarvestScythe : IHarvest
             }
         }
 
-        GridInteraction.RemoveObject(flora.Tile);
+        UnityEngine.Object.Destroy(Grid.Instance.FreeCell(flora.Cell));
         FloraMaster.Instance.Remove(flora);
     }
 
