@@ -93,10 +93,13 @@ public class UseBehaviour : MonoBehaviour
 
         _playerInfo.Inventory.OnSelectItemCallback += (index, asset) =>
         {
+            _itemType?.Behaviour?.OnUnequip(_itemContext);  // Unequip current item.
+
+            if (string.IsNullOrEmpty(asset.ID) || !ItemTypeSettings.Instance.ItemTypeChunk.ContainsKey(asset.ID))
+                return;
+
             _slotIndex = index;
             _amount = asset.Amount;
-
-            _itemType?.Behaviour?.OnUnequip(_itemContext);  // Unequip current item.
 
             _itemType = ItemTypeSettings.Instance.ItemTypeChunk[asset.ID];
             _use = (IUse)_itemType.Behaviour;
