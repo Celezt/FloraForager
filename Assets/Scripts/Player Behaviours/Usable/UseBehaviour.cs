@@ -94,15 +94,19 @@ public class UseBehaviour : MonoBehaviour
         _playerInfo.Inventory.OnSelectItemCallback += (index, asset) =>
         {
             _itemType?.Behaviour?.OnUnequip(_itemContext);  // Unequip current item.
+            _use = null;
+            _itemType = null;
 
             if (string.IsNullOrEmpty(asset.ID) || !ItemTypeSettings.Instance.ItemTypeChunk.ContainsKey(asset.ID))
                 return;
 
+            _itemType = ItemTypeSettings.Instance.ItemTypeChunk[asset.ID];
+
+            if (_itemType.Behaviour != null && _itemType.Behaviour is IUse)                // If item has implemented IUse.
+                _use = (IUse)_itemType.Behaviour;
+
             _slotIndex = index;
             _amount = asset.Amount;
-
-            _itemType = ItemTypeSettings.Instance.ItemTypeChunk[asset.ID];
-            _use = (IUse)_itemType.Behaviour;
 
             _itemContext = new ItemContext(
                 _itemType.Labels,

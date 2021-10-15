@@ -21,6 +21,8 @@ public class ItemTypeSettings : SerializedScriptableSingleton<ItemTypeSettings>
     public IReadOnlyDictionary<string, List<string>> ItemLabelChunk => _itemLabelChunk;
 
     public LabelSettings _labelSettings;
+    [SerializeField, Tooltip("Default icon used when no other icon is present.")]
+    private Sprite _defaultIcon;
     [OdinSerialize]
     private Dictionary<string, List<string>> _itemLabelChunk = new Dictionary<string, List<string>>();
     [OdinSerialize]
@@ -392,9 +394,9 @@ public class ItemTypeSettings : SerializedScriptableSingleton<ItemTypeSettings>
             return;
 
         if (!_itemIconChunk.ContainsKey(id))
-            _itemIconChunk.Add(id, newIcon);
+            _itemIconChunk.Add(id, newIcon == null ? _defaultIcon : newIcon);
 
-        _itemIconChunk[id] = newIcon;
+        _itemIconChunk[id] = newIcon == null ? _defaultIcon : newIcon;
     }
 
     public void ChangeName(string id, string newName)

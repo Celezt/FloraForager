@@ -12,6 +12,7 @@ using Newtonsoft.Json;
 public class ItemType : SerializedScriptableObject
 {
     [PreviewField(120), HideLabel]
+    [OnValueChanged(nameof(OnIconChange))]
     [HorizontalGroup("Group 1", 120)]
     public Sprite Icon;
     [VerticalGroup("Group 1/Right"), LabelWidth(80)]
@@ -93,12 +94,11 @@ public class ItemType : SerializedScriptableObject
         if (settings == null)
             return;
 
-        if (Icon != null)
-            settings.ChangeIcon(ID, Icon);
-
         if (!string.IsNullOrEmpty(Name))
             settings.ChangeName(ID, Name);
     }
+
+    private void OnIconChange() => ItemTypeSettings.Instance.ChangeIcon(ID, Icon);
 
     public class DescriptorDeleteDetector : UnityEditor.AssetModificationProcessor
     {
