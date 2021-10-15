@@ -28,7 +28,7 @@ public class HarvestPluck : IHarvest
     {
         if (flora.Completed)
         {
-            InventoryObject inventory = PlayerInput.GetPlayerByIndex(playerIndex).GetComponent<PlayerInfo>().Inventory;
+            Inventory inventory = PlayerInput.GetPlayerByIndex(playerIndex).GetComponent<PlayerInfo>().Inventory;
 
             for (int i = 0; i < _Pluck.Length; ++i)
             {

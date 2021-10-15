@@ -24,7 +24,7 @@ public abstract class Objective
 
 public class FetchObjective : Objective
 {
-    private InventoryObject _Inventory;
+    private Inventory _Inventory;
 
     public FetchObjective(ObjectiveData data) : base(data)
     {

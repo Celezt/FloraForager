@@ -14,7 +14,7 @@ public class SeedItem : IUse, IItem
     [OdinSerialize, Required] 
     private string _FloraName;
 
-    private InventoryObject _Inventory;
+    private Inventory _Inventory;
 
     public void OnEquip(ItemContext context)
     {

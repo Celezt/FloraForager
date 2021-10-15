@@ -52,7 +52,7 @@ public class UICraftingMenu : Singleton<UICraftingMenu>
         if (_SelectedItem == null || !CanCraft(_SelectedItem))
             return;
 
-        InventoryObject inventory = PlayerInput.GetPlayerByIndex(0).GetComponent<PlayerInfo>().Inventory;
+        Inventory inventory = PlayerInput.GetPlayerByIndex(0).GetComponent<PlayerInfo>().Inventory;
 
         foreach (ResourceRequirement resReq in _SelectedItem.ResourceReqs)
         {
@@ -141,7 +141,7 @@ public class UICraftingMenu : Singleton<UICraftingMenu>
 
     public bool CanCraft(CraftableItem craftableItem)
     {
-        InventoryObject inventory = PlayerInput.GetPlayerByIndex(0).GetComponent<PlayerInfo>().Inventory;
+        Inventory inventory = PlayerInput.GetPlayerByIndex(0).GetComponent<PlayerInfo>().Inventory;
 
         foreach (ResourceRequirement resReq in craftableItem.ResourceReqs)
         {

@@ -19,7 +19,7 @@ public class ChopItem : IItem, IUse, IDestructor
     [SerializeField]
     private Vector3 _halfExtents = new Vector3(0.5f, 1.0f, 0.5f);
     [SerializeField]
-    private Vector3 _centerOffset = new Vector3(0, 0, 0.5f);
+    private Vector3 _centerOffset = new Vector3(0, 0, 1f);
 
     void IItem.OnEquip(ItemContext context)
     {

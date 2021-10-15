@@ -50,7 +50,7 @@ public class CommissionLog : Singleton<CommissionLog>
     {
         _Commissions.Add(commission);
 
-        InventoryObject inventory = PlayerInput.GetPlayerByIndex(0).GetComponent<PlayerInfo>().Inventory;
+        Inventory inventory = PlayerInput.GetPlayerByIndex(0).GetComponent<PlayerInfo>().Inventory;
         foreach (Objective objective in commission.Objectives)
         {
             inventory.OnItemChangeCallback += objective.UpdateAmount;

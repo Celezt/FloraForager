@@ -17,7 +17,7 @@ public abstract class ResourceSource : MonoBehaviour, IUsable, IDestructable
 
     protected GameObject _Player;
     protected PlayerMovement _PlayerMovement;
-    protected InventoryObject _Inventory;
+    protected Inventory _Inventory;
 
     protected float _CollectionTime;
     protected int _CurrentAmount;

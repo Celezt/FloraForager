@@ -14,7 +14,7 @@ public class HarvestScythe : IHarvest
     {
         if (flora.Completed)
         {
-            InventoryObject inventory = PlayerInput.GetPlayerByIndex(playerIndex).GetComponent<PlayerInfo>().Inventory;
+            Inventory inventory = PlayerInput.GetPlayerByIndex(playerIndex).GetComponent<PlayerInfo>().Inventory;
 
             foreach (RewardPair reward in flora.Data.Rewards)
             {

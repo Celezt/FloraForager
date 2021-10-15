@@ -4,9 +4,9 @@ using UnityEngine;
 
 public class PlayerInfo : MonoBehaviour
 {
-    public InventoryObject Inventory => _inventory;
+    public Inventory Inventory => _inventory;
     public PlayerData Data => _playerData;
 
-    [SerializeField] private InventoryObject _inventory;
+    [SerializeField] private Inventory _inventory;
     [SerializeField] private PlayerData _playerData;
 }

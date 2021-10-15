@@ -6,7 +6,7 @@ using UnityEngine;
 using Sirenix.OdinInspector;
 
 [CreateAssetMenu(fileName = "New Inventory", menuName = "Inventory System/Inventory")]
-public class InventoryObject : ScriptableObject
+public class Inventory : ScriptableObject
 {
     public event Action<int> OnItemChangeCallback = delegate { };
     public event Action<int,ItemAsset> OnAddItemCallback = delegate { };
@@ -22,6 +22,8 @@ public class InventoryObject : ScriptableObject
         OnSelectItemCallback.Invoke(position, item);
     }
     public bool IsFull { get; set; }
+
+    public ItemAsset Get(int index) => Container[index];
     public bool AddItem(ItemAsset item)
     {
         if (!IsFull)
@@ -69,33 +71,35 @@ public class InventoryObject : ScriptableObject
         return false;
     }
 
-    public bool RemoveAt(int pos, int amount) 
+    public bool RemoveAt(int index, int amount) 
     {
-        if (pos < Container.Count)
+        if (index < Container.Count)
         {
-            ItemAsset itemAsset = Container[pos];
+            ItemAsset itemAsset = Container[index];
             if (amount <= itemAsset.Amount)
             {
                 itemAsset.Amount -= amount;
-                OnRemoveItemCallback.Invoke(pos, itemAsset);
-                Container[pos] = itemAsset;
-                OnItemChangeCallback.Invoke(pos);
+                OnRemoveItemCallback.Invoke(index, itemAsset);
+                Container[index] = itemAsset;
+                OnItemChangeCallback.Invoke(index);
                 return true;
             }
         }
         return false;
     }
-    public bool RemoveAt(int pos)
+
+    public bool RemoveAt(int index)
     {
-        if (pos < Container.Count)
+        if (index < Container.Count)
         {
-            OnRemoveItemCallback.Invoke(pos, new ItemAsset { ID = Container[pos].ID, Amount = 0});
-            Container[pos] = new ItemAsset();
-            OnItemChangeCallback.Invoke(pos);
+            OnRemoveItemCallback.Invoke(index, new ItemAsset { ID = Container[index].ID, Amount = 0});
+            Container[index] = new ItemAsset();
+            OnItemChangeCallback.Invoke(index);
             return true;
         }
         return false;
     }
+
     public void Remove(string id, int amount)
     {
         List<(int, int)> items = FindAll(id);
@@ -118,14 +122,24 @@ public class InventoryObject : ScriptableObject
             }
         }
     }
-    public void Swap(int pos, int pos2)
+
+    public void Swap(int firstIndex, int secondIndex)
     {
-        ItemAsset holder = Container[pos];
-        Container[pos] = Container[pos2];
-        Container[pos2] = holder;
-        OnItemChangeCallback.Invoke(pos);
-        OnItemChangeCallback.Invoke(pos2);
+        ItemAsset item = Container[firstIndex];
+        Container[firstIndex] = Container[secondIndex];
+        Container[secondIndex] = item;
+        OnItemChangeCallback.Invoke(firstIndex);
+        OnItemChangeCallback.Invoke(secondIndex);
     }
+
+    public ItemAsset Swap(int index, ItemAsset newItem)
+    {
+        ItemAsset item = Container[index];
+        Container[index] = newItem;
+        OnItemChangeCallback.Invoke(index);
+        return item;
+    }
+
     public int ExistsAt(string ID) 
     {
         for (int i = 0; i < Container.Count; i++)

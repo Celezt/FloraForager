@@ -6,7 +6,7 @@ using UnityEngine.UI;
 
 public class ItemSlotButton : MonoBehaviour, ISelectHandler
 {
-    public InventoryManager inventoryManager;
+    public InventoryHandler inventoryManager;
     public ItemSlot itemSlot;
     public void OnSelect(BaseEventData eventData)
     {

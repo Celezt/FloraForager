@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class Player : MonoBehaviour
 {
-    public InventoryObject inventory;
+    public Inventory inventory;
     
     public void OnTriggerEnter(Collider other)
     {
@@ -13,7 +13,7 @@ public class Player : MonoBehaviour
             var item = other.GetComponent<ItemSlot>();
             if (item)
             {
-                inventory.AddItem(item.item);
+                inventory.AddItem(item.Item);
                 Destroy(other.gameObject);
             }
         }
