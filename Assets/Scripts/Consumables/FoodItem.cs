@@ -22,7 +22,7 @@ public class FoodItem : IUse, IItem
 
     void IItem.OnEquip(ItemContext context)
     {
-        _playerStamina = context.playerTransform.GetComponent<PlayerStamina>();
+        _playerStamina = context.transform.GetComponent<PlayerStamina>();
     }
 
     void IItem.OnUnequip(ItemContext context)

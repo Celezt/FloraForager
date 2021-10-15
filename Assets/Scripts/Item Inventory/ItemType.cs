@@ -11,8 +11,10 @@ using Newtonsoft.Json;
 [System.Serializable]
 public class ItemType : SerializedScriptableObject
 {
-    [PreviewField(120), HideLabel]
+#if UNITY_EDITOR
     [OnValueChanged(nameof(OnIconChange))]
+#endif
+    [PreviewField(120), HideLabel]
     [HorizontalGroup("Group 1", 120)]
     public Sprite Icon;
     [VerticalGroup("Group 1/Right"), LabelWidth(80)]

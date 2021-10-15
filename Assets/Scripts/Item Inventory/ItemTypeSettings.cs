@@ -89,7 +89,9 @@ public class ItemTypeSettings : SerializedScriptableSingleton<ItemTypeSettings>
 
         if (_itemTypeChunk.ContainsKey(id))
             return false;
-        
+
+        EditorUtility.SetDirty(this);
+
         _itemTypeChunk.Add(id, itemType);
 
         if (!_itemLabelChunk.ContainsKey(id))
@@ -121,6 +123,8 @@ public class ItemTypeSettings : SerializedScriptableSingleton<ItemTypeSettings>
         if (!_itemTypeChunk.ContainsKey(id))
             return false;
 
+        EditorUtility.SetDirty(this);
+
         OnRemoveItemTypeCallback.Invoke(id);
         
         _itemLabelChunk.Remove(id);
@@ -136,13 +140,14 @@ public class ItemTypeSettings : SerializedScriptableSingleton<ItemTypeSettings>
         if (!_labelSettings.Labels.Contains(name))
             return false;
 
+        EditorUtility.SetDirty(this);
+
         foreach (KeyValuePair<string, List<string>> labels in _itemLabelChunk)
-        {
             labels.Value.Remove(name);
-        }
 
         foreach (KeyValuePair<string, ItemType> item in _itemTypeChunk)
         {
+            EditorUtility.SetDirty(this);
             item.Value.Labels.Remove(name);
         }
 
@@ -392,6 +397,8 @@ public class ItemTypeSettings : SerializedScriptableSingleton<ItemTypeSettings>
     {
         if (string.IsNullOrEmpty(id))
             return;
+
+        EditorUtility.SetDirty(this);
 
         if (!_itemIconChunk.ContainsKey(id))
             _itemIconChunk.Add(id, newIcon == null ? _defaultIcon : newIcon);

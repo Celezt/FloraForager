@@ -18,7 +18,7 @@ public class SeedItem : IUse, IItem
 
     public void OnEquip(ItemContext context)
     {
-        _Inventory = context.playerTransform.GetComponent<PlayerInfo>().Inventory;
+        _Inventory = context.transform.GetComponent<PlayerInfo>().Inventory;
     }
 
     public void OnUnequip(ItemContext context)

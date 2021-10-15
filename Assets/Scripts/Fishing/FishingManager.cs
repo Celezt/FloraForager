@@ -22,7 +22,10 @@ public class FishingManager : MonoBehaviour
     [SerializeField] private RectTransform _fishPointTransform;
     [SerializeField] private RectTransform _toggleTransform;
     [SerializeField] private Slider _progressBar;
-    [SerializeField, Min(0), OnValueChanged(nameof(OnHeightChange))] private int _barHeight = 500;
+#if UNITY_EDITOR
+    [OnValueChanged(nameof(OnHeightChange))]
+#endif
+    [SerializeField, Min(0)] private int _barHeight = 500;
     [SerializeField, Min(0)] private int _playerIndex;
     [SerializeField, Min(0)] private float _gravity = 9.82f;
     [SerializeField, Min(0)] private float _progressSpeed = 5f;
