@@ -10,6 +10,8 @@ public readonly struct ItemContext
     public readonly string name;
     public readonly string id;
     public readonly int playerIndex;
+    public readonly int slotIndex;
+    public readonly int amount;
 
     internal ItemContext(
         List<string> labels,
@@ -17,7 +19,9 @@ public readonly struct ItemContext
         UseBehaviour useBehaviour,
         string name,
         string id,
-        int playerIndex)
+        int playerIndex,
+        int slotIndex,
+        int amount)
     {
         this.labels = labels;
         this.playerTransform = playerTransform;
@@ -25,5 +29,7 @@ public readonly struct ItemContext
         this.name = name;
         this.id = id;
         this.playerIndex = playerIndex;
+        this.slotIndex = slotIndex;
+        this.amount = amount;
     }
 }

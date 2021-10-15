@@ -15,6 +15,8 @@ public class FoodItem : IUse, IItem
 
     [SerializeField]
     private float _staminaChange;
+    [SerializeField, InlineProperty]
+    private List<IEffect> _effects = new List<IEffect>(); 
 
     private PlayerStamina _playerStamina;
 
@@ -25,7 +27,7 @@ public class FoodItem : IUse, IItem
 
     void IItem.OnUnequip(ItemContext context)
     {
-
+        
     }
 
     void IItem.OnUpdate(ItemContext context)
@@ -38,6 +40,12 @@ public class FoodItem : IUse, IItem
         if (context.started)
         {
             _playerStamina.Stamina = _staminaChange;
+
+            foreach (IEffect effect in _effects)
+                if (!effect.Duration.IsActive)
+                    effect.OnEffect(context);
+
+            context.Consume();
         }
 
         yield break;

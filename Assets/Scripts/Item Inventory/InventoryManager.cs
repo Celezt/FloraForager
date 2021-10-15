@@ -20,8 +20,8 @@ public class InventoryManager : MonoBehaviour, IDropHandler
 
     public void SelectItem(ItemSlot itemSlot) 
     {
-        currentSlot = itemSlot;
-        inventory.SetSelectedItem(itemSlot.item);
+           currentSlot = itemSlot;
+        inventory.SetSelectedItem(itemSlot.pos, itemSlot.item);
         //Debug.Log("Selected Item is " + currentSlot.item.ID);
     }
 
