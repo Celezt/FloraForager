@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -8,32 +9,30 @@ using UnityEngine.InputSystem;
 
 public class InventoryHandler : MonoBehaviour
 {
-    public Inventory Inventory { get => _inventory; }
+    public Inventory Inventory => _inventory;
+    public string ID => _id;
 
     [SerializeField]
+    private string _id;
+
     private Inventory _inventory;
-    [SerializeField]
-    private string _inventoryID;
-
-    private ItemTypeSettings _settings;
 
     private ItemSlot[] _slots;
 
-    public void SelectItem(ItemSlot itemSlot) 
+    void Awake()
     {
-        _inventory.SetSelectedItem(itemSlot.Index, itemSlot.Item);
-    }
+        GameManager.Instance.Stream.Get<Inventory>(Hash128.Compute(_id)).TryGetTarget(out _inventory);
 
-    void Start()
-    {
         _inventory.OnItemChangeCallback += (int i) =>
         {
+            ItemTypeSettings settings = ItemTypeSettings.Instance;
+
             if (!(i >= _slots.Length))
             {
-                _slots[i].Item = _inventory.Container[i];
+                _slots[i].Item = _inventory.Items[i];
                 if (_slots[i].Item.ID != null)
                 {
-                    if (_settings.ItemIconChunk.TryGetValue(_slots[i].Item.ID, out Sprite sprite))
+                    if (settings.ItemIconChunk.TryGetValue(_slots[i].Item.ID, out Sprite sprite))
                     {
                         _slots[i].Icon.sprite = sprite;
                     }
@@ -47,39 +46,36 @@ public class InventoryHandler : MonoBehaviour
                     _slots[i].Icon.sprite = null;
                 }
                 
-                _slots[i].TextMesh.text = _inventory.Container[i].Amount.ToString();
+                _slots[i].Amount.text = _inventory.Items[i].Amount.ToString();
             }
         };
 
-        // This occurs 2 time for hud and player inv!!!
-        Addressables.LoadAssetAsync<TextAsset>(_inventoryID).Completed +=(handle)=>
+        _inventory.OnInventoryDeserializeCallback += (items) =>
         {
-            
-            _settings = ItemTypeSettings.Instance;
-            
-            InventoryAsset tmp = JsonConvert.DeserializeObject<InventoryAsset>(handle.Result.text);
-            _slots = GetComponentsInChildren<ItemSlot>();
-            
-            // Assigns Items to slots
-            for (int i = 0; i < _slots.Length; i++) // Assigns Items to slots
-            {                
-                _inventory.Container.Add(tmp.Items.Length > i ? tmp.Items[i]: new ItemAsset());
-                _slots[i].Index = i;
-                _slots[i].GetComponent<ItemSlot>().InventoryManager = this;
+            ItemTypeSettings settings = ItemTypeSettings.Instance;
 
-                if (_inventory.Container[i].ID != null)
+            _slots = GetComponentsInChildren<ItemSlot>();
+
+            int currentCount = items.Count;
+            for (int i = 0; i < _slots.Length; i++)
+            {
+                if (currentCount <= i)  // Resize to fit the amount of slots.
+                    items.Add(new ItemAsset());
+
+                _slots[i].Index = i;
+                _slots[i].InventoryHandler = this;
+
+                if (!string.IsNullOrEmpty(items[i].ID))
                 {
-                    _slots[i].Item = _inventory.Container[i];
-                    if (_settings.ItemIconChunk.TryGetValue(_slots[i].Item.ID, out Sprite sprite))
-                    {
+                    if (settings.ItemIconChunk.TryGetValue(items[i].ID, out Sprite sprite))
                         _slots[i].Icon.sprite = sprite;
-                        
-                    }
-                    _slots[i].TextMesh.text = _inventory.Container[i].Amount.ToString(); // Can use slot instead?
+                    if (settings.ItemNameChunk.TryGetValue(items[i].ID, out string name))
+                        _slots[i].Name = name;
+
+                    _slots[i].Item = items[i];
+                    _slots[i].Amount.text = items[i].Amount.ToString();
                 }
             }
-
-            Addressables.Release(handle);
         };
     }
 }

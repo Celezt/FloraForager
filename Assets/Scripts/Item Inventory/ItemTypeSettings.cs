@@ -8,7 +8,7 @@ using System.IO;
 using System;
 using System.Linq;
 
-[CreateAssetMenu(fileName = "ItemTypeSettings", menuName = "Inventory/ItemTypeSettings")]
+[CreateAssetMenu(fileName = "ItemTypeSettings", menuName = "Inventory System/Item Type Settings")]
 [System.Serializable]
 public class ItemTypeSettings : SerializedScriptableSingleton<ItemTypeSettings>
 {

@@ -13,7 +13,7 @@ public class Player : MonoBehaviour
             var item = other.GetComponent<ItemSlot>();
             if (item)
             {
-                inventory.AddItem(item.Item);
+                inventory.Insert(item.Item);
                 Destroy(other.gameObject);
             }
         }

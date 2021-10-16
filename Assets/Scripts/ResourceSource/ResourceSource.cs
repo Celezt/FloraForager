@@ -120,7 +120,7 @@ public abstract class ResourceSource : MonoBehaviour, IUsable, IDestructable
             _CurrentAmount += amountToAdd;
 
             // TODO: add items to player's inventory (check if available space, if not, then stop collecting and don't add amount)
-            _Inventory.AddItem(new ItemAsset
+            _Inventory.Insert(new ItemAsset
             {
                 ID = _Data.ItemID,
                 Amount = amountToAdd

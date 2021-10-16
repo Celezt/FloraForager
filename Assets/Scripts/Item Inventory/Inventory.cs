@@ -4,44 +4,51 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using Sirenix.OdinInspector;
+using UnityEngine.AddressableAssets;
+using Newtonsoft.Json;
 
 [CreateAssetMenu(fileName = "New Inventory", menuName = "Inventory System/Inventory")]
 public class Inventory : ScriptableObject
 {
+    public IReadOnlyList<ItemAsset> Items => _items;
+
+    public event Action OnInventoryDestroyCallback = delegate { };
+    public event Action<List<ItemAsset>> OnInventoryDeserializeCallback = delegate { };
     public event Action<int> OnItemChangeCallback = delegate { };
     public event Action<int,ItemAsset> OnAddItemCallback = delegate { };
     public event Action<int, ItemAsset> OnRemoveItemCallback = delegate { };
     public event Action<int, ItemAsset> OnSelectItemCallback = delegate { };
     public ItemAsset SelectedItem;
     [NonSerialized, ShowInInspector]
-    public List<ItemAsset> Container = new List<ItemAsset>(); // Change
+    private List<ItemAsset> _items = new List<ItemAsset>(); // Change
 
     public void SetSelectedItem(int position, ItemAsset item) 
     {
         SelectedItem = item;
         OnSelectItemCallback.Invoke(position, item);
     }
+
     public bool IsFull { get; set; }
 
-    public ItemAsset Get(int index) => Container[index];
-    public bool AddItem(ItemAsset item)
+    public ItemAsset Get(int index) => _items[index];
+    public bool Insert(ItemAsset item)
     {
         if (!IsFull)
         {
             int pos = ExistsAt(item.ID);
             if (pos != -1) // It exists
             {
-                ItemAsset tmp = Container[pos];
+                ItemAsset tmp = _items[pos];
                 // Check if new amount > max amount
                 tmp.Amount += item.Amount;
-                Container[pos] = tmp;
+                _items[pos] = tmp;
                 OnAddItemCallback.Invoke(pos,tmp);
                 OnItemChangeCallback.Invoke(pos);
             }
             else
             {
                 int tmp = FindFirstEmptySlot();
-                Container[tmp] = item;
+                _items[tmp] = item;
                 OnAddItemCallback.Invoke(tmp,item);
                 OnItemChangeCallback.Invoke(tmp);
             }
@@ -49,38 +56,21 @@ public class Inventory : ScriptableObject
         }
         else
         {
-            /*
-            if (stackable)
-            {
-                Find all slots of the same id that are not empty
-                if(Found stackables)
-            }
-            {
-            
-            }
-            else
-            {
-            return false;
-            }
-             else
-            {
-            return false;
-            }
-             */
+
         }
         return false;
     }
 
     public bool RemoveAt(int index, int amount) 
     {
-        if (index < Container.Count)
+        if (index < _items.Count)
         {
-            ItemAsset itemAsset = Container[index];
+            ItemAsset itemAsset = _items[index];
             if (amount <= itemAsset.Amount)
             {
                 itemAsset.Amount -= amount;
                 OnRemoveItemCallback.Invoke(index, itemAsset);
-                Container[index] = itemAsset;
+                _items[index] = itemAsset;
                 OnItemChangeCallback.Invoke(index);
                 return true;
             }
@@ -90,10 +80,10 @@ public class Inventory : ScriptableObject
 
     public bool RemoveAt(int index)
     {
-        if (index < Container.Count)
+        if (index < _items.Count)
         {
-            OnRemoveItemCallback.Invoke(index, new ItemAsset { ID = Container[index].ID, Amount = 0});
-            Container[index] = new ItemAsset();
+            OnRemoveItemCallback.Invoke(index, new ItemAsset { ID = _items[index].ID, Amount = 0});
+            _items[index] = new ItemAsset();
             OnItemChangeCallback.Invoke(index);
             return true;
         }
@@ -114,10 +104,10 @@ public class Inventory : ScriptableObject
             }
             else
             {
-                ItemAsset itemAsset = Container[items[i].Item1];
+                ItemAsset itemAsset = _items[items[i].Item1];
                 itemAsset.Amount -= amountToRemove;
                 OnRemoveItemCallback.Invoke(items[i].Item1, itemAsset);
-                Container[items[i].Item1] = itemAsset;
+                _items[items[i].Item1] = itemAsset;
                 OnItemChangeCallback.Invoke(items[i].Item1);
             }
         }
@@ -125,28 +115,28 @@ public class Inventory : ScriptableObject
 
     public void Swap(int firstIndex, int secondIndex)
     {
-        ItemAsset item = Container[firstIndex];
-        Container[firstIndex] = Container[secondIndex];
-        Container[secondIndex] = item;
+        ItemAsset item = _items[firstIndex];
+        _items[firstIndex] = _items[secondIndex];
+        _items[secondIndex] = item;
         OnItemChangeCallback.Invoke(firstIndex);
         OnItemChangeCallback.Invoke(secondIndex);
     }
 
     public ItemAsset Swap(int index, ItemAsset newItem)
     {
-        ItemAsset item = Container[index];
-        Container[index] = newItem;
+        ItemAsset item = _items[index];
+        _items[index] = newItem;
         OnItemChangeCallback.Invoke(index);
         return item;
     }
 
     public int ExistsAt(string ID) 
     {
-        for (int i = 0; i < Container.Count; i++)
+        for (int i = 0; i < _items.Count; i++)
         {
-            if (!Container[i].ID.IsNullOrEmpty())
+            if (!_items[i].ID.IsNullOrEmpty())
             {
-                if (Container[i].ID == ID)
+                if (_items[i].ID == ID)
                 {
                     return i;
                 }
@@ -157,11 +147,11 @@ public class Inventory : ScriptableObject
     public List<(int,int)> FindAll(string ID) // pos, amount
     {
         List<(int, int)> tmp = new List<(int, int)>();
-        for (int i = 0; i < Container.Count; i++)
+        for (int i = 0; i < _items.Count; i++)
         {
-            if (Container[i].ID != null && Container[i].ID == ID)
+            if (_items[i].ID != null && _items[i].ID == ID)
             {
-                tmp.Add((i, Container[i].Amount));
+                tmp.Add((i, _items[i].Amount));
             }
         }
         return tmp;
@@ -169,11 +159,11 @@ public class Inventory : ScriptableObject
     }
     public bool Find(string ID) 
     {
-        for (int i = 0; i < Container.Count; i++)
+        for (int i = 0; i < _items.Count; i++)
         {
-            if (!Container[i].ID.IsNullOrEmpty())
+            if (!_items[i].ID.IsNullOrEmpty())
             {
-                if (Container[i].ID == ID)
+                if (_items[i].ID == ID)
                 {
                     return true;
                 }
@@ -184,11 +174,11 @@ public class Inventory : ScriptableObject
     public int FindAmount(string ID) 
     {
         int tmp = 0;
-        for (int i = 0; i < Container.Count; i++)
+        for (int i = 0; i < _items.Count; i++)
         {
-            if (Container[i].ID != null && Container[i].ID == ID)
+            if (_items[i].ID != null && _items[i].ID == ID)
             {
-                tmp+=Container[i].Amount;
+                tmp += _items[i].Amount;
             }
         }
         return tmp;
@@ -199,9 +189,9 @@ public class Inventory : ScriptableObject
     }
     public int FindFirstEmptySlot() 
     {
-        for (int i = 0; i < Container.Count; i++)
+        for (int i = 0; i < _items.Count; i++)
         {
-            if (!Container[i].ID.IsNullOrEmpty())
+            if (!_items[i].ID.IsNullOrEmpty())
             {
                 return i;
             }
@@ -209,4 +199,30 @@ public class Inventory : ScriptableObject
         return -1;
     }
 
+    private void Deserialize()
+    {
+        Addressables.LoadAssetAsync<TextAsset>("inventory").Completed += (handle) =>
+        {
+            InventoryAsset tmp = JsonConvert.DeserializeObject<InventoryAsset>(handle.Result.text);
+
+            for (int i = 0; i < tmp.Items.Length; i++)
+            {
+                _items.Add(tmp.Items[i]);
+            }
+
+            Addressables.Release(handle);
+
+            OnInventoryDeserializeCallback.Invoke(_items);
+        };
+    }
+
+    private void Awake()
+    {
+        Deserialize();
+    }
+
+    private void OnDestroy()
+    {
+        OnInventoryDestroyCallback.Invoke();
+    }
 }

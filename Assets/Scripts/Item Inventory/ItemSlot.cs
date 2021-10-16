@@ -7,15 +7,22 @@ using UnityEngine.EventSystems;
 
 public class ItemSlot : MonoBehaviour, ISelectHandler
 {
-    public InventoryHandler InventoryManager { get; set; }
+    public InventoryHandler InventoryHandler { get; set; }
     public int Index { get; set; }
     public ItemAsset Item { get; set; }
+    public string Name { get; set; }
+    public TextMeshProUGUI Amount => _amount;
+    public Image Icon => _icon;
 
-    public TextMeshProUGUI TextMesh;
-    public Image Icon;
+    [SerializeField]
+    private TextMeshProUGUI _amount;
+    [SerializeField]
+    private TextMeshProUGUI _name;
+    [SerializeField]
+    private Image _icon;
 
     public void OnSelect(BaseEventData eventData)
     {
-        InventoryManager.SelectItem(this);
+        InventoryHandler.Inventory.SetSelectedItem(Index, Item);
     }
 }

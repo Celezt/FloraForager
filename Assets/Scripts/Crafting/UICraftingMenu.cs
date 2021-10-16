@@ -62,7 +62,7 @@ public class UICraftingMenu : Singleton<UICraftingMenu>
             inventory.Remove(itemID, amount);
         }
 
-        inventory.AddItem(new ItemAsset
+        inventory.Insert(new ItemAsset
         {
             ID = _SelectedItem.ItemID,
             Amount = 1

@@ -52,7 +52,7 @@ class ResourceTree : ResourceSource
                 StopCollecting();
                 OnEmptied.Invoke();
 
-                _Inventory.AddItem(new ItemAsset
+                _Inventory.Insert(new ItemAsset
                 {
                     ID = Data.ItemID,
                     Amount = Data.Amount

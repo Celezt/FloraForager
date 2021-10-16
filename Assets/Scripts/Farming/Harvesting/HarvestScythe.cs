@@ -18,7 +18,7 @@ public class HarvestScythe : IHarvest
 
             foreach (RewardPair reward in flora.Data.Rewards)
             {
-                inventory.AddItem(new ItemAsset
+                inventory.Insert(new ItemAsset
                 {
                     ID = reward.ItemID,
                     Amount = reward.Amount

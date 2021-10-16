@@ -36,7 +36,7 @@ public class HarvestPluck : IHarvest
 
                 _Pluck[i] -= amountToPluck;
 
-                inventory.AddItem(new ItemAsset
+                inventory.Insert(new ItemAsset
                 {
                     ID = flora.Data.Rewards[i].ItemID,
                     Amount = amountToPluck
