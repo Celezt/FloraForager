@@ -7,16 +7,15 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 0}
-  m_Enabled: 0
+  m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 00a108d415261c34b9fe06714b46e722, type: 3}
-  m_Name: sycthe
+  m_Name: forest_axe
   m_EditorClassIdentifier: 
   serializationData:
     SerializedFormat: 2
     SerializedBytes: 
-    ReferencedUnityObjects:
-    - {fileID: 7855364109653012003, guid: 4128454e94bc5d94da50779aff78d2b4, type: 3}
+    ReferencedUnityObjects: []
     SerializedBytesString: 
     Prefab: {fileID: 0}
     PrefabModificationsReferencedUnityObjects: []
@@ -24,34 +23,55 @@ MonoBehaviour:
     SerializationNodes:
     - Name: Behaviour
       Entry: 7
-      Data: 0|ScytheItem, Assembly-CSharp
-    - Name: ItemStack
+      Data: 0|ChopItem, Assembly-CSharp
+    - Name: IItem.ItemStack
       Entry: 3
       Data: 1
-    - Name: Cooldown
+    - Name: IUse.Cooldown
       Entry: 4
-      Data: 0.5
-    - Name: Strength
+      Data: 1
+    - Name: IDestructor.Strength
       Entry: 4
       Data: 20
-    - Name: Damage
+    - Name: IDestructor.Damage
       Entry: 4
       Data: 2
-    - Name: _modelPrefab
-      Entry: 10
+    - Name: _halfExtents
+      Entry: 7
+      Data: UnityEngine.Vector3, UnityEngine.CoreModule
+    - Name: 
+      Entry: 4
+      Data: 0.5
+    - Name: 
+      Entry: 4
+      Data: 0.5
+    - Name: 
+      Entry: 4
+      Data: 0.5
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: _centerOffset
+      Entry: 7
+      Data: UnityEngine.Vector3, UnityEngine.CoreModule
+    - Name: 
+      Entry: 4
       Data: 0
-    - Name: _radius
+    - Name: 
       Entry: 4
-      Data: 3
-    - Name: _arc
+      Data: 0
+    - Name: 
       Entry: 4
-      Data: 0.4
+      Data: 0.5
+    - Name: 
+      Entry: 8
+      Data: 
     - Name: 
       Entry: 8
       Data: 
   Icon: {fileID: 0}
-  Name: Sycthe
-  ID: sycthe
+  Name: Forest Axe
+  ID: forest_axe
   Description: 
   Labels:
-  - scythe
+  - axe

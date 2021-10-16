@@ -10,9 +10,9 @@ using UnityEngine.UI;
 public class InventoryManager : MonoBehaviour, IDropHandler
 {
     private ItemSlot[] slots;
+    private GraphicRaycaster m_raycaster;
     public InventoryObject inventory;
     public string inventoryID;
-    GraphicRaycaster m_Raycaster;
     PointerEventData m_PointerEventData;
     EventSystem m_EventSystem;
     ItemTypeSettings settings;
@@ -53,11 +53,9 @@ public class InventoryManager : MonoBehaviour, IDropHandler
             
             //Debug.Log(inventory.Container[i].Amount.ToString());
         };
-        //Fetch the Raycaster from the GameObject (the Canvas)
-        m_Raycaster = GetComponent<GraphicRaycaster>();
         //Fetch the Event System from the Scene
         m_EventSystem = GetComponent<EventSystem>();
-
+        m_raycaster = GetComponentInParent<GraphicRaycaster>();
 
         // This occurs 2 time for hud and player inv!!!
         Addressables.LoadAssetAsync<TextAsset>(inventoryID).Completed +=(handle)=>
@@ -113,7 +111,7 @@ public class InventoryManager : MonoBehaviour, IDropHandler
             List<RaycastResult> results = new List<RaycastResult>();
 
             //Raycast using the Graphics Raycaster and mouse click position
-            m_Raycaster.Raycast(m_PointerEventData, results);
+            m_raycaster.Raycast(m_PointerEventData, results);
 
             //For every result returned, output the name of the GameObject on the Canvas hit by the Ray
             //Find and swap itemslots

@@ -21,6 +21,8 @@ public class ItemTypeSettings : SerializedScriptableSingleton<ItemTypeSettings>
     public IReadOnlyDictionary<string, List<string>> ItemLabelChunk => _itemLabelChunk;
 
     public LabelSettings _labelSettings;
+    [SerializeField, Tooltip("Default icon used when no other icon is present.")]
+    private Sprite _defaultIcon;
     [OdinSerialize]
     private Dictionary<string, List<string>> _itemLabelChunk = new Dictionary<string, List<string>>();
     [OdinSerialize]
@@ -87,7 +89,9 @@ public class ItemTypeSettings : SerializedScriptableSingleton<ItemTypeSettings>
 
         if (_itemTypeChunk.ContainsKey(id))
             return false;
-        
+
+        EditorUtility.SetDirty(this);
+
         _itemTypeChunk.Add(id, itemType);
 
         if (!_itemLabelChunk.ContainsKey(id))
@@ -119,6 +123,8 @@ public class ItemTypeSettings : SerializedScriptableSingleton<ItemTypeSettings>
         if (!_itemTypeChunk.ContainsKey(id))
             return false;
 
+        EditorUtility.SetDirty(this);
+
         OnRemoveItemTypeCallback.Invoke(id);
         
         _itemLabelChunk.Remove(id);
@@ -134,13 +140,14 @@ public class ItemTypeSettings : SerializedScriptableSingleton<ItemTypeSettings>
         if (!_labelSettings.Labels.Contains(name))
             return false;
 
+        EditorUtility.SetDirty(this);
+
         foreach (KeyValuePair<string, List<string>> labels in _itemLabelChunk)
-        {
             labels.Value.Remove(name);
-        }
 
         foreach (KeyValuePair<string, ItemType> item in _itemTypeChunk)
         {
+            EditorUtility.SetDirty(this);
             item.Value.Labels.Remove(name);
         }
 
@@ -391,10 +398,12 @@ public class ItemTypeSettings : SerializedScriptableSingleton<ItemTypeSettings>
         if (string.IsNullOrEmpty(id))
             return;
 
-        if (!_itemIconChunk.ContainsKey(id))
-            _itemIconChunk.Add(id, newIcon);
+        EditorUtility.SetDirty(this);
 
-        _itemIconChunk[id] = newIcon;
+        if (!_itemIconChunk.ContainsKey(id))
+            _itemIconChunk.Add(id, newIcon == null ? _defaultIcon : newIcon);
+
+        _itemIconChunk[id] = newIcon == null ? _defaultIcon : newIcon;
     }
 
     public void ChangeName(string id, string newName)

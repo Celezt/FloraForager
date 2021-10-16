@@ -16,7 +16,7 @@ public class DebugUseArea : MonoBehaviour, IUsable, IDestructable
 
     private bool _isToggled;
 
-    public IList<string> Filter(ItemLabels labels) => new List<string> { labels.SCYTHE };
+    public IList<string> Filter(ItemLabels labels) => new List<string> { labels.SCYTHE, labels.AXE };
 
     public void OnUse(UsedContext context)
     {

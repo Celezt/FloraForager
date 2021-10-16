@@ -11,6 +11,8 @@ public class UseBehaviour : MonoBehaviour
 
     private readonly ItemLabels _itemLabels = new ItemLabels();
 
+    public Action OnDrawGizmosAction = delegate { };
+
     private PlayerInput _playerInput;
     private InputControlScheme _scheme;
     private ItemContext _itemContext;
@@ -93,13 +95,21 @@ public class UseBehaviour : MonoBehaviour
 
         _playerInfo.Inventory.OnSelectItemCallback += (index, asset) =>
         {
-            _slotIndex = index;
-            _amount = asset.Amount;
-
             _itemType?.Behaviour?.OnUnequip(_itemContext);  // Unequip current item.
+            _use = null;
+            _itemType = null;
+            OnDrawGizmosAction = null;
+
+            if (string.IsNullOrEmpty(asset.ID) || !ItemTypeSettings.Instance.ItemTypeChunk.ContainsKey(asset.ID))
+                return;
 
             _itemType = ItemTypeSettings.Instance.ItemTypeChunk[asset.ID];
-            _use = (IUse)_itemType.Behaviour;
+
+            if (_itemType.Behaviour != null && _itemType.Behaviour is IUse)                // If item has implemented IUse.
+                _use = (IUse)_itemType.Behaviour;
+
+            _slotIndex = index;
+            _amount = asset.Amount;
 
             _itemContext = new ItemContext(
                 _itemType.Labels,
@@ -142,5 +152,11 @@ public class UseBehaviour : MonoBehaviour
         );
 
         _itemType?.Behaviour?.OnUpdate(_itemContext);
+    }
+
+    private void OnDrawGizmos()
+    {
+        if (DebugManager.DebugMode && OnDrawGizmosAction != null)     // Only invoke on debug mode.
+            OnDrawGizmosAction.Invoke();
     }
 }

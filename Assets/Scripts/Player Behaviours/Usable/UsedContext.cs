@@ -7,7 +7,7 @@ public readonly struct UsedContext
     public readonly IUse used;
     public readonly List<string> labels;
     public readonly UseBehaviour useBehaviour;
-    public readonly Transform playerTransform;
+    public readonly Transform transform;
     public readonly string name;
     public readonly string id;
     public readonly int playerIndex;
@@ -18,7 +18,7 @@ public readonly struct UsedContext
     internal UsedContext(
         IUse used,
         List<string> labels,
-        Transform playerTransform,
+        Transform transform,
         UseBehaviour useBehaviour,
         string name,
         string id,
@@ -29,7 +29,7 @@ public readonly struct UsedContext
     {
         this.used = used;
         this.labels = labels;
-        this.playerTransform = playerTransform;
+        this.transform = transform;
         this.useBehaviour = useBehaviour;
         this.name = name;
         this.id = id;

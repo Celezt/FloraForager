@@ -5,16 +5,18 @@ using UnityEngine;
 using Sirenix.OdinInspector;
 using Sirenix.Serialization;
 using System.Linq;
+using Celezt.Mathematics;
+using MyBox;
 
 public class ScytheItem : IUse, IItem, IDestructor
 {
-    [OdinSerialize]
+    [OdinSerialize, PropertyOrder(float.MinValue)]
     public uint ItemStack { get; set; } = 1;
-    [OdinSerialize]
+    [OdinSerialize, PropertyOrder(float.MinValue + 1)]
     public float Cooldown { get; set; } = 0.5f;
-    [OdinSerialize]
+    [OdinSerialize, PropertyOrder(float.MinValue + 2)]
     public float Strength { get; set; } = DurabilityStrengths.BRITTLE_STONE;
-    [OdinSerialize]
+    [OdinSerialize, PropertyOrder(float.MinValue + 3)]
     public float Damage { get; set; } = 2.0f;
 
     [SerializeField, AssetsOnly]
@@ -30,10 +32,16 @@ public class ScytheItem : IUse, IItem, IDestructor
 
     void IItem.OnEquip(ItemContext context)
     {
-        _scytheTransform = GameObject.Instantiate(_modelPrefab, context.playerTransform.position, Quaternion.identity).transform;
-        _scytheTransform.parent = context.playerTransform;
+        _scytheTransform = GameObject.Instantiate(_modelPrefab, context.transform.position, Quaternion.identity).transform;
+        _scytheTransform.parent = context.transform;
 
         _animator = _scytheTransform.GetComponent<Animator>();
+
+        context.useBehaviour.OnDrawGizmosAction = () =>
+        {
+            Gizmos.matrix = context.transform.localToWorldMatrix;
+            GizmosC.DrawWireArc(Vector3.zero, Vector3.forward, _radius, cmath.Map(_arc, new MinMaxFloat(1, -1), new MinMaxFloat(0, 360)));
+        };
     }
 
     void IItem.OnUnequip(ItemContext context)
@@ -53,7 +61,7 @@ public class ScytheItem : IUse, IItem, IDestructor
 
         _animator.SetTrigger("hit");
 
-        Collider[] colliders = PhysicsC.OverlapArc(context.playerTransform.position, context.playerTransform.forward, Vector3.up, _radius, _arc, LayerMask.NameToLayer("default"));
+        Collider[] colliders = PhysicsC.OverlapArc(context.transform.position, context.transform.forward, Vector3.up, _radius, _arc, LayerMask.NameToLayer("default"));
         for (int i = 0; i < colliders.Length; i++)
             if (colliders[i].TryGetComponent(out IUsable usable))
                 yield return usable;
