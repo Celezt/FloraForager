@@ -24,19 +24,45 @@ public class FloraMaster : Singleton<FloraMaster>
     /// <summary>
     /// creates a flora at currently selected tile based on its name
     /// </summary>
-    public bool Add(string name)
+    public bool Add(string floraName)
     {
         Cell cell = Grid.Instance.HoveredCell;
 
-        if (cell == null || cell.Type != CellType.Dirt)
+        if (cell == null)
             return false;
 
-        string key = name.ToLower();
+        if (cell.Data.Type != CellType.Dirt && cell.Data.Type != CellType.Soil)
+            return false;
+
+        string key = floraName.ToLower();
 
         if (!_FloraDictionary.ContainsKey(key))
             return false;
 
         Flora flora = new Flora(_FloraDictionary[key], cell);
+
+        if (!Create(flora, cell))
+            return false;
+
+        _Florae.Add(flora);
+
+        return true;
+    }
+
+    /// <summary>
+    /// creates a flora at currently selected tile based on its data
+    /// </summary>
+    public bool Add(FloraData floraData)
+    {
+        Cell cell = Grid.Instance.HoveredCell;
+
+        if (cell == null)
+            return false;
+
+        if (cell.Data.Type != CellType.Dirt && cell.Data.Type != CellType.Soil)
+            return false;
+
+        Flora flora = new Flora(floraData, cell);
 
         if (!Create(flora, cell))
             return false;

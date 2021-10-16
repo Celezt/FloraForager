@@ -7,6 +7,9 @@ using MyBox;
 [RequireComponent(typeof(MeshFilter), typeof(MeshRenderer), typeof(MeshCollider))]
 public class GridMesh : MonoBehaviour
 {
+    [SerializeField, HideInInspector]
+    public CellData[] CellsData;
+
     [SerializeField]
     private int _TexTilesPerRow, _TexTilesPerCol;
 
@@ -16,9 +19,9 @@ public class GridMesh : MonoBehaviour
 
     public Mesh Mesh => _MeshFilter.sharedMesh;
 
-    public Vector3[] Vertices => Mesh.vertices;
-    public int[] Triangles => Mesh.triangles;
-    public Vector2[] UVs => Mesh.uv;
+    public Vector3[] Vertices { get; private set; }
+    public int[] Triangles { get; private set; }
+    public Vector2[] UVs { get; private set; }
 
     public int TexTilesPerRow => _TexTilesPerRow;
     public int TexTilesPerCol => _TexTilesPerCol;
@@ -38,17 +41,19 @@ public class GridMesh : MonoBehaviour
         _MeshFilter = GetComponent<MeshFilter>();
         _MeshRenderer = GetComponent<MeshRenderer>();
         _MeshCollider = GetComponent<MeshCollider>();
+
+        Vertices = Mesh.vertices;
+        Triangles = Mesh.triangles;
+        UVs = Mesh.uv;
     }
 
 #if UNITY_EDITOR
-    [SerializeField, HideInInspector]
-    private TempCellData[] _CellData;
 
     [Button]
     private void Clear()
     {
         Mesh.Clear();
-        _CellData = null;
+        CellsData = null;
     }
 
     /// <summary>
@@ -62,7 +67,7 @@ public class GridMesh : MonoBehaviour
         int[] triangles = new int[cells.Length * 6];
         Vector2[] uvs = new Vector2[cells.Length * 4];
 
-        _CellData = new TempCellData[cells.Length];
+        CellsData = new CellData[cells.Length];
 
         for (int i = cells.Length - 1, v = 0, t = 0; i >= 0; --i, v += 4, t += 6)
         {
@@ -75,10 +80,10 @@ public class GridMesh : MonoBehaviour
 
             Vector3[] tempVertices = cell.GetWorldVertices();
 
-            vertices[v + 0] = tempVertices[0];
-            vertices[v + 1] = tempVertices[1];
-            vertices[v + 2] = tempVertices[2];
-            vertices[v + 3] = tempVertices[3];
+            vertices[v + 0] = tempVertices[0] - transform.position;
+            vertices[v + 1] = tempVertices[1] - transform.position;
+            vertices[v + 2] = tempVertices[2] - transform.position;
+            vertices[v + 3] = tempVertices[3] - transform.position;
 
             Vector2[] tempUVs = cell.UVs;
 
@@ -87,7 +92,7 @@ public class GridMesh : MonoBehaviour
             uvs[v + 2] = tempUVs[2];
             uvs[v + 3] = tempUVs[3];
 
-            _CellData[i] = new TempCellData(cell.Type);
+            CellsData[i] = new CellData(cell.Data.Type);
 
             DestroyImmediate(cell.gameObject);
         }
@@ -98,6 +103,9 @@ public class GridMesh : MonoBehaviour
         Mesh.triangles = triangles;
         Mesh.uv = uvs;
         Mesh.RecalculateNormals();
+        Mesh.RecalculateBounds();
+
+        _MeshCollider.sharedMesh = Mesh; 
     }
 
     /// <summary>
@@ -105,24 +113,24 @@ public class GridMesh : MonoBehaviour
     /// </summary>
     public CellMesh[] Decompile()
     {
-        if (_CellData == null || _CellData.Length == 0)
+        if (CellsData == null || CellsData.Length == 0)
             return null;
 
-        CellMesh[] cells = new CellMesh[_CellData.Length];
+        CellMesh[] cells = new CellMesh[CellsData.Length];
         for (int i = 0; i < cells.Length; ++i)
         {
             Vector3 sum = Vector3.zero;
             for (int j = 0; j < 4; ++j)
-                sum += Vertices[i * 4 + j];
+                sum += Mesh.vertices[i * 4 + j];
             sum /= 4;
 
             GameObject cellObject = new GameObject($"Cell ({i})", typeof(CellMesh));
-            cellObject.transform.position = sum;
+            cellObject.transform.position = sum + transform.position;
 
             CellMesh mesh = cellObject.GetComponent<CellMesh>();
 
             mesh.Terrain = _MeshRenderer.sharedMaterial;
-            mesh.Initialize(Vector2Int.one, _CellData[i].Type);
+            mesh.Initialize(CellsData[i]);
 
             cells[i] = mesh;
         }
@@ -130,17 +138,6 @@ public class GridMesh : MonoBehaviour
         Clear();
 
         return cells;
-    }
-
-    [System.Serializable]
-    private class TempCellData
-    {
-        public CellType Type;
-
-        public TempCellData(CellType type)
-        {
-            Type = type;
-        }
     }
 #endif
 }

@@ -7,8 +7,10 @@ using Sirenix.Utilities.Editor;
 
 public class GridWindow : OdinEditorWindow
 {
-    [ReadOnly, PropertySpace(10)]
-    public CellMesh[] _Cells;
+    [OdinSerialize, ReadOnly, HorizontalGroup("Group"), ListDrawerSettings(Expanded = true), PropertySpace(10)]
+    private CellMesh[] _CellsMesh;
+    [OdinSerialize, ReadOnly, HorizontalGroup("Group"), ListDrawerSettings(Expanded = true), PropertySpace(10)]
+    private CellData[] _CellsData;
 
     private GridMesh _Mesh;
 
@@ -36,7 +38,7 @@ public class GridWindow : OdinEditorWindow
             return;
         }
 
-        _Mesh.Compile(_Cells);
+        _Mesh.Compile(_CellsMesh);
 
         Refresh();
     }
@@ -51,7 +53,7 @@ public class GridWindow : OdinEditorWindow
             return;
         }
 
-        _Cells = _Mesh.Decompile();
+        _CellsMesh = _Mesh.Decompile();
 
         Refresh();
     }
@@ -59,7 +61,8 @@ public class GridWindow : OdinEditorWindow
     [Button(ButtonSizes.Medium), VerticalGroup, PropertyOrder(-3)]
     private void Refresh()
     {
-        _Cells = GameObject.FindObjectsOfType<CellMesh>();
+        _CellsMesh = GameObject.FindObjectsOfType<CellMesh>();
+        _CellsData = System.Array.ConvertAll(_CellsMesh, c => c.Data);
 
         if (_Mesh == null)
         {

@@ -1,5 +1,5 @@
 [System.Serializable]
-public enum CellType
+public enum CellType : int
 {
     Undefined,
     Empty,

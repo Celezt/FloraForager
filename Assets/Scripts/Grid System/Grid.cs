@@ -15,7 +15,7 @@ public class Grid : Singleton<Grid> // One grid per level
     private GridMesh _Mesh;
     private MeshFilter _MeshFilter;
 
-    private Vector3Int _Position;
+    private Vector3 _Position;
     private int _Width, _Height;
 
     public Cell HoveredCell { get; private set; }
@@ -35,17 +35,18 @@ public class Grid : Singleton<Grid> // One grid per level
 
         _Cells = new Cell[_Width * _Height];
 
-        for (int x = 0; x < _Width; ++x)
+        for (int i = 0; i < _Mesh.Vertices.Length; i += 4)
         {
-            for (int z = 0; z < _Height; ++z)
-            {
-                int i = x + z * _Width;
+            Vector2Int pos = new Vector2Int(i % _Width, i / _Width);
+            Vector3 worldPosition = _Mesh.Vertices[pos.x + pos.y * _Width];
 
-                _Cells[i] = new Cell(this, CellType.Empty, 
-                    _Position + new Vector3Int(0, (int)_Mesh.Vertices[i / 4].y, 0), 
-                    new Vector2Int(x, z), 
-                    new Vector2Int(1, 1));
-            }
+            int x = Mathf.FloorToInt(worldPosition.x - transform.position.x - _Position.x);
+            int z = Mathf.FloorToInt(worldPosition.z - transform.position.z - _Position.z);
+
+            _Cells[x + z * _Width] = new Cell(this, _Mesh.CellsData[i / 4],
+                worldPosition,
+                new Vector2Int(x, z),
+                new Vector2Int(1, 1), (i / 4));
         }
     }
 
@@ -54,15 +55,13 @@ public class Grid : Singleton<Grid> // One grid per level
         Ray ray = Camera.main.ScreenPointToRay(Mouse.current.position.ReadValue());
         if (Physics.Raycast(ray, out RaycastHit hitInfo, Mathf.Infinity, _LayerMasks))
         {
-            int x = Mathf.FloorToInt(hitInfo.point.x - transform.position.x);
-            int z = Mathf.FloorToInt(hitInfo.point.z - transform.position.z);
+            int x = Mathf.FloorToInt(hitInfo.point.x - transform.position.x - _Position.x);
+            int z = Mathf.FloorToInt(hitInfo.point.z - transform.position.z - _Position.z);
 
             HoveredCell = GetCell(x, z);
         }
         else
-        {
             HoveredCell = null;
-        }
     }
 
     /// <summary>
@@ -107,60 +106,58 @@ public class Grid : Singleton<Grid> // One grid per level
         return !(x < 0 || z < 0 || x >= _Width || z >= _Height);
     }
 
-    private (int, int) FindBoundaries()
-    {
-        Vector2Int min = new Vector2Int(int.MaxValue, int.MaxValue);
-        Vector2Int max = new Vector2Int(-int.MaxValue, -int.MaxValue);
-
-        for (int i = 0; i < _Mesh.Vertices.Length; ++i)
-        {
-            Vector3Int vertex = Vector3Int.FloorToInt(_Mesh.Vertices[i]);
-
-            if (vertex.x < min.x)
-                min.x = vertex.x;
-            if (vertex.y < min.y)
-                min.y = vertex.y;
-            if (vertex.x > max.x)
-                max.x = vertex.x;
-            if (vertex.y > max.y)
-                max.y = vertex.y;
-        }
-
-        if (min.x == int.MaxValue ||
-            max.x == -int.MaxValue ||
-            min.y == int.MaxValue ||
-            max.y == -int.MaxValue)
-            return (0, 0);
-
-        _Position = new Vector3Int(min.x, 0, min.y);
-
-        (int, int) boundary = (
-            Mathf.Abs(max.x - min.x), 
-            Mathf.Abs(max.y - min.y));
-
-        return boundary;
-    }
-
     public void UpdateCellsUVs(CellType type, params Cell[] cells)
     {
         foreach (Cell cell in cells)
         {
             cell.SetType(type);
 
-            int i = (int)cell.Local.x + (int)cell.Local.y * _Height;
-
             float tileTexProcRow = 1.0f / _Mesh.TexTilesPerRow;
             float tileTexProcCol = 1.0f / _Mesh.TexTilesPerCol;
 
-            float proc = (int)cell.Type / (float)_Mesh.TexTilesPerRow;
+            float proc = (int)cell.Data.Type / (float)_Mesh.TexTilesPerRow;
             float dFix = 0.00f; // dilation
 
-            _Mesh.UVs[i * 4 + 0] = new Vector2(proc + dFix, 0.0f + dFix); // bottom-left
-            _Mesh.UVs[i * 4 + 1] = new Vector2(proc + dFix, 1.0f - dFix); // top-left
-            _Mesh.UVs[i * 4 + 2] = new Vector2(proc + tileTexProcRow - dFix, 0.0f + dFix); // bottom-right
-            _Mesh.UVs[i * 4 + 3] = new Vector2(proc + tileTexProcRow - dFix, 1.0f - dFix); // top-right
+            _Mesh.UVs[cell.MeshIndex * 4 + 0] = new Vector2(proc + dFix, 0.0f + dFix); // bottom-left
+            _Mesh.UVs[cell.MeshIndex * 4 + 1] = new Vector2(proc + dFix, 1.0f - dFix); // top-left
+            _Mesh.UVs[cell.MeshIndex * 4 + 2] = new Vector2(proc + tileTexProcRow - dFix, 0.0f + dFix); // bottom-right
+            _Mesh.UVs[cell.MeshIndex * 4 + 3] = new Vector2(proc + tileTexProcRow - dFix, 1.0f - dFix); // top-right
         }
 
         _MeshFilter.mesh.uv = _Mesh.UVs;
+    }
+
+    private (int, int) FindBoundaries()
+    {
+        Vector2 min = new Vector2(float.MaxValue, float.MaxValue);
+        Vector2 max = new Vector2(-float.MaxValue, -float.MaxValue);
+
+        for (int i = 0; i < _Mesh.Vertices.Length; ++i)
+        {
+            Vector3 vertex = _Mesh.Vertices[i];
+
+            if (vertex.x < min.x)
+                min.x = vertex.x;
+            if (vertex.z < min.y)
+                min.y = vertex.z;
+            if (vertex.x > max.x)
+                max.x = vertex.x;
+            if (vertex.z > max.y)
+                max.y = vertex.z;
+        }
+
+        if (min.x == float.MaxValue ||
+            min.y == float.MaxValue ||
+            max.x == -float.MaxValue ||
+            max.y == -float.MaxValue)
+            return (0, 0);
+
+        _Position = new Vector3(min.x, 0, min.y);
+
+        (int, int) boundary = (
+            Mathf.Abs(Mathf.FloorToInt(max.x - min.x)),
+            Mathf.Abs(Mathf.FloorToInt(max.y - min.y)));
+
+        return boundary;
     }
 }

@@ -9,11 +9,13 @@ public class Cell
 
     private GameObject _HeldObject;
 
+    private CellData _Data;
+
     // properties
-    private CellType _Type;
-    private Vector3Int _PositionWorld; // position in the world
+    private Vector3 _PositionWorld; // position in the world
     private Vector2Int _PositionLocal; // position relative to grid
     private Vector2Int _Size;
+    private int _MeshIndex;
 
     public bool Occupied;
 
@@ -22,19 +24,21 @@ public class Cell
 
     public GameObject HeldObject => _HeldObject;
 
-    public CellType Type => _Type;
-    public Vector3Int World => _PositionWorld;
+    public CellData Data => _Data;
+    public Vector3 World => _PositionWorld;
     public Vector2Int Local => _PositionLocal;
     public Vector2Int Size => _Size;
-    public Vector2 Middle => _PositionWorld + new Vector3(_Size.x / 2.0f, 0, _Size.y / 2.0f);
+    public int MeshIndex => _MeshIndex;
+    public Vector3 Middle => _PositionWorld + new Vector3(_Size.x / 2.0f, 0, _Size.y / 2.0f);
 
-    public Cell(Grid grid, CellType type, Vector3Int posW, Vector2Int posL, Vector2Int size)
+    public Cell(Grid grid, CellData data, Vector3 posW, Vector2Int posL, Vector2Int size, int meshIndex)
     {
         _Grid = grid;
-        _Type = type;
+        _Data = data;
         _PositionWorld = posW;
         _PositionLocal = posL;
         _Size = size;
+        _MeshIndex = meshIndex;
     }
 
     public bool Occupy(GameObject gameObject)
@@ -59,7 +63,7 @@ public class Cell
 
     public void SetType(CellType type)
     {
-        _Type = type;
+        _Data.Type = type;
     }
 
     public void AddNeighbour(Cell cell)

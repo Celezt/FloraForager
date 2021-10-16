@@ -11,9 +11,10 @@ using Sirenix.Serialization;
 [RequireComponent(typeof(MeshFilter), typeof(MeshRenderer))]
 public class CellMesh : MonoBehaviour
 {
+    public CellData Data;
+
     public Material Terrain;
 
-    public CellType Type { get; private set; } = CellType.Empty;
     public Vector2Int Size { get; private set; } = Vector2Int.one;
 
     public Vector3[] Vertices { get; private set; }
@@ -29,7 +30,7 @@ public class CellMesh : MonoBehaviour
     private void OnValidate()
     {
         if (_Mesh == null)
-            Initialize(Size, Type);
+            Initialize(Data = new CellData(CellType.Empty));
     }
 
     public Vector3[] GetWorldVertices()
@@ -56,7 +57,7 @@ public class CellMesh : MonoBehaviour
 
     public void SetType(CellType type)
     {
-        Type = type;
+        Data.Type = type;
 
         float tileTexProcRow = 1.0f / _GridMesh.TexTilesPerRow;
         float tileTexProcCol = 1.0f / _GridMesh.TexTilesPerCol;
@@ -72,7 +73,7 @@ public class CellMesh : MonoBehaviour
         BuildMesh();
     }
 
-    public void Initialize(Vector2Int size, CellType type)
+    public void Initialize(CellData data)
     {
         Vertices = new Vector3[4];
         Triangles = new int[6];
@@ -93,8 +94,8 @@ public class CellMesh : MonoBehaviour
         _MeshFilter.mesh = new Mesh();
         _Mesh = _MeshFilter.sharedMesh;
 
-        SetSize(size);
-        SetType(type);
+        SetSize(Size);
+        SetType(data.Type);
     }
 
     private void BuildMesh()

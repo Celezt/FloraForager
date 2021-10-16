@@ -23,7 +23,8 @@ public class FloraObject : MonoBehaviour, IUsable, IDestructable
 
     private void OnDestroy()
     {
-        _Flora.OnGrow -= UpdateMesh;
+        if (_Flora != null)
+            _Flora.OnGrow -= UpdateMesh;
     }
 
     public void Initialize(Flora flora)
