@@ -27,10 +27,16 @@ public class GameManager : SerializedScriptableSingleton<GameManager>
             {
                 _streamCapacity = value;
 
-                while (_streamCapacity < _tempQueue.Count)
+                while (_streamCapacity + _streamOffset < _tempQueue.Count)
                 {
                     Hash128 hash = _tempQueue.Dequeue();
                     _streamedObjects.Remove(hash);
+                    _dirtyObjects.Remove(hash);
+
+                    if (_tempObjects.ContainsKey(hash) && --_tempObjects[hash] > 0)   // If more copies exit inside of the queue.
+                        _streamOffset--;
+                    else
+                        _tempObjects.Remove(hash);
                 }
             }
         }
