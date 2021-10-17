@@ -9,20 +9,18 @@ using UnityEngine.InputSystem;
 
 public class InventoryHandler : MonoBehaviour
 {
-    public Inventory Inventory => _inventory;
-    public string ID => _id;
-
-    [SerializeField]
-    private string _id;
+    public Inventory Inventory
+    {
+        get => _inventory;
+        set => _inventory = value;
+    }
 
     private Inventory _inventory;
 
     private ItemSlot[] _slots;
 
-    void Awake()
+    private void Start()
     {
-        GameManager.Instance.Stream.Get<Inventory>(_id).TryGetTarget(out _inventory);
-
         _inventory.OnItemChangeCallback += (int i) =>
         {
             ItemTypeSettings settings = ItemTypeSettings.Instance;
@@ -45,7 +43,7 @@ public class InventoryHandler : MonoBehaviour
                 {
                     _slots[i].Icon.sprite = null;
                 }
-                
+
                 _slots[i].Amount.text = _inventory.Items[i].Amount.ToString();
             }
         };

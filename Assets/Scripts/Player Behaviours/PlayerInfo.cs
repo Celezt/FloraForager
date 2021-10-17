@@ -11,14 +11,12 @@ public class PlayerInfo : MonoBehaviour
     private Inventory _inventory;
     private PlayerData _playerData;
 
-    private void Awake()
+    private void Start()
     {
-        int playerIndex = GetComponent<PlayerInput>().playerIndex;
-
         GameManager.StreamScriptableObject stream = GameManager.Instance.Stream;
 
-        _inventory = stream.LoadPersistent<Inventory>($"PlayerInventory{playerIndex}");
-        _playerData = stream.LoadPersistent<PlayerData>($"PlayerData{playerIndex}");
+        stream.Get<Inventory>("player_inventory_0").TryGetTarget(out _inventory);
+        stream.Get<PlayerData>("player_data_0").TryGetTarget(out _playerData);
     }
 }
  

@@ -2,7 +2,9 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using UnityEditor;
 using UnityEngine;
+using UnityEngine.InputSystem;
 
 #nullable enable
 
@@ -14,6 +16,32 @@ public class GameManager : SerializedScriptableSingleton<GameManager>
 
     [NonSerialized]
     private StreamScriptableObject _stream = new StreamScriptableObject();
+
+    private InitalizeGame _initalizeGame = new InitalizeGame();
+
+    public class InitalizeGame
+    {
+        [RuntimeInitializeOnLoadMethod]
+        static void Initalize()
+        {
+            GameManager gameManager = GameManager.Instance;
+            gameManager._initalizeGame.LoadOrder();
+        }
+
+        private void LoadOrder()
+        {
+            void LoadPlayerData()
+            {
+                StreamScriptableObject stream = GameManager.Instance.Stream;
+
+                stream.LoadPersistent<Inventory>("player_inventory_0");
+                stream.LoadPersistent<PlayerData>("player_data_0");
+            }
+
+            LoadPlayerData();
+        }
+
+    }
 
     public class StreamScriptableObject
     {

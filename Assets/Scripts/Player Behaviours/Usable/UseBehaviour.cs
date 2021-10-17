@@ -93,7 +93,7 @@ public class UseBehaviour : MonoBehaviour
         _scheme = playerInput.user.controlScheme.Value;
     }
 
-    private void Awake()
+    private void Start()
     {
         _playerInput = GetComponent<PlayerInput>();
 
@@ -131,7 +131,7 @@ public class UseBehaviour : MonoBehaviour
                 _slotIndex,
                 _amount
             );
-            
+
             _itemType?.Behaviour?.OnEquip(_itemContext);
         };
 

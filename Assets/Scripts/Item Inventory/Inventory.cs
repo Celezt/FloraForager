@@ -23,7 +23,7 @@ public class Inventory : ScriptableObject
     public ItemAsset SelectedItem;
 
     [NonSerialized, ShowInInspector]
-    private List<ItemAsset> _items = new List<ItemAsset>(); // Change
+    public List<ItemAsset> _items = new List<ItemAsset>(); // Change
     public bool IsFull { get; set; }
 
     public void SetSelectedItem(int position, ItemAsset item) 
