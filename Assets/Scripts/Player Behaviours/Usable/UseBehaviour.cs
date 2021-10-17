@@ -93,23 +93,29 @@ public class UseBehaviour : MonoBehaviour
     {
         _playerInput = GetComponent<PlayerInput>();
 
-        _playerInfo.Inventory.OnSelectItemCallback += (index, asset) =>
+        _playerInfo.Inventory.OnItemMoveCallback += (beforeIndex, afterIndex, beforeItem, afterItem) =>
+        {
+            if (beforeIndex == _slotIndex)
+                _slotIndex = afterIndex;
+        };
+
+        _playerInfo.Inventory.OnSelectItemCallback += (index, item) =>
         {
             _itemType?.Behaviour?.OnUnequip(_itemContext);  // Unequip current item.
             _use = null;
             _itemType = null;
             OnDrawGizmosAction = null;
 
-            if (string.IsNullOrEmpty(asset.ID) || !ItemTypeSettings.Instance.ItemTypeChunk.ContainsKey(asset.ID))
+            if (string.IsNullOrEmpty(item.ID) || !ItemTypeSettings.Instance.ItemTypeChunk.ContainsKey(item.ID))
                 return;
 
-            _itemType = ItemTypeSettings.Instance.ItemTypeChunk[asset.ID];
+            _itemType = ItemTypeSettings.Instance.ItemTypeChunk[item.ID];
 
             if (_itemType.Behaviour != null && _itemType.Behaviour is IUse)                // If item has implemented IUse.
                 _use = (IUse)_itemType.Behaviour;
 
             _slotIndex = index;
-            _amount = asset.Amount;
+            _amount = item.Amount;
 
             _itemContext = new ItemContext(
                 _itemType.Labels,
@@ -125,13 +131,13 @@ public class UseBehaviour : MonoBehaviour
             _itemType?.Behaviour?.OnEquip(_itemContext);
         };
 
-        _playerInfo.Inventory.OnRemoveItemCallback += (index, asset) =>
+        _playerInfo.Inventory.OnRemoveItemCallback += (index, item) =>
         {
-            if (asset.Amount == 0 && _cooldowns.ContainsKey(index))
+            if (item.Amount == 0 && _cooldowns.ContainsKey(index))
                 _cooldowns.Remove(index);
 
             if (index == _slotIndex)
-                _amount = asset.Amount;
+                _amount = item.Amount;
         };
     }
 

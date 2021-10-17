@@ -20,7 +20,10 @@ public class ItemTypeSettings : SerializedScriptableSingleton<ItemTypeSettings>
     public IReadOnlyDictionary<string, string> ItemNameChunk => _itemNameChunk;
     public IReadOnlyDictionary<string, List<string>> ItemLabelChunk => _itemLabelChunk;
 
-    public LabelSettings _labelSettings;
+    public LabelSettings LabelSettings => _labelSettings;
+
+    [SerializeField]
+    private LabelSettings _labelSettings;
     [SerializeField, Tooltip("Default icon used when no other icon is present.")]
     private Sprite _defaultIcon;
     [OdinSerialize]

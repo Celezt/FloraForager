@@ -4,10 +4,6 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEditor;
 using UnityEditorInternal;
-using Sirenix.OdinInspector;
-using Sirenix.OdinInspector.Editor;
-using Sirenix.Utilities.Editor;
-using Sirenix.Serialization;
 using UnityConstantsGenerator;
 using System.IO;
 
@@ -29,7 +25,7 @@ public class ItemLabelWindow : EditorWindow
         _settings = settings;
 
         titleContent = new GUIContent("Item Labels");
-        _reorderableLabels = new ReorderableList(_settings._labelSettings.Labels, typeof(string), true, false, true, true);
+        _reorderableLabels = new ReorderableList(_settings.LabelSettings.Labels, typeof(string), true, false, true, true);
         _reorderableLabels.drawElementCallback += DrawLabelNameCallback;
         _reorderableLabels.onAddDropdownCallback += OnAddLabelCallback;
         _reorderableLabels.onRemoveCallback += OnRemoveLabelCallback;

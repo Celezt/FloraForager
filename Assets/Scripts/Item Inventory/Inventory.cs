@@ -13,22 +13,24 @@ public class Inventory : ScriptableObject
     public IReadOnlyList<ItemAsset> Items => _items;
 
     public event Action OnInventoryDestroyCallback = delegate { };
-    public event Action<List<ItemAsset>> OnInventoryDeserializeCallback = delegate { };
     public event Action<int> OnItemChangeCallback = delegate { };
-    public event Action<int,ItemAsset> OnAddItemCallback = delegate { };
+    public event Action<List<ItemAsset>> OnInventoryDeserializeCallback = delegate { };
+    public event Action<int, int, ItemAsset, ItemAsset> OnItemMoveCallback = delegate { };
+    public event Action<int, ItemAsset> OnAddItemCallback = delegate { };
     public event Action<int, ItemAsset> OnRemoveItemCallback = delegate { };
     public event Action<int, ItemAsset> OnSelectItemCallback = delegate { };
+
     public ItemAsset SelectedItem;
+
     [NonSerialized, ShowInInspector]
     private List<ItemAsset> _items = new List<ItemAsset>(); // Change
+    public bool IsFull { get; set; }
 
     public void SetSelectedItem(int position, ItemAsset item) 
     {
         SelectedItem = item;
         OnSelectItemCallback.Invoke(position, item);
     }
-
-    public bool IsFull { get; set; }
 
     public ItemAsset Get(int index) => _items[index];
     public bool Insert(ItemAsset item)
@@ -83,7 +85,8 @@ public class Inventory : ScriptableObject
         if (index < _items.Count)
         {
             OnRemoveItemCallback.Invoke(index, new ItemAsset { ID = _items[index].ID, Amount = 0});
-            _items[index] = new ItemAsset();
+            ItemAsset emptyItem = new ItemAsset();
+            _items[index] = emptyItem;
             OnItemChangeCallback.Invoke(index);
             return true;
         }
@@ -119,15 +122,9 @@ public class Inventory : ScriptableObject
         _items[firstIndex] = _items[secondIndex];
         _items[secondIndex] = item;
         OnItemChangeCallback.Invoke(firstIndex);
+        OnItemMoveCallback.Invoke(secondIndex, firstIndex, item, _items[firstIndex]);
         OnItemChangeCallback.Invoke(secondIndex);
-    }
-
-    public ItemAsset Swap(int index, ItemAsset newItem)
-    {
-        ItemAsset item = _items[index];
-        _items[index] = newItem;
-        OnItemChangeCallback.Invoke(index);
-        return item;
+        OnItemMoveCallback.Invoke(firstIndex, secondIndex, _items[firstIndex], item);
     }
 
     public int ExistsAt(string ID) 
@@ -224,5 +221,22 @@ public class Inventory : ScriptableObject
     private void OnDestroy()
     {
         OnInventoryDestroyCallback.Invoke();
+    }
+
+    private ItemAsset Swap(int index, ItemAsset newItem)
+    {
+        ItemAsset item = _items[index];
+        _items[index] = newItem;
+        OnItemChangeCallback.Invoke(index);
+        return item;
+    }
+
+    public static void Swap(int firstIndex, int secondIndex, Inventory firstInventory, Inventory secondInventory)
+    {
+        ItemAsset holder = firstInventory.Swap(firstIndex, secondInventory.Get(secondIndex));
+        secondInventory.Swap(secondIndex, holder);
+
+        firstInventory.OnItemMoveCallback.Invoke(firstIndex, secondIndex, holder, secondInventory.Get(secondIndex));
+        secondInventory.OnItemMoveCallback.Invoke(secondIndex, firstIndex, secondInventory.Get(secondIndex), holder);
     }
 }

@@ -55,8 +55,7 @@ public class InventoryManager : MonoBehaviour, IDropHandler
                             Inventory firstInventory = firstHolder.InventoryHandler.Inventory;
                             Inventory secondInventory = secondHolder.InventoryHandler.Inventory;
 
-                            ItemAsset holder = firstInventory.Swap(firstHolder.Index, secondInventory.Get(secondHolder.Index));
-                            secondInventory.Swap(secondHolder.Index, holder);
+                            Inventory.Swap(firstHolder.Index, secondHolder.Index, firstInventory, secondInventory);
                         }
                     }
                 }
