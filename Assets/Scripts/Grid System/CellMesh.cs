@@ -8,10 +8,10 @@ using Sirenix.Serialization;
 /// Only used by grid tool to create grid mesh
 /// </summary>
 #if UNITY_EDITOR
-[RequireComponent(typeof(MeshFilter), typeof(MeshRenderer))]
+[ExecuteInEditMode, RequireComponent(typeof(MeshFilter), typeof(MeshRenderer))]
 public class CellMesh : MonoBehaviour
 {
-    public CellData Data;
+    public CellData Data = new CellData(CellType.Empty);
 
     public Material Terrain;
 
@@ -27,10 +27,9 @@ public class CellMesh : MonoBehaviour
     private MeshFilter _MeshFilter;
     private MeshRenderer _MeshRenderer;
 
-    private void OnValidate()
+    private void Awake()
     {
-        if (_Mesh == null)
-            Initialize(Data = new CellData(CellType.Empty));
+        Initialize(Data);
     }
 
     public Vector3[] GetWorldVertices()
@@ -75,6 +74,8 @@ public class CellMesh : MonoBehaviour
 
     public void Initialize(CellData data)
     {
+        Data = data;
+
         Vertices = new Vector3[4];
         Triangles = new int[6];
         UVs = new Vector2[4];
@@ -89,18 +90,18 @@ public class CellMesh : MonoBehaviour
         _MeshFilter = GetComponent<MeshFilter>();
         _MeshRenderer = GetComponent<MeshRenderer>();
 
-        _MeshRenderer.sharedMaterial = Terrain;
+        _MeshRenderer.material = Terrain;
 
-        _MeshFilter.mesh = new Mesh();
-        _Mesh = _MeshFilter.sharedMesh;
+        _Mesh = new Mesh();
+        _MeshFilter.mesh = _Mesh;
 
         SetSize(Size);
-        SetType(data.Type);
+        SetType(Data.Type);
     }
 
     private void BuildMesh()
     {
-        _Mesh.Clear();
+        _Mesh.Clear(false);
         _Mesh.vertices = Vertices;
         _Mesh.triangles = Triangles;
         _Mesh.uv = UVs;

@@ -69,7 +69,7 @@ public class GridMesh : MonoBehaviour
 
         CellsData = new CellData[cells.Length];
 
-        for (int i = cells.Length - 1, v = 0, t = 0; i >= 0; --i, v += 4, t += 6)
+        for (int i = cells.Length - 1, v = i * 4, t = i * 6; i >= 0; --i, v -= 4, t -= 6)
         {
             CellMesh cell = cells[i];
 
@@ -92,7 +92,7 @@ public class GridMesh : MonoBehaviour
             uvs[v + 2] = tempUVs[2];
             uvs[v + 3] = tempUVs[3];
 
-            CellsData[i] = new CellData(cell.Data.Type);
+            CellsData[i] = cell.Data;
 
             DestroyImmediate(cell.gameObject);
         }
@@ -117,7 +117,7 @@ public class GridMesh : MonoBehaviour
             return null;
 
         CellMesh[] cells = new CellMesh[CellsData.Length];
-        for (int i = 0; i < cells.Length; ++i)
+        for (int i = cells.Length - 1; i >= 0; --i)
         {
             Vector3 sum = Vector3.zero;
             for (int j = 0; j < 4; ++j)
