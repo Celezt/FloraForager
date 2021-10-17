@@ -27,17 +27,7 @@ public class GameManager : SerializedScriptableSingleton<GameManager>
             {
                 _streamCapacity = value;
 
-                while (_streamCapacity + _streamOffset < _tempQueue.Count)
-                {
-                    Hash128 hash = _tempQueue.Dequeue();
-                    _streamedObjects.Remove(hash);
-                    _dirtyObjects.Remove(hash);
-
-                    if (_tempObjects.ContainsKey(hash) && --_tempObjects[hash] > 0)   // If more copies exit inside of the queue.
-                        _streamOffset--;
-                    else
-                        _tempObjects.Remove(hash);
-                }
+                ReleaseOld();
             }
         }
 
@@ -78,28 +68,7 @@ public class GameManager : SerializedScriptableSingleton<GameManager>
             _tempObjects.Add(hash, 1);
 
             _tempQueue.Enqueue(hash);
-            if (_streamCapacity + _streamOffset < _tempQueue.Count)
-                while (_tempQueue.Count > 0)
-                {
-                    Hash128 outHash = _tempQueue.Dequeue();
-
-                    if (_tempObjects.ContainsKey(outHash) && --_tempObjects[outHash] > 0)   // If more copies exit inside of the queue.
-                    {
-                        _streamOffset--;
-                        continue;
-                    }
-
-                    if (_streamedObjects.ContainsKey(outHash))
-                    {
-                        if (!_dirtyObjects.Contains(outHash))
-                        {
-                            Release(outHash);
-                            break;
-                        }
-                    }
-
-                    _streamOffset--;
-                }
+            ReleaseOld();
 
             return new WeakReference<T>(obj);
         }
@@ -185,6 +154,32 @@ public class GameManager : SerializedScriptableSingleton<GameManager>
 
             if (_tempObjects.ContainsKey(hash))
                 _streamOffset++;
+        }
+
+        private void ReleaseOld()
+        {
+            if (_streamCapacity + _streamOffset < _tempQueue.Count)
+                while (_tempQueue.Count > 0)
+                {
+                    Hash128 hash = _tempQueue.Dequeue();
+
+                    if (_tempObjects.ContainsKey(hash) && --_tempObjects[hash] > 0)   // If more copies exit inside of the queue.
+                    {
+                        _streamOffset--;
+                        continue;
+                    }
+
+                    if (_streamedObjects.ContainsKey(hash))
+                    {
+                        if (!_dirtyObjects.Contains(hash))
+                        {
+                            Release(hash);
+                            break;
+                        }
+                    }
+
+                    _streamOffset--;
+                }
         }
     }
 }
