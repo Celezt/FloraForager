@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using Celezt.Time;
+using UnityEngine.EventSystems;
 
 public class UseBehaviour : MonoBehaviour
 {
@@ -32,6 +33,9 @@ public class UseBehaviour : MonoBehaviour
 
     public void OnUse(InputAction.CallbackContext context)
     {
+        if (CanvasUtility.IsPointerOverUIElement()) // Skip if pointing over a UI element.
+            return;
+
         if (_itemType == null || _use == null)
             return;
 
