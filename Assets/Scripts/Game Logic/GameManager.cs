@@ -27,9 +27,9 @@ public class GameManager : SerializedScriptableSingleton<GameManager>
             {
                 _streamCapacity = value;
 
-                while (_streamCapacity < _streamQueue.Count)
+                while (_streamCapacity < _tempQueue.Count)
                 {
-                    Hash128 hash = _streamQueue.Dequeue();
+                    Hash128 hash = _tempQueue.Dequeue();
                     _streamedObjects.Remove(hash);
                 }
             }
@@ -37,7 +37,8 @@ public class GameManager : SerializedScriptableSingleton<GameManager>
 
         private HashSet<Hash128> _dirtyObjects = new HashSet<Hash128>();
         private Dictionary<Hash128, ScriptableObject> _streamedObjects = new Dictionary<Hash128, ScriptableObject>();
-        private Queue<Hash128> _streamQueue = new Queue<Hash128>();
+        private Dictionary<Hash128, short> _tempObjects = new Dictionary<Hash128, short>();
+        private Queue<Hash128> _tempQueue = new Queue<Hash128>();
 
         private int _streamCapacity = 64;
         private int _streamOffset;
@@ -51,17 +52,28 @@ public class GameManager : SerializedScriptableSingleton<GameManager>
             T obj = ScriptableObject.CreateInstance<T>();
 
             _streamedObjects.Add(hash, obj);
+            _tempObjects.Add(hash, 1);
 
-            _streamQueue.Enqueue(hash);
-            if (_streamCapacity + _streamOffset < _streamQueue.Count)
-                while (_streamQueue.Count > 0)
+            _tempQueue.Enqueue(hash);
+            if (_streamCapacity + _streamOffset < _tempQueue.Count)
+                while (_tempQueue.Count > 0)
                 {
-                    Hash128 outHash = _streamQueue.Dequeue();
+                    Hash128 outHash = _tempQueue.Dequeue();
+
+                    if (--_tempObjects[outHash] > 0)   // If more copies exit inside of the queue.
+                    {
+                        _streamOffset--;
+                        continue;
+                    }
+
+                    _tempObjects.Remove(outHash);
 
                     if (_streamedObjects.ContainsKey(outHash))
                     {
                         if (!_dirtyObjects.Contains(outHash))
                         {
+                            _streamedObjects.Remove(outHash);
+
                             Release(outHash);
                             break;
                         }
@@ -92,7 +104,7 @@ public class GameManager : SerializedScriptableSingleton<GameManager>
             if (!_streamedObjects.TryGetValue(hash, out ScriptableObject obj))
                 return false;
 
-            if (_streamQueue.Contains(hash))
+            if (_tempObjects.Remove(hash))
                 _streamOffset++;
 
             Destroy(obj);
@@ -103,10 +115,23 @@ public class GameManager : SerializedScriptableSingleton<GameManager>
             return true;
         }
 
+        /// <summary>
+        /// Return weak reference and if temporary, place it last in the queue.
+        /// </summary>
         public WeakReference<T?> Get<T>(string id) where T : ScriptableObject => Get<T>(Hash128.Compute(id));
+        /// <summary>
+        /// Return weak reference and if temporary, place it last in the queue.
+        /// </summary>
         public WeakReference<T?> Get<T>(Hash128 hash) where T : ScriptableObject
         {
             ScriptableObject obj = _streamedObjects[hash];
+
+            if (_tempObjects.ContainsKey(hash))
+            {
+                _tempObjects[hash]++;   // Increase the amount of copies existing inside of the queue.
+                _streamOffset++;
+                _tempQueue.Enqueue(hash);
+            }
 
             return new WeakReference<T?>((T)obj);  
         }
@@ -114,12 +139,11 @@ public class GameManager : SerializedScriptableSingleton<GameManager>
         /// <summary>
         /// Set dirty to save the asset on next saving.
         /// </summary>
-        /// <param name="hash"></param>
         public void SetDirty(Hash128 hash)
         {
             _dirtyObjects.Add(hash);
 
-            if (_streamQueue.Contains(hash))
+            if (_tempObjects.ContainsKey(hash))
                 _streamOffset++;
         }
     }
