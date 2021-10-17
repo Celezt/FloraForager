@@ -10,15 +10,15 @@ using UnityEngine;
 [System.Serializable]
 public class GameManager : SerializedScriptableSingleton<GameManager>
 {
-    public StreamObject Stream => _stream;
+    public StreamScriptableObject Stream => _stream;
 
     [NonSerialized]
-    private StreamObject _stream = new StreamObject();
+    private StreamScriptableObject _stream = new StreamScriptableObject();
 
-    public class StreamObject
+    public class StreamScriptableObject
     {
         /// <summary>
-        /// Temporary stream capacity. The oldest object gets released if reached capacity.
+        /// Temporary stream capacity. The oldest non dirty object gets released if reached capacity.
         /// </summary>
         public int StreamCapacity
         {
@@ -39,8 +39,10 @@ public class GameManager : SerializedScriptableSingleton<GameManager>
         private Dictionary<Hash128, ScriptableObject> _streamedObjects = new Dictionary<Hash128, ScriptableObject>();
         private Queue<Hash128> _streamQueue = new Queue<Hash128>();
 
-        private int _streamCapacity;
+        private int _streamCapacity = 64;
+        private int _streamOffset;
 
+        public WeakReference<T>? LoadTemp<T>(string id) where T : ScriptableObject => LoadTemp<T>(Hash128.Compute(id));
         public WeakReference<T>? LoadTemp<T>(Hash128 hash) where T : ScriptableObject
         {
             if (_streamedObjects.ContainsKey(hash))
@@ -51,21 +53,27 @@ public class GameManager : SerializedScriptableSingleton<GameManager>
             _streamedObjects.Add(hash, obj);
 
             _streamQueue.Enqueue(hash);
-            if (_streamCapacity < _streamQueue.Count)
+            if (_streamCapacity + _streamOffset < _streamQueue.Count)
                 while (_streamQueue.Count > 0)
                 {
                     Hash128 outHash = _streamQueue.Dequeue();
 
-                    if (_streamedObjects.ContainsKey(outHash) && !_dirtyObjects.Contains(outHash))
+                    if (_streamedObjects.ContainsKey(outHash))
                     {
-                        Release(outHash);
-                        break;
+                        if (!_dirtyObjects.Contains(outHash))
+                        {
+                            Release(outHash);
+                            break;
+                        }
+
+                        _streamOffset--;
                     }
                 }
 
             return new WeakReference<T>(obj);
         }
 
+        public T? LoadPersistent<T>(string id) where T : ScriptableObject => LoadPersistent<T>(Hash128.Compute(id));
         public T? LoadPersistent<T>(Hash128 hash) where T : ScriptableObject
         {
             if (_streamedObjects.ContainsKey(hash))
@@ -78,18 +86,24 @@ public class GameManager : SerializedScriptableSingleton<GameManager>
             return obj;
         }
 
+        public bool Release(string id) => Release(Hash128.Compute(id));
         public bool Release(Hash128 hash)
         {
             if (!_streamedObjects.TryGetValue(hash, out ScriptableObject obj))
                 return false;
 
+            if (_streamQueue.Contains(hash))
+                _streamOffset++;
+
             Destroy(obj);
 
             _streamedObjects.Remove(hash);
+            _dirtyObjects.Remove(hash);
 
             return true;
         }
 
+        public WeakReference<T?> Get<T>(string id) where T : ScriptableObject => Get<T>(Hash128.Compute(id));
         public WeakReference<T?> Get<T>(Hash128 hash) where T : ScriptableObject
         {
             ScriptableObject obj = _streamedObjects[hash];
@@ -104,6 +118,9 @@ public class GameManager : SerializedScriptableSingleton<GameManager>
         public void SetDirty(Hash128 hash)
         {
             _dirtyObjects.Add(hash);
+
+            if (_streamQueue.Contains(hash))
+                _streamOffset++;
         }
     }
 }

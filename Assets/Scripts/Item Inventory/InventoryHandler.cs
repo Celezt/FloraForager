@@ -21,7 +21,7 @@ public class InventoryHandler : MonoBehaviour
 
     void Awake()
     {
-        GameManager.Instance.Stream.Get<Inventory>(Hash128.Compute(_id)).TryGetTarget(out _inventory);
+        GameManager.Instance.Stream.Get<Inventory>(_id).TryGetTarget(out _inventory);
 
         _inventory.OnItemChangeCallback += (int i) =>
         {

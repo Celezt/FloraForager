@@ -15,8 +15,8 @@ public class PlayerInfo : MonoBehaviour
     {
         int playerIndex = GetComponent<PlayerInput>().playerIndex;
 
-        _inventory = GameManager.Instance.Stream.LoadPersistent<Inventory>(Hash128.Compute($"PlayerInventory{playerIndex}"));
-        _playerData = GameManager.Instance.Stream.LoadPersistent<PlayerData>(Hash128.Compute($"PlayerData{playerIndex}"));
+        _inventory = GameManager.Instance.Stream.LoadPersistent<Inventory>($"PlayerInventory{playerIndex}");
+        _playerData = GameManager.Instance.Stream.LoadPersistent<PlayerData>($"PlayerData{playerIndex}");
     }
 }
  
