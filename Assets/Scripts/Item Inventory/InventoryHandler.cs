@@ -6,6 +6,7 @@ using UnityEngine.AddressableAssets;
 using Newtonsoft.Json;
 using UnityEngine.EventSystems;
 using UnityEngine.InputSystem;
+using UnityEngine.UI;
 
 public class InventoryHandler : MonoBehaviour
 {
@@ -21,6 +22,23 @@ public class InventoryHandler : MonoBehaviour
 
     private void Start()
     {
+        void SetEmptyIcon(int index)
+        {
+            Image icon = _slots[index].Icon;
+            icon.sprite = null;
+            Color color = icon.color;
+            color.a = 0;
+            icon.color = color;
+        }
+        void SetIcon(int index, Sprite sprite)
+        {
+            Image icon = _slots[index].Icon;
+            icon.sprite = sprite;
+            Color color = icon.color;
+            color.a = 1;
+            icon.color = color;
+        }
+
         _inventory.OnItemChangeCallback += (int i) =>
         {
             ItemTypeSettings settings = ItemTypeSettings.Instance;
@@ -28,21 +46,15 @@ public class InventoryHandler : MonoBehaviour
             if (!(i >= _slots.Length))
             {
                 _slots[i].Item = _inventory.Items[i];
-                if (_slots[i].Item.ID != null)
+                if (!string.IsNullOrEmpty(_slots[i].Item.ID))
                 {
                     if (settings.ItemIconChunk.TryGetValue(_slots[i].Item.ID, out Sprite sprite))
-                    {
-                        _slots[i].Icon.sprite = sprite;
-                    }
+                        SetIcon(i, sprite);
                     else
-                    {
-                        _slots[i].Icon.sprite = null;
-                    }
+                        SetEmptyIcon(i);
                 }
                 else
-                {
-                    _slots[i].Icon.sprite = null;
-                }
+                    SetEmptyIcon(i);
 
                 _slots[i].Amount.text = _inventory.Items[i].Amount.ToString();
             }
@@ -66,7 +78,10 @@ public class InventoryHandler : MonoBehaviour
                 if (!string.IsNullOrEmpty(items[i].ID))
                 {
                     if (settings.ItemIconChunk.TryGetValue(items[i].ID, out Sprite sprite))
-                        _slots[i].Icon.sprite = sprite;
+                        SetIcon(i, sprite);
+                    else
+                        SetEmptyIcon(i);
+
                     if (settings.ItemNameChunk.TryGetValue(items[i].ID, out string name))
                         _slots[i].Name = name;
 

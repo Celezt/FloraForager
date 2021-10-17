@@ -9,28 +9,32 @@ public class PlayerInventory : MonoBehaviour
     [SerializeField]
     private CanvasGroup _canvasGroup;
     [SerializeField]
+    private InventoryHandler _inventoryHandler;
+    [SerializeField]
+    private InventoryHandler _hotbarHandler;
+    [SerializeField]
     private string _id;
 
-    private bool _isActive;
+    private bool _isInventoryOpen;
 
     private PlayerAction _playerAction;
     private Inventory _inventory;
 
     public void Awake()
     {
-        Hide();
-        _isActive = true;
-
         _playerAction = new PlayerAction();
     }
 
     private void Start()
     {
-        GameManager.Instance.Stream.Get<Inventory>(_id).TryGetTarget(out _inventory);
+        Show(_hotbarHandler.GetComponent<CanvasGroup>());
+        Hide(_inventoryHandler.GetComponent<CanvasGroup>());
 
-        InventoryHandler[] handlers = GetComponentsInChildren<InventoryHandler>();
-        foreach (InventoryHandler handler in handlers)
-            handler.Inventory = _inventory;
+        if (!GameManager.Instance.Stream.Get<Inventory>(_id).TryGetTarget(out _inventory))
+            Debug.LogError("Player inventory was not found");
+
+        _inventoryHandler.Inventory = _inventory;
+        _hotbarHandler.Inventory = _inventory;
     }
 
     public void OnEnable()
@@ -47,27 +51,34 @@ public class PlayerInventory : MonoBehaviour
 
     public void OnInventory(InputAction.CallbackContext context) 
     {
-        if (_isActive)
-            Show();
+        _isInventoryOpen = !_isInventoryOpen;
+
+        if (_isInventoryOpen)
+        {
+            Show(_inventoryHandler.GetComponent<CanvasGroup>());
+            Hide(_hotbarHandler.GetComponent<CanvasGroup>());
+            Time.timeScale = 0;
+        }
         else
-            Hide();
+        {
+            Show(_hotbarHandler.GetComponent<CanvasGroup>());
+            Hide(_inventoryHandler.GetComponent<CanvasGroup>());
+            Time.timeScale = 1;
+        }
 
-            _isActive = !_isActive;
     }
 
-    public void Hide() 
+    public void Hide(CanvasGroup canvasGroup) 
     {
-        _canvasGroup.alpha = 0f;
-        _canvasGroup.interactable = false;
-        _canvasGroup.blocksRaycasts = false;
-        _isActive = false;
+        canvasGroup.alpha = 0f;
+        canvasGroup.interactable = false;
+        canvasGroup.blocksRaycasts = false;
     }
 
-    public void Show() 
+    public void Show(CanvasGroup canvasGroup) 
     {
-        _canvasGroup.alpha = 1f;
-        _canvasGroup.interactable = true;
-        _canvasGroup.blocksRaycasts = true;
-        _isActive = true;
+        canvasGroup.interactable = true;
+        canvasGroup.alpha = 1f;
+        canvasGroup.blocksRaycasts = true;
     }
 }
