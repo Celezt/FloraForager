@@ -25,6 +25,6 @@ public class ItemSlot : MonoBehaviour, ISelectHandler
     {
         if (InventoryHandler.IsItemSelectable)                      // If items inside of the handler is selectable.
             if (InventoryHandler.Inventory.SelectedIndex != Index)  // If not already selected.
-                InventoryHandler.Inventory.SetSelectedItem(Index, Item);
+                InventoryHandler.Inventory.SetSelectedItem(Index);
     }
 }

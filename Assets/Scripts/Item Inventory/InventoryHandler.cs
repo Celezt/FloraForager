@@ -21,6 +21,8 @@ public class InventoryHandler : MonoBehaviour
         set => _isItemSelectable = value;
     }
 
+    public event Action OnInventoryInitalizedCallback = delegate { };
+
     private ItemSlot[] _slots;
 
     private Inventory _inventory;
@@ -96,6 +98,8 @@ public class InventoryHandler : MonoBehaviour
                     _slots[i].Amount.text = _inventory.Items[i].Amount > 0 ? _inventory.Items[i].Amount.ToString() : "";
                 }
             }
+
+            OnInventoryInitalizedCallback.Invoke();
         };
     }
 }

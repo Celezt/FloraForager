@@ -22,7 +22,6 @@ public class Inventory : ScriptableObject
     public event Action<int, ItemAsset> OnRemoveItemCallback = delegate { };
     public event Action<int, ItemAsset> OnSelectItemCallback = delegate { };
 
-
     private ItemAsset _selectedItem;
     private int _selectedIndex = int.MinValue;
 
@@ -30,11 +29,14 @@ public class Inventory : ScriptableObject
     public List<ItemAsset> _items = new List<ItemAsset>(); // Change
     public bool IsFull { get; set; }
 
-    public void SetSelectedItem(int index, ItemAsset item) 
+    public void SetSelectedItem(int index) 
     {
-        _selectedItem = item;
+        if (string.IsNullOrEmpty(_items[index].ID))
+            return;
+
+        _selectedItem = _items[index];
         _selectedIndex = index;
-        OnSelectItemCallback.Invoke(index, item);
+        OnSelectItemCallback.Invoke(index, _items[index]);
     }
 
     public ItemAsset Get(int index) => _items[index];
@@ -131,13 +133,13 @@ public class Inventory : ScriptableObject
         OnItemMoveCallback.Invoke(firstIndex, secondIndex, _items[firstIndex], item);
     }
 
-    public int ExistsAt(string ID) 
+    public int ExistsAt(string id) 
     {
         for (int i = 0; i < _items.Count; i++)
         {
             if (!_items[i].ID.IsNullOrEmpty())
             {
-                if (_items[i].ID == ID)
+                if (_items[i].ID == id)
                 {
                     return i;
                 }
@@ -158,13 +160,13 @@ public class Inventory : ScriptableObject
         return tmp;
 
     }
-    public bool Find(string ID) 
+    public bool Find(string id) 
     {
         for (int i = 0; i < _items.Count; i++)
         {
             if (!_items[i].ID.IsNullOrEmpty())
             {
-                if (_items[i].ID == ID)
+                if (_items[i].ID == id)
                 {
                     return true;
                 }
@@ -172,21 +174,21 @@ public class Inventory : ScriptableObject
         }
         return false;
     }
-    public int FindAmount(string ID) 
+    public int FindAmount(string id) 
     {
         int tmp = 0;
         for (int i = 0; i < _items.Count; i++)
         {
-            if (_items[i].ID != null && _items[i].ID == ID)
+            if (_items[i].ID != null && _items[i].ID == id)
             {
                 tmp += _items[i].Amount;
             }
         }
         return tmp;
     }
-    public bool FindEnough(string ID, int amount) 
+    public bool FindEnough(string id, int amount) 
     {        
-        return amount <= FindAmount(ID);
+        return amount <= FindAmount(id);
     }
     public int FindFirstEmptySlot() 
     {

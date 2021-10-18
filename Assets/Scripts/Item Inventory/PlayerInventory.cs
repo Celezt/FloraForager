@@ -37,6 +37,11 @@ public class PlayerInventory : MonoBehaviour
         _inventoryHandler.IsItemSelectable = false;
         _hotbarHandler.Inventory = _inventory;
         _hotbarHandler.IsItemSelectable = true;
+
+        _hotbarHandler.OnInventoryInitalizedCallback += () =>
+        {
+            _hotbarHandler.Inventory.SetSelectedItem(0);
+        };
     }
 
     public void OnEnable()
