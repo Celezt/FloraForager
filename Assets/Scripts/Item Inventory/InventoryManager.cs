@@ -9,7 +9,6 @@ public class InventoryManager : MonoBehaviour, IDropHandler
 {
     private GraphicRaycaster _raycaster;
     private EventSystem _EventSystem;
-    private ItemTypeSettings _settings;
 
     private void Awake()
     {

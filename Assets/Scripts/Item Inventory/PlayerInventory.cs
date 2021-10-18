@@ -27,7 +27,7 @@ public class PlayerInventory : MonoBehaviour
         if (_isInventoryOpen)
             return;
 
-        if (value > _hotbarHandler.SlotLength)
+        if (value > _hotbarHandler.Slots.Count)
             return;
 
         _inventory.SetSelectedItem((int)(value - 1.0f));
@@ -90,9 +90,14 @@ public class PlayerInventory : MonoBehaviour
 
         _hotbarHandler.Inventory.OnItemMoveCallback += (beforeIndex, afterIndex, beforeItem, afterItem) =>
         {
-            if (beforeIndex < _hotbarHandler.SlotLength && afterIndex >= _hotbarHandler.SlotLength)
+            if (beforeIndex < _hotbarHandler.Slots.Count && afterIndex >= _hotbarHandler.Slots.Count)
                 _inventory.SelectFirst();
         };
+    }
+
+    private void Update()
+    {
+        
     }
 
     private void OnEnable()
