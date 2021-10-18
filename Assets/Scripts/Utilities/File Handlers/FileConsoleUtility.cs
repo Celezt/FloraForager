@@ -7,7 +7,7 @@ using UnityEngine.AddressableAssets;
 
 public static class FileConsoleUtility
 {
-    [ConsoleMethod("file_read_json", "Read JSON-file")]
+    [ConsoleMethod("file.read_json", "Read JSON-file")]
     public static void ReadJSON(string address)
     {
         Addressables.LoadAssetAsync<TextAsset>(address).Completed += (handle) =>

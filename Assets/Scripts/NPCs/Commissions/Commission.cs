@@ -3,21 +3,23 @@ using System.Linq;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.InputSystem;
 using UnityEngine.Events;
 
 public class Commission
 {
-    private CommissionData _Data;    // data used to create this commission
-    private CommissionGiver _Giver;  // the NPC who gave out this commission
+    private readonly CommissionData _Data;    // data used to create this commission
+    private readonly CommissionGiver _Giver;  // the NPC who gave out this commission
     private Objective[] _Objectives; // all of the objectives to be fulfilled to complete this commission
 
     private int _DaysLeft;
 
     public string Title => _Data.Title;
     public string Description => _Data.Description;
+    public float PenaltyRelation => _Data.PenaltyRelations;
     public int DaysLeft => _DaysLeft;
     public Objective[] Objectives => _Objectives;
-    public RewardPair<string, int>[] Rewards => _Data.Rewards;
+    public RewardPair[] Rewards => _Data.Rewards;
 
     public CommissionGiver Giver => _Giver;
 
@@ -52,12 +54,14 @@ public class Commission
 
     public void Complete()
     {
+        PlayerInfo playerInfo = PlayerInput.GetPlayerByIndex(0).GetComponent<PlayerInfo>();
+
         for (int i = 0; i < _Objectives.Length; ++i)
         {
             string itemID = _Objectives[i].ItemID;
             int amount = _Objectives[i].Amount;
 
-            // get items and remove
+            playerInfo.Inventory.Remove(itemID, amount);
         }
 
         for (int i = 0; i < _Data.Rewards.Length; ++i)
@@ -65,7 +69,16 @@ public class Commission
             string itemID = _Data.Rewards[i].ItemID;
             int amount = _Data.Rewards[i].Amount;
 
-            // add items to inventory
+            playerInfo.Inventory.AddItem(new ItemAsset
+            {
+                ID = itemID,
+                Amount = amount
+            });
+        }
+
+        foreach (Objective objective in Objectives)
+        {
+            playerInfo.Inventory.OnItemChangeCallback -= objective.UpdateAmount;
         }
 
         _Giver.NPC.Relations.AddRelation(_Data.RewardRelations);
@@ -74,9 +87,12 @@ public class Commission
     public void DayPassed()
     {
         if (--_DaysLeft <= 0)
-        {
-            _Giver.NPC.Relations.AddRelation(_Data.PenaltyRelations);
-            CommissionLog.Instance.RemoveCommission(Object); // TODO: add some heads-up for the player
-        }
+            RemoveWithPenalty();
+    }
+
+    public void RemoveWithPenalty()
+    {
+        _Giver.NPC.Relations.AddRelation(_Data.PenaltyRelations);
+        CommissionLog.Instance.RemoveCommission(Object); // TODO: add some heads-up for the player
     }
 }

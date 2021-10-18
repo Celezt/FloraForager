@@ -4,7 +4,6 @@ using UnityEngine;
 
 public class DayNightCycle : MonoBehaviour
 {
-    [Header("Sun")]
     [SerializeField] private Light _Sun;
     [SerializeField, Range(0.0f, 360.0f)] private float _Yaw = 30.0f;
     [SerializeField, Range(1.0f, 10.0f)] private float _Damping = 4.5f;
@@ -39,7 +38,7 @@ public class DayNightCycle : MonoBehaviour
         _Pitch = 360.0f * (GameTime.Instance.CurrentTime / 24.0f) - _MorningOffset;
 
         float angleDiff = Mathf.Abs(_NewPitch) - Mathf.Abs(_Pitch);
-        _NewPitch = (angleDiff < 10.0f) ? Mathf.SmoothStep(_NewPitch, _Pitch, _Damping * Time.deltaTime) : _Pitch;
+        _NewPitch = (angleDiff < 5.0f) ? Mathf.SmoothStep(_NewPitch, _Pitch, _Damping * Time.deltaTime) : _Pitch;
 
         _Sun.transform.localRotation = Quaternion.Euler(_NewPitch, _Yaw, 0.0f);
     }

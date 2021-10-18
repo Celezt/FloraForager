@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.InputSystem;
 
 public partial class PlayerAction
 {
@@ -8,12 +9,12 @@ public partial class PlayerAction
 
     public PlayerActionHandle AddSharedDisable()
     {
-        PlayerActionHandle handle = PlayerActionHandle.Create();
+        PlayerActionHandle handle = PlayerActionHandle.Create(this);
         
         _sharedDisable.Add(handle);
 
         asset.Disable();
-
+        
         return handle;
     }
 

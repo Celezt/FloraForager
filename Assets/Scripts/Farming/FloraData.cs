@@ -1,31 +1,35 @@
 using System;
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
+using Sirenix.OdinInspector;
+using Sirenix.Serialization;
+using Newtonsoft.Json;
 
 [CreateAssetMenu(fileName = "Flora", menuName = "Scriptable Objects/Flora")]
-public class FloraData : ScriptableObject
+[Serializable]
+public class FloraData : SerializedScriptableObject
 {
-    [Space(3), Header("Properties")]
-    [SerializeField] private string _Name;
-    [SerializeField, TextArea(3, 10)] private string _Description;
-    [SerializeField] private RewardPair<string, int>[] _Rewards;
+    [OdinSerialize, VerticalGroup, Required, LabelWidth(80)] 
+    private string _Name;
+    [OdinSerialize, VerticalGroup, TextArea(5, 30)] 
+    private string _Description;
 
-    [Space(3), Header("Growth")]
-    [SerializeField, Min(0)] private int _GrowTime = 0; // growth time in days
-    [SerializeField] private GameObject[] _Stages;      // Number of visual growth stages this flora has [0 = start, x = final]
+    [Title("Harvesting")]
+    [OdinSerialize, VerticalGroup]
+    private IHarvest _HarvestMethod;
+    [OdinSerialize, VerticalGroup, PropertySpace(10), ListDrawerSettings(Expanded = true)] 
+    private RewardPair[] _Rewards = new RewardPair[1];
+
+    [Title("Growth")]
+    [OdinSerialize, VerticalGroup, MinValue(0)] 
+    private int _GrowTime = 0; // growth time in days
+    [OdinSerialize, VerticalGroup, AssetSelector(Paths = "Assets/Models/Flora"), ListDrawerSettings(Expanded = true)] 
+    private GameObject[] _Stages = new GameObject[1]; // Number of visual growth stages this flora has [0 = start, x = final]
 
     public string Name => _Name;
     public string Description => _Description;
-    public RewardPair<string, int>[] Rewards => _Rewards;
-
+    public IHarvest HarvestMethod => _HarvestMethod;
+    public RewardPair[] Rewards => _Rewards;
+    
     public int GrowTime => _GrowTime;
     public GameObject[] Stages => _Stages;
-}
-
-[Serializable]
-public struct RewardPair<T1, T2>
-{
-    public T1 ItemID;
-    public T2 Amount;
 }

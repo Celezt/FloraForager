@@ -5,11 +5,11 @@ using UnityEngine;
 using UnityEngine.InputSystem;
 using MyBox;
 using IngameDebugConsole;
+using Celezt.Time;
+using System.Linq;
 
 public class PlayerMovement : MonoBehaviour
 {
-    public PlayerAction Inputs => _inputs;
-
     /// <summary>
     /// Unprocessed input direction.
     /// </summary>
@@ -21,17 +21,27 @@ public class PlayerMovement : MonoBehaviour
     /// <summary>
     /// Current player speed including when the player is running.
     /// </summary>
-    public float CurrentSpeed => _isRunning ? _speed * _runningSpeedMultiplier : _speed;
-    /// <summary>
-    /// Normal speed of the player.
-    /// </summary>
-    public float Speed
+    public float CurrentSpeed
     {
-        get => _speed;
-        set => _speed = value;
+        get
+        {
+            float totalMultiplier = 1;
+            foreach (KeyValuePair<Duration, float> mutliplier in _speedMultipliers)
+                totalMultiplier += mutliplier.Value;
+
+            return _isRunning ? _baseSpeed * totalMultiplier * _runningSpeedMultiplier : _baseSpeed * totalMultiplier;
+        }
     }
     /// <summary>
-    /// Running multiplier on the current speed if running.
+    /// Base speed of the player.
+    /// </summary>
+    public float BaseSpeed => _baseSpeed;
+    /// <summary>
+    /// Speed multipliers affecting the player.
+    /// </summary>
+    public IReadOnlyDictionary<Duration, float> SpeedMultipliers => _speedMultipliers;
+    /// <summary>
+    /// Running multiplier.
     /// </summary>
     public float RunningSpeedMultiplier
     {
@@ -77,16 +87,19 @@ public class PlayerMovement : MonoBehaviour
     public event Action<float, bool> OnPlayerRunCallback = delegate { };
 
     [SerializeField] private Rigidbody _rigidbody;
+    [SerializeField] private Collider _collider;
     [SerializeField] private PivotMode _pivotMode;
     [SerializeField, ConditionalField(nameof(_pivotMode), false, PivotMode.Camera)] private Camera _camera;
     [SerializeField, ConditionalField(nameof(_pivotMode), false, PivotMode.Target)] private Transform _pivot;
-    [SerializeField] private float _speed = 6.0f;
+    [SerializeField] private float _baseSpeed = 6.0f;
     [SerializeField, Min(0)] private float _runningSpeedMultiplier = 2.0f;
     [SerializeField] private float _drag = 8.0f;
     [SerializeField] private float _angularDrag = 5.0f;
     [SerializeField] private LayerMask _groundLayer;
     [SerializeField] private float _groundCheckDistance = 1.5f;
     [SerializeField, Tooltip("In degrees."), Range(0, 180)] private float _maxSlopeAngle = 45.0f;
+    [SerializeField] private PhysicMaterial _groundPhysicMaterial;
+    [SerializeField] private PhysicMaterial _fallPhysicMaterial;
 
     private enum PivotMode
     {
@@ -94,6 +107,8 @@ public class PlayerMovement : MonoBehaviour
         Camera,
         Target,
     }
+
+    private Dictionary<Duration, float> _speedMultipliers = new Dictionary<Duration, float>();
 
     private Vector3 _slopeForward;
     private Vector3 _rawDirection;
@@ -107,9 +122,40 @@ public class PlayerMovement : MonoBehaviour
     private bool _isRunning;
     private bool _isGrounded;
     private bool _isOnLedge;
-    private PlayerAction _inputs;
 
-    public void SetSpeed(float speed) => _speed = speed;
+    private PlayerInput _playerInput;
+
+    /// <summary>
+    /// Stack different speed multipliers without overriding any other multiplier. 
+    /// </summary>
+    /// <param name="multiplier">Speed multiplier.</param>
+    /// <param name="duration">Time the multiplier last.</param>
+    /// <returns>Identifier.</returns>
+    public Duration AddSpeedMultiplier(float multiplier, Duration duration)
+    {
+        _speedMultipliers.Add(duration, multiplier);
+        return duration;
+    }
+    /// <summary>
+    /// Stack different speed multipliers without overriding any other multiplier. 
+    /// </summary>
+    /// <param name="multiplier">Speed multiplier.</param>
+    /// <param name="duration">Time the multiplier last.</param>
+    /// <returns>Identifier.</returns>
+    public Duration AddSpeedMultiplier(float multiplier, float duration) => AddSpeedMultiplier(multiplier, new Duration(duration));
+    /// <summary>
+    /// Stack different speed multipliers without overriding any other multiplier. 
+    /// </summary>
+    /// <param name="multiplier">Speed multiplier.</param>
+    /// <returns>Identifier.</returns>
+    public Duration AddSpeedMultiplier(float multiplier) => AddSpeedMultiplier(multiplier, Duration.Infinity);
+    /// <summary>
+    /// Remove existing multiplier.
+    /// </summary>
+    /// <param name="identifier">Duration as a identifier.</param>
+    /// <returns>If exist.</returns>
+    public bool RemoveSpeedMultiplier(Duration identifier) => _speedMultipliers.Remove(identifier);
+    public void ClearSpeedMultiplier() => _speedMultipliers.Clear();
     public void SetRunMultiplier(float multiplier) => _runningSpeedMultiplier = multiplier;
     public void SetDrag(float drag) => _drag = drag;
     public void SetAngularDrag(float angularDrag) => _angularDrag = angularDrag;
@@ -120,11 +166,10 @@ public class PlayerMovement : MonoBehaviour
     {
         Vector2 value = context.ReadValue<Vector2>();
         _rawDirection = new Vector3(value.x, 0, value.y);
+        _rigidbody.velocity = new Vector3(0, _rigidbody.velocity.y, 0);
 
-        if (context.canceled)
-        {
-            _inputs.Ground.Run.Reset();
-        }
+        //if (context.canceled)
+        //    _playerInput.actions["Run"].Reset();
     }
 
     public void OnRun(InputAction.CallbackContext context)
@@ -140,153 +185,146 @@ public class PlayerMovement : MonoBehaviour
 
     private void Awake()
     {
-        _inputs = new PlayerAction();
+        _playerInput = GetComponent<PlayerInput>();
+        _relativeForward = transform.forward;
     }
 
     private void Start()
     {
-        DebugLogConsole.AddCommandInstance("player_speed", "Sets player's speed value", nameof(SetSpeed), this);
-        DebugLogConsole.AddCommandInstance("player_run", "Sets player's run multiplier", nameof(SetRunMultiplier), this);
-        DebugLogConsole.AddCommandInstance("player_drag", "Sets player's drag value", nameof(SetDrag), this);
-        DebugLogConsole.AddCommandInstance("player_ground_check_distance", "Sets player's ground check distance if on the ground", nameof(SetGroundCheckDistance), this);
-        DebugLogConsole.AddCommandInstance("player_max_slope_angle", "Sets player's max slope angle that are possible to move over", nameof(SetMaxSlopeAngle), this);
-    }
-
-    private void OnEnable()
-    {
-        _inputs.Enable();
-        _inputs.Ground.Move.started += OnMove;
-        _inputs.Ground.Move.performed += OnMove;
-        _inputs.Ground.Move.canceled += OnMove;
-        _inputs.Ground.Run.started += OnRun;
-        _inputs.Ground.Run.performed += OnRun;
-        _inputs.Ground.Run.canceled += OnRun;
-
-        _relativeForward = transform.forward;
-    }
-
-    private void OnDisable()
-    {
-        _inputs.Disable();
-        _inputs.Ground.Move.started -= OnMove;
-        _inputs.Ground.Move.performed -= OnMove;
-        _inputs.Ground.Move.canceled -= OnMove;
-        _inputs.Ground.Run.started -= OnRun;
-        _inputs.Ground.Run.performed -= OnRun;
-        _inputs.Ground.Run.canceled -= OnRun;
+        DebugLogConsole.AddCommandInstance("player.speed", "Sets player's base speed value", nameof(SetBaseSpeed), this);
+        DebugLogConsole.AddCommandInstance("player.run", "Sets player's run multiplier", nameof(SetRunMultiplier), this);
+        DebugLogConsole.AddCommandInstance("player.drag", "Sets player's drag value", nameof(SetDrag), this);
+        DebugLogConsole.AddCommandInstance("player.ground_check_distance", "Sets player's ground check distance if on the ground", nameof(SetGroundCheckDistance), this);
+        DebugLogConsole.AddCommandInstance("player.max_slope_angle", "Sets player's max slope angle that are possible to move over", nameof(SetMaxSlopeAngle), this);
     }
 
     private void FixedUpdate()
     {
         Vector3 position = transform.position;
 
-        Movement(position);
-        SlopeMovement(position);
-    }
-
-    private void Movement(Vector3 position)
-    {
-        float fixedDeltaTime = Time.fixedDeltaTime;
-        _rawRotation = _rigidbody.rotation;
-
-        void GetDirection(Vector3 pivotForward, Vector3 pivotRight)
+        void Movement()
         {
-            pivotForward.y = 0f;
-            pivotRight.y = 0f;
+            float fixedDeltaTime = Time.fixedDeltaTime;
+            _rawRotation = _rigidbody.rotation;
 
-            _forward = (pivotForward * _rawDirection.z + pivotRight * _rawDirection.x).normalized;
+            void GetDirection(Vector3 pivotForward, Vector3 pivotRight)
+            {
+                pivotForward.y = 0f;
+                pivotRight.y = 0f;
 
-            if (_rawDirection != Vector3.zero)
-                _relativeForward = _forward;
-        }
+                _forward = (pivotForward * _rawDirection.z + pivotRight * _rawDirection.x).normalized;
 
-        Vector3 pivotForward = Vector3.zero;
-        Vector3 pivotRight = Vector3.zero;
-        switch (_pivotMode)
-        {
-            case PivotMode.Camera:
-                if (_camera == null)
-                    _camera = Camera.main;
-
-                Transform cameraTransform = _camera.transform;
-                pivotForward = cameraTransform.forward;
-                pivotRight = cameraTransform.right;
-
-                GetDirection(pivotForward, pivotRight);
-                break;
-            case PivotMode.Target:
-                pivotForward = _pivot.forward;
-                pivotRight = _pivot.right;
-
-                GetDirection(pivotForward, pivotRight);
-                break;
-            default:
                 if (_rawDirection != Vector3.zero)
-                    _relativeForward = _rawDirection;
-
-                _forward = _rawDirection;
-                break;
-        }
-
-        void FixedMove()
-        {
-            if (_groundAngle >= _maxSlopeAngle)
-                return;
-
-            _rawVelocity = _slopeForward * ((_isRunning) ? _speed * _runningSpeedMultiplier : _speed) * fixedDeltaTime;
-            _velocity = Vector3.Lerp(_velocity, _rawVelocity, _drag * fixedDeltaTime);
-            _rigidbody.MovePosition(position + _velocity);
-        }
-
-        void FixedRotate()
-        {
-            _rotation = Quaternion.Slerp(_rawRotation, Quaternion.LookRotation(_relativeForward, Vector3.up), _angularDrag * fixedDeltaTime);
-            _rigidbody.MoveRotation(_rotation);
-        }
-
-        FixedMove();
-        FixedRotate();
-    }
-
-    private void SlopeMovement(Vector3 position)
-    {
-        RaycastHit hit = new RaycastHit();
-
-        void CheckGround()
-        {
-            _isGrounded = Physics.Raycast(position, -Vector3.up, out hit, _groundCheckDistance, _groundLayer);
-        }
-
-        void ForwardSlope()
-        {
-            if (!_isGrounded)
-            {
-                _slopeForward = _forward;
-                return;
+                    _relativeForward = _forward;
             }
 
-            _slopeForward = Vector3.Cross(Vector3.Cross(Vector3.up, _forward), hit.normal).normalized;
-        };
+            Vector3 pivotForward = Vector3.zero;
+            Vector3 pivotRight = Vector3.zero;
+            switch (_pivotMode)
+            {
+                case PivotMode.Camera:
+                    if (_camera == null)
+                        _camera = Camera.main;
 
-        void GroundAngle()
-        {
-            _groundAngle = Vector3.Angle(hit.normal, _forward) - 90.0f;
+                    Transform cameraTransform = _camera.transform;
+                    pivotForward = cameraTransform.forward;
+                    pivotRight = cameraTransform.right;
+
+                    GetDirection(pivotForward, pivotRight);
+                    break;
+                case PivotMode.Target:
+                    pivotForward = _pivot.forward;
+                    pivotRight = _pivot.right;
+
+                    GetDirection(pivotForward, pivotRight);
+                    break;
+                default:
+                    if (_rawDirection != Vector3.zero)
+                        _relativeForward = _rawDirection;
+
+                    _forward = _rawDirection;
+                    break;
+            }
+
+            void FixedMove()
+            {
+                if (_groundAngle >= _maxSlopeAngle)
+                    return;
+
+                _rawVelocity = _slopeForward * CurrentSpeed * fixedDeltaTime;
+                _velocity = Vector3.Lerp(_velocity, _rawVelocity, _drag * fixedDeltaTime);
+                _rigidbody.MovePosition(position + _velocity);
+            }
+
+            void FixedRotate()
+            {
+                _rotation = Quaternion.Slerp(_rawRotation, Quaternion.LookRotation(_relativeForward, Vector3.up), _angularDrag * fixedDeltaTime);
+                _rigidbody.MoveRotation(_rotation);
+            }
+
+            FixedMove();
+            FixedRotate();
         }
 
-        void DrawDebugLines()
+        void SlopeMovement()
         {
+            RaycastHit hit = new RaycastHit();
+
+            void CheckGround()
+            {
+                _isGrounded = Physics.Raycast(position, -Vector3.up, out hit, _groundCheckDistance, _groundLayer);
+            }
+
+            void ForwardSlope()
+            {
+                if (!_isGrounded)
+                {
+                    _slopeForward = _forward;
+                    return;
+                }
+
+                _slopeForward = Vector3.Cross(Vector3.Cross(Vector3.up, _forward), hit.normal).normalized;
+            };
+
+            void GroundAngle()
+            {
+                _groundAngle = Vector3.Angle(hit.normal, _forward) - 90.0f;
+            }
+
+            void DrawDebugLines()
+            {
 #if UNITY_EDITOR
-            if (DebugManager.DebugMode)
-            {
-                Debug.DrawLine(position, position + _slopeForward * _groundCheckDistance * 2, Color.blue);
-                Debug.DrawLine(position, position - Vector3.up * _groundCheckDistance, Color.green);
-            }
+                if (DebugManager.DebugMode)
+                {
+                    Debug.DrawLine(position, position + _slopeForward * _groundCheckDistance * 2, Color.blue);
+                    Debug.DrawLine(position, position - Vector3.up * _groundCheckDistance, Color.green);
+                }
 #endif
+            }
+
+            CheckGround();
+            ForwardSlope();
+            GroundAngle();
+            DrawDebugLines();
         }
 
-        CheckGround();
-        ForwardSlope();
-        GroundAngle();
-        DrawDebugLines();
+        void PhysicMaterialToUse()
+        {
+            _collider.material = _isGrounded ? _groundPhysicMaterial : _fallPhysicMaterial;
+        }
+
+        void updateSpeedMultipliers()
+        {
+            foreach (KeyValuePair<Duration, float> multiplier in _speedMultipliers.ToList())
+                if (!multiplier.Key.IsActive)
+                    _speedMultipliers.Remove(multiplier.Key);
+        }
+
+        updateSpeedMultipliers();
+        Movement();
+        SlopeMovement();
+        PhysicMaterialToUse();
     }
+
+    private void SetBaseSpeed(float speed) => _baseSpeed = speed;
 }

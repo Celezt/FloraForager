@@ -10,16 +10,24 @@ using UnityEngine.UI;
 public class InventoryManager : MonoBehaviour, IDropHandler
 {
     private ItemSlot[] slots;
+    private GraphicRaycaster m_raycaster;
     public InventoryObject inventory;
-
-    GraphicRaycaster m_Raycaster;
+    public string inventoryID;
     PointerEventData m_PointerEventData;
     EventSystem m_EventSystem;
     ItemTypeSettings settings;
+    public ItemSlot currentSlot;
+
+    public void SelectItem(ItemSlot itemSlot) 
+    {
+           currentSlot = itemSlot;
+        inventory.SetSelectedItem(itemSlot.pos, itemSlot.item);
+        //Debug.Log("Selected Item is " + currentSlot.item.ID);
+    }
 
     void Start()
     {
-        inventory.InventoryAction += (int i) =>
+        inventory.OnItemChangeCallback += (int i) =>
         {
             if (!(i >= slots.Length))
             {
@@ -45,32 +53,32 @@ public class InventoryManager : MonoBehaviour, IDropHandler
             
             //Debug.Log(inventory.Container[i].Amount.ToString());
         };
-        //Fetch the Raycaster from the GameObject (the Canvas)
-        m_Raycaster = GetComponent<GraphicRaycaster>();
         //Fetch the Event System from the Scene
         m_EventSystem = GetComponent<EventSystem>();
+        m_raycaster = GetComponentInParent<GraphicRaycaster>();
 
-        Addressables.LoadAssetAsync<TextAsset>("inventory").Completed +=(handle)=>
+        // This occurs 2 time for hud and player inv!!!
+        Addressables.LoadAssetAsync<TextAsset>(inventoryID).Completed +=(handle)=>
         {
+            
             settings = ItemTypeSettings.Instance;
-            inventory.Container = new ItemAsset[32];
+            
             InventoryAsset tmp = JsonConvert.DeserializeObject<InventoryAsset>(handle.Result.text);
-            for (int i = 0; i < tmp.Items.Length; i++)
-            {
-                inventory.Container[i] = tmp.Items[i];
-            }
             slots = GetComponentsInChildren<ItemSlot>();
-
+            
             // Assigns Items to slots
             for (int i = 0; i < slots.Length; i++) // Assigns Items to slots
-            {
+            {                
+                inventory.Container.Add(tmp.Items.Length > i ? tmp.Items[i]: new ItemAsset());
                 slots[i].pos = i;
+                slots[i].GetComponent<ItemSlotButton>().inventoryManager = this;
                 if (inventory.Container[i].ID != null)
                 {
                     slots[i].item = inventory.Container[i];
                     if (settings.ItemIconChunk.TryGetValue(slots[i].item.ID, out Sprite sprite))
                     {
                         slots[i].image.sprite = sprite;
+                        
                     }
                     slots[i].TextMesh.text = inventory.Container[i].Amount.ToString(); // Can use slot instead?
                     //Debug.Log(inventory.Container[i].Amount);
@@ -81,7 +89,7 @@ public class InventoryManager : MonoBehaviour, IDropHandler
         };
         //selectedSlot = slots[0];
     }
-
+    
     public void OnDrop(PointerEventData eventData)
     {
         RectTransform uiGrid = transform as RectTransform;
@@ -103,7 +111,7 @@ public class InventoryManager : MonoBehaviour, IDropHandler
             List<RaycastResult> results = new List<RaycastResult>();
 
             //Raycast using the Graphics Raycaster and mouse click position
-            m_Raycaster.Raycast(m_PointerEventData, results);
+            m_raycaster.Raycast(m_PointerEventData, results);
 
             //For every result returned, output the name of the GameObject on the Canvas hit by the Ray
             //Find and swap itemslots

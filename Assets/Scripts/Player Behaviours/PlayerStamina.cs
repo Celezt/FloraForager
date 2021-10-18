@@ -3,16 +3,18 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.Events;
+using IngameDebugConsole;
 
 public class PlayerStamina : MonoBehaviour
 {
     [SerializeField] private GameObject _StaminaSlider;
     [SerializeField] private float _MaxStamina = 100.0f;
-    [SerializeField] private float _StmMovementDrain = 0.04f;  // amount stamina drained every second
-    [SerializeField] private float _StmActionDrain = 0.05f;
+    [SerializeField] private float _StmWalkingDrain = 0.04f;  // amount stamina drained every second
+    [SerializeField] private float _StmRunningDrain = 0.09f;
     [SerializeField] private float _StmNightDrain = 7.5f;
 
-    public UnityEvent OnStaminaDrained;
+    public System.Action OnStaminaDrained = delegate { };
+    public System.Action OnStaminaEmptied = delegate { };
 
     private PlayerMovement _PlayerMovement;
     private Slider _Slider;
@@ -33,14 +35,30 @@ public class PlayerStamina : MonoBehaviour
     {
         _PlayerMovement = GetComponent<PlayerMovement>();
         _Slider = _StaminaSlider.GetComponentInChildren<Slider>();
+
+        DebugLogConsole.AddCommandInstance("player.stamina_change", "Change player's stamina", nameof(ChangeStamina), this);
     }
 
     private void Start()
     {
         _Stamina = _MaxStamina;
 
-        OnStaminaDrained.AddListener(MovementDrain);
-        OnStaminaDrained.AddListener(NightDrain);
+        OnStaminaDrained += NightDrain;
+        OnStaminaDrained += WalkingDrain;
+
+        _PlayerMovement.OnPlayerRunCallback += (speed, isRunning) =>
+        {
+            if (!isRunning)
+            {
+                OnStaminaDrained -= RunningDrain;
+                OnStaminaDrained += WalkingDrain;
+            }
+            else
+            {
+                OnStaminaDrained -= WalkingDrain;
+                OnStaminaDrained += RunningDrain;
+            }
+        };
     }
 
     private void Update()
@@ -48,6 +66,7 @@ public class PlayerStamina : MonoBehaviour
         OnStaminaDrained.Invoke();
         if (_Stamina <= 0.0f && !SleepSchedule.Instance.IsSleeping)
         {
+            OnStaminaEmptied.Invoke();
             SleepSchedule.Instance.StartSleeping();
         }
     }
@@ -57,10 +76,14 @@ public class PlayerStamina : MonoBehaviour
         _Slider.value = (_Stamina / _MaxStamina);
     }
 
-    private void MovementDrain()
+    private void WalkingDrain()
     {
-        float playerSpeed = (_PlayerMovement.RawVelocity.magnitude / (_PlayerMovement.Speed * Time.fixedDeltaTime));
-        Drain(_StmMovementDrain * playerSpeed);
+        Drain(_StmWalkingDrain * ((_PlayerMovement.Velocity.magnitude > 0.01f) ? 1.0f : 0.0f));
+    }
+
+    private void RunningDrain()
+    {
+        Drain(_StmRunningDrain * ((_PlayerMovement.Velocity.magnitude > 0.01f) ? 1.0f : 0.0f));
     }
 
     private void NightDrain()
@@ -80,6 +103,8 @@ public class PlayerStamina : MonoBehaviour
             Drain(_StmNightDrain * sleepy);
         }
     }
+
+    public void ChangeStamina(float change) => Stamina = change;
 
     public void Drain(float staminaDrain)
     {

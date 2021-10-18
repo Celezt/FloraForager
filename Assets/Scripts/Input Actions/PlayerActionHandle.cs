@@ -5,12 +5,22 @@ using UnityEngine;
 
 public struct PlayerActionHandle
 {
-    private int _id;
+    public bool IsEmpty => _id == 0;
 
-    public static PlayerActionHandle Create()
+    private int _id;
+    private PlayerAction _playerActionReference;
+
+    public void Clear() => _id = 0;
+
+    public static PlayerActionHandle Create(PlayerAction reference)
     {
-        return new PlayerActionHandle { _id = Guid.NewGuid().GetHashCode() };
+        return new PlayerActionHandle { _id = Guid.NewGuid().GetHashCode(), _playerActionReference = reference };
     }
 
     public override int GetHashCode() => _id;
+
+    public void RemoveSharedDisable()
+    {
+        _playerActionReference.RemoveSharedDisable(this);
+    }
 }

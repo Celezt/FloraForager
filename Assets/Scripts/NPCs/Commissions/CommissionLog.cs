@@ -19,6 +19,7 @@ public class CommissionLog : Singleton<CommissionLog>
     private Commission _Selected; // selected commission in the log
 
     private CanvasGroup _CanvasGroup;
+    private PlayerAction _PlayerAction;
 
     public List<Commission> Commissions => _Commissions;
 
@@ -27,28 +28,33 @@ public class CommissionLog : Singleton<CommissionLog>
         _CanvasGroup = GetComponent<CanvasGroup>();
         _CanvasGroup.alpha = 0.0f;
 
+        _PlayerAction = new PlayerAction();
+
         _CommissionObjects = new List<CommissionObject>();
         _Commissions = new List<Commission>();
     }
 
-    private void Update()
+    private void OnEnable()
     {
-        if (Keyboard.current.iKey.wasPressedThisFrame)
-        {
-            OpenExit();
-        }
-        if (Keyboard.current.oKey.wasPressedThisFrame)
-        {
-            foreach (CommissionObject co in _CommissionObjects)
-            {
-                co.Commission.Objectives.ForEach(o => ((FetchObjective)o).UpdateItemCount());
-            }
-        }
+        _PlayerAction.Enable();
+        _PlayerAction.Ground.CommissionLog.started += OnOpenExit;
+    }
+
+    private void OnDisable()
+    {
+        _PlayerAction.Disable();
+        _PlayerAction.Ground.CommissionLog.started -= OnOpenExit;
     }
 
     public void AcceptCommission(Commission commission)
     {
         _Commissions.Add(commission);
+
+        InventoryObject inventory = PlayerInput.GetPlayerByIndex(0).GetComponent<PlayerInfo>().Inventory;
+        foreach (Objective objective in commission.Objectives)
+        {
+            inventory.OnItemChangeCallback += objective.UpdateAmount;
+        }
 
         GameObject obj = Instantiate(_CommissionPrefab, _CommissionArea); // create object to be added to the log list
 
@@ -65,7 +71,7 @@ public class CommissionLog : Singleton<CommissionLog>
 
     public void AbandonCommission()
     {
-        RemoveCommission(_Selected.Object);
+        _Selected.RemoveWithPenalty();
     }
 
     /// <summary>
@@ -122,7 +128,7 @@ public class CommissionLog : Singleton<CommissionLog>
         objectives += "</size>";
 
         string rewards = "<b>Rewards</b>\n<size=20>";
-        foreach (RewardPair<string, int> reward in commission.Rewards)
+        foreach (RewardPair reward in commission.Rewards)
         {
             rewards += reward.Amount + " " + reward.ItemID + "\n";
         }
@@ -148,7 +154,7 @@ public class CommissionLog : Singleton<CommissionLog>
         }
     }
 
-    public void OpenExit()
+    public void OnOpenExit(InputAction.CallbackContext context)
     {
         if (_CanvasGroup.alpha == 1.0f)
         {

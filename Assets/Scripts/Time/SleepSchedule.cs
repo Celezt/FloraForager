@@ -11,14 +11,13 @@ public class SleepSchedule : Singleton<SleepSchedule>
     [SerializeField, Range(0.0f, 24.0f)] private float _NightTime = 22.0f;
     [Space(5)]
     [SerializeField, Min(0)] private float _SleepTime = 1.0f;
-    [SerializeField] private GameObject _Player;
 
     private PlayerStamina _PlayerStamina;
     private PlayerMovement _PlayerMovement;
     private InteractBehaviour _InteractableArea;
     private Rigidbody _PlayerRigidbody;
 
-    private bool _IsSleeping = false;    // if the player is currently sleeping
+    private bool _IsSleeping = false;  // if the player is currently sleeping
     private float _NightToMorning = 0; // total time in hours for player to sleep
 
     public float MorningTime => _MorningTime;
@@ -29,20 +28,19 @@ public class SleepSchedule : Singleton<SleepSchedule>
 
     private void Awake()
     {
-        if (_Player == null)
-            Debug.LogError("need reference to current Player in scene");
+        GameObject player = PlayerInput.GetPlayerByIndex(0).gameObject;
 
-        _PlayerMovement = _Player.GetComponent<PlayerMovement>();
-        _PlayerStamina = _Player.GetComponent<PlayerStamina>();
-        _InteractableArea = _Player.GetComponent<InteractBehaviour>();
-        _PlayerRigidbody = _Player.GetComponent<Rigidbody>();
+        _PlayerMovement = player.GetComponent<PlayerMovement>();
+        _PlayerStamina = player.GetComponent<PlayerStamina>();
+        _InteractableArea = player.GetComponent<InteractBehaviour>();
+        _PlayerRigidbody = player.GetComponent<Rigidbody>();
     }
 
     private void Start()
     {
         _NightToMorning = (24.0f + (_MorningTime - _NightTime)) % 24.0f;
 
-        DebugLogConsole.AddCommandInstance("player_sleep", "Activate sleep mode", nameof(ConsoleStartSleeping), this);
+        DebugLogConsole.AddCommandInstance("player.sleep", "Activate sleep mode", nameof(ConsoleStartSleeping), this);
     }
 
     private void ConsoleStartSleeping() => StartSleeping();

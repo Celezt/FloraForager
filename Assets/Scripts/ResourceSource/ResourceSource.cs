@@ -1,26 +1,32 @@
 using System.Collections;
+using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Events;
 using UnityEngine.EventSystems;
 using UnityEngine.InputSystem;
 
-public class ResourceSource : MonoBehaviour, IInteractable
+public abstract class ResourceSource : MonoBehaviour, IUsable, IDestructable
 {
     [SerializeField] private ResourceSourceData _Data;
-    [SerializeField] private GameObject _Player;
     [SerializeField] private LayerMask _LayerMasks;
 
-    public UnityEvent OnQuantityChanged;
+    public System.Action OnQuantityChanged = delegate { };
+    public System.Action OnEmptied = delegate { };
+    public System.Action OnStarted = delegate { };
+    public System.Action OnStopped = delegate { };
 
-    private PlayerMovement _PlayerMovement;
+    protected GameObject _Player;
+    protected PlayerMovement _PlayerMovement;
+    protected InventoryObject _Inventory;
 
-    private float _CollectionTime;
-    private int _CurrentAmount;
-    private bool _IsBeingCollected;
-    private Coroutine _CollectingCoroutine;
-    private Bounds _Bounds;
+    protected float _CollectionTime;
+    protected int _CurrentAmount;
+    protected bool _IsBeingCollected;
+    protected Coroutine _CollectingCoroutine;
 
     public static ResourceSource ResourceBeingCollected = null; // can only collect from one source at a time
+
+    private Bounds _Bounds;
 
     public ResourceSourceData Data => _Data;
     public Bounds Bounds => _Bounds;
@@ -28,18 +34,28 @@ public class ResourceSource : MonoBehaviour, IInteractable
 
     public int Priority => 1;
 
+    public abstract float Strength { get; set; }
+    public abstract float Durability { get; set; }
+
     private void Awake()
     {
+        _Player = PlayerInput.GetPlayerByIndex(0).gameObject;
         _PlayerMovement = _Player.GetComponent<PlayerMovement>();
+        _Inventory = _Player.GetComponent<PlayerInfo>().Inventory;
+
         _Bounds = GetComponent<MeshFilter>().mesh.bounds;
     }
 
-    private void Start()
+    protected virtual void Start()
     {
-        _CollectionTime = _Data.TotalCollectionTime / (_Data.Amount / _Data.AmountPerCollect);
+        _CollectionTime = (_Data.AmountPerCollect != 0) ? 
+            _Data.TotalCollectionTime / (_Data.Amount / (float)_Data.AmountPerCollect) : 
+            _Data.TotalCollectionTime;
+
+        Strength = Data.Strength;
     }
 
-    private void Update()
+    protected virtual void Update()
     {
         if (_PlayerMovement.Velocity.magnitude > float.Epsilon 
             || (ResourceBeingCollected != null && ResourceBeingCollected != this)) // stop collecting if player moved or this is not the resouce being collected
@@ -60,28 +76,26 @@ public class ResourceSource : MonoBehaviour, IInteractable
         }
     }
 
-    public bool StartCollecting()
+    protected virtual bool StartCollecting()
     {
         if (_IsBeingCollected || _CollectingCoroutine != null)
             return false;
 
-        Debug.Log("started collecting");
-
-        _CollectingCoroutine = StartCoroutine(Collecting());
+        _CollectingCoroutine = StartCoroutine(Collect());
 
         _PlayerMovement.Velocity = Vector3.zero; // stops player
 
         ResourceBeingCollected = this;
+
+        OnStarted.Invoke();
         
         return (_IsBeingCollected = true);      
     }
 
-    public bool StopCollecting()
+    protected virtual bool StopCollecting()
     {
         if (!_IsBeingCollected || _CollectingCoroutine == null)
             return false;
-
-        Debug.Log("stopped collecting");
 
         StopCoroutine(_CollectingCoroutine);
         _CollectingCoroutine = null;
@@ -89,10 +103,12 @@ public class ResourceSource : MonoBehaviour, IInteractable
         if (ResourceBeingCollected == this)
             ResourceBeingCollected = null;
 
+        OnStopped.Invoke();
+
         return !(_IsBeingCollected = false);
     }
 
-    private IEnumerator Collecting()
+    protected virtual IEnumerator Collect()
     {
         while (true)
         {
@@ -103,18 +119,20 @@ public class ResourceSource : MonoBehaviour, IInteractable
 
             _CurrentAmount += amountToAdd;
 
-            Debug.Log("collected " + amountToAdd + " " + _Data.ItemID);
-
             // TODO: add items to player's inventory (check if available space, if not, then stop collecting and don't add amount)
+            _Inventory.AddItem(new ItemAsset
+            {
+                ID = _Data.ItemID,
+                Amount = amountToAdd
+            });
 
             OnQuantityChanged.Invoke();
-            ResourceSourceUI.Instance.UpdateText();
 
             if (_CurrentAmount >= _Data.Amount)
             {
-                Debug.Log("finished collecting");
-
                 StopCollecting();
+
+                OnEmptied.Invoke();
 
                 ResourceSourceUI.Instance.SetActive(null, false);
 
@@ -125,16 +143,16 @@ public class ResourceSource : MonoBehaviour, IInteractable
         }
     }
 
-    public void OnInteract(InteractContext context)
+    public void OnUse(UsedContext context)
     {
         if (!context.performed)
             return;
-
-        // TODO: check if the player is holding the right tool
 
         if (!_IsBeingCollected)
             StartCollecting();
         else
             StopCollecting();
     }
+
+    public abstract IList<string> Filter(ItemLabels labels);
 }

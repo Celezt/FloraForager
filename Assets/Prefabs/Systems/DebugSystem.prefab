@@ -12,23 +12,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5b4670ad74c5bc844a648b846410c922, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _toggleBinding:
-    m_Name: Toggle Binding
-    m_Type: 1
-    m_ExpectedControlType: Button
-    m_Id: a07237f0-5d89-481c-9778-d52b663ef256
-    m_Processors: 
-    m_Interactions: 
-    m_SingletonActionBindings:
-    - m_Name: 
-      m_Id: d1d65bc6-256b-4ba2-bc47-33bafdae480d
-      m_Path: <Keyboard>/backquote
-      m_Interactions: 
-      m_Processors: 
-      m_Groups: 
-      m_Action: Toggle Binding
-      m_Flags: 0
-    m_Flags: 0
 --- !u!1001 &8391630715868562191
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -39,6 +22,10 @@ PrefabInstance:
     - target: {fileID: 132536, guid: 67117722a812a2e46ab8cb8eafbf5f5e, type: 3}
       propertyPath: m_Name
       value: DebugSystem
+      objectReference: {fileID: 0}
+    - target: {fileID: 11452418, guid: 67117722a812a2e46ab8cb8eafbf5f5e, type: 3}
+      propertyPath: autoFocusOnCommandInputField
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 22426080, guid: 67117722a812a2e46ab8cb8eafbf5f5e, type: 3}
       propertyPath: m_AnchorMax.x

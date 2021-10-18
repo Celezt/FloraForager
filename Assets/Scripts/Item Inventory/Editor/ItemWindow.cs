@@ -68,6 +68,9 @@ public class ItemWindow : OdinMenuEditorWindow
 
     protected override void OnBeginDrawEditors()
     {
+        if (MenuTree == null)
+            return;
+
         OdinMenuTreeSelection selected = MenuTree.Selection;
         ItemType asset = selected.SelectedValue as ItemType;
 

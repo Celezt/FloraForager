@@ -56,7 +56,7 @@ public class DialogueManager : MonoBehaviour
     /// </summary>
     /// <param name="playerIndex">Index.</param>
     /// <returns>Dialogue Manager.</returns>
-    public static DialogueManager GetDialogueByIndex(int playerIndex) => _dialogues[playerIndex];
+    public static DialogueManager GetByIndex(int playerIndex) => _dialogues[playerIndex];
 
     public float GetAutoTextSpeedMultiplier(int layer) => _speedMultiplierHierarchy[layer];
 
@@ -224,9 +224,9 @@ public class DialogueManager : MonoBehaviour
     {
         _dialogues.Add(_playerIndex, this);
 
-        DebugLogConsole.AddCommandInstance("dialogue_cancel", "Cancel current dialogue", nameof(CancelDialogue), this);
-        DebugLogConsole.AddCommandInstance("dialogue_start", "Start dialogue", nameof(StartDialogueConsole), this);
-        DebugLogConsole.AddCommandInstance("dialogue_speed", "Sets auto text speed", nameof(SetAutoTextSpeedConsole), this);
+        DebugLogConsole.AddCommandInstance("dialogue.cancel", "Cancel current dialogue", nameof(CancelDialogue), this);
+        DebugLogConsole.AddCommandInstance("dialogue.start", "Start dialogue", nameof(StartDialogueConsole), this);
+        DebugLogConsole.AddCommandInstance("dialogue.speed", "Sets auto text speed", nameof(SetAutoTextSpeedConsole), this);
 
         _dialogueUI.SetActive(false);
 
@@ -235,6 +235,11 @@ public class DialogueManager : MonoBehaviour
             DialogueUtility.LoadAliases(_aliasLabel, _aliases);
             _initializedTags = true;
         }
+    }
+
+    private void OnDestroy()
+    {
+        _dialogues.Remove(_playerIndex);
     }
 
     private void StartDialogueConsole(string address, params string[] aliases) => StartDialogue(address, aliases);

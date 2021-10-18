@@ -12,12 +12,80 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e13bdbfc4f9cfa641af6b820a6e35066, type: 3}
   m_Name: flora_00
   m_EditorClassIdentifier: 
-  _Name: variant
-  _Description: this is a variant
-  _Rewards:
-  - ItemID: seed
-    Amount: 5
-  _GrowTime: 1
-  _Stages:
-  - {fileID: 4799064409479062077, guid: cc8541a068e3bf14bb1c99c0a5ac77cb, type: 3}
-  - {fileID: 7216889357112173167, guid: 5bbdaa00335016e4ab38d9fbb501593f, type: 3}
+  serializationData:
+    SerializedFormat: 2
+    SerializedBytes: 
+    ReferencedUnityObjects:
+    - {fileID: 4799064409479062077, guid: cc8541a068e3bf14bb1c99c0a5ac77cb, type: 3}
+    - {fileID: 7216889357112173167, guid: 5bbdaa00335016e4ab38d9fbb501593f, type: 3}
+    SerializedBytesString: 
+    Prefab: {fileID: 0}
+    PrefabModificationsReferencedUnityObjects: []
+    PrefabModifications: []
+    SerializationNodes:
+    - Name: _Name
+      Entry: 1
+      Data: variant
+    - Name: _Description
+      Entry: 1
+      Data: this is a variant
+    - Name: _HarvestMethod
+      Entry: 7
+      Data: 0|HarvestPluck, Assembly-CSharp
+    - Name: _PluckFromAll
+      Entry: 5
+      Data: false
+    - Name: _PluckAmount
+      Entry: 3
+      Data: 1
+    - Name: OnEmptied
+      Entry: 6
+      Data: 
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: _Rewards
+      Entry: 7
+      Data: 1|RewardPair[], Assembly-CSharp
+    - Name: 
+      Entry: 12
+      Data: 1
+    - Name: 
+      Entry: 7
+      Data: RewardPair, Assembly-CSharp
+    - Name: ItemID
+      Entry: 1
+      Data: pepsi
+    - Name: Amount
+      Entry: 3
+      Data: 5
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: 
+      Entry: 13
+      Data: 
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: _GrowTime
+      Entry: 3
+      Data: 1
+    - Name: _Stages
+      Entry: 7
+      Data: 2|UnityEngine.GameObject[], UnityEngine.CoreModule
+    - Name: 
+      Entry: 12
+      Data: 2
+    - Name: 
+      Entry: 10
+      Data: 0
+    - Name: 
+      Entry: 10
+      Data: 1
+    - Name: 
+      Entry: 13
+      Data: 
+    - Name: 
+      Entry: 8
+      Data: 

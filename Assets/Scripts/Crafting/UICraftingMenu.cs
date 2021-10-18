@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using UnityEngine.InputSystem;
 using MyBox;
 
 public class UICraftingMenu : Singleton<UICraftingMenu>
@@ -11,7 +12,8 @@ public class UICraftingMenu : Singleton<UICraftingMenu>
 
     [SerializeField] private GameObject _Description;
     [SerializeField] private Image _DescriptionImage;
-    [SerializeField] private Text _DescriptionText;
+    [SerializeField] private Text _ItemNameText;
+    [SerializeField] private Text _ResourceReqsText;
 
     private List<GameObject> _CraftableItemObjects;
 
@@ -50,19 +52,21 @@ public class UICraftingMenu : Singleton<UICraftingMenu>
         if (_SelectedItem == null || !CanCraft(_SelectedItem))
             return;
 
-        string itemID = string.Empty;
+        InventoryObject inventory = PlayerInput.GetPlayerByIndex(0).GetComponent<PlayerInfo>().Inventory;
 
-        foreach (ResourceRequirement<string, int> resReq in _SelectedItem.ResourceReqs)
+        foreach (ResourceRequirement resReq in _SelectedItem.ResourceReqs)
         {
-            itemID = resReq.ItemID;
+            string itemID = resReq.ItemID;
             int amount = resReq.Amount;
 
-            // remove amount of items from itemID
+            inventory.Remove(itemID, amount);
         }
 
-        itemID = _SelectedItem.ItemID; // add this item to player's inventory
-
-
+        inventory.AddItem(new ItemAsset
+        {
+            ID = _SelectedItem.ItemID,
+            Amount = 1
+        });
     }
 
     public void ShowCraftableItems(Workbench workbench)
@@ -104,24 +108,19 @@ public class UICraftingMenu : Singleton<UICraftingMenu>
         _SelectedItem = craftableItem;
 
         string resReqs = string.Empty;
-        foreach  (ResourceRequirement<string, int> resReq in craftableItem.ResourceReqs)
+        for (int i = 0; i < craftableItem.ResourceReqs.Length; ++i)
         {
-            resReqs += resReq.Amount + " " + resReq.ItemID;
+            ResourceRequirement resReq = craftableItem.ResourceReqs[i];
 
-            int last = (craftableItem.ResourceReqs.Length - 1);
+            resReqs += resReq.Amount + " " + ItemTypeSettings.Instance.ItemNameChunk[resReq.ItemID];
 
-            string id0 = resReq.ItemID;
-            string id1 = craftableItem.ResourceReqs[last].ItemID;
-
-            int am0 = resReq.Amount;
-            int am1 = craftableItem.ResourceReqs[last].Amount;
-
-            if (id0 != id1 && am0 != am1)
+            if (i != (craftableItem.ResourceReqs.Length - 1))
                 resReqs += "\n";
         }
 
-        _DescriptionText.text = resReqs;
-        _DescriptionImage.sprite = craftableItem.Sprite;
+        _ItemNameText.text = ItemTypeSettings.Instance.ItemNameChunk[craftableItem.ItemID];
+        _ResourceReqsText.text = resReqs;
+        _DescriptionImage.sprite = ItemTypeSettings.Instance.ItemIconChunk[craftableItem.ItemID];
     }
 
     public void Open()
@@ -132,6 +131,8 @@ public class UICraftingMenu : Singleton<UICraftingMenu>
 
     public void Exit()
     {
+        _Workbench = null;
+
         _CanvasGroup.alpha = 0.0f;
         _CanvasGroup.blocksRaycasts = false;
 
@@ -140,14 +141,15 @@ public class UICraftingMenu : Singleton<UICraftingMenu>
 
     public bool CanCraft(CraftableItem craftableItem)
     {
-        // check player's inventory 
+        InventoryObject inventory = PlayerInput.GetPlayerByIndex(0).GetComponent<PlayerInfo>().Inventory;
 
-        foreach (ResourceRequirement<string, int> resReq in craftableItem.ResourceReqs)
+        foreach (ResourceRequirement resReq in craftableItem.ResourceReqs)
         {
             string itemID = resReq.ItemID;
             int amount = resReq.Amount;
 
-            // check inventory if it contains amount of itemID, if not return false
+            if (!inventory.FindEnough(itemID, amount))
+                return false;
         }
 
         return true;

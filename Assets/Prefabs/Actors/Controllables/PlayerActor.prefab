@@ -17,6 +17,8 @@ GameObject:
   - component: {fileID: 2616486780325099183}
   - component: {fileID: 6098485419816427265}
   - component: {fileID: 2280982920848057557}
+  - component: {fileID: 7641041535583446093}
+  - component: {fileID: 6333730084197885922}
   m_Layer: 0
   m_Name: PlayerActor
   m_TagString: Untagged
@@ -156,27 +158,151 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
+      - m_Target: {fileID: 2280982920848057557}
+        m_TargetAssemblyTypeName: UseBehaviour, Assembly-CSharp
+        m_MethodName: ControlsChangedEvent
+        m_Mode: 0
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
   m_ActionEvents:
   - m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 2616486780325099183}
+        m_TargetAssemblyTypeName: PlayerMovement, Assembly-CSharp
+        m_MethodName: OnMove
+        m_Mode: 0
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
     m_ActionId: becf28c3-836b-4e02-a26f-3f5a5e7ea584
     m_ActionName: Ground/Move[/Keyboard/w,/Keyboard/s,/Keyboard/a,/Keyboard/d,/DualShock4GamepadHID/leftStick]
   - m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 2616486780325099183}
+        m_TargetAssemblyTypeName: PlayerMovement, Assembly-CSharp
+        m_MethodName: OnRun
+        m_Mode: 0
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
     m_ActionId: 2c946915-6922-440d-ab6f-486e6eb12450
     m_ActionName: Ground/Run[/Keyboard/shift,/DualShock4GamepadHID/leftStickPress]
   - m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 2280982920848057557}
+        m_TargetAssemblyTypeName: UseBehaviour, Assembly-CSharp
+        m_MethodName: OnUse
+        m_Mode: 0
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
     m_ActionId: da351995-88b3-43e3-9b6f-7f0e620987fc
     m_ActionName: Ground/LeftClick[/Mouse/leftButton]
   - m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 6098485419816427265}
+        m_TargetAssemblyTypeName: InteractBehaviour, Assembly-CSharp
+        m_MethodName: OnInteract
+        m_Mode: 0
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
     m_ActionId: 30f89829-79d7-4865-8e75-c3adfcc1f816
     m_ActionName: Ground/RightClick[/Mouse/rightButton]
   - m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 6098485419816427265}
+        m_TargetAssemblyTypeName: InteractBehaviour, Assembly-CSharp
+        m_MethodName: OnCursor
+        m_Mode: 0
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
     m_ActionId: 3a0176d8-2b2b-4001-a828-fb901964c5da
     m_ActionName: Ground/Cursor[/Mouse/position]
+  - m_PersistentCalls:
+      m_Calls: []
+    m_ActionId: df7bab96-1949-484f-a018-7206483fba4a
+    m_ActionName: Ground/Inventory[/Keyboard/e]
+  - m_PersistentCalls:
+      m_Calls: []
+    m_ActionId: bb111f06-1961-4f94-a2be-8a97dec5aab0
+    m_ActionName: Ground/CommissionLog[/Keyboard/c]
+  - m_PersistentCalls:
+      m_Calls: []
+    m_ActionId: 869d4ea3-7a43-428a-b480-496a98c690a7
+    m_ActionName: Fishing/Drag[/Mouse/leftButton]
+  - m_PersistentCalls:
+      m_Calls: []
+    m_ActionId: c534ecaa-d991-416f-b01e-643fe736cd93
+    m_ActionName: UI/Navigate
+  - m_PersistentCalls:
+      m_Calls: []
+    m_ActionId: 97c6cb24-c410-4526-a325-015c12000104
+    m_ActionName: UI/Submit[/Keyboard/enter]
+  - m_PersistentCalls:
+      m_Calls: []
+    m_ActionId: eca8cb5e-399a-4c56-bc74-9b81d7818f76
+    m_ActionName: UI/Cancel[/Keyboard/escape]
+  - m_PersistentCalls:
+      m_Calls: []
+    m_ActionId: 94f8c1f9-89fb-493a-8cf0-2fd03a56e287
+    m_ActionName: UI/Point[/Mouse/position,/Pen/position]
+  - m_PersistentCalls:
+      m_Calls: []
+    m_ActionId: 1ba9985c-1634-4b45-a284-0cad46baaa79
+    m_ActionName: UI/Click[/Mouse/leftButton,/Pen/tip]
+  - m_PersistentCalls:
+      m_Calls: []
+    m_ActionId: c6ec4f09-4166-45f3-af5f-a1fd104febe5
+    m_ActionName: UI/ScrollWheel[/Mouse/scroll]
+  - m_PersistentCalls:
+      m_Calls: []
+    m_ActionId: 11a6197e-6b4c-4c48-9b9b-57bc5486be06
+    m_ActionName: UI/MiddleClick[/Mouse/middleButton]
+  - m_PersistentCalls:
+      m_Calls: []
+    m_ActionId: df8d22ca-4291-4731-ae66-5952f0c88ff4
+    m_ActionName: UI/RightClick[/Mouse/rightButton]
+  - m_PersistentCalls:
+      m_Calls: []
+    m_ActionId: da20cc70-badc-4cfd-8675-a577e804d6a5
+    m_ActionName: UI/TrackedDevicePosition
+  - m_PersistentCalls:
+      m_Calls: []
+    m_ActionId: 06d57aed-87b1-4873-81a4-da8abb92da6c
+    m_ActionName: UI/TrackedDeviceOrientation
   m_NeverAutoSwitchControlSchemes: 0
   m_DefaultControlScheme: 
   m_DefaultActionMap: Ground
@@ -195,6 +321,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _rigidbody: {fileID: 2699139005166002770}
+  _collider: {fileID: 8143937787667907710}
   _pivotMode: 0
   _camera: {fileID: 0}
   _pivot: {fileID: 0}
@@ -204,9 +331,11 @@ MonoBehaviour:
   _angularDrag: 12
   _groundLayer:
     serializedVersion: 2
-    m_Bits: 64
-  _groundCheckDistance: 2
+    m_Bits: 1
+  _groundCheckDistance: 1.5
   _maxSlopeAngle: 45
+  _groundPhysicMaterial: {fileID: 13400000, guid: a4767b41799feac47b7800098935937b, type: 2}
+  _fallPhysicMaterial: {fileID: 13400000, guid: 9bfea5fa8573a434bb6cdd09d5eecab7, type: 2}
 --- !u!114 &6098485419816427265
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -222,7 +351,7 @@ MonoBehaviour:
   _radius: 4
   _interactableLayers:
     serializedVersion: 2
-    m_Bits: 249
+    m_Bits: 185
 --- !u!114 &2280982920848057557
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -235,6 +364,41 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8c475b4449161c84f886e2cb2aec01b8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _playerInfo: {fileID: 6333730084197885922}
+--- !u!114 &7641041535583446093
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1114366716177447940}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 693ae75940fef8c49ae0b265687be59b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _StaminaSlider: {fileID: 0}
+  _MaxStamina: 100
+  _StmWalkingDrain: 0.04
+  _StmRunningDrain: 0.09
+  _StmNightDrain: 7.5
+  OnStaminaDrained:
+    m_PersistentCalls:
+      m_Calls: []
+--- !u!114 &6333730084197885922
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1114366716177447940}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a5242c5c185084c48af25fb662a5a7db, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _inventory: {fileID: 11400000, guid: 33d168e8181e5fd469cf3f018b0c7d5b, type: 2}
+  _playerData: {fileID: 11400000, guid: 8e38f09bfbc2c2f4fade0b50315538de, type: 2}
 --- !u!1 &5178136194200900361
 GameObject:
   m_ObjectHideFlags: 0
@@ -306,7 +470,6 @@ GameObject:
   - component: {fileID: 8035921015659076889}
   - component: {fileID: 2078577158175106976}
   - component: {fileID: 6492024887078394930}
-  - component: {fileID: 5438711644961765380}
   m_Layer: 0
   m_Name: Eyes
   m_TagString: Untagged
@@ -377,16 +540,3 @@ MeshRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_AdditionalVertexStreams: {fileID: 0}
---- !u!65 &5438711644961765380
-BoxCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 6540760501917631855}
-  m_Material: {fileID: 0}
-  m_IsTrigger: 0
-  m_Enabled: 1
-  serializedVersion: 2
-  m_Size: {x: 1, y: 1, z: 1}
-  m_Center: {x: 0, y: 0, z: 0}

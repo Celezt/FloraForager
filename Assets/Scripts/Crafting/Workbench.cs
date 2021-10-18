@@ -6,9 +6,10 @@ using UnityEngine.EventSystems;
 
 public class Workbench : MonoBehaviour, IInteractable
 {
-    [SerializeField] private GameObject _Player;
     [SerializeField] private float _Radius = 3.5f;
     [SerializeField] private CraftableItemData[] _CraftableItemsData;
+
+    private GameObject _Player;
 
     private CraftableItem[] _CraftableItems;
 
@@ -26,7 +27,7 @@ public class Workbench : MonoBehaviour, IInteractable
 
     private void Update()
     {
-        if (UICraftingMenu.Instance.Workbench == null)
+        if (UICraftingMenu.Instance.Workbench == null || _Player == null)
             return;
 
         float distance = Vector3.Distance(transform.position, _Player.transform.position);
@@ -40,6 +41,8 @@ public class Workbench : MonoBehaviour, IInteractable
     {
         if (!context.performed)
             return;
+
+        _Player = PlayerInput.GetPlayerByIndex(context.playerIndex).gameObject;
 
         UICraftingMenu.Instance.ShowCraftableItems(this);
         UICraftingMenu.Instance.Open();
