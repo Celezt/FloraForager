@@ -20,7 +20,7 @@ public class InventoryHandler : MonoBehaviour
         get => _isItemSelectable;
         set => _isItemSelectable = value;
     }
-    public int SlotAmount => _slots.Length;
+    public int SlotLength => _slots.Length;
 
     public event Action OnInventoryInitalizedCallback = delegate { };
 

@@ -27,6 +27,19 @@ public class Inventory : ScriptableObject
     [NonSerialized, ShowInInspector]
     private List<ItemAsset> _items = new List<ItemAsset>(); // Change
 
+    /// <summary>
+    /// Select first existing item.
+    /// </summary>
+    public void SelectFirst()
+    {
+        for (int i = 0; i < _items.Count; i++)
+            if (!string.IsNullOrEmpty(_items[i].ID))
+            {
+                SetSelectedItem(i);
+                break;
+            }
+    }
+
     public void SetSelectedItem(int index) 
     {
         if (string.IsNullOrEmpty(_items[index].ID))

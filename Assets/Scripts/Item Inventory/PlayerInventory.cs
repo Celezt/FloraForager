@@ -24,6 +24,12 @@ public class PlayerInventory : MonoBehaviour
     {
         float value = context.ReadValue<float>();
 
+        if (_isInventoryOpen)
+            return;
+
+        if (value > _hotbarHandler.SlotLength)
+            return;
+
         _inventory.SetSelectedItem((int)(value - 1.0f));
     }
 
@@ -80,6 +86,12 @@ public class PlayerInventory : MonoBehaviour
         _hotbarHandler.OnInventoryInitalizedCallback += () =>
         {
             _inventory.SetSelectedItem(0);
+        };
+
+        _hotbarHandler.Inventory.OnItemMoveCallback += (beforeIndex, afterIndex, beforeItem, afterItem) =>
+        {
+            if (beforeIndex < _hotbarHandler.SlotLength && afterIndex >= _hotbarHandler.SlotLength)
+                _inventory.SelectFirst();
         };
     }
 
