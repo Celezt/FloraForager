@@ -11,6 +11,8 @@ using Newtonsoft.Json;
 public class Inventory : ScriptableObject
 {
     public IReadOnlyList<ItemAsset> Items => _items;
+    public ItemAsset SelectedItem => _selectedItem;
+    public int SelectedIndex => _selectedIndex;
 
     public event Action OnInventoryDestroyCallback = delegate { };
     public event Action<int> OnItemChangeCallback = delegate { };
@@ -20,16 +22,19 @@ public class Inventory : ScriptableObject
     public event Action<int, ItemAsset> OnRemoveItemCallback = delegate { };
     public event Action<int, ItemAsset> OnSelectItemCallback = delegate { };
 
-    public ItemAsset SelectedItem;
+
+    private ItemAsset _selectedItem;
+    private int _selectedIndex = int.MinValue;
 
     [NonSerialized, ShowInInspector]
     public List<ItemAsset> _items = new List<ItemAsset>(); // Change
     public bool IsFull { get; set; }
 
-    public void SetSelectedItem(int position, ItemAsset item) 
+    public void SetSelectedItem(int index, ItemAsset item) 
     {
-        SelectedItem = item;
-        OnSelectItemCallback.Invoke(position, item);
+        _selectedItem = item;
+        _selectedIndex = index;
+        OnSelectItemCallback.Invoke(index, item);
     }
 
     public ItemAsset Get(int index) => _items[index];
@@ -233,6 +238,12 @@ public class Inventory : ScriptableObject
 
     public static void Swap(int firstIndex, int secondIndex, Inventory firstInventory, Inventory secondInventory)
     {
+        // If moving selected item.
+        if (firstIndex == firstInventory._selectedIndex)
+            firstInventory._selectedIndex = secondIndex;
+        else if (secondIndex == secondInventory._selectedIndex)
+            secondInventory._selectedIndex = firstIndex;
+
         ItemAsset holder = firstInventory.Swap(firstIndex, secondInventory.Get(secondIndex));
         secondInventory.Swap(secondIndex, holder);
 

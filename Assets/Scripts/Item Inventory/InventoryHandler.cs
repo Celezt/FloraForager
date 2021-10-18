@@ -15,10 +15,17 @@ public class InventoryHandler : MonoBehaviour
         get => _inventory;
         set => _inventory = value;
     }
+    public bool IsItemSelectable
+    {
+        get => _isItemSelectable;
+        set => _isItemSelectable = value;
+    }
+
+    private ItemSlot[] _slots;
 
     private Inventory _inventory;
 
-    private ItemSlot[] _slots;
+    private bool _isItemSelectable = true;
 
     private void Start()
     {
@@ -56,7 +63,7 @@ public class InventoryHandler : MonoBehaviour
                 else
                     SetEmptyIcon(i);
 
-                _slots[i].Amount.text = _inventory.Items[i].Amount.ToString();
+                _slots[i].Amount.text = _inventory.Items[i].Amount > 0 ? _inventory.Items[i].Amount.ToString() : "";
             }
         };
 
@@ -86,7 +93,7 @@ public class InventoryHandler : MonoBehaviour
                         _slots[i].Name = name;
 
                     _slots[i].Item = items[i];
-                    _slots[i].Amount.text = items[i].Amount.ToString();
+                    _slots[i].Amount.text = _inventory.Items[i].Amount > 0 ? _inventory.Items[i].Amount.ToString() : "";
                 }
             }
         };

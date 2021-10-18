@@ -23,6 +23,8 @@ public class ItemSlot : MonoBehaviour, ISelectHandler
 
     public void OnSelect(BaseEventData eventData)
     {
-        InventoryHandler.Inventory.SetSelectedItem(Index, Item);
+        if (InventoryHandler.IsItemSelectable)                      // If items inside of the handler is selectable.
+            if (InventoryHandler.Inventory.SelectedIndex != Index)  // If not already selected.
+                InventoryHandler.Inventory.SetSelectedItem(Index, Item);
     }
 }

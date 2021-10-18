@@ -34,7 +34,9 @@ public class PlayerInventory : MonoBehaviour
             Debug.LogError("Player inventory was not found");
 
         _inventoryHandler.Inventory = _inventory;
+        _inventoryHandler.IsItemSelectable = false;
         _hotbarHandler.Inventory = _inventory;
+        _hotbarHandler.IsItemSelectable = true;
     }
 
     public void OnEnable()
