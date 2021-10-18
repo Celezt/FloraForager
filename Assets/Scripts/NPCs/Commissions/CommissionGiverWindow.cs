@@ -72,7 +72,7 @@ public class CommissionGiverWindow : Singleton<CommissionGiverWindow>
 
             foreach (Objective objective in commission.Objectives)
             {
-                objective.UpdateAmount(0);
+                objective.UpdateAmount(0, new ItemAsset { });
             }
         }
     }

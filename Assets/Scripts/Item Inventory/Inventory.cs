@@ -14,7 +14,7 @@ public class Inventory : ScriptableObject
     public int SelectedIndex => _selectedIndex;
 
     public event Action OnInventoryDestroyCallback = delegate { };
-    public event Action<int> OnItemChangeCallback = delegate { };
+    public event Action<int, ItemAsset> OnItemChangeCallback = delegate { };
     public event Action<List<ItemAsset>> OnInventoryDeserializeCallback = delegate { };
     public event Action<int, int, ItemAsset, ItemAsset> OnItemMoveCallback = delegate { };
     public event Action<int, ItemAsset> OnAddItemCallback = delegate { };
@@ -97,7 +97,7 @@ public class Inventory : ScriptableObject
 
                 OnAddItemCallback.Invoke(i, itemAsset);
                 _items[foundItems[i].Item1] = itemAsset;
-                OnItemChangeCallback.Invoke(foundItems[i].Item1);
+                OnItemChangeCallback.Invoke(foundItems[i].Item1, itemAsset);
 
                 if (amountToAdd - addAmount < 0)
                     return true;
@@ -115,7 +115,7 @@ public class Inventory : ScriptableObject
 
             OnAddItemCallback.Invoke(newIndex, itemAsset);
             _items[newIndex] = itemAsset;
-            OnItemChangeCallback.Invoke(newIndex);
+            OnItemChangeCallback.Invoke(newIndex, itemAsset);
 
             if (amountToAdd - stack < 0)
                 return true;
@@ -136,7 +136,7 @@ public class Inventory : ScriptableObject
                 itemAsset.Amount -= amount;
                 OnRemoveItemCallback.Invoke(index, itemAsset);
                 _items[index] = itemAsset.Amount > 0 ? itemAsset : new ItemAsset { };
-                OnItemChangeCallback.Invoke(index);
+                OnItemChangeCallback.Invoke(index, itemAsset);
                 return true;
             }
         }
@@ -147,9 +147,10 @@ public class Inventory : ScriptableObject
     {
         if (index < _items.Count)
         {
-            OnRemoveItemCallback.Invoke(index, new ItemAsset { ID = _items[index].ID, Amount = 0});
-            _items[index] = new ItemAsset { };
-            OnItemChangeCallback.Invoke(index);
+            ItemAsset empty = new ItemAsset { };
+            _items[index] = empty;
+            OnRemoveItemCallback.Invoke(index, empty);
+            OnItemChangeCallback.Invoke(index, empty);
             return true;
         }
         return false;
@@ -171,9 +172,9 @@ public class Inventory : ScriptableObject
             {
                 ItemAsset itemAsset = _items[items[i].Item1];
                 itemAsset.Amount -= amountToRemove;
-                OnRemoveItemCallback.Invoke(items[i].Item1, itemAsset);
                 _items[items[i].Item1] = itemAsset;
-                OnItemChangeCallback.Invoke(items[i].Item1);
+                OnRemoveItemCallback.Invoke(items[i].Item1, itemAsset);
+                OnItemChangeCallback.Invoke(items[i].Item1, itemAsset);
             }
         }
     }
@@ -183,9 +184,9 @@ public class Inventory : ScriptableObject
         ItemAsset item = _items[firstIndex];
         _items[firstIndex] = _items[secondIndex];
         _items[secondIndex] = item;
-        OnItemChangeCallback.Invoke(firstIndex);
+        OnItemChangeCallback.Invoke(firstIndex, _items[secondIndex]);
         OnItemMoveCallback.Invoke(secondIndex, firstIndex, item, _items[firstIndex]);
-        OnItemChangeCallback.Invoke(secondIndex);
+        OnItemChangeCallback.Invoke(secondIndex, item);
         OnItemMoveCallback.Invoke(firstIndex, secondIndex, _items[firstIndex], item);
     }
 
@@ -294,7 +295,7 @@ public class Inventory : ScriptableObject
     {
         ItemAsset item = _items[index];
         _items[index] = newItem;
-        OnItemChangeCallback.Invoke(index);
+        OnItemChangeCallback.Invoke(index, newItem);
         return item;
     }
 
@@ -310,6 +311,9 @@ public class Inventory : ScriptableObject
         if (fromItem.ID != toItem.ID)                               // If not the same type.
             return false;
 
+        if (string.IsNullOrEmpty(fromItem.ID))
+            return false;
+
         int stack = (int)ItemTypeSettings.Instance.ItemTypeChunk[fromItem.ID].Behaviour.ItemStack;
 
         if (fromItem.Amount == stack || toItem.Amount == stack)     // If at least one of them are full.
@@ -318,8 +322,8 @@ public class Inventory : ScriptableObject
         if (toItem.Amount + fromItem.Amount <= stack)
         {
             toItem.Amount += fromItem.Amount;
-
-            fromInventory._items[fromIndex] = new ItemAsset { };
+            fromItem = new ItemAsset { };
+            fromInventory._items[fromIndex] = fromItem;
             toInventory._items[toIndex] = toItem;
 
             fromInventory.OnItemMoveCallback.Invoke(fromIndex, toIndex, fromItem, toItem);
@@ -334,8 +338,8 @@ public class Inventory : ScriptableObject
             toInventory._items[toIndex] = toItem;
         }
 
-        fromInventory.OnItemChangeCallback(fromIndex);
-        toInventory.OnItemChangeCallback(toIndex);
+        fromInventory.OnItemChangeCallback(fromIndex, fromItem);
+        toInventory.OnItemChangeCallback(toIndex, toItem);
 
         return true;
     }

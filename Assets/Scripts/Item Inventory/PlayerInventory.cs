@@ -16,6 +16,8 @@ public class PlayerInventory : MonoBehaviour
     private string _id;
     [SerializeField]
     private float _frameDegreeSpeed = 4-0f;
+    [SerializeField]
+    private Color _selectColor = Color.white;
 
     private List<RectTransform> _hotbarFrameTransforms = new List<RectTransform>();
 
@@ -24,6 +26,7 @@ public class PlayerInventory : MonoBehaviour
 
     private bool _isInventoryOpen;
     private float _frameDegree;
+    private int _selectedIndex;
 
     public void OnHotbar(InputAction.CallbackContext context)
     {
@@ -40,6 +43,9 @@ public class PlayerInventory : MonoBehaviour
 
     public void OnInventory(InputAction.CallbackContext context)
     {
+        if (DebugManager.DebugMode)
+            return; 
+
         _isInventoryOpen = !_isInventoryOpen;
 
         if (_isInventoryOpen)
@@ -88,6 +94,32 @@ public class PlayerInventory : MonoBehaviour
         _hotbarHandler.Inventory = _inventory;
         _hotbarHandler.IsItemSelectable = true;
 
+        void SetColorWithoutTransparency(Color newColor)
+        {
+            Color color = _hotbarHandler.Slots[_selectedIndex].Background.color;
+            color = new Color(newColor.r, newColor.g, newColor.b, color.a);
+            _hotbarHandler.Slots[_selectedIndex].Background.color = color;
+        }
+
+        void HideBackground(int index, ItemAsset item)
+        {
+            if (index < _hotbarHandler.Slots.Count)
+            {
+                if (string.IsNullOrEmpty(item.ID) || item.Amount <= 0)  // Hide background if slot is empty.
+                {
+                    Color color = _hotbarHandler.Slots[index].Background.color;
+                    color.a = 0;
+                    _hotbarHandler.Slots[index].Background.color = color;
+                }
+                else
+                {
+                    Color color = _hotbarHandler.Slots[index].Background.color;
+                    color.a = 1;
+                    _hotbarHandler.Slots[index].Background.color = color;
+                }
+            }
+        }
+
         _hotbarHandler.OnInventoryInitalizedCallback += () =>
         {
             _inventory.SetSelectedItem(0);
@@ -96,10 +128,43 @@ public class PlayerInventory : MonoBehaviour
                 _hotbarFrameTransforms.Add(_hotbarHandler.Slots[i].FrameTransform);
         };
 
-        _hotbarHandler.Inventory.OnItemMoveCallback += (beforeIndex, afterIndex, beforeItem, afterItem) =>
+        _inventory.OnItemMoveCallback += (beforeIndex, afterIndex, beforeItem, afterItem) =>
         {
-            if (beforeIndex < _hotbarHandler.Slots.Count && afterIndex >= _hotbarHandler.Slots.Count)
+            int count = _hotbarHandler.Slots.Count;
+            if (beforeIndex < count && afterIndex >= count)
+            {
                 _inventory.SelectFirst();
+            }
+
+            if (beforeIndex < count && afterIndex < count)
+            {
+                if (beforeIndex == _selectedIndex) // Change selected's color.
+                {
+                    SetColorWithoutTransparency(Color.white);
+                    _selectedIndex = afterIndex;
+                    SetColorWithoutTransparency(_selectColor);
+                }
+            }
+        };
+
+        _inventory.OnSelectItemCallback += (index, item) =>
+        {
+
+            if (_selectedIndex != index)    // Change selected's color.
+                SetColorWithoutTransparency(Color.white);
+
+            _selectedIndex = index;
+            SetColorWithoutTransparency(_selectColor);
+        };
+
+        _inventory.OnRemoveItemCallback += (index, item) =>
+        {
+            HideBackground(index, item);
+        };
+
+        _inventory.OnItemChangeCallback += (index, item) =>
+        {
+            HideBackground(index, item);
         };
     }
 

@@ -57,22 +57,22 @@ public class InventoryHandler : MonoBehaviour
             _slots[index].Amount.text = _inventory.Items[index].Amount > 1 ? _inventory.Items[index].Amount.ToString() : "";
         }
 
-        _inventory.OnItemChangeCallback += (int i) =>
+        _inventory.OnItemChangeCallback += (index, item) =>
         {
-            if (!(i >= _slots.Length))
+            if (!(index >= _slots.Length))
             {
-                _slots[i].Item = _inventory.Items[i];
-                if (!string.IsNullOrEmpty(_slots[i].Item.ID))
+                _slots[index].Item = _inventory.Items[index];
+                if (!string.IsNullOrEmpty(_slots[index].Item.ID))
                 {
-                    if (_settings.ItemIconChunk.TryGetValue(_slots[i].Item.ID, out Sprite sprite))
-                        SetIcon(i, sprite);
+                    if (_settings.ItemIconChunk.TryGetValue(_slots[index].Item.ID, out Sprite sprite))
+                        SetIcon(index, sprite);
                     else
-                        SetEmptyIcon(i);
+                        SetEmptyIcon(index);
                 }
                 else
-                    SetEmptyIcon(i);
+                    SetEmptyIcon(index);
 
-                SetTextAmount(i);
+                SetTextAmount(index);
             }
         };
 

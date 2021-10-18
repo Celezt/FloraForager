@@ -19,7 +19,7 @@ public abstract class Objective
         _Data = data;
     }
 
-    public abstract void UpdateAmount(int pos);
+    public abstract void UpdateAmount(int pos, ItemAsset item);
 }
 
 public class FetchObjective : Objective
@@ -31,7 +31,7 @@ public class FetchObjective : Objective
         _Inventory = PlayerInput.GetPlayerByIndex(0).GetComponent<PlayerInfo>().Inventory;
     }
 
-    public override void UpdateAmount(int pos)
+    public override void UpdateAmount(int pos, ItemAsset item)
     {
         CurrentAmount = _Inventory.FindAmount(ItemID);
 
