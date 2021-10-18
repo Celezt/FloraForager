@@ -7,7 +7,7 @@ using Sirenix.OdinInspector;
 public class SeedItem : IUse, IItem
 {
     [OdinSerialize]
-    public uint ItemStack { get; set; } = 64;
+    public int ItemStack { get; set; } = 64;
     [OdinSerialize]
     public float Cooldown { get; set; } = 2;
 

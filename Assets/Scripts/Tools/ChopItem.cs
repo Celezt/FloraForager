@@ -8,7 +8,7 @@ using UnityEditor;
 public class ChopItem : IItem, IUse, IDestructor
 {
     [OdinSerialize, PropertyOrder(float.MinValue)]
-    uint IItem.ItemStack { get; set; } = 1;
+    int IItem.ItemStack { get; set; } = 1;
     [OdinSerialize, PropertyOrder(float.MinValue + 1)]
     float IUse.Cooldown { get; set; } = 1.0f;
     [OdinSerialize, PropertyOrder(float.MinValue + 2)]

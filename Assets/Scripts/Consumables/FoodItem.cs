@@ -9,7 +9,7 @@ using Sirenix.OdinInspector;
 public class FoodItem : IUse, IItem
 {
     [OdinSerialize, PropertyOrder(-2)]
-    public uint ItemStack { get; set; } = 64;
+    public int ItemStack { get; set; } = 64;
     [OdinSerialize, PropertyOrder(-1)]
     public float Cooldown { get; set; } = 2;
 

@@ -28,11 +28,14 @@ public class InventoryHandler : MonoBehaviour
     private ItemSlot[] _slots;
 
     private Inventory _inventory;
+    ItemTypeSettings _settings;
 
     private bool _isItemSelectable;
 
     private void Start()
     {
+        _settings = ItemTypeSettings.Instance;
+
         void SetEmptyIcon(int index)
         {
             Image icon = _slots[index].Icon;
@@ -49,17 +52,19 @@ public class InventoryHandler : MonoBehaviour
             color.a = 1;
             icon.color = color;
         }
+        void SetTextAmount(int index)
+        {
+            _slots[index].Amount.text = _inventory.Items[index].Amount > 1 ? _inventory.Items[index].Amount.ToString() : "";
+        }
 
         _inventory.OnItemChangeCallback += (int i) =>
         {
-            ItemTypeSettings settings = ItemTypeSettings.Instance;
-
             if (!(i >= _slots.Length))
             {
                 _slots[i].Item = _inventory.Items[i];
                 if (!string.IsNullOrEmpty(_slots[i].Item.ID))
                 {
-                    if (settings.ItemIconChunk.TryGetValue(_slots[i].Item.ID, out Sprite sprite))
+                    if (_settings.ItemIconChunk.TryGetValue(_slots[i].Item.ID, out Sprite sprite))
                         SetIcon(i, sprite);
                     else
                         SetEmptyIcon(i);
@@ -67,14 +72,12 @@ public class InventoryHandler : MonoBehaviour
                 else
                     SetEmptyIcon(i);
 
-                _slots[i].Amount.text = _inventory.Items[i].Amount > 0 ? _inventory.Items[i].Amount.ToString() : "";
+                SetTextAmount(i);
             }
         };
 
         _inventory.OnInventoryDeserializeCallback += (items) =>
         {
-            ItemTypeSettings settings = ItemTypeSettings.Instance;
-
             _slots = GetComponentsInChildren<ItemSlot>();
 
             int currentCount = items.Count;
@@ -88,16 +91,16 @@ public class InventoryHandler : MonoBehaviour
 
                 if (!string.IsNullOrEmpty(items[i].ID))
                 {
-                    if (settings.ItemIconChunk.TryGetValue(items[i].ID, out Sprite sprite))
+                    if (_settings.ItemIconChunk.TryGetValue(items[i].ID, out Sprite sprite))
                         SetIcon(i, sprite);
                     else
                         SetEmptyIcon(i);
 
-                    if (settings.ItemNameChunk.TryGetValue(items[i].ID, out string name))
+                    if (_settings.ItemNameChunk.TryGetValue(items[i].ID, out string name))
                         _slots[i].Name = name;
 
                     _slots[i].Item = items[i];
-                    _slots[i].Amount.text = _inventory.Items[i].Amount > 0 ? _inventory.Items[i].Amount.ToString() : "";
+                    SetTextAmount(i);
                 }
             }
 

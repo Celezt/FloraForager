@@ -13,7 +13,7 @@ public class RodItem : IItem, IUse, IStar, IValue
     public float Bounciness => _bounciness;
 
     [OdinSerialize, PropertyOrder(int.MinValue)]
-    uint IItem.ItemStack { get; set; } = 1;
+    int IItem.ItemStack { get; set; } = 1;
     [OdinSerialize, PropertyOrder(int.MinValue + 1)]
     float IUse.Cooldown { get; set; } = 1;
     [OdinSerialize, PropertyOrder(int.MinValue + 2)]

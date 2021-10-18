@@ -13,6 +13,7 @@ public class ItemSlot : MonoBehaviour, ISelectHandler
     public string Name { get; set; }
     public TextMeshProUGUI Amount => _amount;
     public Image Icon => _icon;
+    public RectTransform FrameTransform => _frameTransform;
 
     [SerializeField]
     private TextMeshProUGUI _amount;
@@ -20,6 +21,8 @@ public class ItemSlot : MonoBehaviour, ISelectHandler
     private TextMeshProUGUI _name;
     [SerializeField]
     private Image _icon;
+    [SerializeField]
+    private RectTransform _frameTransform;
 
     public void OnSelect(BaseEventData eventData)
     {

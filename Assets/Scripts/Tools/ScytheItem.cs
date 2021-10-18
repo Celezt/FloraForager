@@ -11,7 +11,7 @@ using MyBox;
 public class ScytheItem : IUse, IItem, IDestructor
 {
     [OdinSerialize, PropertyOrder(float.MinValue)]
-    public uint ItemStack { get; set; } = 1;
+    public int ItemStack { get; set; } = 1;
     [OdinSerialize, PropertyOrder(float.MinValue + 1)]
     public float Cooldown { get; set; } = 0.5f;
     [OdinSerialize, PropertyOrder(float.MinValue + 2)]

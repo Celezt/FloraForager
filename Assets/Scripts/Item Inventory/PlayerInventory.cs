@@ -14,11 +14,16 @@ public class PlayerInventory : MonoBehaviour
     private InventoryHandler _hotbarHandler;
     [SerializeField]
     private string _id;
+    [SerializeField]
+    private float _frameDegreeSpeed = 4-0f;
 
-    private bool _isInventoryOpen;
+    private List<RectTransform> _hotbarFrameTransforms = new List<RectTransform>();
 
     private PlayerAction _playerAction;
     private Inventory _inventory;
+
+    private bool _isInventoryOpen;
+    private float _frameDegree;
 
     public void OnHotbar(InputAction.CallbackContext context)
     {
@@ -86,6 +91,9 @@ public class PlayerInventory : MonoBehaviour
         _hotbarHandler.OnInventoryInitalizedCallback += () =>
         {
             _inventory.SetSelectedItem(0);
+
+            for (int i = 0; i < _hotbarHandler.Slots.Count; i++)
+                _hotbarFrameTransforms.Add(_hotbarHandler.Slots[i].FrameTransform);
         };
 
         _hotbarHandler.Inventory.OnItemMoveCallback += (beforeIndex, afterIndex, beforeItem, afterItem) =>
@@ -97,7 +105,10 @@ public class PlayerInventory : MonoBehaviour
 
     private void Update()
     {
-        
+        _frameDegree += Time.deltaTime * _frameDegreeSpeed;
+        _frameDegree %= 360;
+        for (int i = 0; i < _hotbarFrameTransforms.Count; i++)
+            _hotbarFrameTransforms[i].rotation = (i % 2 == 0) ? Quaternion.Euler(0, 0, _frameDegree) : Quaternion.Euler(0, 0, -_frameDegree + 45);
     }
 
     private void OnEnable()
