@@ -77,7 +77,7 @@ public class Inventory : ScriptableObject
             {
                 itemAsset.Amount -= amount;
                 OnRemoveItemCallback.Invoke(index, itemAsset);
-                _items[index] = itemAsset;
+                _items[index] = itemAsset.Amount > 0 ? itemAsset : new ItemAsset { };
                 OnItemChangeCallback.Invoke(index);
                 return true;
             }
@@ -90,8 +90,7 @@ public class Inventory : ScriptableObject
         if (index < _items.Count)
         {
             OnRemoveItemCallback.Invoke(index, new ItemAsset { ID = _items[index].ID, Amount = 0});
-            ItemAsset emptyItem = new ItemAsset();
-            _items[index] = emptyItem;
+            _items[index] = new ItemAsset { };
             OnItemChangeCallback.Invoke(index);
             return true;
         }

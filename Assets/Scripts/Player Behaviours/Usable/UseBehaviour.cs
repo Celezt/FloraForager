@@ -31,6 +31,14 @@ public class UseBehaviour : MonoBehaviour
         _playerInfo.Inventory.RemoveAt(_slotIndex, amount);
     }
 
+    public void Unequip()
+    {
+        _itemType?.Behaviour?.OnUnequip(_itemContext);  // Unequip current item.
+        _use = null;
+        _itemType = null;
+        OnDrawGizmosAction = null;
+    }
+
     public void OnUse(InputAction.CallbackContext context)
     {
         if (CanvasUtility.IsPointerOverUIElement()) // Skip if pointing over a UI element.
@@ -105,10 +113,7 @@ public class UseBehaviour : MonoBehaviour
 
         _playerInfo.Inventory.OnSelectItemCallback += (index, item) =>
         {
-            _itemType?.Behaviour?.OnUnequip(_itemContext);  // Unequip current item.
-            _use = null;
-            _itemType = null;
-            OnDrawGizmosAction = null;
+            Unequip();
 
             if (string.IsNullOrEmpty(item.ID) || !ItemTypeSettings.Instance.ItemTypeChunk.ContainsKey(item.ID))
                 return;
@@ -141,7 +146,12 @@ public class UseBehaviour : MonoBehaviour
                 _cooldowns.Remove(index);
 
             if (index == _slotIndex)
-                _amount = item.Amount;
+            {
+                if (item.Amount > 0)    //  Update amount if not empty.
+                    _amount = item.Amount;
+                else
+                    Unequip();
+            }
         };
     }
 

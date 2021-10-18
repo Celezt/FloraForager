@@ -9,7 +9,6 @@ public struct SpeedEffect : IEffect
     public Duration Duration { get; set; }
 
     public float SpeedMultiplier;
-    [Min(0)]
     public float Time;
 
     void IEffect.OnEffect(UseContext context)
