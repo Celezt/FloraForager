@@ -20,7 +20,46 @@ public class PlayerInventory : MonoBehaviour
     private PlayerAction _playerAction;
     private Inventory _inventory;
 
-    public void Awake()
+    public void OnHotbar(InputAction.CallbackContext context)
+    {
+        float value = context.ReadValue<float>();
+
+        _inventory.SetSelectedItem((int)(value - 1.0f));
+    }
+
+    public void OnInventory(InputAction.CallbackContext context)
+    {
+        _isInventoryOpen = !_isInventoryOpen;
+
+        if (_isInventoryOpen)
+        {
+            Show(_inventoryHandler.GetComponent<CanvasGroup>());
+            Hide(_hotbarHandler.GetComponent<CanvasGroup>());
+            Time.timeScale = 0;
+        }
+        else
+        {
+            Show(_hotbarHandler.GetComponent<CanvasGroup>());
+            Hide(_inventoryHandler.GetComponent<CanvasGroup>());
+            Time.timeScale = 1;
+        }
+    }
+
+    public void Hide(CanvasGroup canvasGroup)
+    {
+        canvasGroup.alpha = 0f;
+        canvasGroup.interactable = false;
+        canvasGroup.blocksRaycasts = false;
+    }
+
+    public void Show(CanvasGroup canvasGroup)
+    {
+        canvasGroup.interactable = true;
+        canvasGroup.alpha = 1f;
+        canvasGroup.blocksRaycasts = true;
+    }
+
+    private void Awake()
     {
         _playerAction = new PlayerAction();
     }
@@ -44,48 +83,17 @@ public class PlayerInventory : MonoBehaviour
         };
     }
 
-    public void OnEnable()
+    private void OnEnable()
     {
         _playerAction.Enable();
         _playerAction.Ground.Inventory.started += OnInventory;
+        _playerAction.Ground.Hotbar.started += OnHotbar;
     }
 
-    public void OnDisable()
+    private void OnDisable()
     {
         _playerAction.Disable();
         _playerAction.Ground.Inventory.started -= OnInventory;
-    }
-
-    public void OnInventory(InputAction.CallbackContext context) 
-    {
-        _isInventoryOpen = !_isInventoryOpen;
-
-        if (_isInventoryOpen)
-        {
-            Show(_inventoryHandler.GetComponent<CanvasGroup>());
-            Hide(_hotbarHandler.GetComponent<CanvasGroup>());
-            Time.timeScale = 0;
-        }
-        else
-        {
-            Show(_hotbarHandler.GetComponent<CanvasGroup>());
-            Hide(_inventoryHandler.GetComponent<CanvasGroup>());
-            Time.timeScale = 1;
-        }
-
-    }
-
-    public void Hide(CanvasGroup canvasGroup) 
-    {
-        canvasGroup.alpha = 0f;
-        canvasGroup.interactable = false;
-        canvasGroup.blocksRaycasts = false;
-    }
-
-    public void Show(CanvasGroup canvasGroup) 
-    {
-        canvasGroup.interactable = true;
-        canvasGroup.alpha = 1f;
-        canvasGroup.blocksRaycasts = true;
+        _playerAction.Ground.Hotbar.started -= OnHotbar;
     }
 }

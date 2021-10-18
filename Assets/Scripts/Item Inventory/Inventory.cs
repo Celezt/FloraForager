@@ -25,7 +25,7 @@ public class Inventory : ScriptableObject
     private int _selectedIndex = int.MinValue;
 
     [NonSerialized, ShowInInspector]
-    public List<ItemAsset> _items = new List<ItemAsset>(); // Change
+    private List<ItemAsset> _items = new List<ItemAsset>(); // Change
 
     public void SetSelectedItem(int index) 
     {
@@ -285,6 +285,51 @@ public class Inventory : ScriptableObject
         return item;
     }
 
+    /// <summary>
+    /// Merger two items of the same type.
+    /// </summary>
+    /// <returns>If same type.</returns>
+    public static bool Merge(int fromIndex, int toIndex, Inventory fromInventory, Inventory toInventory)
+    {
+        ItemAsset fromItem = fromInventory._items[fromIndex];
+        ItemAsset toItem = toInventory._items[toIndex];
+
+        if (fromItem.ID != toItem.ID)                               // If not the same type.
+            return false;
+
+        int stack = (int)ItemTypeSettings.Instance.ItemTypeChunk[fromItem.ID].Behaviour.ItemStack;
+
+        if (fromItem.Amount == stack || toItem.Amount == stack)     // If at least one of them are full.
+            return false;
+
+        if (toItem.Amount + fromItem.Amount <= stack)
+        {
+            toItem.Amount += fromItem.Amount;
+
+            fromInventory._items[fromIndex] = new ItemAsset { };
+            toInventory._items[toIndex] = toItem;
+
+            fromInventory.OnItemMoveCallback.Invoke(fromIndex, toIndex, fromItem, toItem);
+        }
+        else
+        {
+            int emptyAmount = stack - toItem.Amount;
+            toItem.Amount = stack;
+            fromItem.Amount -= emptyAmount;
+
+            fromInventory._items[fromIndex] = fromItem;
+            toInventory._items[toIndex] = toItem;
+        }
+
+        fromInventory.OnItemChangeCallback(fromIndex);
+        toInventory.OnItemChangeCallback(toIndex);
+
+        return true;
+    }
+
+    /// <summary>
+    /// Swap two items index.
+    /// </summary>
     public static void Swap(int firstIndex, int secondIndex, Inventory firstInventory, Inventory secondInventory)
     {
         // If moving selected item.

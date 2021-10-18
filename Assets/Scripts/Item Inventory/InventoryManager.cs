@@ -55,7 +55,8 @@ public class InventoryManager : MonoBehaviour, IDropHandler
                             Inventory firstInventory = firstHolder.InventoryHandler.Inventory;
                             Inventory secondInventory = secondHolder.InventoryHandler.Inventory;
 
-                            Inventory.Swap(firstHolder.Index, secondHolder.Index, firstInventory, secondInventory);
+                            if (!Inventory.Merge(secondHolder.Index, firstHolder.Index, secondInventory, firstInventory)) // If items is not mergeable.
+                                Inventory.Swap(firstHolder.Index, secondHolder.Index, firstInventory, secondInventory);
                         }
                     }
                 }
