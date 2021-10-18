@@ -40,7 +40,7 @@ public class PlayerInventory : MonoBehaviour
 
         _hotbarHandler.OnInventoryInitalizedCallback += () =>
         {
-            _hotbarHandler.Inventory.SetSelectedItem(0);
+            _inventory.SetSelectedItem(0);
         };
     }
 

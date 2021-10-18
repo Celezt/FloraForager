@@ -1,4 +1,3 @@
-using MyBox;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -27,7 +26,6 @@ public class Inventory : ScriptableObject
 
     [NonSerialized, ShowInInspector]
     public List<ItemAsset> _items = new List<ItemAsset>(); // Change
-    public bool IsFull { get; set; }
 
     public void SetSelectedItem(int index) 
     {
@@ -40,33 +38,78 @@ public class Inventory : ScriptableObject
     }
 
     public ItemAsset Get(int index) => _items[index];
+
+    /// <summary>
+    /// Inserts first in existing Indices until full. After that, starts filling in new Indices. Abort the insert if there is not enough space.
+    /// </summary>
+    /// <returns>If inventory is full.</returns>
+    public bool Insert(string id, int amount) => Insert(new ItemAsset { ID = id, Amount = amount });
+    /// <summary>
+    /// Inserts first in existing Indices until full. After that, starts filling in new Indices. Abort the insert if there is not enough space.
+    /// </summary>
+    /// <returns>If inventory is full.</returns>
     public bool Insert(ItemAsset item)
     {
-        if (!IsFull)
-        {
-            int pos = ExistsAt(item.ID);
-            if (pos != -1) // It exists
-            {
-                ItemAsset tmp = _items[pos];
-                // Check if new amount > max amount
-                tmp.Amount += item.Amount;
-                _items[pos] = tmp;
-                OnAddItemCallback.Invoke(pos,tmp);
-                OnItemChangeCallback.Invoke(pos);
-            }
-            else
-            {
-                int tmp = FindFirstEmptySlot();
-                _items[tmp] = item;
-                OnAddItemCallback.Invoke(tmp,item);
-                OnItemChangeCallback.Invoke(tmp);
-            }
-            return true;
-        }
-        else
-        {
+        if (FindEmptySpace(item.ID) < item.Amount)     // If not enough space to fill.
+            return false;
 
+        return InsertUntilFull(item);
+    }
+    /// <summary>
+    /// Inserts first in existing Indices until full. After that, starts filling in new Indices. Does it until it is done or the
+    /// inventory is full.
+    /// </summary>
+    /// <returns>If inventory is full.</returns>
+    public bool InsertUntilFull(string id, int amount) => InsertUntilFull(new ItemAsset { ID = id, Amount = amount });
+    /// <summary>
+    /// Inserts first in existing Indices until full. After that, starts filling in new Indices. Does it until it is done or the
+    /// inventory is full.
+    /// </summary>
+    /// <returns>If inventory is full.</returns>
+    public bool InsertUntilFull(ItemAsset item)
+    {
+        int amountToAdd = item.Amount;
+        int stack = (int)ItemTypeSettings.Instance.ItemTypeChunk[item.ID].Behaviour.ItemStack;
+
+        {
+            List<(int, int)> foundItems = FindAll(item.ID);
+
+            // Fill existing locations.
+            for (int i = 0; i < foundItems.Count; i++)
+            {
+                int addAmount = Mathf.Clamp(stack - foundItems[i].Item2, 0, stack);
+
+                ItemAsset itemAsset = _items[foundItems[i].Item1];
+                itemAsset.Amount += Mathf.Clamp(addAmount, 0, amountToAdd);
+
+                OnAddItemCallback.Invoke(i, itemAsset);
+                _items[foundItems[i].Item1] = itemAsset;
+                OnItemChangeCallback.Invoke(foundItems[i].Item1);
+
+                if (amountToAdd - addAmount < 0)
+                    return true;
+                else
+                    amountToAdd -= addAmount;
+            }
         }
+
+        // Fill new locations.
+        while (FindFirstEmptySlot(out int newIndex))
+        {
+            ItemAsset itemAsset = _items[newIndex];
+            itemAsset.ID = item.ID;
+            itemAsset.Amount = Mathf.Clamp(stack, 0, amountToAdd);
+
+            OnAddItemCallback.Invoke(newIndex, itemAsset);
+            _items[newIndex] = itemAsset;
+            OnItemChangeCallback.Invoke(newIndex);
+
+            if (amountToAdd - stack < 0)
+                return true;
+            else
+                amountToAdd -= stack;
+        }
+
         return false;
     }
 
@@ -133,38 +176,26 @@ public class Inventory : ScriptableObject
         OnItemMoveCallback.Invoke(firstIndex, secondIndex, _items[firstIndex], item);
     }
 
-    public int ExistsAt(string id) 
+    /// <summary>
+    /// Find all instances of that type.
+    /// </summary>
+    /// <returns>(index, amount)</returns>
+    public List<(int,int)> FindAll(string id)
     {
+        List<(int, int)> found = new List<(int, int)>();
         for (int i = 0; i < _items.Count; i++)
         {
-            if (!_items[i].ID.IsNullOrEmpty())
-            {
-                if (_items[i].ID == id)
-                {
-                    return i;
-                }
-            }
+            if (!string.IsNullOrEmpty(_items[i].ID) && _items[i].ID == id)
+                found.Add((i, _items[i].Amount));
         }
-        return -1;
+        return found;
     }
-    public List<(int,int)> FindAll(string ID) // pos, amount
-    {
-        List<(int, int)> tmp = new List<(int, int)>();
-        for (int i = 0; i < _items.Count; i++)
-        {
-            if (_items[i].ID != null && _items[i].ID == ID)
-            {
-                tmp.Add((i, _items[i].Amount));
-            }
-        }
-        return tmp;
 
-    }
     public bool Find(string id) 
     {
         for (int i = 0; i < _items.Count; i++)
         {
-            if (!_items[i].ID.IsNullOrEmpty())
+            if (!string.IsNullOrEmpty(_items[i].ID))
             {
                 if (_items[i].ID == id)
                 {
@@ -174,32 +205,49 @@ public class Inventory : ScriptableObject
         }
         return false;
     }
+
     public int FindAmount(string id) 
     {
-        int tmp = 0;
+        int amount = 0;
         for (int i = 0; i < _items.Count; i++)
         {
-            if (_items[i].ID != null && _items[i].ID == id)
-            {
-                tmp += _items[i].Amount;
-            }
+            if (!string.IsNullOrEmpty(_items[i].ID) && _items[i].ID == id)
+                amount += _items[i].Amount;
         }
-        return tmp;
+        return amount;
     }
-    public bool FindEnough(string id, int amount) 
-    {        
-        return amount <= FindAmount(id);
-    }
-    public int FindFirstEmptySlot() 
+
+    /// <summary>
+    /// Find amount of potential space left to fill of that type.
+    /// </summary>
+    public int FindEmptySpace(string id)
     {
+        int stack = (int)ItemTypeSettings.Instance.ItemTypeChunk[id].Behaviour.ItemStack;
+        int amountLeft = 0;
         for (int i = 0; i < _items.Count; i++)
         {
-            if (!_items[i].ID.IsNullOrEmpty())
-            {
-                return i;
-            }
+            if (string.IsNullOrEmpty(_items[i].ID))     // Empty space.
+                amountLeft += stack;
+            else if (_items[i].ID == id)                // Existing amount that can be filled.
+                amountLeft += Mathf.Clamp(stack - _items[i].Amount, 0, stack);
         }
-        return -1;
+        return amountLeft;
+    }
+
+    /// <summary>
+    /// Find enough of that type.
+    /// </summary>
+    public bool FindEnough(string id, int amount) => amount <= FindAmount(id);
+
+    public bool FindFirstEmptySlot(out int index) 
+    {
+        for (index = 0; index < _items.Count; index++)
+        {
+            if (string.IsNullOrEmpty(_items[index].ID))
+                return true;
+        }
+
+        return false;
     }
 
     private void Deserialize()
