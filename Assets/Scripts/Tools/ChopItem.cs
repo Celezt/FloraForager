@@ -51,10 +51,16 @@ public class ChopItem : IItem, IUse, IDestructor
     {
         if (!context.started)
             yield break;
-
+        
         Collider[] colliders = Physics.OverlapBox(context.transform.position + context.transform.rotation * _centerOffset, _halfExtents, context.transform.rotation, LayerMask.NameToLayer("default"));
+        List<Collider> usableColliders = new List<Collider>(colliders.Length);
+
         for (int i = 0; i < colliders.Length; i++)
-            if (colliders[i].TryGetComponent(out IUsable usable))
-                yield return usable;
+            if (colliders[i].TryGetComponent(out IUsable _))   // Only call one usable.
+                usableColliders.Add(colliders[i]);
+        
+        Collider collider = new KdTree<Collider>(usableColliders).FindClosest(context.transform.position);
+
+        yield return collider.GetComponent<IUsable>();
     }
 }
