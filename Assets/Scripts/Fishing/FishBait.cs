@@ -10,6 +10,11 @@ public class FishBait : IItem, IBait
     [OdinSerialize]
     float IBait.Efficiency { get; set; } = 5;
 
+    void IItem.OnInitialize(ItemTypeContext context)
+    {
+
+    }
+
     void IItem.OnEquip(ItemContext context)
     {
         

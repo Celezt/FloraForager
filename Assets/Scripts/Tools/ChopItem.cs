@@ -21,6 +21,11 @@ public class ChopItem : IItem, IUse, IDestructor
     [SerializeField]
     private Vector3 _centerOffset = new Vector3(0, 0, 1f);
 
+    void IItem.OnInitialize(ItemTypeContext context)
+    {
+
+    }
+
     void IItem.OnEquip(ItemContext context)
     {
 #if UNITY_EDITOR

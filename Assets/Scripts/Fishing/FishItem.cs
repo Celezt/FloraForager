@@ -45,6 +45,11 @@ public class FishItem : IItem, IStar, IValue
     private static AnimationCurve CustomAddIdlePatterns() => AnimationCurve.Constant(0, 1, 0);
     private static AnimationCurve CustomAddDownPatterns() => AnimationCurve.EaseInOut(0, 0, 1, -1);
 
+    void IItem.OnInitialize(ItemTypeContext context)
+    {
+
+    }
+
     void IItem.OnEquip(ItemContext context)
     {
         

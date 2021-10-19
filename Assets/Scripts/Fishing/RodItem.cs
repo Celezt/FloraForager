@@ -33,6 +33,11 @@ public class RodItem : IItem, IUse, IStar, IValue
     [SerializeField]
     private float _bounciness = 0.5f;
 
+    void IItem.OnInitialize(ItemTypeContext context)
+    {
+
+    }
+
     void IItem.OnEquip(ItemContext context)
     {
 

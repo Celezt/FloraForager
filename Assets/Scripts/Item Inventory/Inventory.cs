@@ -15,7 +15,7 @@ public class Inventory : ScriptableObject
 
     public event Action OnInventoryDestroyCallback = delegate { };
     public event Action<int, ItemAsset> OnItemChangeCallback = delegate { };
-    public event Action<List<ItemAsset>> OnInventoryDeserializeCallback = delegate { };
+    public event Action<List<ItemAsset>> OnInventoryInitalizeCallback = delegate { };
     public event Action<int, int, ItemAsset, ItemAsset> OnItemMoveCallback = delegate { };
     public event Action<int, ItemAsset> OnAddItemCallback = delegate { };
     public event Action<int, ItemAsset> OnRemoveItemCallback = delegate { };
@@ -277,7 +277,7 @@ public class Inventory : ScriptableObject
 
             Addressables.Release(handle);
 
-            OnInventoryDeserializeCallback.Invoke(_items);
+            OnInventoryInitalizeCallback.Invoke(_items);
         };
     }
 

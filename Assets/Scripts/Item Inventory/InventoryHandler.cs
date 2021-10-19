@@ -76,7 +76,7 @@ public class InventoryHandler : MonoBehaviour
             }
         };
 
-        _inventory.OnInventoryDeserializeCallback += (items) =>
+        _inventory.OnInventoryInitalizeCallback += (items) =>
         {
             _slots = GetComponentsInChildren<ItemSlot>();
 

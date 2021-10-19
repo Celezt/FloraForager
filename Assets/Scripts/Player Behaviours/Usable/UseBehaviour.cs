@@ -22,7 +22,6 @@ public class UseBehaviour : MonoBehaviour
 
     private Dictionary<int, Duration> _cooldowns = new Dictionary<int, Duration>();
 
-    private int _playerIndex;
     private int _slotIndex;
     private int _amount;
 
@@ -61,9 +60,10 @@ public class UseBehaviour : MonoBehaviour
                     _itemType.Labels,
                     transform,
                     this,
+                    _playerInfo,
                     _itemType.Name,
                     _itemType.ID,
-                    _playerIndex,
+                    _playerInput.playerIndex,
                     _slotIndex,
                     _amount,
                     context.canceled,
@@ -82,7 +82,7 @@ public class UseBehaviour : MonoBehaviour
                                     this,
                                     _itemType.Name,
                                     _itemType.ID,
-                                    _playerIndex,
+                                    _playerInput.playerIndex,
                                     context.canceled,
                                     context.started,
                                     context.performed
@@ -97,13 +97,29 @@ public class UseBehaviour : MonoBehaviour
 
     public void ControlsChangedEvent(PlayerInput playerInput)
     {
-        _playerIndex = playerInput.playerIndex;
         _scheme = playerInput.user.controlScheme.Value;
     }
 
     private void Start()
     {
         _playerInput = GetComponent<PlayerInput>();
+
+        _playerInfo.Inventory.OnInventoryInitalizeCallback += (_) =>
+        {
+            _slotIndex = _playerInfo.Inventory.SelectedIndex;
+
+            ItemTypeContext itemTypeContext = new ItemTypeContext(
+                transform,
+                this,
+                _playerInfo,
+                _playerInput.playerIndex,
+                _slotIndex
+            );
+
+            IReadOnlyDictionary<string, ItemType> itemTypeChunk = ItemTypeSettings.Instance.ItemTypeChunk;
+            foreach (KeyValuePair<string, ItemType> itemType in itemTypeChunk)
+                itemType.Value?.Behaviour?.OnInitialize(itemTypeContext);
+        };
 
         _playerInfo.Inventory.OnItemMoveCallback += (beforeIndex, afterIndex, beforeItem, afterItem) =>
         {
@@ -130,6 +146,7 @@ public class UseBehaviour : MonoBehaviour
                 _itemType.Labels,
                 transform,
                 this,
+                _playerInfo,
                 _itemType.Name,
                 _itemType.ID,
                 _playerInput.playerIndex,
@@ -164,6 +181,7 @@ public class UseBehaviour : MonoBehaviour
             _itemType.Labels,
             transform,
             this,
+            _playerInfo,
             _itemType.Name,
             _itemType.ID,
             _playerInput.playerIndex,

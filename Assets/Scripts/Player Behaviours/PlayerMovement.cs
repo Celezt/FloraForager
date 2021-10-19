@@ -27,7 +27,7 @@ public class PlayerMovement : MonoBehaviour
         {
             float totalMultiplier = 1;
             foreach (KeyValuePair<Duration, float> mutliplier in _speedMultipliers)
-                totalMultiplier += mutliplier.Value;
+                totalMultiplier *= mutliplier.Value;
 
             return _isRunning ? _baseSpeed * totalMultiplier * _runningSpeedMultiplier : _baseSpeed * totalMultiplier;
         }
