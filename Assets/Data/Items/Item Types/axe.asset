@@ -10,7 +10,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 00a108d415261c34b9fe06714b46e722, type: 3}
-  m_Name: forest_axe
+  m_Name: axe
   m_EditorClassIdentifier: 
   serializationData:
     SerializedFormat: 2
@@ -27,9 +27,15 @@ MonoBehaviour:
     - Name: IItem.ItemStack
       Entry: 3
       Data: 1
+    - Name: IStar.Star
+      Entry: 3
+      Data: 1
+    - Name: IValue.BaseValue
+      Entry: 3
+      Data: 100
     - Name: IUse.Cooldown
       Entry: 4
-      Data: 1
+      Data: 0.6
     - Name: IDestructor.Strength
       Entry: 4
       Data: 20
@@ -38,7 +44,7 @@ MonoBehaviour:
       Data: 2
     - Name: _stunDuration
       Entry: 4
-      Data: 0.8
+      Data: 0.6
     - Name: _halfExtents
       Entry: 7
       Data: UnityEngine.Vector3, UnityEngine.CoreModule
@@ -73,8 +79,9 @@ MonoBehaviour:
       Entry: 8
       Data: 
   Icon: {fileID: 0}
-  Name: Forest Axe
-  ID: forest_axe
+  Name: Axe
+  ID: axe
   Description: 
   Labels:
   - axe
+  - tool

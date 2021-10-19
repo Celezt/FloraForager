@@ -100,7 +100,7 @@ public class ItemTypeSettings : SerializedScriptableSingleton<ItemTypeSettings>
         if (!_itemLabelChunk.ContainsKey(id))
             _itemLabelChunk.Add(id, itemType.Labels.Select(item => (string)item.Clone()).ToList());
         if (!_itemIconChunk.ContainsKey(id))
-            _itemIconChunk.Add(id, itemType.Icon);
+            _itemIconChunk.Add(id, itemType.Icon  == null ? _defaultIcon : itemType.Icon);
         if (!_itemNameChunk.ContainsKey(id))
             _itemNameChunk.Add(id, itemType.Name);
 

@@ -129,3 +129,93 @@ public class DurationCollection<T> : IEnumerable<KeyValuePair<Duration, T>>, IEn
         return _durations.GetEnumerator();
     }
 }
+
+public class DurationCollection : IEnumerable<Duration>, IEnumerable
+{
+    HashSet<Duration> _durations = new HashSet<Duration>();
+
+    Stopwatch _stopwatch;
+    float _oldTime;
+
+    public int Count
+    {
+        get
+        {
+            if (!IsUpdated)
+                Update();
+
+            return _durations.Count;
+        }
+    }
+
+    public IReadOnlyCollection<Duration> Durations
+    {
+        get
+        {
+            if (!IsUpdated)
+                Update();
+
+            return _durations;
+        }
+    }
+
+    /// <summary>
+    /// If it has been updated this frame.
+    /// </summary>
+    public bool IsUpdated
+    {
+        get
+        {
+            bool value = false;
+
+            if (_stopwatch.Timer == 0)
+                _stopwatch = Stopwatch.Initialize();
+            value = _stopwatch.Timer == _oldTime;
+
+            _oldTime = _stopwatch.Timer;
+
+            return value;
+        }
+    }
+
+    /// <summary>
+    /// Add duration that expires.
+    /// </summary>
+    /// <returns>Identifier.</returns>
+    public Duration Add(float duration) => Add(new Duration(duration));
+    /// <summary>
+    /// Add duration that expires.
+    /// </summary>
+    /// <returns>Identifier.</returns>
+    public Duration Add(Duration duration)
+    {
+        _durations.Add(duration);
+
+        return duration;
+    }
+
+    public bool Remove(Duration identifier) => _durations.Remove(identifier);
+
+    public void Clear() => _durations.Clear();
+
+    /// <summary>
+    /// Manually update.
+    /// </summary>
+    public void Update() => _durations.RemoveWhere(x => !x.IsActive);
+
+    public IEnumerator<Duration> GetEnumerator()
+    {
+        if (!IsUpdated)
+            Update();
+
+        return _durations.GetEnumerator();
+    }
+
+    IEnumerator IEnumerable.GetEnumerator()
+    {
+        if (!IsUpdated)
+            Update();
+
+        return _durations.GetEnumerator();
+    }
+}

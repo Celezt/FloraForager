@@ -8,24 +8,30 @@ using System.Linq;
 using Celezt.Mathematics;
 using MyBox;
 
-public class ScytheItem : IUse, IItem, IDestructor
+public class ScytheItem : IUse, IItem, IDestructor, IStar, IValue
 {
     [OdinSerialize, PropertyOrder(float.MinValue)]
     public int ItemStack { get; set; } = 1;
     [OdinSerialize, PropertyOrder(float.MinValue + 1)]
-    public float Cooldown { get; set; } = 0.5f;
+    Stars IStar.Star { get; set; } = Stars.One;
     [OdinSerialize, PropertyOrder(float.MinValue + 2)]
-    public float Strength { get; set; } = DurabilityStrengths.BRITTLE_STONE;
+    int IValue.BaseValue { get; set; }
     [OdinSerialize, PropertyOrder(float.MinValue + 3)]
+    public float Cooldown { get; set; } = 0.5f;
+    [OdinSerialize, PropertyOrder(float.MinValue + 4)]
+    public float Strength { get; set; } = DurabilityStrengths.BRITTLE_STONE;
+    [OdinSerialize, PropertyOrder(float.MinValue + 5)]
     public float Damage { get; set; } = 2.0f;
 
-    [SerializeField, AssetsOnly]
-    private GameObject _modelPrefab { get; set; }
-
+    [Title("Tool Behaviour")]
+    [SerializeField]
+    private float _stunDuration = 0.5f;
     [SerializeField]
     private float _radius = 3f;
     [SerializeField]
     private float _arc = 0.4f;
+    [SerializeField, AssetsOnly]
+    private GameObject _modelPrefab { get; set; }
 
     private Transform _scytheTransform;
     private Animator _animator;
@@ -66,7 +72,10 @@ public class ScytheItem : IUse, IItem, IDestructor
 
         _animator.SetTrigger("hit");
 
+        context.transform.GetComponent<PlayerMovement>().ActivaInput.Add(_stunDuration);
+
         Collider[] colliders = PhysicsC.OverlapArc(context.transform.position, context.transform.forward, Vector3.up, _radius, _arc, LayerMask.NameToLayer("default"));
+
         for (int i = 0; i < colliders.Length; i++)
             if (colliders[i].TryGetComponent(out IUsable usable))
                 yield return usable;

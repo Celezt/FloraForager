@@ -6,11 +6,15 @@ using Sirenix.Serialization;
 using MyBox;
 using Sirenix.OdinInspector;
 
-public class FoodItem : IUse, IItem
+public class FoodItem : IUse, IItem, IStar, IValue
 {
-    [OdinSerialize, PropertyOrder(-2)]
+    [OdinSerialize, PropertyOrder(float.MinValue)]
     public int ItemStack { get; set; } = 64;
-    [OdinSerialize, PropertyOrder(-1)]
+    [OdinSerialize, PropertyOrder(float.MinValue + 1)]
+    Stars IStar.Star { get; set; } = Stars.One;
+    [OdinSerialize, PropertyOrder(float.MinValue + 2)]
+    int IValue.BaseValue { get; set; }
+    [OdinSerialize, PropertyOrder(float.MinValue + 3)]
     public float Cooldown { get; set; } = 2;
 
     [SerializeField]

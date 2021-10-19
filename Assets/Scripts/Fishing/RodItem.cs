@@ -15,11 +15,11 @@ public class RodItem : IItem, IUse, IStar, IValue
     [OdinSerialize, PropertyOrder(int.MinValue)]
     int IItem.ItemStack { get; set; } = 1;
     [OdinSerialize, PropertyOrder(int.MinValue + 1)]
-    float IUse.Cooldown { get; set; } = 1;
-    [OdinSerialize, PropertyOrder(int.MinValue + 2)]
     Stars IStar.Star { get; set; }
-    [OdinSerialize, PropertyOrder(int.MinValue + 3)]
+    [OdinSerialize, PropertyOrder(int.MinValue + 2)]
     int IValue.BaseValue { get; set; }
+    [OdinSerialize, PropertyOrder(int.MinValue + 3)]
+    float IUse.Cooldown { get; set; } = 1;
 
     [Title("Rod Behaviour")]
     [SerializeField, Range(0, 1)]

@@ -26,7 +26,6 @@ public class PlayerMovement : MonoBehaviour
         get
         {
             float totalMultiplier = 1;
-
             _speedMultipliers.ForEach(x => totalMultiplier *= x.Value);
 
             return _isRunning ? _baseSpeed * totalMultiplier * _runningSpeedMultiplier : _baseSpeed * totalMultiplier;
@@ -38,7 +37,7 @@ public class PlayerMovement : MonoBehaviour
     public float BaseSpeed => _baseSpeed;
 
     public DurationCollection<float> SpeedMultipliers => _speedMultipliers;
-    public DurationCollection<bool> ActivaInput => _activeInput;
+    public DurationCollection ActivaInput => _activeInput;
 
     /// <summary>
     /// Running multiplier.
@@ -109,7 +108,7 @@ public class PlayerMovement : MonoBehaviour
     }
 
     private DurationCollection<float> _speedMultipliers = new DurationCollection<float>();
-    private DurationCollection<bool> _activeInput = new DurationCollection<bool>();
+    private DurationCollection _activeInput = new DurationCollection();
 
     private Vector3 _slopeForward;
     private Vector3 _rawDirection;
@@ -135,6 +134,7 @@ public class PlayerMovement : MonoBehaviour
     public void OnMove(InputAction.CallbackContext context)
     {
         Vector2 value = context.ReadValue<Vector2>();
+
         _rawDirection = new Vector3(value.x, 0, value.y);
         _rigidbody.velocity = new Vector3(0, _rigidbody.velocity.y, 0);
 
@@ -171,6 +171,7 @@ public class PlayerMovement : MonoBehaviour
     private void FixedUpdate()
     {
         Vector3 position = transform.position;
+        Vector3 rawDirection = _activeInput.IsNullOrEmpty() ? _rawDirection : Vector3.zero;
 
         void Movement()
         {
@@ -182,9 +183,9 @@ public class PlayerMovement : MonoBehaviour
                 pivotForward.y = 0f;
                 pivotRight.y = 0f;
 
-                _forward = (pivotForward * _rawDirection.z + pivotRight * _rawDirection.x).normalized;
+                _forward = (pivotForward * rawDirection.z + pivotRight * rawDirection.x).normalized;
 
-                if (_rawDirection != Vector3.zero)
+                if (rawDirection != Vector3.zero)
                     _relativeForward = _forward;
             }
 
@@ -209,10 +210,10 @@ public class PlayerMovement : MonoBehaviour
                     GetDirection(pivotForward, pivotRight);
                     break;
                 default:
-                    if (_rawDirection != Vector3.zero)
-                        _relativeForward = _rawDirection;
+                    if (rawDirection != Vector3.zero)
+                        _relativeForward = rawDirection;
 
-                    _forward = _rawDirection;
+                    _forward = rawDirection;
                     break;
             }
 
