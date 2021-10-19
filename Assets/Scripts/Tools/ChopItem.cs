@@ -4,6 +4,7 @@ using UnityEngine;
 using Sirenix.Serialization;
 using Sirenix.OdinInspector;
 using UnityEditor;
+using UnityEngine.InputSystem;
 
 public class ChopItem : IItem, IUse, IDestructor
 {
@@ -16,6 +17,8 @@ public class ChopItem : IItem, IUse, IDestructor
     [OdinSerialize, PropertyOrder(float.MinValue + 3)]
     float IDestructor.Damage { get; set; } = 2.0f;
 
+    [SerializeField]
+    private float _stunDuration = 0.8f;
     [SerializeField]
     private Vector3 _halfExtents = new Vector3(0.5f, 1.0f, 0.5f);
     [SerializeField]
@@ -51,6 +54,8 @@ public class ChopItem : IItem, IUse, IDestructor
     {
         if (!context.started)
             yield break;
+
+        context.transform.GetComponent<PlayerMovement>().SpeedMultipliers.Add(_stunDuration, 0);
         
         Collider[] colliders = Physics.OverlapBox(context.transform.position + context.transform.rotation * _centerOffset, _halfExtents, context.transform.rotation, LayerMask.NameToLayer("default"));
         List<Collider> usableColliders = new List<Collider>(colliders.Length);
@@ -60,6 +65,9 @@ public class ChopItem : IItem, IUse, IDestructor
                 usableColliders.Add(colliders[i]);
         
         Collider collider = new KdTree<Collider>(usableColliders).FindClosest(context.transform.position);
+
+        if (collider == null)
+            yield break;
 
         yield return collider.GetComponent<IUsable>();
     }
