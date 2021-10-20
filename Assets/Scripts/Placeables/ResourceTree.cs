@@ -68,5 +68,5 @@ class ResourceTree : ResourceSource
         }
     }
 
-    public override IList<string> Filter(ItemLabels labels) => new List<string> { labels.AXE };
+    public override ItemLabels Filter() => ItemLabels.Axe;
 }

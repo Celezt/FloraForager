@@ -40,5 +40,5 @@ class ResourceStone : ResourceSource
         yield return base.Collect();
     }
 
-    public override IList<string> Filter(ItemLabels labels) => new List<string> { labels.PICKAXE };
+    public override ItemLabels Filter() => ItemLabels.Pickaxe;
 }

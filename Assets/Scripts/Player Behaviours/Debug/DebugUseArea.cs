@@ -6,7 +6,6 @@ using Sirenix.Serialization;
 
 public class DebugUseArea : MonoBehaviour, IUsable, IResourceObject, IDestructableObject
 {
-
     [SerializeField, Required] private Material _firstMaterial;
     [SerializeField, Required] private Material _secondMaterial;
 
@@ -17,7 +16,7 @@ public class DebugUseArea : MonoBehaviour, IUsable, IResourceObject, IDestructab
 
     private bool _isToggled;
 
-    IList<string> IUsable.Filter(ItemLabels labels) => new List<string> { labels.SCYTHE, labels.AXE };
+    ItemLabels IUsable.Filter() => ItemLabels.Scythe | ItemLabels.Axe;
 
     void IUsable.OnUse(UsedContext context)
     {

@@ -9,7 +9,7 @@ using UnityEditor;
 #if UNITY_EDITOR
 public static class EnumGenerator
 {
-    public static void Generate(string enumName, string path, IList<string> entries)
+    public static void Generate(string enumName, string path, IReadOnlyList<string> entries)
     {
         if (string.IsNullOrWhiteSpace(enumName))
         {
@@ -26,10 +26,17 @@ public static class EnumGenerator
         string filePathAndName = $"{path}/{enumName}.cs";
 
         StringBuilder contents = new StringBuilder();
-        contents.AppendLine($"public enum {string.Concat(enumName.FirstCharToUpper().Where(x => !char.IsWhiteSpace(x)))}");
+        contents.AppendLine("//Auto-generated code");
+        contents.AppendLine();
+        contents.AppendLine("using System;");
+        contents.AppendLine();
+        contents.AppendLine("[Flags]");
+        contents.AppendLine($"public enum {string.Concat(enumName.FirstCharToUpper().Where(x => !char.IsWhiteSpace(x)))} : uint");
         contents.AppendLine("{");
-        for (int i = 0; i < entries.Count; i++)
-            contents.AppendLine($"\t{string.Concat(entries[i].FirstCharToUpper().Where(x => !char.IsWhiteSpace(x)))},");
+        if (entries.Count > 0)  // For the first entry.
+            contents.AppendLine($"\t{string.Concat(entries[0].FirstCharToUpper().Where(x => !char.IsWhiteSpace(x)))} = 0,");
+        for (int i = 1; i < entries.Count; i++)
+            contents.AppendLine($"\t{string.Concat(entries[i].FirstCharToUpper().Where(x => !char.IsWhiteSpace(x)))} = 1 << {i - 1},");
         contents.AppendLine("}");
 
         File.WriteAllText(filePathAndName, contents.ToString());

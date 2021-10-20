@@ -62,7 +62,6 @@ public class FloraObject : MonoBehaviour, IUsable, IDestructableObject
             (_Collider.bounds.size.y - _MeshFilter.mesh.bounds.size.y) / 2.0f, 0);
     }
 
-    public IList<string> Filter(ItemLabels labels) => Flora.HarvestMethod.Filter(labels);
     public void OnUse(UsedContext context)
     {
         if (!context.performed)
@@ -79,6 +78,11 @@ public class FloraObject : MonoBehaviour, IUsable, IDestructableObject
     }
 
     void IDestructableObject.OnDestruction(UsedContext context)
+    {
+        throw new System.NotImplementedException();
+    }
+
+    ItemLabels IUsable.Filter()
     {
         throw new System.NotImplementedException();
     }

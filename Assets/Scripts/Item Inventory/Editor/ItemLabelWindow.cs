@@ -119,7 +119,7 @@ public class ItemLabelWindow : EditorWindow
     private void OnDestroy()
     {
         if (_labelsChanged)
-            ConstantsGenerator.GenerateAndImport("", Path.Combine("Assets/Data", "Generated", "ItemLabels.cs"), false, () => _settings.Labels.AsEnumerable());
+            EnumGenerator.Generate("ItemLabels", "Assets/Data/Generated", _settings.Labels);
     }
 
     private class LabelNamePopup : PopupWindowContent

@@ -16,7 +16,10 @@ public class HarvestPluck : IHarvest
 
     private int[] _Pluck;
 
-    public IList<string> Filter(ItemLabels labels) => new List<string> { };
+    ItemLabels IUsable.Filter()
+    {
+        throw new System.NotImplementedException();
+    }
 
     public void Initialize(FloraData data, IHarvest harvestData)
     {

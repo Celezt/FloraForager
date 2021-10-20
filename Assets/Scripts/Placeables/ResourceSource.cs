@@ -154,7 +154,7 @@ public abstract class ResourceSource : MonoBehaviour, IUsable, IDestructableObje
             StopCollecting();
     }
 
-    public abstract IList<string> Filter(ItemLabels labels);
+    public abstract ItemLabels Filter();
 
     void IDestructableObject.OnDamage(IDestructor destructor, IDestructable destructable, UsedContext context)
     {
@@ -165,4 +165,5 @@ public abstract class ResourceSource : MonoBehaviour, IUsable, IDestructableObje
     {
         throw new System.NotImplementedException();
     }
+
 }
