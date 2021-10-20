@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using Celezt.Time;
+using UnityEngine.EventSystems;
 
 public class UseBehaviour : MonoBehaviour
 {
@@ -21,7 +22,6 @@ public class UseBehaviour : MonoBehaviour
 
     private Dictionary<int, Duration> _cooldowns = new Dictionary<int, Duration>();
 
-    private int _playerIndex;
     private int _slotIndex;
     private int _amount;
 
@@ -30,8 +30,19 @@ public class UseBehaviour : MonoBehaviour
         _playerInfo.Inventory.RemoveAt(_slotIndex, amount);
     }
 
+    public void Unequip()
+    {
+        _itemType?.Behaviour?.OnUnequip(_itemContext);  // Unequip current item.
+        _use = null;
+        _itemType = null;
+        OnDrawGizmosAction = null;
+    }
+
     public void OnUse(InputAction.CallbackContext context)
     {
+        if (CanvasUtility.IsPointerOverUIElement()) // Skip if pointing over a UI element.
+            return;
+
         if (_itemType == null || _use == null)
             return;
 
@@ -49,9 +60,10 @@ public class UseBehaviour : MonoBehaviour
                     _itemType.Labels,
                     transform,
                     this,
+                    _playerInfo,
                     _itemType.Name,
                     _itemType.ID,
-                    _playerIndex,
+                    _playerInput.playerIndex,
                     _slotIndex,
                     _amount,
                     context.canceled,
@@ -70,7 +82,7 @@ public class UseBehaviour : MonoBehaviour
                                     this,
                                     _itemType.Name,
                                     _itemType.ID,
-                                    _playerIndex,
+                                    _playerInput.playerIndex,
                                     context.canceled,
                                     context.started,
                                     context.performed
@@ -85,53 +97,78 @@ public class UseBehaviour : MonoBehaviour
 
     public void ControlsChangedEvent(PlayerInput playerInput)
     {
-        _playerIndex = playerInput.playerIndex;
         _scheme = playerInput.user.controlScheme.Value;
     }
 
-    private void Awake()
+    private void Start()
     {
         _playerInput = GetComponent<PlayerInput>();
 
-        _playerInfo.Inventory.OnSelectItemCallback += (index, asset) =>
+        _playerInfo.Inventory.OnInventoryInitalizeCallback += (_) =>
         {
-            _itemType?.Behaviour?.OnUnequip(_itemContext);  // Unequip current item.
-            _use = null;
-            _itemType = null;
-            OnDrawGizmosAction = null;
+            _slotIndex = _playerInfo.Inventory.SelectedIndex;
 
-            if (string.IsNullOrEmpty(asset.ID) || !ItemTypeSettings.Instance.ItemTypeChunk.ContainsKey(asset.ID))
+            ItemTypeContext itemTypeContext = new ItemTypeContext(
+                transform,
+                this,
+                _playerInfo,
+                _playerInput.playerIndex,
+                _slotIndex
+            );
+
+            IReadOnlyDictionary<string, ItemType> itemTypeChunk = ItemTypeSettings.Instance.ItemTypeChunk;
+            foreach (KeyValuePair<string, ItemType> itemType in itemTypeChunk)
+                itemType.Value?.Behaviour?.OnInitialize(itemTypeContext);
+        };
+        
+        _playerInfo.Inventory.OnItemMoveCallback += (beforeIndex, afterIndex, beforeItem, afterItem) =>
+        {
+            if (beforeIndex == _slotIndex)
+                _slotIndex = afterIndex;
+        };
+
+        _playerInfo.Inventory.OnSelectItemCallback += (index, item) =>
+        {
+            Unequip();
+
+            if (string.IsNullOrEmpty(item.ID) || !ItemTypeSettings.Instance.ItemTypeChunk.ContainsKey(item.ID))
                 return;
 
-            _itemType = ItemTypeSettings.Instance.ItemTypeChunk[asset.ID];
+            _itemType = ItemTypeSettings.Instance.ItemTypeChunk[item.ID];
 
             if (_itemType.Behaviour != null && _itemType.Behaviour is IUse)                // If item has implemented IUse.
                 _use = (IUse)_itemType.Behaviour;
 
             _slotIndex = index;
-            _amount = asset.Amount;
+            _amount = item.Amount;
 
             _itemContext = new ItemContext(
                 _itemType.Labels,
                 transform,
                 this,
+                _playerInfo,
                 _itemType.Name,
                 _itemType.ID,
                 _playerInput.playerIndex,
                 _slotIndex,
                 _amount
             );
-            
+
             _itemType?.Behaviour?.OnEquip(_itemContext);
         };
 
-        _playerInfo.Inventory.OnRemoveItemCallback += (index, asset) =>
+        _playerInfo.Inventory.OnRemoveItemCallback += (index, item) =>
         {
-            if (asset.Amount == 0 && _cooldowns.ContainsKey(index))
+            if (item.Amount == 0 && _cooldowns.ContainsKey(index))
                 _cooldowns.Remove(index);
 
             if (index == _slotIndex)
-                _amount = asset.Amount;
+            {
+                if (item.Amount > 0)    //  Update amount if not empty.
+                    _amount = item.Amount;
+                else
+                    Unequip();
+            }
         };
     }
 
@@ -144,6 +181,7 @@ public class UseBehaviour : MonoBehaviour
             _itemType.Labels,
             transform,
             this,
+            _playerInfo,
             _itemType.Name,
             _itemType.ID,
             _playerInput.playerIndex,

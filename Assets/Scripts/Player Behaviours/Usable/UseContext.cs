@@ -5,8 +5,9 @@ using UnityEngine;
 public readonly struct UseContext
 {
     public readonly List<string> labels;
-    public readonly UseBehaviour useBehaviour;
     public readonly Transform transform;
+    public readonly UseBehaviour useBehaviour;
+    public readonly PlayerInfo playerInfo;
     public readonly string name;
     public readonly string id;
     public readonly int playerIndex;
@@ -20,6 +21,7 @@ public readonly struct UseContext
         List<string> labels,
         Transform transform,
         UseBehaviour useBehaviour,
+        PlayerInfo playerInfo,
         string name,
         string id,
         int playerIndex,
@@ -32,6 +34,7 @@ public readonly struct UseContext
         this.labels = labels;
         this.transform = transform;
         this.useBehaviour = useBehaviour;
+        this.playerInfo = playerInfo;
         this.name = name;
         this.id = id;
         this.playerIndex = playerIndex;

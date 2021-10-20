@@ -31,6 +31,12 @@ public class KdTree<T> : IEnumerable<T>, IEnumerable where T : Component
         _just2D = just2D;
     }
 
+    public KdTree(IList<T> items, bool just2D = false)
+    {
+        _just2D = just2D;
+        AddAll(items);
+    }
+
     public T this[int key]
     {
         get
@@ -57,7 +63,7 @@ public class KdTree<T> : IEnumerable<T>, IEnumerable where T : Component
     /// batch add items
     /// </summary>
     /// <param name="items">items</param>
-    public void AddAll(List<T> items)
+    public void AddAll(IList<T> items)
     {
         foreach (var item in items)
             Add(item);

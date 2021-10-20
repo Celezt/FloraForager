@@ -112,9 +112,9 @@ public class CommissionLog : Singleton<CommissionLog>
         _Selected = commission;
 
         string objectives = "<b>Objectives</b>\n<size=20>";
-        commission.Data.Objectives.ForEach(o => 
-        { 
-            objectives += o.Status + '\n'; 
+        commission.Data.Objectives.ForEach(o =>
+        {
+            objectives += o.Status + '\n';
         });
         objectives += "</size>";
 
@@ -131,9 +131,9 @@ public class CommissionLog : Singleton<CommissionLog>
 
         string completed = commission.IsCompleted ? "<color=green>(Complete)</color>" : string.Empty;
 
-        _Description.text = string.Format("<b>{0}</b>\n<size=20>{1}</size>\n\n{2}\n{3}\n{4}\n\n{5}\n\n{6}", 
-            commission.Data.Title, 
-            commission.Data.Description, 
+        _Description.text = string.Format("<b>{0}</b>\n<size=20>{1}</size>\n\n{2}\n{3}\n{4}\n\n{5}\n\n{6}",
+            commission.Data.Title,
+            commission.Data.Description,
             objectives, rewards, daysLeft, giver, completed);
     }
 

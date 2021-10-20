@@ -60,7 +60,7 @@ public class Commission
             string itemID = _Data.Rewards[i].ItemID;
             int amount = _Data.Rewards[i].Amount;
 
-            inventory.AddItem(new ItemAsset
+            playerInfo.Inventory.Insert(new ItemAsset
             {
                 ID = itemID,
                 Amount = amount

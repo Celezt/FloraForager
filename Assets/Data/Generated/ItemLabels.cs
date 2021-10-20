@@ -42,6 +42,8 @@ public class ItemLabels {
     
     public readonly string WATERING_CAN = "watering_can";
     
+    public readonly string TOOL = "tool";
+    
     public ItemLabels() {
     }
 }

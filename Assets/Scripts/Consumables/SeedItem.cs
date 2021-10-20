@@ -7,12 +7,17 @@ using Sirenix.OdinInspector;
 public class SeedItem : IUse, IItem
 {
     [OdinSerialize]
-    public uint ItemStack { get; set; } = 64;
+    public int ItemStack { get; set; } = 64;
     [OdinSerialize]
     public float Cooldown { get; set; } = 2;
 
     [OdinSerialize]
     private FloraData _Flora;
+
+    void IItem.OnInitialize(ItemTypeContext context)
+    {
+
+    }
 
     public void OnEquip(ItemContext context)
     {

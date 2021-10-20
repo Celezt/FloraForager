@@ -57,6 +57,7 @@ MonoBehaviour:
   _aliasLabel:
     m_LabelString: alias
   _autoTextSpeed: 0.1
+  _playerIndex: 0
 --- !u!1 &3085050776186547507
 GameObject:
   m_ObjectHideFlags: 0
@@ -189,6 +190,18 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
+--- !u!225 &1734227570269772237
+CanvasGroup:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3943414288544815957}
+  m_Enabled: 1
+  m_Alpha: 1
+  m_Interactable: 0
+  m_BlocksRaycasts: 0
+  m_IgnoreParentGroups: 0
 --- !u!1001 &2020385052330842707
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -493,6 +506,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 294476bd6d62e974b98aa7d781c6b673, type: 3}
+--- !u!1 &3943414288544815957 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 9209978732451989560, guid: 294476bd6d62e974b98aa7d781c6b673, type: 3}
+  m_PrefabInstance: {fileID: 5289962349252170605}
+  m_PrefabAsset: {fileID: 0}
 --- !u!114 &4515887018542072058 stripped
 MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 8629494932851282839, guid: 294476bd6d62e974b98aa7d781c6b673, type: 3}

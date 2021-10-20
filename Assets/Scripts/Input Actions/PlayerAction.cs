@@ -82,6 +82,15 @@ public partial class @PlayerAction : IInputActionCollection2, IDisposable
                     ""initialStateCheck"": false
                 },
                 {
+                    ""name"": ""Hotbar"",
+                    ""type"": ""Button"",
+                    ""id"": ""3dd48922-af30-45d8-88d6-3e57e2ac0fc4"",
+                    ""expectedControlType"": ""Button"",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
+                },
+                {
                     ""name"": ""CommissionLog"",
                     ""type"": ""Button"",
                     ""id"": ""bb111f06-1961-4f94-a2be-8a97dec5aab0"",
@@ -254,6 +263,116 @@ public partial class @PlayerAction : IInputActionCollection2, IDisposable
                     ""processors"": """",
                     ""groups"": ""KeyboardAndMouse"",
                     ""action"": ""CommissionLog"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""7da100af-7162-4ab3-9288-34da11771660"",
+                    ""path"": ""<Keyboard>/1"",
+                    ""interactions"": """",
+                    ""processors"": ""Scale"",
+                    ""groups"": ""KeyboardAndMouse"",
+                    ""action"": ""Hotbar"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""c4d2176e-bb55-44cb-8220-90098a04491d"",
+                    ""path"": ""<Keyboard>/2"",
+                    ""interactions"": """",
+                    ""processors"": ""Scale(factor=2)"",
+                    ""groups"": ""KeyboardAndMouse"",
+                    ""action"": ""Hotbar"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""e05e7b27-b874-4b4a-930b-35c3bb9ee798"",
+                    ""path"": ""<Keyboard>/3"",
+                    ""interactions"": """",
+                    ""processors"": ""Scale(factor=3)"",
+                    ""groups"": ""KeyboardAndMouse"",
+                    ""action"": ""Hotbar"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""eec6b03c-337b-4fa6-9acf-9c08a9ab5c9a"",
+                    ""path"": ""<Keyboard>/4"",
+                    ""interactions"": """",
+                    ""processors"": ""Scale(factor=4)"",
+                    ""groups"": ""KeyboardAndMouse"",
+                    ""action"": ""Hotbar"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""d68945d7-0587-40c0-842d-f6fdf07ed1c7"",
+                    ""path"": ""<Keyboard>/5"",
+                    ""interactions"": """",
+                    ""processors"": ""Scale(factor=5)"",
+                    ""groups"": ""KeyboardAndMouse"",
+                    ""action"": ""Hotbar"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""eacc8408-f7d0-4cb6-90a8-734429b32fcc"",
+                    ""path"": ""<Keyboard>/6"",
+                    ""interactions"": """",
+                    ""processors"": ""Scale(factor=6)"",
+                    ""groups"": ""KeyboardAndMouse"",
+                    ""action"": ""Hotbar"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""fc298b4e-4313-485f-bb01-2e2ac0ed5dce"",
+                    ""path"": ""<Keyboard>/7"",
+                    ""interactions"": """",
+                    ""processors"": ""Scale(factor=7)"",
+                    ""groups"": ""KeyboardAndMouse"",
+                    ""action"": ""Hotbar"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""e95cfd5f-ccbc-4954-8eb0-95c16cbd7682"",
+                    ""path"": ""<Keyboard>/8"",
+                    ""interactions"": """",
+                    ""processors"": ""Scale(factor=8)"",
+                    ""groups"": ""KeyboardAndMouse"",
+                    ""action"": ""Hotbar"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""db242fe4-84fe-447f-b40b-c92d37b5e5c6"",
+                    ""path"": ""<Keyboard>/9"",
+                    ""interactions"": """",
+                    ""processors"": ""Scale(factor=9)"",
+                    ""groups"": ""KeyboardAndMouse"",
+                    ""action"": ""Hotbar"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""1b677ad6-7db6-4e83-98cc-24f875455185"",
+                    ""path"": ""<Keyboard>/0"",
+                    ""interactions"": """",
+                    ""processors"": ""Scale(factor=10)"",
+                    ""groups"": ""KeyboardAndMouse"",
+                    ""action"": ""Hotbar"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
                 }
@@ -743,6 +862,7 @@ public partial class @PlayerAction : IInputActionCollection2, IDisposable
         m_Ground_Interact = m_Ground.FindAction("Interact", throwIfNotFound: true);
         m_Ground_Cursor = m_Ground.FindAction("Cursor", throwIfNotFound: true);
         m_Ground_Inventory = m_Ground.FindAction("Inventory", throwIfNotFound: true);
+        m_Ground_Hotbar = m_Ground.FindAction("Hotbar", throwIfNotFound: true);
         m_Ground_CommissionLog = m_Ground.FindAction("CommissionLog", throwIfNotFound: true);
         // Fishing
         m_Fishing = asset.FindActionMap("Fishing", throwIfNotFound: true);
@@ -824,6 +944,7 @@ public partial class @PlayerAction : IInputActionCollection2, IDisposable
     private readonly InputAction m_Ground_Interact;
     private readonly InputAction m_Ground_Cursor;
     private readonly InputAction m_Ground_Inventory;
+    private readonly InputAction m_Ground_Hotbar;
     private readonly InputAction m_Ground_CommissionLog;
     public struct GroundActions
     {
@@ -835,6 +956,7 @@ public partial class @PlayerAction : IInputActionCollection2, IDisposable
         public InputAction @Interact => m_Wrapper.m_Ground_Interact;
         public InputAction @Cursor => m_Wrapper.m_Ground_Cursor;
         public InputAction @Inventory => m_Wrapper.m_Ground_Inventory;
+        public InputAction @Hotbar => m_Wrapper.m_Ground_Hotbar;
         public InputAction @CommissionLog => m_Wrapper.m_Ground_CommissionLog;
         public InputActionMap Get() { return m_Wrapper.m_Ground; }
         public void Enable() { Get().Enable(); }
@@ -863,6 +985,9 @@ public partial class @PlayerAction : IInputActionCollection2, IDisposable
                 @Inventory.started -= m_Wrapper.m_GroundActionsCallbackInterface.OnInventory;
                 @Inventory.performed -= m_Wrapper.m_GroundActionsCallbackInterface.OnInventory;
                 @Inventory.canceled -= m_Wrapper.m_GroundActionsCallbackInterface.OnInventory;
+                @Hotbar.started -= m_Wrapper.m_GroundActionsCallbackInterface.OnHotbar;
+                @Hotbar.performed -= m_Wrapper.m_GroundActionsCallbackInterface.OnHotbar;
+                @Hotbar.canceled -= m_Wrapper.m_GroundActionsCallbackInterface.OnHotbar;
                 @CommissionLog.started -= m_Wrapper.m_GroundActionsCallbackInterface.OnCommissionLog;
                 @CommissionLog.performed -= m_Wrapper.m_GroundActionsCallbackInterface.OnCommissionLog;
                 @CommissionLog.canceled -= m_Wrapper.m_GroundActionsCallbackInterface.OnCommissionLog;
@@ -888,6 +1013,9 @@ public partial class @PlayerAction : IInputActionCollection2, IDisposable
                 @Inventory.started += instance.OnInventory;
                 @Inventory.performed += instance.OnInventory;
                 @Inventory.canceled += instance.OnInventory;
+                @Hotbar.started += instance.OnHotbar;
+                @Hotbar.performed += instance.OnHotbar;
+                @Hotbar.canceled += instance.OnHotbar;
                 @CommissionLog.started += instance.OnCommissionLog;
                 @CommissionLog.performed += instance.OnCommissionLog;
                 @CommissionLog.canceled += instance.OnCommissionLog;
@@ -1059,6 +1187,7 @@ public partial class @PlayerAction : IInputActionCollection2, IDisposable
         void OnInteract(InputAction.CallbackContext context);
         void OnCursor(InputAction.CallbackContext context);
         void OnInventory(InputAction.CallbackContext context);
+        void OnHotbar(InputAction.CallbackContext context);
         void OnCommissionLog(InputAction.CallbackContext context);
     }
     public interface IFishingActions

@@ -16,6 +16,8 @@ public class PlayerData : ScriptableObject
         Addressables.LoadAssetAsync<TextAsset>("player").Completed += (handle) =>
         {
             Data = JsonConvert.DeserializeObject<PlayerAsset>(handle.Result.text);
+
+            Addressables.Release(handle);
         };
     }
 

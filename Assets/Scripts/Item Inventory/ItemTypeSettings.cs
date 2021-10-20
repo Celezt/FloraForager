@@ -8,7 +8,7 @@ using System.IO;
 using System;
 using System.Linq;
 
-[CreateAssetMenu(fileName = "ItemTypeSettings", menuName = "Inventory/ItemTypeSettings")]
+[CreateAssetMenu(fileName = "ItemTypeSettings", menuName = "Inventory System/Item Type Settings")]
 [System.Serializable]
 public class ItemTypeSettings : SerializedScriptableSingleton<ItemTypeSettings>
 {
@@ -20,7 +20,10 @@ public class ItemTypeSettings : SerializedScriptableSingleton<ItemTypeSettings>
     public IReadOnlyDictionary<string, string> ItemNameChunk => _itemNameChunk;
     public IReadOnlyDictionary<string, List<string>> ItemLabelChunk => _itemLabelChunk;
 
-    public LabelSettings _labelSettings;
+    public LabelSettings LabelSettings => _labelSettings;
+
+    [SerializeField]
+    private LabelSettings _labelSettings;
     [SerializeField, Tooltip("Default icon used when no other icon is present.")]
     private Sprite _defaultIcon;
     [OdinSerialize]
@@ -97,7 +100,7 @@ public class ItemTypeSettings : SerializedScriptableSingleton<ItemTypeSettings>
         if (!_itemLabelChunk.ContainsKey(id))
             _itemLabelChunk.Add(id, itemType.Labels.Select(item => (string)item.Clone()).ToList());
         if (!_itemIconChunk.ContainsKey(id))
-            _itemIconChunk.Add(id, itemType.Icon);
+            _itemIconChunk.Add(id, itemType.Icon  == null ? _defaultIcon : itemType.Icon);
         if (!_itemNameChunk.ContainsKey(id))
             _itemNameChunk.Add(id, itemType.Name);
 

@@ -13,13 +13,13 @@ public class RodItem : IItem, IUse, IStar, IValue
     public float Bounciness => _bounciness;
 
     [OdinSerialize, PropertyOrder(int.MinValue)]
-    uint IItem.ItemStack { get; set; } = 1;
+    int IItem.ItemStack { get; set; } = 1;
     [OdinSerialize, PropertyOrder(int.MinValue + 1)]
-    float IUse.Cooldown { get; set; } = 1;
-    [OdinSerialize, PropertyOrder(int.MinValue + 2)]
     Stars IStar.Star { get; set; }
-    [OdinSerialize, PropertyOrder(int.MinValue + 3)]
+    [OdinSerialize, PropertyOrder(int.MinValue + 2)]
     int IValue.BaseValue { get; set; }
+    [OdinSerialize, PropertyOrder(int.MinValue + 3)]
+    float IUse.Cooldown { get; set; } = 1;
 
     [Title("Rod Behaviour")]
     [SerializeField, Range(0, 1)]
@@ -32,6 +32,11 @@ public class RodItem : IItem, IUse, IStar, IValue
     private float _dragDamp = 10.0f;
     [SerializeField]
     private float _bounciness = 0.5f;
+
+    void IItem.OnInitialize(ItemTypeContext context)
+    {
+
+    }
 
     void IItem.OnEquip(ItemContext context)
     {
