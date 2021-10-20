@@ -12,8 +12,7 @@ GameObject:
   - component: {fileID: 553403459393986877}
   - component: {fileID: 2185109834499097367}
   - component: {fileID: 5746847473745481404}
-  - component: {fileID: 4013543836649799814}
-  - component: {fileID: 7824439885619993001}
+  - component: {fileID: 7236999621400103892}
   m_Layer: 7
   m_Name: NPCActorGiverTest
   m_TagString: NPC
@@ -98,7 +97,7 @@ CapsuleCollider:
   m_Height: 2
   m_Direction: 1
   m_Center: {x: 0, y: 0, z: 0}
---- !u!114 &4013543836649799814
+--- !u!114 &7236999621400103892
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -110,29 +109,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5f9b8a8bc84c6e24e9f7216bb7d4d260, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _NPCData: {fileID: 11400000, guid: a1f02cb2ac979ff4080b73872a08728f, type: 2}
   _LayerMasks:
     serializedVersion: 2
-    m_Bits: 241
---- !u!114 &7824439885619993001
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7201386800842517229}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 5cdd410e0a94f2e489dd8b1d23e46f8a, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  _Commissions:
-  - _Title: potato
-    _Description: GET THOSE POTATOES
-    _Objectives:
-    - _Amount: 6
-      _Type: potato
-  - _Title: banana
-    _Description: GET THOSE BANANAS
-    _Objectives:
-    - _Amount: 6
-      _Type: banana
+    m_Bits: 161

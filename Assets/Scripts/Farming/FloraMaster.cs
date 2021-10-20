@@ -10,35 +10,57 @@ using MyBox;
 /// </summary>
 public class FloraMaster : Singleton<FloraMaster>
 {
-    [SerializeField] private GameObject _FloraPrefab;
-    [SerializeField] private List<FloraData> _FloraVariants;
+    [SerializeField] 
+    private GameObject _FloraPrefab;
+    [SerializeField] 
+    private List<FloraData> _FloraVariants;
 
-    private static Dictionary<string, FloraData> _FloraDictionary;
-    private static List<Flora> _Florae = new List<Flora>();
+    private Dictionary<string, FloraData> _FloraDictionary;
+    private List<Flora> _Florae = new List<Flora>();
 
     private void Awake()
     {
         _FloraDictionary = _FloraVariants.ToDictionary(key => key.Name.ToLower(), value => value);
     }
 
+    public void Update()
+    {
+        if (Mouse.current.leftButton.wasPressedThisFrame)
+        {
+            if (Grid.Instance.HoveredCell != null && Grid.Instance.HoveredCell.HeldObject != null)
+            {
+                Grid.Instance.HoveredCell.HeldObject.TryGetComponent(out FloraObject flora);
+
+                if (flora != null)
+                {
+                    flora.Flora.Watered = true;
+                }
+            }
+            Add("Variant");
+        }
+    }
+
     /// <summary>
     /// creates a flora at currently selected tile based on its name
     /// </summary>
-    public bool Add(string name)
+    public bool Add(string floraName)
     {
-        Tile tile = GridInteraction.CurrentTile;
+        Cell cell = Grid.Instance.HoveredCell;
 
-        if (tile == null || tile.TileType != TileType.Dirt)
+        if (cell == null)
             return false;
 
-        string key = name.ToLower();
+        if (cell.Data.Type != CellType.Dirt && cell.Data.Type != CellType.Soil)
+            return false;
+
+        string key = floraName.ToLower();
 
         if (!_FloraDictionary.ContainsKey(key))
             return false;
 
-        Flora flora = new Flora(_FloraDictionary[key], tile);
+        Flora flora = new Flora(_FloraDictionary[key], cell);
 
-        if (!Create(flora, tile))
+        if (!Create(flora, cell))
             return false;
 
         _Florae.Add(flora);
@@ -46,11 +68,34 @@ public class FloraMaster : Singleton<FloraMaster>
         return true;
     }
 
-    public bool Create(Flora flora, Tile tile)
+    /// <summary>
+    /// creates a flora at currently selected tile based on its data
+    /// </summary>
+    public bool Add(FloraData floraData)
+    {
+        Cell cell = Grid.Instance.HoveredCell;
+
+        if (cell == null)
+            return false;
+
+        if (cell.Data.Type != CellType.Dirt && cell.Data.Type != CellType.Soil)
+            return false;
+
+        Flora flora = new Flora(floraData, cell);
+
+        if (!Create(flora, cell))
+            return false;
+
+        _Florae.Add(flora);
+
+        return true;
+    }
+
+    public bool Create(Flora flora, Cell cell)
     {
         GameObject obj = Instantiate(_FloraPrefab);
 
-        if (!GridInteraction.PlaceObject(tile, obj))
+        if (!Grid.Instance.OccupyCell(cell, obj))
         {
             Destroy(obj);
             return false;

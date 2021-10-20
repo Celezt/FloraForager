@@ -7,7 +7,7 @@ using UnityEngine.InputSystem;
 public class Flora
 {
     private FloraData _Data; // data used to create flora
-    private Tile _Tile;      // associated tile
+    private Cell _Cell;      // associated cell
 
     public System.Action OnGrow = delegate { };
     public System.Action OnWatered = delegate { };
@@ -27,7 +27,7 @@ public class Flora
     public MeshRenderer CurrentMeshRenderer => _StagesMeshRenderers[_Mesh];
 
     public FloraData Data => _Data;
-    public Tile Tile => _Tile;
+    public Cell Cell => _Cell;
 
     public IHarvest HarvestMethod { get; private set; }
 
@@ -38,14 +38,14 @@ public class Flora
         set
         {
             OnWatered.Invoke();
-            _Tile.TileMap.Grid.UpdateTile((_Watered = value) ? TileType.Soil : TileType.Dirt, _Tile);
+            _Cell.Grid.UpdateCellsUVs((_Watered = value) ? CellType.Soil : CellType.Dirt, _Cell);
         }
     }
 
-    public Flora(FloraData data, Tile tile)
+    public Flora(FloraData data, Cell cell)
     {
         _Data = data;
-        _Tile = tile;
+        _Cell = cell;
 
         _StagesMeshFilters = System.Array.ConvertAll(_Data.Stages, mf => mf.GetComponent<MeshFilter>()); // extract mesh and materials from objects
         _StagesMeshRenderers = System.Array.ConvertAll(_Data.Stages, mr => mr.GetComponent<MeshRenderer>());
@@ -53,7 +53,7 @@ public class Flora
         _StageUpdate = (_Data.GrowTime + 1f) / _Data.Stages.Length;
 
         HarvestMethod = (IHarvest)System.Activator.CreateInstance(_Data.HarvestMethod.GetType()); // create a new instance of the harvest method
-        HarvestMethod.Initialize(data);
+        HarvestMethod.Initialize(data, _Data.HarvestMethod); // fill it with new data
     }
 
     public void Grow()

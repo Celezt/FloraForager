@@ -11,10 +11,8 @@ public class SeedItem : IUse, IItem
     [OdinSerialize]
     public float Cooldown { get; set; } = 2;
 
-    [OdinSerialize, Required] 
-    private string _FloraName;
-
-    private Inventory _Inventory;
+    [OdinSerialize]
+    private FloraData _Flora;
 
     void IItem.OnInitialize(ItemTypeContext context)
     {
@@ -23,7 +21,7 @@ public class SeedItem : IUse, IItem
 
     public void OnEquip(ItemContext context)
     {
-        _Inventory = context.transform.GetComponent<PlayerInfo>().Inventory;
+
     }
 
     public void OnUnequip(ItemContext context)
@@ -41,7 +39,9 @@ public class SeedItem : IUse, IItem
         if (!context.performed)
             yield break;
 
-        FloraMaster.Instance.Add(_FloraName.ToLower());
+        FloraMaster.Instance.Add(_Flora);
+
+        context.Consume();
 
         yield break;
     }
