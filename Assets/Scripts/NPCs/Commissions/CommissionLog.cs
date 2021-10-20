@@ -43,10 +43,8 @@ public class CommissionLog : Singleton<CommissionLog>
         _PlayerAction.Ground.CommissionLog.started -= OnOpenExit;
     }
 
-    public void AcceptCommission(Commission commission)
+    public void Accept(Commission commission)
     {
-        _Commissions.Add(commission);
-
         GameObject obj = Instantiate(_CommissionPrefab, _CommissionArea); // create object to be added to the log list
 
         CommissionObject cs = obj.GetComponent<CommissionObject>();
@@ -55,34 +53,43 @@ public class CommissionLog : Singleton<CommissionLog>
 
         obj.GetComponent<Text>().text = commission.Data.Title;
 
+        _Commissions.Add(commission);
         _CommissionObjects.Add(cs);
+
+        commission.Objectives.ForEach(o => o.Accepted());
 
         CheckCompletion();
     }
 
-    public void AbandonCommission()
+    public void Abandon()
     {
-        _Selected.RemoveWithPenalty();
+        if (_Selected == null)
+            return;
+
+        _Selected.Penalty();
+        Remove(_Selected);
     }
 
     /// <summary>
     /// remove specified commission from the log
     /// </summary>
-    public void RemoveCommission(CommissionObject commObject)
+    public void Remove(Commission commission)
     {
-        if (commObject == null)
+        if (commission == null || commission.Object == null)
             return;
 
-        _CommissionObjects.Remove(commObject);
-        _Commissions.Remove(commObject.Commission);
+        _CommissionObjects.Remove(commission.Object);
+        _Commissions.Remove(commission);
 
-        Destroy(commObject.gameObject);
+        Destroy(commission.Object.gameObject);
 
-        if (commObject.Commission == CommissionTracker.Instance.Commission)
+        if (commission == CommissionTracker.Instance.Commission)
             CommissionTracker.Instance.Untrack();
 
         _Description.text = string.Empty;
         _Selected = null;
+
+        commission.Objectives.ForEach(o => o.Removed());
     }
 
     /// <summary>
@@ -101,6 +108,24 @@ public class CommissionLog : Singleton<CommissionLog>
         ShowDescription(_Selected);
     }
 
+    public void CheckCompletion()
+    {
+        foreach (CommissionObject co in _CommissionObjects)
+        {
+            co.IsCompleted();
+        }
+    }
+
+    public void Notify()
+    {
+        _Commissions.ForEach(c => c.DayPassed());
+    }
+
+    public bool HasCommission(Commission commission)
+    {
+        return _Commissions.Exists(c => c.Data.Title == commission.Data.Title);
+    }
+
     public void ShowDescription(Commission commission)
     {
         if (commission == null)
@@ -112,7 +137,7 @@ public class CommissionLog : Singleton<CommissionLog>
         _Selected = commission;
 
         string objectives = "<b>Objectives</b>\n<size=20>";
-        commission.Data.Objectives.ForEach(o =>
+        commission.Objectives.ForEach(o =>
         {
             objectives += o.Status + '\n';
         });
@@ -137,14 +162,6 @@ public class CommissionLog : Singleton<CommissionLog>
             objectives, rewards, daysLeft, giver, completed);
     }
 
-    public void CheckCompletion()
-    {
-        foreach (CommissionObject co in _CommissionObjects)
-        {
-            co.IsCompleted();
-        }
-    }
-
     public void OnOpenExit(InputAction.CallbackContext context)
     {
         if (_CanvasGroup.alpha == 1.0f)
@@ -167,18 +184,5 @@ public class CommissionLog : Singleton<CommissionLog>
         _CanvasGroup.blocksRaycasts = false;
 
         _Description.text = string.Empty;
-    }
-
-    /// <summary>
-    /// notify all commissions that a day has passed
-    /// </summary>
-    public void Notify()
-    {
-        _Commissions.ForEach(c => c.DayPassed());
-    }
-
-    public bool HasCommission(Commission commission)
-    {
-        return _Commissions.Exists(c => c.Data.Title == commission.Data.Title);
     }
 }

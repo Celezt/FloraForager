@@ -69,8 +69,6 @@ public class CommissionGiverWindow : Singleton<CommissionGiverWindow>
                 c.a = 0.5f;
                 commText.color = c;
             }
-
-            commission.Objectives.ForEach(o => o.UpdateStatus());
         }
     }
 
@@ -95,7 +93,7 @@ public class CommissionGiverWindow : Singleton<CommissionGiverWindow>
         _CommissionDescription.SetActive(true);
 
         string objectives = "<b>Objectives</b>\n<size=20>";
-        commission.Data.Objectives.ForEach(o =>
+        commission.Objectives.ForEach(o =>
         {
             objectives += o.Status + '\n';
         });
@@ -104,7 +102,7 @@ public class CommissionGiverWindow : Singleton<CommissionGiverWindow>
         string rewards = "<b>Rewards</b>\n<size=20>";
         foreach (RewardPair reward in commission.Data.Rewards)
         {
-            rewards += reward.Amount + " " + reward.ItemID + "\n";
+            rewards += reward.Amount + " " + ItemTypeSettings.Instance.ItemNameChunk[reward.ItemID] + "\n";
         }
         rewards += "</size>";
 
@@ -139,7 +137,7 @@ public class CommissionGiverWindow : Singleton<CommissionGiverWindow>
     /// </summary>
     public void Accept()
     {
-        CommissionLog.Instance.AcceptCommission(_SelectedCommission);
+        CommissionLog.Instance.Accept(_SelectedCommission);
         Back();
     }
 
@@ -171,10 +169,9 @@ public class CommissionGiverWindow : Singleton<CommissionGiverWindow>
             }
         }
 
-        _CommissionGiver.Relation.AddRelation(_SelectedCommission.Data.RewardRelations);
-
         _SelectedCommission.Complete();
-        CommissionLog.Instance.RemoveCommission(_SelectedCommission.Object);
+        CommissionLog.Instance.Remove(_SelectedCommission);
+
         Back();
     }
 }

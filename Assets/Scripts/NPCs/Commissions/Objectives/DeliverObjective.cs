@@ -15,13 +15,21 @@ public class DeliverObjective : IObjective
 
     }
 
-    public void UpdateStatus()
+    public void Accepted()
+    {
+
+    }
+    public void Complete()
+    {
+
+    }
+    public void Removed()
     {
 
     }
 
-    public void Complete()
+    public void UpdateStatus()
     {
-        throw new NotImplementedException();
+
     }
 }

@@ -15,10 +15,10 @@ public class Commission
     public CommissionObject Object;   // associated object in the log
 
     public CommissionData Data => _Data;
-    public IObjective[] Objectives => _Objectives;
 
-    public int DaysLeft => _DaysLeft;
+    public IObjective[] Objectives => _Objectives;
     public NPC Giver => _Giver;
+    public int DaysLeft => _DaysLeft;
 
     public bool IsCompleted
     {
@@ -54,29 +54,33 @@ public class Commission
     {
         _Objectives.ForEach(o => o.Complete());
 
-        InventoryObject inventory = PlayerInput.GetPlayerByIndex(0).GetComponent<PlayerInfo>().Inventory;
+        Inventory inventory = PlayerInput.GetPlayerByIndex(0).GetComponent<PlayerInfo>().Inventory;
         for (int i = 0; i < _Data.Rewards.Length; ++i)
         {
             string itemID = _Data.Rewards[i].ItemID;
             int amount = _Data.Rewards[i].Amount;
 
-            playerInfo.Inventory.Insert(new ItemAsset
+            inventory.Insert(new ItemAsset
             {
                 ID = itemID,
                 Amount = amount
             });
         }
+
+        _Giver.Relation.AddRelation(_Data.RewardRelations);
     }
 
     public void DayPassed()
     {
         if (--_DaysLeft <= 0)
-            RemoveWithPenalty();
+        {
+            Penalty();
+            CommissionLog.Instance.Remove(this);
+        }
     }
 
-    public void RemoveWithPenalty()
+    public void Penalty()
     {
         _Giver.Relation.AddRelation(_Data.PenaltyRelations);
-        CommissionLog.Instance.RemoveCommission(Object); // TODO: add some heads-up for the player
     }
 }

@@ -4,6 +4,10 @@ public interface IObjective
     public string Status { get; }
 
     public void Initialize(IObjective objectiveData);
-    public void UpdateStatus();
+
+    public void Accepted();
+    public void Removed();
     public void Complete();
+
+    public void UpdateStatus();
 }
