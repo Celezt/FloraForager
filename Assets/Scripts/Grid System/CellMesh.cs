@@ -11,7 +11,7 @@ using Sirenix.Serialization;
 [ExecuteInEditMode, RequireComponent(typeof(MeshFilter), typeof(MeshRenderer))]
 public class CellMesh : MonoBehaviour
 {
-    public CellData Data = new CellData(CellType.Empty);
+    public CellData Data = new CellData(null, CellType.Empty);
 
     public Material Terrain;
 
@@ -30,6 +30,15 @@ public class CellMesh : MonoBehaviour
     private void Awake()
     {
         Initialize(Data);
+    }
+
+    private void Update()
+    {
+        // snap to grid
+        transform.position = new Vector3(
+            Mathf.FloorToInt(transform.position.x), 
+            transform.position.y, 
+            Mathf.FloorToInt(transform.position.z));
     }
 
     public Vector3[] GetWorldVertices()

@@ -39,6 +39,8 @@ public class Cell
         _PositionLocal = posL;
         _Size = size;
         _MeshIndex = meshIndex;
+
+        _Neighbours = new List<Cell>();
     }
 
     public bool Occupy(GameObject gameObject)

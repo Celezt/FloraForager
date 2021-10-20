@@ -1,3 +1,4 @@
+using System.Linq;
 using System.Collections;
 using System.Collections.Generic;
 using Sirenix.OdinInspector;
@@ -61,7 +62,10 @@ public class GridMesh : MonoBehaviour
     /// </summary>
     public void Compile(CellMesh[] cells)
     {
-        Decompile();
+        CellMesh[] decompiledCells = Decompile();
+
+        if (decompiledCells != null)
+            cells = cells.Concat(decompiledCells).ToArray();
 
         Vector3[] vertices = new Vector3[cells.Length * 4];
         int[] triangles = new int[cells.Length * 6];

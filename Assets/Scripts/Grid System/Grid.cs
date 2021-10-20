@@ -48,6 +48,8 @@ public class Grid : Singleton<Grid> // One grid per level
                 new Vector2Int(x, z),
                 new Vector2Int(1, 1), (i / 4));
         }
+
+        AddNeighbours();
     }
 
     private void Update()
@@ -58,7 +60,7 @@ public class Grid : Singleton<Grid> // One grid per level
             int x = Mathf.FloorToInt(hitInfo.point.x - transform.position.x - _Position.x);
             int z = Mathf.FloorToInt(hitInfo.point.z - transform.position.z - _Position.z);
 
-            HoveredCell = GetCell(x, z);
+            HoveredCell = GetCellLocal(x, z);
         }
         else
             HoveredCell = null;
@@ -93,12 +95,20 @@ public class Grid : Singleton<Grid> // One grid per level
         return cell.Free();
     }
 
-    public Cell GetCell(int x, int z)
+    public Cell GetCellLocal(int x, int z)
     {
         if (!WithinGrid(x, z))
             return null;
 
         return _Cells[x + z * _Width];
+    }
+
+    public Cell GetCellWorld(Vector3 worldPos)
+    {
+        int x = Mathf.FloorToInt(worldPos.x - transform.position.x - _Position.x);
+        int z = Mathf.FloorToInt(worldPos.z - transform.position.z - _Position.z);
+
+        return GetCellLocal(x, z);
     }
 
     public bool WithinGrid(int x, int z)
@@ -159,5 +169,33 @@ public class Grid : Singleton<Grid> // One grid per level
             Mathf.Abs(Mathf.FloorToInt(max.y - min.y)));
 
         return boundary;
+    }
+
+    private void AddNeighbours()
+    {
+        for (int i = 0; i < _Mesh.Vertices.Length; i += 4)
+        {
+            Vector2Int pos = new Vector2Int(i % _Width, i / _Width);
+            Vector3 worldPosition = _Mesh.Vertices[pos.x + pos.y * _Width];
+
+            int xPos = Mathf.FloorToInt(worldPosition.x - transform.position.x - _Position.x);
+            int zPos = Mathf.FloorToInt(worldPosition.z - transform.position.z - _Position.z);
+
+            Cell cell = _Cells[xPos + zPos * _Width];
+
+            for (int x = -1; x <= 1; ++x)
+            {
+                for (int z = -1; z <= 1; ++z)
+                {
+                    if (!WithinGrid(xPos + x, zPos + z) || (x == 0 && z == 0))
+                        continue;
+
+                    Cell neighbour = _Cells[(xPos + x) + (zPos + z) * _Width];
+
+                    if (neighbour != null)
+                        cell.AddNeighbour(neighbour);
+                }
+            }
+        }
     }
 }
