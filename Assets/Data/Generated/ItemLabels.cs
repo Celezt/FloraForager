@@ -44,6 +44,12 @@ public class ItemLabels {
     
     public readonly string TOOL = "tool";
     
+    public readonly string STORAGE = "storage";
+    
+    public readonly string PLACEABLE = "placeable";
+    
+    public readonly string TREE = "tree";
+    
     public ItemLabels() {
     }
 }

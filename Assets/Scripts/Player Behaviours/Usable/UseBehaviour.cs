@@ -1,4 +1,5 @@
 using System;
+using System.Linq;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -72,23 +73,38 @@ public class UseBehaviour : MonoBehaviour
                 );
 
                 foreach (IUsable usable in _use.OnUse(useContext))
+                {
                     foreach (string label in useContext.labels)
+                    {
                         if (usable.Filter(_itemLabels).Contains(label))
                         {
-                            usable.OnUse(new UsedContext(
-                                    _use,
-                                    _itemType.Labels,
-                                    transform,
-                                    this,
-                                    _itemType.Name,
-                                    _itemType.ID,
-                                    _playerInput.playerIndex,
-                                    context.canceled,
-                                    context.started,
-                                    context.performed
-                                ));
+                            UsedContext usedContext = new UsedContext(
+                                _use,
+                                _itemType.Labels,
+                                transform,
+                                this,
+                                _itemType.Name,
+                                _itemType.ID,
+                                _playerInput.playerIndex,
+                                context.canceled,
+                                context.started,
+                                context.performed
+                            );
+
+                            //if (usable is IDestructableObject && _use is IDestructor)                     // Do damage.
+                            //{
+                            //    IDestructableObject destructable = usable as IDestructableObject;
+                            //    destructable.OnDamage(_use as IDestructor, destructable, usedContext);
+
+                            //    if (destructable.Durability <= 0)                                   // If destroyed.
+                            //        destructable.OnDestruction(usedContext);
+                            //}
+
+                            usable.OnUse(usedContext);
                             break;
                         }
+                    }
+                }
             }
 
             UseTowardsCursor();
@@ -116,7 +132,7 @@ public class UseBehaviour : MonoBehaviour
                 _slotIndex
             );
 
-            IReadOnlyDictionary<string, ItemType> itemTypeChunk = ItemTypeSettings.Instance.ItemTypeChunk;
+            IReadOnlyDictionary<string, ItemType> itemTypeChunk = ItemTypeSettings.Instance.ItemTypeChunk;  // Activate all OnInitalize.
             foreach (KeyValuePair<string, ItemType> itemType in itemTypeChunk)
                 itemType.Value?.Behaviour?.OnInitialize(itemTypeContext);
         };

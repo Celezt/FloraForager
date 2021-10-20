@@ -19,7 +19,7 @@ public class ScytheItem : IUse, IItem, IDestructor, IStar, IValue
     [OdinSerialize, PropertyOrder(float.MinValue + 3)]
     public float Cooldown { get; set; } = 0.5f;
     [OdinSerialize, PropertyOrder(float.MinValue + 4)]
-    public float Strength { get; set; } = DurabilityStrengths.BRITTLE_STONE;
+    public float Strength { get; set; } = 1;
     [OdinSerialize, PropertyOrder(float.MinValue + 5)]
     public float Damage { get; set; } = 2.0f;
 
