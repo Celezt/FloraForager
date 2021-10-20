@@ -31,12 +31,18 @@ public static class EnumGenerator
         contents.AppendLine("using System;");
         contents.AppendLine();
         contents.AppendLine("[Flags]");
-        contents.AppendLine($"public enum {string.Concat(enumName.FirstCharToUpper().Where(x => !char.IsWhiteSpace(x)))} : uint");
+        contents.AppendLine($"public enum {string.Concat(enumName.FirstCharToUpper().Where(x => !char.IsWhiteSpace(x)))}");
         contents.AppendLine("{");
-        if (entries.Count > 0)  // For the first entry.
-            contents.AppendLine($"\t{string.Concat(entries[0].FirstCharToUpper().Where(x => !char.IsWhiteSpace(x)))} = 0,");
-        for (int i = 1; i < entries.Count; i++)
-            contents.AppendLine($"\t{string.Concat(entries[i].FirstCharToUpper().Where(x => !char.IsWhiteSpace(x)))} = 1 << {i - 1},");
+        for (int i = 0; i < entries.Count; i++)
+            contents.AppendLine($"\t{string.Concat(entries[i].FirstCharToUpper().Where(x => !char.IsWhiteSpace(x) && x != '_'))} = 1 << {i + 1},");
+        contents.Append("\tAll = ");
+        for (int i = 0; i < entries.Count; i++)
+        {
+            contents.Append($" {string.Concat(entries[i].FirstCharToUpper().Where(x => !char.IsWhiteSpace(x) && x != '_'))} ");
+            if (i < entries.Count - 1)
+                contents.Append("|");
+        }
+        contents.AppendLine();
         contents.AppendLine("}");
 
         File.WriteAllText(filePathAndName, contents.ToString());

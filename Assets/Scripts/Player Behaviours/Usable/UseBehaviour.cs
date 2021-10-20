@@ -11,8 +11,6 @@ public class UseBehaviour : MonoBehaviour
 {
     [SerializeField] private PlayerInfo _playerInfo;
 
-    //private readonly ItemLabels _itemLabels = new ItemLabels();
-
     public Action OnDrawGizmosAction = delegate { };
 
     private PlayerInput _playerInput;
@@ -76,33 +74,33 @@ public class UseBehaviour : MonoBehaviour
                 {
                     foreach (string label in useContext.labels)
                     {
-                        //if (usable.Filter(_itemLabels).Contains(label))
-                        //{
-                        //    UsedContext usedContext = new UsedContext(
-                        //        _use,
-                        //        _itemType.Labels,
-                        //        transform,
-                        //        this,
-                        //        _itemType.Name,
-                        //        _itemType.ID,
-                        //        _playerInput.playerIndex,
-                        //        context.canceled,
-                        //        context.started,
-                        //        context.performed
-                        //    );
+                        if (Enum.TryParse(label, true, out ItemLabels itemLabel) && usable.Filter().HasFlag(itemLabel))
+                        {
+                            UsedContext usedContext = new UsedContext(
+                                _use,
+                                _itemType.Labels,
+                                transform,
+                                this,
+                                _itemType.Name,
+                                _itemType.ID,
+                                _playerInput.playerIndex,
+                                context.canceled,
+                                context.started,
+                                context.performed
+                            );
 
-                        //    //if (usable is IDestructableObject && _use is IDestructor)                     // Do damage.
-                        //    //{
-                        //    //    IDestructableObject destructable = usable as IDestructableObject;
-                        //    //    destructable.OnDamage(_use as IDestructor, destructable, usedContext);
+                            //if (usable is IDestructableObject && _use is IDestructor)                     // Do damage.
+                            //{
+                            //    IDestructableObject destructable = usable as IDestructableObject;
+                            //    destructable.OnDamage(_use as IDestructor, destructable, usedContext);
 
-                        //    //    if (destructable.Durability <= 0)                                   // If destroyed.
-                        //    //        destructable.OnDestruction(usedContext);
-                        //    //}
+                            //    if (destructable.Durability <= 0)                                   // If destroyed.
+                            //        destructable.OnDestruction(usedContext);
+                            //}
 
-                        //    usable.OnUse(usedContext);
-                        //    break;
-                        //}
+                            usable.OnUse(usedContext);
+                            break;
+                        }
                     }
                 }
             }
