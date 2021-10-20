@@ -1,40 +1,29 @@
-using System.Collections;
+﻿using System;
 using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
 using UnityEngine;
-using UnityEngine.EventSystems;
-using UnityEngine.InputSystem;
 
-/// <summary>
-/// foundation for NPC
-/// </summary>
-public class NPC : MonoBehaviour
+public class NPC
 {
-    [SerializeField] private LayerMask _LayerMasks;
+    private NPCData _NPCData;
 
-    private RelationshipManager _Relations;
-    private Bounds _Bounds;
+    public string Name => _NPCData.Name;
 
-    public RelationshipManager Relations => _Relations;
-    public Bounds Bounds => _Bounds;
+    public RelationshipManager Relation;
+    public Commission[] Commissions;
 
-    private void Awake()
+    public NPC(NPCData data)
     {
-        _Relations = GetComponent<RelationshipManager>();
-        _Bounds = GetComponent<MeshFilter>().mesh.bounds;
-    }
+        _NPCData = data;
 
-    private void Update()
-    {
-        Ray ray = Camera.main.ScreenPointToRay(Mouse.current.position.ReadValue());
-        bool collision = Physics.Raycast(ray, out RaycastHit hitInfo, Mathf.Infinity, _LayerMasks) && !EventSystem.current.IsPointerOverGameObject();
+        Relation = new RelationshipManager(data.RelationRange.Min, data.RelationRange.Max, data.StartRelation);
 
-        if (collision && hitInfo.transform.gameObject == gameObject)
+        Commissions = new Commission[data.CommissionsData.Length];
+        for (int i = 0; i < Commissions.Length; ++i)
         {
-            NPCUI.Instance.SetActive(this, true);
-        }
-        else if ((collision && !hitInfo.transform.CompareTag("NPC")) || !collision)
-        {
-            NPCUI.Instance.SetActive(null, false);
+            Commissions[i] = new Commission(data.CommissionsData[i], this);
         }
     }
 }

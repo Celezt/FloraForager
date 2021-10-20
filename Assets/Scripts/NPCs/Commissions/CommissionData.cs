@@ -8,7 +8,7 @@ using Sirenix.OdinInspector;
 [CreateAssetMenu(fileName = "Commission", menuName = "Scriptable Objects/Commission")]
 public class CommissionData : SerializedScriptableObject
 {
-    [OdinSerialize] 
+    [OdinSerialize, Required] 
     private string _Title;
     [OdinSerialize, TextArea(5, 30)] 
     private string _Description;
@@ -17,11 +17,11 @@ public class CommissionData : SerializedScriptableObject
     [OdinSerialize] 
     private int _TimeLimit;
     [OdinSerialize, Required]
-    private ObjectiveData[] _ObjectivesData = new ObjectiveData[1];
+    private IObjective[] _Objectives = new IObjective[] { new GatherObjective() };
 
     [Title("Relations")]
     [OdinSerialize] 
-    private Relation _MinRelation;
+    private Relation _MinRelation = Relation.Neutral;
     [OdinSerialize] 
     private float _RewardRelations;
     [OdinSerialize] 
@@ -29,13 +29,13 @@ public class CommissionData : SerializedScriptableObject
 
     [Title("Rewards")]
     [OdinSerialize, Required] 
-    private RewardPair[] _Rewards = new RewardPair[1];
+    private RewardPair[] _Rewards = new RewardPair[] { new RewardPair() };
 
     public string Title => _Title;
     public string Description => _Description;
 
     public int TimeLimit => _TimeLimit;
-    public ObjectiveData[] ObjectivesData => _ObjectivesData;
+    public IObjective[] Objectives => _Objectives;
 
     public Relation MinRelation => _MinRelation;
     public float RewardRelations => _RewardRelations;

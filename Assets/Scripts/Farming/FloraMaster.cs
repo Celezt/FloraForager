@@ -10,15 +10,34 @@ using MyBox;
 /// </summary>
 public class FloraMaster : Singleton<FloraMaster>
 {
-    [SerializeField] private GameObject _FloraPrefab;
-    [SerializeField] private List<FloraData> _FloraVariants;
+    [SerializeField] 
+    private GameObject _FloraPrefab;
+    [SerializeField] 
+    private List<FloraData> _FloraVariants;
 
-    private static Dictionary<string, FloraData> _FloraDictionary;
-    private static List<Flora> _Florae = new List<Flora>();
+    private Dictionary<string, FloraData> _FloraDictionary;
+    private List<Flora> _Florae = new List<Flora>();
 
     private void Awake()
     {
         _FloraDictionary = _FloraVariants.ToDictionary(key => key.Name.ToLower(), value => value);
+    }
+
+    public void Update()
+    {
+        if (Mouse.current.leftButton.wasPressedThisFrame)
+        {
+            if (Grid.Instance.HoveredCell != null && Grid.Instance.HoveredCell.HeldObject != null)
+            {
+                Grid.Instance.HoveredCell.HeldObject.TryGetComponent(out FloraObject flora);
+
+                if (flora != null)
+                {
+                    flora.Flora.Watered = true;
+                }
+            }
+            Add("Variant");
+        }
     }
 
     /// <summary>

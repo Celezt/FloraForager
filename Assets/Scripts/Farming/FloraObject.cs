@@ -35,8 +35,11 @@ public class FloraObject : MonoBehaviour, IUsable, IDestructable
         _MeshRenderer = GetComponent<MeshRenderer>();
         _Collider = GetComponent<BoxCollider>();
 
-        _MeshFilter.mesh = _Flora.CurrentMeshFilter.sharedMesh; // set new mesh and materials on this object
-        _MeshRenderer.materials = _Flora.CurrentMeshRenderer.sharedMaterials;
+        if (_Flora.CurrentMeshFilter != null && _Flora.CurrentMeshRenderer != null)
+        {
+            _MeshFilter.mesh = _Flora.CurrentMeshFilter.sharedMesh; // set new mesh and materials on this object
+            _MeshRenderer.materials = _Flora.CurrentMeshRenderer.sharedMaterials;
+        }
 
         _Flora.OnGrow += UpdateMesh;
 
@@ -45,15 +48,18 @@ public class FloraObject : MonoBehaviour, IUsable, IDestructable
 
     private void UpdateMesh()
     {
-        _MeshFilter.sharedMesh = _Flora.CurrentMeshFilter.sharedMesh;
-        _MeshRenderer.sharedMaterials = _Flora.CurrentMeshRenderer.sharedMaterials;
+        if (_Flora.CurrentMeshFilter != null && _Flora.CurrentMeshRenderer != null)
+        {
+            _MeshFilter.mesh = _Flora.CurrentMeshFilter.sharedMesh;
+            _MeshRenderer.materials = _Flora.CurrentMeshRenderer.sharedMaterials;
+        }
 
         transform.position = _Flora.Cell.Middle;
-        transform.position += Vector3.up * (_MeshFilter.sharedMesh.bounds.size.y / 2.0f);
+        transform.position += Vector3.up * (_MeshFilter.mesh.bounds.size.y / 2.0f);
 
         _Collider.center = new Vector3(0, 
-            _MeshFilter.sharedMesh.bounds.center.y + 
-            (_Collider.bounds.size.y - _MeshFilter.sharedMesh.bounds.size.y) / 2.0f, 0);
+            _MeshFilter.mesh.bounds.center.y + 
+            (_Collider.bounds.size.y - _MeshFilter.mesh.bounds.size.y) / 2.0f, 0);
     }
 
     public IList<string> Filter(ItemLabels labels) => Flora.HarvestMethod.Filter(labels);

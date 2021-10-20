@@ -19,7 +19,7 @@ public class CommissionGiverWindow : Singleton<CommissionGiverWindow>
 
     private CanvasGroup _CanvasGroup;
 
-    private CommissionGiver _CommissionGiver; // giver assigned to this window
+    private NPC _CommissionGiver; // giver assigned to this window
     private List<GameObject> _CommissionObjects; // objects in the window list
     private Commission _SelectedCommission; // selected commission in the window
 
@@ -32,11 +32,11 @@ public class CommissionGiverWindow : Singleton<CommissionGiverWindow>
         _CanvasGroup.alpha = 0.0f;
     }
 
-    public void ShowCommissions(CommissionGiver commissionGiver)
+    public void ShowCommissions(NPC commissionGiver)
     {
         _CommissionGiver = commissionGiver;
 
-        _Title.text = commissionGiver.name;
+        _Title.text = commissionGiver.Name;
 
         _CommissionObjects.ForEach(o => Destroy(o));
         _CommissionObjects.Clear();
@@ -53,7 +53,7 @@ public class CommissionGiverWindow : Singleton<CommissionGiverWindow>
 
             Text commText = obj.GetComponent<Text>();
 
-            commText.text = commission.Title;
+            commText.text = commission.Data.Title;
             obj.GetComponent<CGCommissionObject>().Commission = commission;
 
             _CommissionObjects.Add(obj);
@@ -70,10 +70,7 @@ public class CommissionGiverWindow : Singleton<CommissionGiverWindow>
                 commText.color = c;
             }
 
-            foreach (Objective objective in commission.Objectives)
-            {
-                objective.UpdateAmount(0);
-            }
+            commission.Objectives.ForEach(o => o.UpdateStatus());
         }
     }
 
@@ -98,14 +95,14 @@ public class CommissionGiverWindow : Singleton<CommissionGiverWindow>
         _CommissionDescription.SetActive(true);
 
         string objectives = "<b>Objectives</b>\n<size=20>";
-        foreach (Objective obj in commission.Objectives)
+        commission.Data.Objectives.ForEach(o =>
         {
-            objectives += obj.ItemID + ": " + obj.CurrentAmount + "/" + obj.Amount + "\n";
-        }
+            objectives += o.Status + '\n';
+        });
         objectives += "</size>";
 
         string rewards = "<b>Rewards</b>\n<size=20>";
-        foreach (RewardPair reward in commission.Rewards)
+        foreach (RewardPair reward in commission.Data.Rewards)
         {
             rewards += reward.Amount + " " + reward.ItemID + "\n";
         }
@@ -116,8 +113,8 @@ public class CommissionGiverWindow : Singleton<CommissionGiverWindow>
         string completed = commission.IsCompleted ? "<color=green>(Complete)</color>" : string.Empty;
 
         _Description.text = string.Format("<b>{0}</b>\n<size=20>{1}</size>\n\n{2}\n{3}\n{4}\n\n{5}",
-            commission.Title,
-            commission.Description,
+            commission.Data.Title,
+            commission.Data.Description,
             objectives, rewards, daysLeft, completed);
     }
 
@@ -174,10 +171,10 @@ public class CommissionGiverWindow : Singleton<CommissionGiverWindow>
             }
         }
 
+        _CommissionGiver.Relation.AddRelation(_SelectedCommission.Data.RewardRelations);
+
         _SelectedCommission.Complete();
-
         CommissionLog.Instance.RemoveCommission(_SelectedCommission.Object);
-
         Back();
     }
 }

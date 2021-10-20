@@ -53,7 +53,7 @@ public class Flora
         _StageUpdate = (_Data.GrowTime + 1f) / _Data.Stages.Length;
 
         HarvestMethod = (IHarvest)System.Activator.CreateInstance(_Data.HarvestMethod.GetType()); // create a new instance of the harvest method
-        HarvestMethod.Initialize(data);
+        HarvestMethod.Initialize(data, _Data.HarvestMethod); // fill it with new data
     }
 
     public void Grow()

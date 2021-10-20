@@ -5,7 +5,7 @@ public class HarvestScythe : IHarvest
 {
     public IList<string> Filter(ItemLabels labels) => new List<string> { labels.SCYTHE };
 
-    public void Initialize(FloraData data)
+    public void Initialize(FloraData data, IHarvest harvestData)
     {
         
     }

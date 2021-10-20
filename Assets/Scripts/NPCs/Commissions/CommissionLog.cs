@@ -13,8 +13,8 @@ public class CommissionLog : Singleton<CommissionLog>
     [SerializeField] private Transform _CommissionArea;
     [SerializeField] private Text _Description;
 
-    private List<CommissionObject> _CommissionObjects;
-    private List<Commission> _Commissions;
+    private List<CommissionObject> _CommissionObjects = new List<CommissionObject>();
+    private List<Commission> _Commissions = new List<Commission>();
 
     private Commission _Selected; // selected commission in the log
 
@@ -29,9 +29,6 @@ public class CommissionLog : Singleton<CommissionLog>
         _CanvasGroup.alpha = 0.0f;
 
         _PlayerAction = new PlayerAction();
-
-        _CommissionObjects = new List<CommissionObject>();
-        _Commissions = new List<Commission>();
     }
 
     private void OnEnable()
@@ -50,19 +47,13 @@ public class CommissionLog : Singleton<CommissionLog>
     {
         _Commissions.Add(commission);
 
-        InventoryObject inventory = PlayerInput.GetPlayerByIndex(0).GetComponent<PlayerInfo>().Inventory;
-        foreach (Objective objective in commission.Objectives)
-        {
-            inventory.OnItemChangeCallback += objective.UpdateAmount;
-        }
-
         GameObject obj = Instantiate(_CommissionPrefab, _CommissionArea); // create object to be added to the log list
 
         CommissionObject cs = obj.GetComponent<CommissionObject>();
         commission.Object = cs;
         cs.Commission = commission;
 
-        obj.GetComponent<Text>().text = commission.Title;
+        obj.GetComponent<Text>().text = commission.Data.Title;
 
         _CommissionObjects.Add(cs);
 
@@ -121,14 +112,14 @@ public class CommissionLog : Singleton<CommissionLog>
         _Selected = commission;
 
         string objectives = "<b>Objectives</b>\n<size=20>";
-        foreach (Objective obj in commission.Objectives)
-        {
-            objectives += obj.ItemID + ": " + obj.CurrentAmount + "/" + obj.Amount + "\n";
-        }
+        commission.Data.Objectives.ForEach(o => 
+        { 
+            objectives += o.Status + '\n'; 
+        });
         objectives += "</size>";
 
         string rewards = "<b>Rewards</b>\n<size=20>";
-        foreach (RewardPair reward in commission.Rewards)
+        foreach (RewardPair reward in commission.Data.Rewards)
         {
             rewards += reward.Amount + " " + reward.ItemID + "\n";
         }
@@ -136,13 +127,13 @@ public class CommissionLog : Singleton<CommissionLog>
 
         string daysLeft = "<b>Time limit</b>\n<size=20>" + commission.DaysLeft.ToString() + " Days</size>";
 
-        string giver = "<b>Giver</b>\n<size=20>" + commission.Giver.name + "</size>";
+        string giver = "<b>Giver</b>\n<size=20>" + commission.Giver.Name + "</size>";
 
         string completed = commission.IsCompleted ? "<color=green>(Complete)</color>" : string.Empty;
 
         _Description.text = string.Format("<b>{0}</b>\n<size=20>{1}</size>\n\n{2}\n{3}\n{4}\n\n{5}\n\n{6}", 
-            commission.Title, 
-            commission.Description, 
+            commission.Data.Title, 
+            commission.Data.Description, 
             objectives, rewards, daysLeft, giver, completed);
     }
 
@@ -188,6 +179,6 @@ public class CommissionLog : Singleton<CommissionLog>
 
     public bool HasCommission(Commission commission)
     {
-        return _Commissions.Exists(c => c.Title == commission.Title);
+        return _Commissions.Exists(c => c.Data.Title == commission.Data.Title);
     }
 }
