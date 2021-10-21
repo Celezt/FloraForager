@@ -7,9 +7,12 @@ using Sirenix.Utilities.Editor;
 
 public class GridWindow : OdinEditorWindow
 {
-    [OdinSerialize, ReadOnly, HorizontalGroup("Group"), ListDrawerSettings(Expanded = true), PropertySpace(10)]
+    [SerializeField, PropertySpace(10)]
+    [HorizontalGroup("Group"), ListDrawerSettings(Expanded = true, NumberOfItemsPerPage = 50, IsReadOnly = true), ReadOnly]
     private CellMesh[] _CellsMesh;
-    [OdinSerialize, ReadOnly, HorizontalGroup("Group"), ListDrawerSettings(Expanded = true), PropertySpace(10)]
+
+    [SerializeField, PropertySpace(10)]
+    [HorizontalGroup("Group"), ListDrawerSettings(Expanded = true, NumberOfItemsPerPage = 50, IsReadOnly = true)]
     private CellData[] _CellsData;
 
     private GridMesh _Mesh;
@@ -26,6 +29,12 @@ public class GridWindow : OdinEditorWindow
     {
         base.OnEnable();
         Refresh();
+    }
+
+    protected override void OnBeforeSerialize()
+    {
+        for (int i = 0; i < _CellsMesh.Length; ++i)
+            _CellsMesh[i].Initialize(_CellsData[i]);
     }
 
     [PropertySpace(5)]

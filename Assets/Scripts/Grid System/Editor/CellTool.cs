@@ -11,9 +11,18 @@ public class CellTool : EditorTool
 
     private GUIContent _IconContent;
 
-    private bool _MiddleButtonPressed;
+    private bool _MiddleButtonPressed = false;
 
+    private bool _RightButtonPressed = false;
+    private bool _RightButtonHeld = false;
+    private bool _RightButtonReleased = false;
+
+    private bool _QPressed = false;
+    private bool _EPressed = false;
+
+    private Vector3 _MousePosition;
     private Vector3 _CreateAt;
+    private Vector3 _Start;
 
     public override GUIContent toolbarIcon 
     { 
@@ -47,18 +56,31 @@ public class CellTool : EditorTool
         if (!ToolManager.IsActiveTool(this))
             return;
 
-        _MiddleButtonPressed = false;
+        _QPressed = Event.current.type == EventType.KeyDown && Event.current.keyCode == KeyCode.Q;
+        _EPressed = Event.current.type == EventType.KeyDown && Event.current.keyCode == KeyCode.E;
 
-        if (Event.current.type == EventType.MouseDown && Event.current.button == 2)
-        {
-            _MiddleButtonPressed = true;
-        }
-
-        if (_MiddleButtonPressed)
-        {
-            ShowMenu();
+        if (_QPressed)
             Event.current.Use();
-        }
+        if (_EPressed)
+            Event.current.Use();
+
+        if (Event.current.alt || Event.current.control)
+            return;
+
+        _MiddleButtonPressed = Event.current.type == EventType.MouseDown && Event.current.button == 2;
+        _RightButtonPressed = Event.current.type == EventType.MouseDown && Event.current.button == 1;
+
+        _RightButtonReleased = Event.current.type == EventType.MouseUp && Event.current.button == 1;
+
+        if (_RightButtonPressed)
+            _RightButtonHeld = true;
+        if (_RightButtonReleased)
+            _RightButtonHeld = false;
+
+        if (_RightButtonPressed)
+            Event.current.Use();
+        if (_MiddleButtonPressed)
+            Event.current.Use();
     }
 
     public override void OnToolGUI(EditorWindow window)
@@ -69,18 +91,95 @@ public class CellTool : EditorTool
         if (!ToolManager.IsActiveTool(this))
             return;
 
-        Handles.DrawWireDisc(GetCurrentMousePositionInScene(), Vector3.up, 0.5f);
+        _MousePosition = GetCurrentMousePositionInScene();
 
+        Handles.DrawWireDisc(_MousePosition, Vector3.up, 0.4f);
 
+        ChangeTypeTool();
+        CreateTypeTool();
+        FillTool();
 
         window.Repaint();
     }
 
-    private Vector3 GetCurrentMousePositionInScene()
+    private void ChangeTypeTool()
     {
-        Vector3 mousePosition = Event.current.mousePosition;
-        bool placeObject = HandleUtility.PlaceObject(mousePosition, out Vector3 newPosition, out Vector3 normal);
-        return placeObject ? newPosition : HandleUtility.GUIPointToWorldRay(mousePosition).GetPoint(10);
+        int changeType = 0;
+
+        if (_QPressed)
+            changeType = -1;
+        if (_EPressed)
+            changeType = 1;
+
+        if (changeType == 0)
+            return;
+
+        int range = Enum.GetValues(typeof(CellType)).Length;
+
+        GameObject[] selection = Array.ConvertAll(Selection.objects, o => (GameObject)o);
+        foreach (GameObject active in selection)
+        {
+            active.TryGetComponent(out CellMesh cell);
+
+            if (cell == null)
+                continue;
+
+            int newType = (int)cell.Data.Type + changeType;
+
+            if (newType <= 0)
+                newType = range - 1;
+            if (newType >= range)
+                newType = 1;
+
+            cell.SetType((CellType)newType);
+        }
+    }
+
+    private void CreateTypeTool()
+    {
+        if (_MiddleButtonPressed)
+        {
+            ShowMenu();
+        }
+    }
+
+    private void FillTool()
+    {
+        if (_RightButtonPressed)
+        {
+            _Start = Vector3Int.RoundToInt(_MousePosition);
+        }
+        if (_RightButtonHeld)
+        {
+            Handles.DrawLine(_Start, Vector3Int.RoundToInt(_MousePosition), 3.0f);
+        }
+        if (_RightButtonReleased)
+        {
+            CreateCells();
+        }
+    }
+
+    private void CreateCells()
+    {
+        Vector3 direction = _MousePosition - _Start;
+        Vector2Int boundary = Vector2Int.RoundToInt(new Vector3(direction.x + Mathf.Sign(direction.x), direction.z + Mathf.Sign(direction.z)));
+
+        Vector3 createAt = _Start;
+
+        int boundWidth = Mathf.Abs(boundary.x);
+        int boundHeight = Mathf.Abs(boundary.y);
+
+        GameObject[] cells = new GameObject[boundWidth * boundHeight];
+        for (int x = 0; x < boundWidth; ++x)
+        {
+            for (int y = 0; y < boundHeight; ++y)
+            {
+                _CreateAt = createAt + new Vector3(x * Mathf.Sign(boundary.x), 0, y * Mathf.Sign(boundary.y));
+                cells[x + y * boundWidth] = CreateCell(CellType.Empty);
+            }
+        }
+
+        Selection.objects = cells;
     }
 
     private void ShowMenu()
@@ -89,31 +188,44 @@ public class CellTool : EditorTool
         if (names.Length <= 0)
             return;
 
-        _CreateAt = GetCurrentMousePositionInScene();
+        _CreateAt = _MousePosition;
 
         GenericMenu menu = new GenericMenu();
         for (int i = 1; i < names.Length; ++i)
         {
-            menu.AddItem(new GUIContent(names[i]), false, CreateObject, Enum.ToObject(typeof(CellType), i));
+            menu.AddItem(new GUIContent(names[i]), false, (object type) => 
+            {
+                CreateCell((CellType)type);
+            }, 
+            Enum.ToObject(typeof(CellType), i));
         }
         menu.ShowAsContext();
     }
 
-    private void CreateObject(object type)
+    private GameObject CreateCell(CellType type)
     {
         GameObject cellPrefab = AssetDatabase.LoadAssetAtPath<GameObject>("Assets/Prefabs/Grid System/Cell.prefab");
         if (cellPrefab == null)
         {
             Debug.LogError("could not instantiate prefab");
-            return;
+            return null;
         }
 
-        GameObject newCellObject = (GameObject)PrefabUtility.InstantiatePrefab(cellPrefab);
-        newCellObject.GetComponent<CellMesh>().SetType((CellType)type);
+        GameObject cellObject = (GameObject)PrefabUtility.InstantiatePrefab(cellPrefab);
+        cellObject.GetComponent<CellMesh>().SetType(type);
 
-        newCellObject.transform.position = Vector3Int.RoundToInt(_CreateAt + Vector3.up);
-        newCellObject.transform.SetAsLastSibling();
+        cellObject.transform.position = Vector3Int.RoundToInt(_CreateAt + Vector3.up);
+        cellObject.transform.SetAsLastSibling();
 
-        Undo.RegisterCreatedObjectUndo(newCellObject, "Place new object");
+        Undo.RegisterCreatedObjectUndo(cellObject, "Place new object");
+
+        return cellObject;
+    }
+
+    private Vector3 GetCurrentMousePositionInScene()
+    {
+        Vector3 mousePosition = Event.current.mousePosition;
+        bool placeObject = HandleUtility.PlaceObject(mousePosition, out Vector3 newPosition, out Vector3 normal);
+        return placeObject ? newPosition : HandleUtility.GUIPointToWorldRay(mousePosition).GetPoint(10);
     }
 }
