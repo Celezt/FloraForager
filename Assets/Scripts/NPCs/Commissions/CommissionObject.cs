@@ -1,16 +1,16 @@
 using UnityEngine;
-using UnityEngine.UI;
+using TMPro;
 
 public class CommissionObject : MonoBehaviour
 {
-    private Text _Text;
+    private TMP_Text _Text;
     private Color _NormalColor;
 
     public Commission Commission { get; set; }
 
     private void Awake()
     {
-        _Text = GetComponent<Text>();
+        _Text = GetComponent<TMP_Text>();
         _NormalColor = _Text.color;
     }
 

@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using TMPro;
 using MyBox;
 
 public class CommissionGiverWindow : Singleton<CommissionGiverWindow>
@@ -13,9 +14,8 @@ public class CommissionGiverWindow : Singleton<CommissionGiverWindow>
     [SerializeField] private GameObject _CompleteButton;
     [SerializeField] private GameObject _CommissionDescription;
 
-    [SerializeField] private Text _Title;
-
-    private Text _Description;
+    [SerializeField] private TMP_Text _Title;
+    [SerializeField] private TMP_Text _Description;
 
     private CanvasGroup _CanvasGroup;
 
@@ -26,7 +26,6 @@ public class CommissionGiverWindow : Singleton<CommissionGiverWindow>
     private void Awake()
     {
         _CanvasGroup = GetComponent<CanvasGroup>();
-        _Description = _CommissionDescription.GetComponent<Text>();
 
         _CommissionObjects = new List<GameObject>();
         _CanvasGroup.alpha = 0.0f;
@@ -51,7 +50,7 @@ public class CommissionGiverWindow : Singleton<CommissionGiverWindow>
 
             GameObject obj = Instantiate(_CommissionPrefab, _CommissionArea);
 
-            Text commText = obj.GetComponent<Text>();
+            TMP_Text commText = obj.GetComponent<TMP_Text>();
 
             commText.text = commission.Data.Title;
             obj.GetComponent<CGCommissionObject>().Commission = commission;

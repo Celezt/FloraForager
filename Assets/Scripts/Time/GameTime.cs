@@ -20,7 +20,7 @@ public class GameTime : Singleton<GameTime>
     [SerializeField, Min(0)] private int _DaysPerMonth = 30;
     [SerializeField, Min(0)] private int _MonthsPerYear = 12;
 
-    private decimal _ElapsedTime = 0.0M;
+    private static decimal _ElapsedTime = 0.0M;
 
     private float _MinuteClock = 0.0f;
     private float _HourClock = 0.0f;

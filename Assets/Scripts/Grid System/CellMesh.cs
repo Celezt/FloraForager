@@ -85,15 +85,6 @@ public class CellMesh : MonoBehaviour
     {
         Data = data;
 
-        Vertices = new Vector3[4];
-        Triangles = new int[6];
-        UVs = new Vector2[4];
-
-        Triangles[0] = 0;
-        Triangles[1] = Triangles[4] = 1;
-        Triangles[2] = Triangles[3] = 2;
-        Triangles[5] = 3;
-
         _GridMesh = Grid.Instance.transform.GetComponent<GridMesh>();
 
         _MeshFilter = GetComponent<MeshFilter>();
@@ -103,6 +94,15 @@ public class CellMesh : MonoBehaviour
 
         _Mesh = new Mesh();
         _MeshFilter.mesh = _Mesh;
+
+        Vertices = new Vector3[4];
+        Triangles = new int[6];
+        UVs = new Vector2[4];
+
+        Triangles[0] = 0;
+        Triangles[1] = Triangles[4] = 1;
+        Triangles[2] = Triangles[3] = 2;
+        Triangles[5] = 3;
 
         SetSize(Size);
         SetType(Data.Type);

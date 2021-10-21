@@ -2,12 +2,13 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using TMPro;
 using MyBox;
 
 public class CommissionTracker : Singleton<CommissionTracker>
 {
-    [SerializeField] private Text _Title;
-    [SerializeField] private Text _Quota;
+    [SerializeField] private TMP_Text _Title;
+    [SerializeField] private TMP_Text _Quota;
 
     private CanvasGroup _CanvasGroup;
 

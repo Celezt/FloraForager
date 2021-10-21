@@ -41,6 +41,8 @@ public class Cell
         _MeshIndex = meshIndex;
 
         _Neighbours = new List<Cell>();
+
+        Occupied = (data.HeldObject != null);
     }
 
     public bool Occupy(GameObject gameObject)
