@@ -11,8 +11,12 @@ public class TreeBehaviour : MonoBehaviour, IStreamableObject<TreeBehaviour.Data
         public int Hej = 10;
     }
 
-    public Data OnUnload() => _data = new Data();
-    public void OnLoad(object state) => _data = state as Data;
+    public Data OnUpload() => _data = new Data();
+    public void OnLoad(object state)
+    {
+        Data data = state as Data;
+        _data = data;
+    }
 
 
     [SerializeField]
@@ -20,7 +24,7 @@ public class TreeBehaviour : MonoBehaviour, IStreamableObject<TreeBehaviour.Data
 
     void IUsable.OnUse(UsedContext context)
     {
-
+        _data.Hej++;
     }
 
     void IDestructableObject.OnDamage(IDestructor destructor, IDestructable destructable, UsedContext context)

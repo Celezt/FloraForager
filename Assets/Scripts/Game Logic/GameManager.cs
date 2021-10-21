@@ -11,6 +11,8 @@ public static class GameManager
 {
     public const string WORLDS_PATH = "/Worlds/";
     public const string PLAYERS_PATH = "/Players/";
+    public const string WORLD_FILE_TYPE = ".wld";
+    public const string PLAYER_FILE_TYPE = ".plr";
 
     public static StreamData Stream => _stream;
 
@@ -81,14 +83,21 @@ public static class GameManager
 
     public static void SaveGame()
     {
-        //byte[] bytes = SerializationUtility.SerializeValueWeak(, DataFormat.Binary);
-       // File.WriteAllBytes(SaveWorldPath + "hej.data", bytes);
-
+       byte[] bytes = SerializationUtility.SerializeValueWeak(_stream.StreamedData, DataFormat.Binary);
+       File.WriteAllBytes(SaveWorldPath + "debug" + WORLD_FILE_TYPE, bytes);
     }
 
     public static void LoadGame()
     {
 
+        byte[] bytes = File.ReadAllBytes(SaveWorldPath + "debug" + WORLD_FILE_TYPE);
+        _stream.StreamedData = (Dictionary<Guid, object>)SerializationUtility.DeserializeValueWeak(bytes, DataFormat.Binary);
+
+        StreamableBehaviour[] streamableBehaviours = UnityEngine.Object.FindObjectsOfType<StreamableBehaviour>();
+        for (int i = 0; i < streamableBehaviours.Length; i++)
+        {
+            streamableBehaviours[i].Load();
+        }
     }
 
     public class InitalizeGame
@@ -113,6 +122,12 @@ public static class GameManager
 
     public class StreamData
     {
+        public Dictionary<Guid, object> StreamedData
+        {
+            get => _streamedData;
+            set => _streamedData = value;
+        }
+
         private HashSet<Guid> _dirtyData = new HashSet<Guid>();
         private Dictionary<Guid, object> _streamedData = new Dictionary<Guid, object>();
 

@@ -9,5 +9,5 @@ public interface IStreamableObject
 
 public interface IStreamableObject<out T> : IStreamableObject where T : class
 {
-    public T OnUnload();
+    public T OnUpload();
 }
