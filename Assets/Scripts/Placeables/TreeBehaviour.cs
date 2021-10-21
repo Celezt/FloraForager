@@ -2,11 +2,18 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class TreeBehaviour : MonoBehaviour, IStreamableObject<TreeData>, IUsable, IResourceObject, IDestructableObject
+public class TreeBehaviour : MonoBehaviour, IStreamableObject<TreeBehaviour.Data>, IUsable, IResourceObject, IDestructableObject
 {
-    private TreeData _data = new TreeData();
+    private Data _data;
 
-    TreeData IStreamableObject<TreeData>.Data() => _data;
+    public class Data
+    {
+        public int Hej = 10;
+    }
+
+    public Data OnUnload() => _data = new Data();
+    public void OnLoad(object state) => _data = state as Data;
+
 
     [SerializeField]
     ItemLabels IUsable.Filter() => ItemLabels.Axe;

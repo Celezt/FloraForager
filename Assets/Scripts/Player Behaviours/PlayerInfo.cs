@@ -18,8 +18,6 @@ public class PlayerInfo : MonoBehaviour
 
     private void Start()
     {
-        GameManager.StreamData stream = GameManager.Instance.Stream;
-
         //stream.Get<Inventory>("player_inventory_0").TryGetTarget(out _inventory);
         //stream.Get<PlayerData>("player_data_0").TryGetTarget(out _playerData);
     }

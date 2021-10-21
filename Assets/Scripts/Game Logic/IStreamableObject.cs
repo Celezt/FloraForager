@@ -4,14 +4,10 @@ using UnityEngine;
 
 public interface IStreamableObject
 {
-
+    public void OnLoad(object state);
 }
 
-public interface IStreamableObject<out T> : IStreamableObject where T : class, IStreamable
+public interface IStreamableObject<out T> : IStreamableObject where T : class
 {
-    /// <summary>
-    /// Streamable data.
-    /// </summary>
-    /// <returns></returns>
-    public T Data();
+    public T OnUnload();
 }

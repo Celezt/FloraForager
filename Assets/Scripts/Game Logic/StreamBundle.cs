@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public struct StreamBundle
+public struct StreamBundle 
 {
-    public Dictionary<Hash128, IStreamable> Streamables;
+    public Dictionary<Hash128, object> Streamables;
 }
