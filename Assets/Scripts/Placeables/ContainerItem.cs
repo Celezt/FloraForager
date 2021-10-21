@@ -4,7 +4,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Container : IItem, IPlaceable, IDestructable, IStar
+public class Container : IItem, IPlace, IDestructable, IStar
 {
     [OdinSerialize, PropertyOrder(int.MinValue)]
     int IItem.ItemStack { get; set; }
@@ -13,7 +13,7 @@ public class Container : IItem, IPlaceable, IDestructable, IStar
     [OdinSerialize, PropertyOrder(int.MinValue + 2)]
     float IDestructable.Durability { get; set; } = 1;
     [OdinSerialize, PropertyOrder(int.MinValue + 3)]
-    GameObject IPlaceable.WorldObject { get; set; }
+    GameObject IPlace.PlaceableObject { get; set; }
     [OdinSerialize, PropertyOrder(int.MinValue + 4)]
     List<IResource.DropType> IResource.Drops { get; set; } = new List<IResource.DropType>();
 

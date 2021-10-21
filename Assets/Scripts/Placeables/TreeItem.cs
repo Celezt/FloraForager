@@ -4,7 +4,7 @@ using UnityEngine;
 using Sirenix.Serialization;
 using Sirenix.OdinInspector;
 
-public class TreeItem : IItem, IUse, IPlaceable, IResource, IDestructable, IStar
+public class TreeItem : IItem, IUse, IPlace, IResource, IDestructable, IStar
 {
     [OdinSerialize, PropertyOrder(int.MinValue)]
     int IItem.ItemStack { get; set; } = 64;
@@ -14,7 +14,7 @@ public class TreeItem : IItem, IUse, IPlaceable, IResource, IDestructable, IStar
     float IDestructable.Durability { get; set; } = 5;
     [AssetsOnly]
     [OdinSerialize, PropertyOrder(int.MinValue + 4)]
-    GameObject IPlaceable.WorldObject { get; set; }
+    GameObject IPlace.PlaceableObject { get; set; }
 
     float IUse.Cooldown { get; set; } = 0;
 
@@ -42,7 +42,7 @@ public class TreeItem : IItem, IUse, IPlaceable, IResource, IDestructable, IStar
         if (!context.started)
             yield break;
 
-        Object.Instantiate((this as IPlaceable).WorldObject, context.transform.position + context.transform.forward, Quaternion.identity);
+        Object.Instantiate((this as IPlace).PlaceableObject, context.transform.position + context.transform.forward, Quaternion.identity);
 
         context.Consume();
 

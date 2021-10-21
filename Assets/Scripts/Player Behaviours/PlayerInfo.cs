@@ -11,12 +11,17 @@ public class PlayerInfo : MonoBehaviour
     private Inventory _inventory;
     private PlayerData _playerData;
 
+    private void Awake()
+    {
+        _inventory = ScriptableObject.CreateInstance<Inventory>();
+    }
+
     private void Start()
     {
-        GameManager.StreamScriptableObject stream = GameManager.Instance.Stream;
+        GameManager.StreamData stream = GameManager.Instance.Stream;
 
-        stream.Get<Inventory>("player_inventory_0").TryGetTarget(out _inventory);
-        stream.Get<PlayerData>("player_data_0").TryGetTarget(out _playerData);
+        //stream.Get<Inventory>("player_inventory_0").TryGetTarget(out _inventory);
+        //stream.Get<PlayerData>("player_data_0").TryGetTarget(out _playerData);
     }
 }
  

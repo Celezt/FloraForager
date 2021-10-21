@@ -3,13 +3,13 @@ using System.Collections.Generic;
 using UnityEngine;
 using MyBox;
 
-public interface IResource : IItem, IPlaceable
+public interface IResource : IItem, IPlace
 {
     [SerializeField]
     public struct DropType
     {
         public Items Items;
-        public MinMaxInt DropAmount;
+        public MinMaxInt DropRate;
     }
 
     public List<DropType> Drops { get; set; }

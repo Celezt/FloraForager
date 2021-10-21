@@ -26,14 +26,14 @@ MonoBehaviour:
       Data: 0|TreeItem, Assembly-CSharp
     - Name: IItem.ItemStack
       Entry: 3
-      Data: 16
+      Data: 64
     - Name: IStar.Star
       Entry: 3
       Data: 1
     - Name: IDestructable.Durability
       Entry: 4
       Data: 5
-    - Name: IPlaceable.WorldObject
+    - Name: IPlace.PlaceableObject
       Entry: 6
       Data: 
     - Name: IResource.Drops
@@ -48,8 +48,8 @@ MonoBehaviour:
       Data: IResource+DropType, Assembly-CSharp
     - Name: Items
       Entry: 3
-      Data: 1
-    - Name: DropAmount
+      Data: 4
+    - Name: DropRate
       Entry: 7
       Data: MyBox.MinMaxInt, MyBox
     - Name: Min
@@ -57,7 +57,7 @@ MonoBehaviour:
       Data: 1
     - Name: Max
       Entry: 3
-      Data: 3
+      Data: 2
     - Name: 
       Entry: 8
       Data: 
@@ -69,8 +69,8 @@ MonoBehaviour:
       Data: IResource+DropType, Assembly-CSharp
     - Name: Items
       Entry: 3
-      Data: 2
-    - Name: DropAmount
+      Data: 32
+    - Name: DropRate
       Entry: 7
       Data: MyBox.MinMaxInt, MyBox
     - Name: Min

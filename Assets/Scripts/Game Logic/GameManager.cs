@@ -11,10 +11,10 @@ using UnityEngine.InputSystem;
 [System.Serializable]
 public class GameManager : SerializedScriptableSingleton<GameManager>
 {
-    public StreamScriptableObject Stream => _stream;
+    public StreamData Stream => _stream;
 
     [NonSerialized]
-    private StreamScriptableObject _stream = new StreamScriptableObject();
+    private StreamData _stream = new StreamData();
 
     private InitalizeGame _initalizeGame = new InitalizeGame();
 
@@ -31,10 +31,10 @@ public class GameManager : SerializedScriptableSingleton<GameManager>
         {
             void LoadPlayerData()
             {
-                StreamScriptableObject stream = GameManager.Instance.Stream;
+                StreamData stream = GameManager.Instance.Stream;
 
-                stream.LoadPersistent<Inventory>("player_inventory_0");
-                stream.LoadPersistent<PlayerData>("player_data_0");
+                //stream.LoadPersistent<Inventory>("player_inventory_0");
+                //stream.LoadPersistent<PlayerData>("player_data_0");
             }
 
             LoadPlayerData();
@@ -42,7 +42,7 @@ public class GameManager : SerializedScriptableSingleton<GameManager>
 
     }
 
-    public class StreamScriptableObject
+    public class StreamData
     {
         /// <summary>
         /// Temporary stream capacity. The oldest non dirty object gets released if reached capacity.
@@ -58,43 +58,39 @@ public class GameManager : SerializedScriptableSingleton<GameManager>
             }
         }
 
-        public int Count => _streamedObjects.Count;
+        public int Count => _streamedData.Count;
 
         /// <summary>
         /// Current temporary queue offset affected by copies and already released references.
         /// </summary>
         public int Offset => _streamOffset;
 
-        private HashSet<Hash128> _dirtyObjects = new HashSet<Hash128>();
-        private Dictionary<Hash128, ScriptableObject> _streamedObjects = new Dictionary<Hash128, ScriptableObject>();
-        private Dictionary<Hash128, short> _tempObjects = new Dictionary<Hash128, short>();
-        private Queue<Hash128> _tempQueue = new Queue<Hash128>();
+        private HashSet<Guid> _dirtyData = new HashSet<Guid>();
+        private Dictionary<Guid, ScriptableObject> _streamedData = new Dictionary<Guid, ScriptableObject>();
+        private Dictionary<Guid, short> _tempData = new Dictionary<Guid, short>();
+        private Queue<Guid> _tempQueue = new Queue<Guid>();
 
         private int _streamCapacity = 64;
         private int _streamOffset;
 
-        public bool IsDirty(string id) => IsDirty(Hash128.Compute(id));
-        public bool IsDirty(Hash128 hash) => _dirtyObjects.Contains(hash);
+        public bool IsDirty(string id) => IsDirty(Guid.Parse(id));
+        public bool IsDirty(Guid guid) => _dirtyData.Contains(guid);
 
-        /// <summary>
-        /// Load temporary reference who can be released if not used and not set to dirty.
-        /// </summary>
-        public WeakReference<T>? LoadTemp<T>(string id) where T : ScriptableObject => LoadTemp<T>(Hash128.Compute(id));
         /// <summary>
         /// Load temporary reference that can be released if not used and not set to dirty.
         /// </summary>
-        public WeakReference<T>? LoadTemp<T>(Hash128 hash) where T : ScriptableObject
+        public WeakReference<T>? LoadTemp<T>(Guid guid) where T : ScriptableObject
         {
-            if (_streamedObjects.ContainsKey(hash))
+            if (_streamedData.ContainsKey(guid))
                 return null;
 
             T obj = CreateInstance<T>();
-            obj.name = hash.ToString();
+            obj.name = guid.ToString();
 
-            _streamedObjects.Add(hash, obj);
-            _tempObjects.Add(hash, 1);
+            _streamedData.Add(guid, obj);
+            _tempData.Add(guid, 1);
 
-            _tempQueue.Enqueue(hash);
+            _tempQueue.Enqueue(guid);
             ReleaseOld();
 
             return new WeakReference<T>(obj);
@@ -103,18 +99,14 @@ public class GameManager : SerializedScriptableSingleton<GameManager>
         /// <summary>
         /// Load persistent reference that needs to be manually released. 
         /// </summary>
-        public T? LoadPersistent<T>(string id) where T : ScriptableObject => LoadPersistent<T>(Hash128.Compute(id));
-        /// <summary>
-        /// Load persistent reference that needs to be manually released. 
-        /// </summary>
-        public T? LoadPersistent<T>(Hash128 hash) where T : ScriptableObject
+        public T? LoadPersistent<T>(Guid guid) where T : ScriptableObject
         {
-            if (_streamedObjects.ContainsKey(hash))
+            if (_streamedData.ContainsKey(guid))
                 return null;
 
             T obj = ScriptableObject.CreateInstance<T>();
 
-            _streamedObjects.Add(hash, obj);
+            _streamedData.Add(guid, obj);
 
             return obj;
         }
@@ -122,27 +114,27 @@ public class GameManager : SerializedScriptableSingleton<GameManager>
         /// <summary>
         /// Release existing reference. Removes dirty.
         /// </summary>
-        public bool Release(string id) => Release(Hash128.Compute(id));
+        public bool Release(string id) => Release(Guid.Parse(id));
         /// <summary>
         /// Release existing reference. Removes dirty.
         /// </summary>
-        public bool Release(Hash128 hash)
+        public bool Release(Guid guid)
         {
-            if (!_streamedObjects.TryGetValue(hash, out ScriptableObject obj))
+            if (!_streamedData.TryGetValue(guid, out ScriptableObject obj))
                 return false;
 
-            if (_tempObjects.TryGetValue(hash, out short amount))
+            if (_tempData.TryGetValue(guid, out short amount))
             {
                 for (int i = 0; i < amount; i++)
                         _streamOffset++;
 
-                _tempObjects.Remove(hash);
+                _tempData.Remove(guid);
             }
 
             Destroy(obj);
 
-            _streamedObjects.Remove(hash);
-            _dirtyObjects.Remove(hash);
+            _streamedData.Remove(guid);
+            _dirtyData.Remove(guid);
 
             return true;
         }
@@ -150,19 +142,15 @@ public class GameManager : SerializedScriptableSingleton<GameManager>
         /// <summary>
         /// Return weak reference and if temporary, place it last in the queue.
         /// </summary>
-        public WeakReference<T?> Get<T>(string id) where T : ScriptableObject => Get<T>(Hash128.Compute(id));
-        /// <summary>
-        /// Return weak reference and if temporary, place it last in the queue.
-        /// </summary>
-        public WeakReference<T?> Get<T>(Hash128 hash) where T : ScriptableObject
+        public WeakReference<T?> Get<T>(Guid guid) where T : ScriptableObject
         {
-            _streamedObjects.TryGetValue(hash, out ScriptableObject obj);
+            _streamedData.TryGetValue(guid, out ScriptableObject obj);
 
-            if (_tempObjects.ContainsKey(hash))
+            if (_tempData.ContainsKey(guid))
             {
-                _tempObjects[hash]++;   // Increase the amount of copies existing inside of the queue.
+                _tempData[guid]++;   // Increase the amount of copies existing inside of the queue.
                 _streamOffset++;
-                _tempQueue.Enqueue(hash);
+                _tempQueue.Enqueue(guid);
             }
 
             return new WeakReference<T?>(obj as T);  
@@ -171,15 +159,11 @@ public class GameManager : SerializedScriptableSingleton<GameManager>
         /// <summary>
         /// Set dirty to save the asset on next saving.
         /// </summary>
-        public void SetDirty(string id) => SetDirty(Hash128.Compute(id));
-        /// <summary>
-        /// Set dirty to save the asset on next saving.
-        /// </summary>
-        public void SetDirty(Hash128 hash)
+        public void SetDirty(Guid guid)
         {
-            _dirtyObjects.Add(hash);
+            _dirtyData.Add(guid);
 
-            if (_tempObjects.ContainsKey(hash))
+            if (_tempData.ContainsKey(guid))
                 _streamOffset++;
         }
 
@@ -188,19 +172,19 @@ public class GameManager : SerializedScriptableSingleton<GameManager>
             if (_streamCapacity + _streamOffset < _tempQueue.Count)
                 while (_tempQueue.Count > 0)
                 {
-                    Hash128 hash = _tempQueue.Dequeue();
+                    Guid guid = _tempQueue.Dequeue();
 
-                    if (_tempObjects.ContainsKey(hash) && --_tempObjects[hash] > 0)   // If more copies exit inside of the queue.
+                    if (_tempData.ContainsKey(guid) && --_tempData[guid] > 0)   // If more copies exit inside of the queue.
                     {
                         _streamOffset--;
                         continue;
                     }
 
-                    if (_streamedObjects.ContainsKey(hash))
+                    if (_streamedData.ContainsKey(guid))
                     {
-                        if (!_dirtyObjects.Contains(hash))
+                        if (!_dirtyData.Contains(guid))
                         {
-                            Release(hash);
+                            Release(guid);
                             break;
                         }
                     }

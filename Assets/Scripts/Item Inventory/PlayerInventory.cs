@@ -86,8 +86,10 @@ public class PlayerInventory : MonoBehaviour
         Show(_hotbarHandler.GetComponent<CanvasGroup>());
         Hide(_inventoryHandler.GetComponent<CanvasGroup>());
 
-        if (!GameManager.Instance.Stream.Get<Inventory>(_id).TryGetTarget(out _inventory))
-            Debug.LogError("Player inventory was not found");
+        //if (!GameManager.Instance.Stream.Get<Inventory>(_id).TryGetTarget(out _inventory))
+        //    Debug.LogError("Player inventory was not found");
+
+        _inventory = PlayerInput.GetPlayerByIndex(0).GetComponent<PlayerInfo>().Inventory;
 
         _inventoryHandler.Inventory = _inventory;
         _inventoryHandler.IsItemSelectable = false;
