@@ -56,12 +56,10 @@ public class UseBehaviour : MonoBehaviour
             void UseTowardsCursor()
             {
                 UseContext useContext = new UseContext(
-                    _itemType.Labels,
+                    _itemType,
                     transform,
                     this,
                     _playerInfo,
-                    _itemType.Name,
-                    _itemType.ID,
                     _playerInput.playerIndex,
                     _slotIndex,
                     _amount,

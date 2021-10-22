@@ -4,15 +4,15 @@ using UnityEngine;
 using Sirenix.Serialization;
 using Sirenix.OdinInspector;
 
-public class TreeItem : IItem, IUse, IPlace, IStar
+public class TreeItem : IItem, IUse, IStar
 {
     [OdinSerialize, PropertyOrder(int.MinValue)]
     int IItem.ItemStack { get; set; } = 64;
     [OdinSerialize, PropertyOrder(int.MinValue + 2)]
     Stars IStar.Star { get; set; } = Stars.One;
-    [AssetsOnly]
-    [OdinSerialize, PropertyOrder(int.MinValue + 3)]
-    GameObject IPlace.PlaceableObject { get; set; }
+
+    [SerializeField, AssetsOnly]
+    private GameObject _placeableObject;
      
     float IUse.Cooldown { get; set; } = 0;
 
@@ -36,8 +36,7 @@ public class TreeItem : IItem, IUse, IPlace, IStar
         if (!context.started)
             yield break;
 
-        Object.Instantiate((this as IPlace).PlaceableObject, context.transform.position + context.transform.forward, Quaternion.identity);
-
+        context.Place(_placeableObject, context.transform.position + context.transform.forward, Quaternion.identity);
         context.Consume();
 
         yield break;

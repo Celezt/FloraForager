@@ -6,7 +6,7 @@ public readonly struct UseContext
 {
     public readonly List<string> labels;
     public readonly Transform transform;
-    public readonly UseBehaviour useBehaviour;
+    public readonly UseBehaviour behaviour;
     public readonly PlayerInfo playerInfo;
     public readonly string name;
     public readonly string id;
@@ -17,13 +17,13 @@ public readonly struct UseContext
     public readonly bool started;
     public readonly bool performed;
 
+    private readonly ItemType _itemType;
+
     internal UseContext(
-        List<string> labels,
+        ItemType item,
         Transform transform,
-        UseBehaviour useBehaviour,
+        UseBehaviour behaviour,
         PlayerInfo playerInfo,
-        string name,
-        string id,
         int playerIndex,
         int slotIndex,
         int amount,
@@ -31,12 +31,13 @@ public readonly struct UseContext
         bool started,
         bool performed)
     {
-        this.labels = labels;
+        _itemType = item;
+        this.labels = _itemType.Labels;
         this.transform = transform;
-        this.useBehaviour = useBehaviour;
+        this.behaviour = behaviour;
         this.playerInfo = playerInfo;
-        this.name = name;
-        this.id = id;
+        this.name = _itemType.Name;
+        this.id = _itemType.ID;
         this.playerIndex = playerIndex;
         this.slotIndex = slotIndex;
         this.amount = amount;
@@ -45,11 +46,35 @@ public readonly struct UseContext
         this.performed = performed;
     }
 
+    public void Place(GameObject orginal, Vector3 position, Quaternion rotation)
+    {
+        GameObject obj = Object.Instantiate(orginal, position, rotation);
+
+        IPlaceable[] placeables = obj.GetComponentsInChildren<IPlaceable>();
+
+        if (placeables != null)
+        {
+            for (int i = 0; i < placeables.Length; i++)
+            {
+                placeables[i].OnPlace(new PlacedContext
+                    (
+                        _itemType as IItem,
+                        _itemType.Labels,
+                        transform,
+                        behaviour,
+                        name,
+                        id,
+                        playerIndex
+                    ));
+            }
+        }
+    }
+
     /// <summary>
     /// Consume the current item
     /// </summary>
     public void Consume(int amount = 1)
     {
-        useBehaviour.ConsumeCurrentItem(amount);
+        behaviour.ConsumeCurrentItem(amount);
     }
 }

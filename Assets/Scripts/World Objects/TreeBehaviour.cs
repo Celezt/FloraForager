@@ -3,18 +3,14 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class TreeBehaviour : MonoBehaviour, IStreamableObject<TreeBehaviour.Data>, IUsable
+public class TreeBehaviour : MonoBehaviour, IStreamable<TreeBehaviour.Data>, IUsable
 {
+    [SerializeField] private ItemLabels _filter = ItemLabels.Axe;
+    [SerializeField] private Stars _star = Stars.One;
+    [SerializeField] private float _durability = 5;
+    [SerializeField] private List<DropType> _drops = new List<DropType>();
+
     private Data _data;
-
-    [SerializeField]
-    [AssetList(CustomFilterMethod = nameof(HasIPlace))]
-    private ItemType _item;
-
-    public bool HasIPlace(ItemType itemType) => itemType.Behaviour is IPlace;
-
-
-    private float _durability;
 
     public class Data
     {
@@ -29,10 +25,22 @@ public class TreeBehaviour : MonoBehaviour, IStreamableObject<TreeBehaviour.Data
     }
 
     [SerializeField]
-    ItemLabels IUsable.Filter() => ItemLabels.Axe;
+    ItemLabels IUsable.Filter() => _filter;
 
     void IUsable.OnUse(UsedContext context)
     {
-        _data.Hej++;
+        if (!(context.used is IDestructor))
+            return;
+
+        int usedStar = (int)Stars.One;
+        int star = (int)_star;
+
+        if (context.used is IStar)
+            usedStar = (int)(context.used as IStar).Star;
+
+        if (usedStar >= star)
+        {
+
+        }
     }
 }

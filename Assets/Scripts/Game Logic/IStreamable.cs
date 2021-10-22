@@ -2,12 +2,12 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public interface IStreamableObject
+public interface IStreamable
 {
     public void OnLoad(object state);
 }
 
-public interface IStreamableObject<out T> : IStreamableObject where T : class
+public interface IStreamable<out T> : IStreamable where T : class
 {
     public T OnUpload();
 }
