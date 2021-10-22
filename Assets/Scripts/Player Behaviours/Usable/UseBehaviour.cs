@@ -89,15 +89,6 @@ public class UseBehaviour : MonoBehaviour
                                 context.performed
                             );
 
-                            //if (usable is IDestructableObject && _use is IDestructor)                     // Do damage.
-                            //{
-                            //    IDestructableObject destructable = usable as IDestructableObject;
-                            //    destructable.OnDamage(_use as IDestructor, destructable, usedContext);
-
-                            //    if (destructable.Durability <= 0)                                   // If destroyed.
-                            //        destructable.OnDestruction(usedContext);
-                            //}
-
                             usable.OnUse(usedContext);
                             break;
                         }

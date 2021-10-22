@@ -1,10 +1,20 @@
+using Sirenix.OdinInspector;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class TreeBehaviour : MonoBehaviour, IStreamableObject<TreeBehaviour.Data>, IUsable, IResourceObject, IDestructableObject
+public class TreeBehaviour : MonoBehaviour, IStreamableObject<TreeBehaviour.Data>, IUsable
 {
     private Data _data;
+
+    [SerializeField]
+    [AssetList(CustomFilterMethod = nameof(HasIPlace))]
+    private ItemType _item;
+
+    public bool HasIPlace(ItemType itemType) => itemType.Behaviour is IPlace;
+
+
+    private float _durability;
 
     public class Data
     {
@@ -18,22 +28,11 @@ public class TreeBehaviour : MonoBehaviour, IStreamableObject<TreeBehaviour.Data
         _data = data;
     }
 
-
     [SerializeField]
     ItemLabels IUsable.Filter() => ItemLabels.Axe;
 
     void IUsable.OnUse(UsedContext context)
     {
         _data.Hej++;
-    }
-
-    void IDestructableObject.OnDamage(IDestructor destructor, IDestructable destructable, UsedContext context)
-    {
-
-    }
-
-    void IDestructableObject.OnDestruction(UsedContext context)
-    {
-
     }
 }

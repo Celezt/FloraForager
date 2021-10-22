@@ -9,7 +9,7 @@ public readonly struct UsedContext
     public readonly UseBehaviour useBehaviour;
     public readonly Transform transform;
     public readonly string name;
-    public readonly string id;
+    public readonly string itemTypeId;
     public readonly int playerIndex;
     public readonly bool canceled;
     public readonly bool started;
@@ -32,7 +32,7 @@ public readonly struct UsedContext
         this.transform = transform;
         this.useBehaviour = useBehaviour;
         this.name = name;
-        this.id = id;
+        this.itemTypeId = id;
         this.playerIndex = playerIndex;
         this.canceled = canceled;
         this.started = started;
