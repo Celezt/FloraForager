@@ -6,6 +6,6 @@ public class CGCommissionObject : MonoBehaviour
 
     public void Select()
     {
-        CommissionGiverWindow.Instance.ShowCommissionInfo(Commission);
+        CommissionGiverWindow.Instance.ShowDescription(Commission);
     }
 }

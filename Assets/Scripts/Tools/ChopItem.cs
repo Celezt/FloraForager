@@ -18,8 +18,6 @@ public class ChopItem : IItem, IUse, IDestructor, IStar, IValue
     [OdinSerialize, PropertyOrder(float.MinValue + 3)]
     float IUse.Cooldown { get; set; } = 0.6f;
     [OdinSerialize, PropertyOrder(float.MinValue + 4)]
-    float IDestructor.Strength { get; set; } = DurabilityStrengths.BRITTLE_STONE;
-    [OdinSerialize, PropertyOrder(float.MinValue + 5)]
     float IDestructor.Damage { get; set; } = 2.0f;
 
     [Title("Tool Behaviour")]

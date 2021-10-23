@@ -1,0 +1,104 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 00a108d415261c34b9fe06714b46e722, type: 3}
+  m_Name: birow
+  m_EditorClassIdentifier: 
+  serializationData:
+    SerializedFormat: 2
+    SerializedBytes: 
+    ReferencedUnityObjects:
+    - {fileID: 2032678476091294719, guid: 93e814ef9a4e9b240ab3916ca4d9ffb3, type: 3}
+    SerializedBytesString: 
+    Prefab: {fileID: 0}
+    PrefabModificationsReferencedUnityObjects: []
+    PrefabModifications: []
+    SerializationNodes:
+    - Name: Behaviour
+      Entry: 7
+      Data: 0|TreeItem, Assembly-CSharp
+    - Name: IItem.ItemStack
+      Entry: 3
+      Data: 64
+    - Name: IStar.Star
+      Entry: 3
+      Data: 1
+    - Name: IDestructable.Durability
+      Entry: 4
+      Data: 5
+    - Name: IPlace.PlaceableObject
+      Entry: 10
+      Data: 0
+    - Name: IResource.Drops
+      Entry: 7
+      Data: 1|System.Collections.Generic.List`1[[IResource+DropType, Assembly-CSharp]],
+        mscorlib
+    - Name: 
+      Entry: 12
+      Data: 2
+    - Name: 
+      Entry: 7
+      Data: IResource+DropType, Assembly-CSharp
+    - Name: Items
+      Entry: 3
+      Data: 4
+    - Name: DropRate
+      Entry: 7
+      Data: MyBox.MinMaxInt, MyBox
+    - Name: Min
+      Entry: 3
+      Data: 1
+    - Name: Max
+      Entry: 3
+      Data: 2
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: 
+      Entry: 7
+      Data: IResource+DropType, Assembly-CSharp
+    - Name: Items
+      Entry: 3
+      Data: 32
+    - Name: DropRate
+      Entry: 7
+      Data: MyBox.MinMaxInt, MyBox
+    - Name: Min
+      Entry: 3
+      Data: 2
+    - Name: Max
+      Entry: 3
+      Data: 2
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: 
+      Entry: 13
+      Data: 
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: 
+      Entry: 8
+      Data: 
+  Icon: {fileID: 0}
+  Name: Birow
+  ID: birow
+  Description: 
+  Labels:
+  - tree
+  - placeable

@@ -1,40 +1,118 @@
+using Sirenix.Serialization;
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
-#nullable enable
-
-[CreateAssetMenu(fileName = "GameManager", menuName = "Game Logic/Game Manager")]
-[System.Serializable]
-public class GameManager : SerializedScriptableSingleton<GameManager>
+public static class GameManager
 {
-    public StreamScriptableObject Stream => _stream;
+    public const string WORLDS_PATH = "/Worlds/";
+    public const string PLAYERS_PATH = "/Players/";
+    public const string WORLD_FILE_TYPE = ".wld";
+    public const string PLAYER_FILE_TYPE = ".plr";
+
+    public static StreamData Stream => _stream;
 
     [NonSerialized]
-    private StreamScriptableObject _stream = new StreamScriptableObject();
+    private static StreamData _stream = new StreamData();
 
-    private InitalizeGame _initalizeGame = new InitalizeGame();
+    private static InitalizeGame _initalizeGame = new InitalizeGame();
+
+    public static string SavePlayerPath
+    {
+        get
+        {
+#if UNITY_STANDALONE_WIN
+            try
+            {
+                string path = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments).Replace("\\", "/") + "/My Games/" + Application.productName + PLAYERS_PATH;
+                Directory.CreateDirectory(path);
+                return path;
+            }
+            catch (Exception e)
+            {
+                throw e;
+            }
+#else
+            try
+            {
+                string path = Application.persistentDataPath + PLAYERS_PATH;
+                Directory.CreateDirectory(path);
+                return path;
+            }
+            catch (Exception e)
+            {
+                throw e;
+            }
+#endif
+        }
+    }
+
+    public static string SaveWorldPath
+    {
+        get
+        {
+#if UNITY_STANDALONE_WIN
+            try
+            {
+                string path = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments).Replace("\\", "/") + "/My Games/" + Application.productName + WORLDS_PATH;
+                Directory.CreateDirectory(path);
+                return path;
+            }
+            catch (Exception e)
+            {
+                throw e;
+            }
+#else
+            try
+            {
+                string path = Application.persistentDataPath + WORLD_PATH;
+                Directory.CreateDirectory(path);
+                return path;
+            }
+            catch (Exception e)
+            {
+                throw e;
+            }
+#endif
+        }
+    }
+
+    public static void SaveGame()
+    {
+       byte[] bytes = SerializationUtility.SerializeValueWeak(_stream.StreamedData, DataFormat.Binary);
+       File.WriteAllBytes(SaveWorldPath + "debug" + WORLD_FILE_TYPE, bytes);
+    }
+
+    public static void LoadGame()
+    {
+
+        byte[] bytes = File.ReadAllBytes(SaveWorldPath + "debug" + WORLD_FILE_TYPE);
+        _stream.StreamedData = (Dictionary<Guid, object>)SerializationUtility.DeserializeValueWeak(bytes, DataFormat.Binary);
+
+        StreamableBehaviour[] streamableBehaviours = UnityEngine.Object.FindObjectsOfType<StreamableBehaviour>();
+        for (int i = 0; i < streamableBehaviours.Length; i++)
+        {
+            streamableBehaviours[i].Load();
+        }
+    }
 
     public class InitalizeGame
     {
         [RuntimeInitializeOnLoadMethod]
         static void Initalize()
         {
-            GameManager gameManager = GameManager.Instance;
-            gameManager._initalizeGame.LoadOrder();
+            _initalizeGame.LoadOrder();
         }
 
         private void LoadOrder()
         {
             void LoadPlayerData()
             {
-                StreamScriptableObject stream = GameManager.Instance.Stream;
 
-                stream.LoadPersistent<Inventory>("player_inventory_0");
-                stream.LoadPersistent<PlayerData>("player_data_0");
             }
 
             LoadPlayerData();
@@ -42,171 +120,59 @@ public class GameManager : SerializedScriptableSingleton<GameManager>
 
     }
 
-    public class StreamScriptableObject
+    public class StreamData
     {
-        /// <summary>
-        /// Temporary stream capacity. The oldest non dirty object gets released if reached capacity.
-        /// </summary>
-        public int StreamCapacity
+        public Dictionary<Guid, object> StreamedData
         {
-            get => _streamCapacity;
-            set
-            {
-                _streamCapacity = value;
-
-                ReleaseOld();
-            }
+            get => _streamedData;
+            set => _streamedData = value;
         }
 
-        public int Count => _streamedObjects.Count;
+        private HashSet<Guid> _dirtyData = new HashSet<Guid>();
+        private Dictionary<Guid, object> _streamedData = new Dictionary<Guid, object>();
 
-        /// <summary>
-        /// Current temporary queue offset affected by copies and already released references.
-        /// </summary>
-        public int Offset => _streamOffset;
+        public bool IsDirty(Guid guid) => _dirtyData.Contains(guid);
 
-        private HashSet<Hash128> _dirtyObjects = new HashSet<Hash128>();
-        private Dictionary<Hash128, ScriptableObject> _streamedObjects = new Dictionary<Hash128, ScriptableObject>();
-        private Dictionary<Hash128, short> _tempObjects = new Dictionary<Hash128, short>();
-        private Queue<Hash128> _tempQueue = new Queue<Hash128>();
-
-        private int _streamCapacity = 64;
-        private int _streamOffset;
-
-        public bool IsDirty(string id) => IsDirty(Hash128.Compute(id));
-        public bool IsDirty(Hash128 hash) => _dirtyObjects.Contains(hash);
-
-        /// <summary>
-        /// Load temporary reference who can be released if not used and not set to dirty.
-        /// </summary>
-        public WeakReference<T>? LoadTemp<T>(string id) where T : ScriptableObject => LoadTemp<T>(Hash128.Compute(id));
-        /// <summary>
-        /// Load temporary reference that can be released if not used and not set to dirty.
-        /// </summary>
-        public WeakReference<T>? LoadTemp<T>(Hash128 hash) where T : ScriptableObject
+        public bool Load(Guid guid, object obj)
         {
-            if (_streamedObjects.ContainsKey(hash))
-                return null;
+            if (_streamedData.ContainsKey(guid))
+                return false;
 
-            T obj = CreateInstance<T>();
-            obj.name = hash.ToString();
+            _streamedData.Add(guid, obj);
 
-            _streamedObjects.Add(hash, obj);
-            _tempObjects.Add(hash, 1);
-
-            _tempQueue.Enqueue(hash);
-            ReleaseOld();
-
-            return new WeakReference<T>(obj);
+            return true;
         }
 
-        /// <summary>
-        /// Load persistent reference that needs to be manually released. 
-        /// </summary>
-        public T? LoadPersistent<T>(string id) where T : ScriptableObject => LoadPersistent<T>(Hash128.Compute(id));
-        /// <summary>
-        /// Load persistent reference that needs to be manually released. 
-        /// </summary>
-        public T? LoadPersistent<T>(Hash128 hash) where T : ScriptableObject
+        public bool Release(Guid guid)
         {
-            if (_streamedObjects.ContainsKey(hash))
-                return null;
+            if (!_streamedData.ContainsKey(guid))
+                return false;
 
-            T obj = ScriptableObject.CreateInstance<T>();
+            _streamedData.Remove(guid);
+            _dirtyData.Remove(guid);
 
-            _streamedObjects.Add(hash, obj);
+            return true;
+        }
+
+        public object Get(Guid guid)
+        {
+            _streamedData.TryGetValue(guid, out object obj);
 
             return obj;
         }
 
         /// <summary>
-        /// Release existing reference. Removes dirty.
+        /// Set dirty to save the asset on next save.
         /// </summary>
-        public bool Release(string id) => Release(Hash128.Compute(id));
-        /// <summary>
-        /// Release existing reference. Removes dirty.
-        /// </summary>
-        public bool Release(Hash128 hash)
+        /// <returns>If streamed object exist.</returns>
+        public bool SetDirty(Guid guid)
         {
-            if (!_streamedObjects.TryGetValue(hash, out ScriptableObject obj))
+            if (!_streamedData.ContainsKey(guid))
                 return false;
 
-            if (_tempObjects.TryGetValue(hash, out short amount))
-            {
-                for (int i = 0; i < amount; i++)
-                        _streamOffset++;
-
-                _tempObjects.Remove(hash);
-            }
-
-            Destroy(obj);
-
-            _streamedObjects.Remove(hash);
-            _dirtyObjects.Remove(hash);
+            _dirtyData.Add(guid);
 
             return true;
-        }
-
-        /// <summary>
-        /// Return weak reference and if temporary, place it last in the queue.
-        /// </summary>
-        public WeakReference<T?> Get<T>(string id) where T : ScriptableObject => Get<T>(Hash128.Compute(id));
-        /// <summary>
-        /// Return weak reference and if temporary, place it last in the queue.
-        /// </summary>
-        public WeakReference<T?> Get<T>(Hash128 hash) where T : ScriptableObject
-        {
-            _streamedObjects.TryGetValue(hash, out ScriptableObject obj);
-
-            if (_tempObjects.ContainsKey(hash))
-            {
-                _tempObjects[hash]++;   // Increase the amount of copies existing inside of the queue.
-                _streamOffset++;
-                _tempQueue.Enqueue(hash);
-            }
-
-            return new WeakReference<T?>(obj as T);  
-        }
-
-        /// <summary>
-        /// Set dirty to save the asset on next saving.
-        /// </summary>
-        public void SetDirty(string id) => SetDirty(Hash128.Compute(id));
-        /// <summary>
-        /// Set dirty to save the asset on next saving.
-        /// </summary>
-        public void SetDirty(Hash128 hash)
-        {
-            _dirtyObjects.Add(hash);
-
-            if (_tempObjects.ContainsKey(hash))
-                _streamOffset++;
-        }
-
-        private void ReleaseOld()
-        {
-            if (_streamCapacity + _streamOffset < _tempQueue.Count)
-                while (_tempQueue.Count > 0)
-                {
-                    Hash128 hash = _tempQueue.Dequeue();
-
-                    if (_tempObjects.ContainsKey(hash) && --_tempObjects[hash] > 0)   // If more copies exit inside of the queue.
-                    {
-                        _streamOffset--;
-                        continue;
-                    }
-
-                    if (_streamedObjects.ContainsKey(hash))
-                    {
-                        if (!_dirtyObjects.Contains(hash))
-                        {
-                            Release(hash);
-                            break;
-                        }
-                    }
-
-                    _streamOffset--;
-                }
         }
     }
 }

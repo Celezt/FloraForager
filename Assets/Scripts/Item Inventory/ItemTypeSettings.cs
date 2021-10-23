@@ -81,6 +81,12 @@ public class ItemTypeSettings : SerializedScriptableSingleton<ItemTypeSettings>
     public event Action<string> OnAddLabelCallback = delegate { };
     public event Action<string> OnRemoveLabelCallback = delegate { };
 
+    [Button]
+    private void Regenerate()
+    {
+        EnumGenerator.Generate("Items", "Assets/Data/Generated", _itemNameChunk.Values.ToList());
+    }
+
     /// <summary>
     /// Add new <see cref="ItemType"/> to all chunks.
     /// </summary>
@@ -105,7 +111,10 @@ public class ItemTypeSettings : SerializedScriptableSingleton<ItemTypeSettings>
             _itemNameChunk.Add(id, itemType.Name);
 
         OnAddItemTypeCallback.Invoke(itemType);
-        
+
+
+        EnumGenerator.Generate("Items", "Assets/Data/Generated", _itemNameChunk.Values.ToList());
+
         return true;
     }
 
@@ -134,6 +143,8 @@ public class ItemTypeSettings : SerializedScriptableSingleton<ItemTypeSettings>
         _itemTypeChunk.Remove(id);
         _itemIconChunk.Remove(id);
         _itemNameChunk.Remove(id);
+
+        EnumGenerator.Generate("Items", "Assets/Data/Generated", _itemNameChunk.Values.ToList());
 
         return true;
     }

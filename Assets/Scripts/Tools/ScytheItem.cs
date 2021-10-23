@@ -11,17 +11,15 @@ using MyBox;
 public class ScytheItem : IUse, IItem, IDestructor, IStar, IValue
 {
     [OdinSerialize, PropertyOrder(float.MinValue)]
-    public int ItemStack { get; set; } = 1;
+    int IItem.ItemStack { get; set; } = 1;
     [OdinSerialize, PropertyOrder(float.MinValue + 1)]
     Stars IStar.Star { get; set; } = Stars.One;
     [OdinSerialize, PropertyOrder(float.MinValue + 2)]
     int IValue.BaseValue { get; set; }
     [OdinSerialize, PropertyOrder(float.MinValue + 3)]
-    public float Cooldown { get; set; } = 0.5f;
+    float IUse.Cooldown { get; set; } = 0.5f;
     [OdinSerialize, PropertyOrder(float.MinValue + 4)]
-    public float Strength { get; set; } = DurabilityStrengths.BRITTLE_STONE;
-    [OdinSerialize, PropertyOrder(float.MinValue + 5)]
-    public float Damage { get; set; } = 2.0f;
+    float IDestructor.Damage { get; set; } = 2.0f;
 
     [Title("Tool Behaviour")]
     [SerializeField]

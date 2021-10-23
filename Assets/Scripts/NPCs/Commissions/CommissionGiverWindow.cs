@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using TMPro;
 using MyBox;
 
 public class CommissionGiverWindow : Singleton<CommissionGiverWindow>
@@ -11,38 +12,40 @@ public class CommissionGiverWindow : Singleton<CommissionGiverWindow>
     [SerializeField] private GameObject _AcceptButton;
     [SerializeField] private GameObject _BackButton;
     [SerializeField] private GameObject _CompleteButton;
-    [SerializeField] private GameObject _CommissionDescription;
+    [SerializeField] private GameObject _DescriptionArea;
 
-    [SerializeField] private Text _Title;
-
-    private Text _Description;
+    [SerializeField] private TMP_Text _Title;
+    [SerializeField] private TMP_Text _Description;
+    [SerializeField] private ScrollRect _ScrollRect;
 
     private CanvasGroup _CanvasGroup;
 
-    private CommissionGiver _CommissionGiver; // giver assigned to this window
+    private NPC _CommissionGiver; // giver assigned to this window
     private List<GameObject> _CommissionObjects; // objects in the window list
     private Commission _SelectedCommission; // selected commission in the window
 
     private void Awake()
     {
         _CanvasGroup = GetComponent<CanvasGroup>();
-        _Description = _CommissionDescription.GetComponent<Text>();
 
         _CommissionObjects = new List<GameObject>();
         _CanvasGroup.alpha = 0.0f;
     }
 
-    public void ShowCommissions(CommissionGiver commissionGiver)
+    public void ShowCommissions(NPC commissionGiver)
     {
         _CommissionGiver = commissionGiver;
 
-        _Title.text = commissionGiver.name;
+        _Title.text = commissionGiver.Name;
 
         _CommissionObjects.ForEach(o => Destroy(o));
         _CommissionObjects.Clear();
 
         _CommissionArea.gameObject.SetActive(true);
-        _CommissionDescription.SetActive(false);
+        _DescriptionArea.SetActive(false);
+
+        _ScrollRect.content = _CommissionArea.GetComponent<RectTransform>();
+        _ScrollRect.viewport = null;
 
         foreach (Commission commission in commissionGiver.Commissions)
         {
@@ -51,9 +54,9 @@ public class CommissionGiverWindow : Singleton<CommissionGiverWindow>
 
             GameObject obj = Instantiate(_CommissionPrefab, _CommissionArea);
 
-            Text commText = obj.GetComponent<Text>();
+            TMP_Text commText = obj.GetComponent<TMP_Text>();
 
-            commText.text = commission.Title;
+            commText.text = commission.Data.Title;
             obj.GetComponent<CGCommissionObject>().Commission = commission;
 
             _CommissionObjects.Add(obj);
@@ -69,15 +72,10 @@ public class CommissionGiverWindow : Singleton<CommissionGiverWindow>
                 c.a = 0.5f;
                 commText.color = c;
             }
-
-            foreach (Objective objective in commission.Objectives)
-            {
-                objective.UpdateAmount(0, new ItemAsset { });
-            }
         }
     }
 
-    public void ShowCommissionInfo(Commission commission)
+    public void ShowDescription(Commission commission)
     {
         _SelectedCommission = commission;
 
@@ -95,19 +93,22 @@ public class CommissionGiverWindow : Singleton<CommissionGiverWindow>
         _BackButton.SetActive(true);
 
         _CommissionArea.gameObject.SetActive(false);
-        _CommissionDescription.SetActive(true);
+        _DescriptionArea.SetActive(true);
+
+        _ScrollRect.content = _Description.GetComponent<RectTransform>();
+        _ScrollRect.viewport = _DescriptionArea.GetComponent<RectTransform>();
 
         string objectives = "<b>Objectives</b>\n<size=20>";
-        foreach (Objective obj in commission.Objectives)
+        commission.Objectives.ForEach(o =>
         {
-            objectives += obj.ItemID + ": " + obj.CurrentAmount + "/" + obj.Amount + "\n";
-        }
+            objectives += o.Status + '\n';
+        });
         objectives += "</size>";
 
         string rewards = "<b>Rewards</b>\n<size=20>";
-        foreach (RewardPair reward in commission.Rewards)
+        foreach (RewardPair reward in commission.Data.Rewards)
         {
-            rewards += reward.Amount + " " + reward.ItemID + "\n";
+            rewards += reward.Amount + " " + ItemTypeSettings.Instance.ItemNameChunk[reward.ItemID] + "\n";
         }
         rewards += "</size>";
 
@@ -116,8 +117,8 @@ public class CommissionGiverWindow : Singleton<CommissionGiverWindow>
         string completed = commission.IsCompleted ? "<color=green>(Complete)</color>" : string.Empty;
 
         _Description.text = string.Format("<b>{0}</b>\n<size=20>{1}</size>\n\n{2}\n{3}\n{4}\n\n{5}",
-            commission.Title,
-            commission.Description,
+            commission.Data.Title,
+            commission.Data.Description,
             objectives, rewards, daysLeft, completed);
     }
 
@@ -142,7 +143,7 @@ public class CommissionGiverWindow : Singleton<CommissionGiverWindow>
     /// </summary>
     public void Accept()
     {
-        CommissionLog.Instance.AcceptCommission(_SelectedCommission);
+        CommissionLog.Instance.Accept(_SelectedCommission);
         Back();
     }
 
@@ -175,8 +176,7 @@ public class CommissionGiverWindow : Singleton<CommissionGiverWindow>
         }
 
         _SelectedCommission.Complete();
-
-        CommissionLog.Instance.RemoveCommission(_SelectedCommission.Object);
+        CommissionLog.Instance.Remove(_SelectedCommission);
 
         Back();
     }

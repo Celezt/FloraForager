@@ -20,6 +20,8 @@ public class SleepSchedule : Singleton<SleepSchedule>
     private bool _IsSleeping = false;  // if the player is currently sleeping
     private float _NightToMorning = 0; // total time in hours for player to sleep
 
+    public System.Action OnSlept = delegate { };
+
     public float MorningTime => _MorningTime;
     public float NightTime => _NightTime;
     public float NightToMorning => _NightToMorning;
@@ -59,6 +61,8 @@ public class SleepSchedule : Singleton<SleepSchedule>
     {
         // sleep
 
+        FadeScreen.Instance.StartFadeIn(_SleepTime);
+
         _PlayerMovement.enabled = false;
         _InteractableArea.enabled = false;
         _PlayerRigidbody.isKinematic = true;
@@ -67,9 +71,13 @@ public class SleepSchedule : Singleton<SleepSchedule>
 
         // wake up
 
+        FadeScreen.Instance.StartFadeOut(2.0f);
+
         _PlayerMovement.enabled = true;
         _InteractableArea.enabled = true;
         _PlayerRigidbody.isKinematic = false;
+
+        OnSlept.Invoke();
 
         _PlayerStamina.Recover();
         FloraMaster.Instance.Notify();

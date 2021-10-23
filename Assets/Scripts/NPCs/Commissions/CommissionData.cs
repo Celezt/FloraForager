@@ -2,25 +2,44 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Events;
+using Sirenix.Serialization;
+using Sirenix.OdinInspector;
 
 [CreateAssetMenu(fileName = "Commission", menuName = "Scriptable Objects/Commission")]
-public class CommissionData : ScriptableObject
+public class CommissionData : SerializedScriptableObject
 {
-    [SerializeField] private string _Title;
-    [SerializeField, TextArea(3, 5)] private string _Description;
-    [SerializeField] private int _TimeLimit;
-    [SerializeField] private Relation _MinRelation;
-    [SerializeField] private float _RewardRelations;
-    [SerializeField] private float _PenaltyRelations;
-    [SerializeField] private ObjectiveData[] _ObjectivesData;
-    [SerializeField] private RewardPair[] _Rewards;
+    [OdinSerialize, Required] 
+    private string _Title;
+    [OdinSerialize, TextArea(5, 30)] 
+    private string _Description;
+
+    [Title("Challenge")]
+    [OdinSerialize] 
+    private int _TimeLimit;
+    [OdinSerialize, Required]
+    private IObjective[] _Objectives = new IObjective[] { new GatherObjective() };
+
+    [Title("Relations")]
+    [OdinSerialize] 
+    private Relation _MinRelation = Relation.Neutral;
+    [OdinSerialize] 
+    private float _RewardRelations;
+    [OdinSerialize] 
+    private float _PenaltyRelations;
+
+    [Title("Rewards")]
+    [OdinSerialize, Required] 
+    private RewardPair[] _Rewards = new RewardPair[] { new RewardPair() };
 
     public string Title => _Title;
     public string Description => _Description;
+
     public int TimeLimit => _TimeLimit;
+    public IObjective[] Objectives => _Objectives;
+
     public Relation MinRelation => _MinRelation;
     public float RewardRelations => _RewardRelations;
     public float PenaltyRelations => _PenaltyRelations;
-    public ObjectiveData[] ObjectivesData => _ObjectivesData;
+
     public RewardPair[] Rewards => _Rewards;
 }

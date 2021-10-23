@@ -3,9 +3,9 @@ using UnityEngine.InputSystem;
 
 public class HarvestScythe : IHarvest
 {
-    public IList<string> Filter(ItemLabels labels) => new List<string> { labels.SCYTHE };
+    ItemLabels IUsable.Filter() => ItemLabels.Scythe;
 
-    public void Initialize(FloraData data)
+    public void Initialize(FloraData data, IHarvest harvestData)
     {
         
     }
@@ -26,7 +26,7 @@ public class HarvestScythe : IHarvest
             }
         }
 
-        GridInteraction.RemoveObject(flora.Tile);
+        UnityEngine.Object.Destroy(Grid.Instance.FreeCell(flora.Cell));
         FloraMaster.Instance.Remove(flora);
     }
 
