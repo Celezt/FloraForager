@@ -8,41 +8,48 @@ using Sirenix.OdinInspector;
 [System.Serializable]
 public class HarvestPluck : IHarvest
 {
-    [OdinSerialize]
-    private bool _PluckFromAll = false;
-    [OdinSerialize]
-    private int _PluckAmount = 1;
+    public bool PluckFromAll = false;
+    public int PluckAmount = 1;
 
+    [HideInInspector]
     public System.Action OnEmptied = delegate { };
 
     private int[] _Pluck;
 
-    public IList<string> Filter(ItemLabels labels) => new List<string> { };
+    ItemLabels IUsable.Filter()
+    {
+        throw new System.NotImplementedException();
+    }
 
-    public void Initialize(FloraData data)
+    public void Initialize(FloraData data, IHarvest harvestData)
     {
         _Pluck = System.Array.ConvertAll(data.Rewards, r => r.Amount);
+
+        HarvestPluck harvestPluck = harvestData as HarvestPluck;
+
+        PluckFromAll = harvestPluck.PluckFromAll;
+        PluckAmount = harvestPluck.PluckAmount;
     }
 
     public void Harvest(Flora flora, int playerIndex)
     {
         if (flora.Completed)
         {
-            InventoryObject inventory = PlayerInput.GetPlayerByIndex(playerIndex).GetComponent<PlayerInfo>().Inventory;
+            Inventory inventory = PlayerInput.GetPlayerByIndex(playerIndex).GetComponent<PlayerInfo>().Inventory;
 
             for (int i = 0; i < _Pluck.Length; ++i)
             {
-                int amountToPluck = ((_Pluck[i] - _PluckAmount) < 0) ? _Pluck[i] : _PluckAmount;
+                int amountToPluck = ((_Pluck[i] - PluckAmount) < 0) ? _Pluck[i] : PluckAmount;
 
                 _Pluck[i] -= amountToPluck;
 
-                inventory.AddItem(new ItemAsset
+                inventory.Insert(new ItemAsset
                 {
                     ID = flora.Data.Rewards[i].ItemID,
                     Amount = amountToPluck
                 });
 
-                if (!_PluckFromAll)
+                if (!PluckFromAll)
                     break;
             }
 
@@ -50,7 +57,7 @@ public class HarvestPluck : IHarvest
             {
                 OnEmptied.Invoke();
 
-                GridInteraction.RemoveObject(flora.Tile);
+                UnityEngine.Object.Destroy(Grid.Instance.FreeCell(flora.Cell));
                 FloraMaster.Instance.Remove(flora);
             }
         }

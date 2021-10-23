@@ -3,9 +3,9 @@ using UnityEngine.InputSystem;
 
 public class HarvestScythe : IHarvest
 {
-    public IList<string> Filter(ItemLabels labels) => new List<string> { labels.SCYTHE };
+    ItemLabels IUsable.Filter() => ItemLabels.Scythe;
 
-    public void Initialize(FloraData data)
+    public void Initialize(FloraData data, IHarvest harvestData)
     {
         
     }
@@ -14,11 +14,11 @@ public class HarvestScythe : IHarvest
     {
         if (flora.Completed)
         {
-            InventoryObject inventory = PlayerInput.GetPlayerByIndex(playerIndex).GetComponent<PlayerInfo>().Inventory;
+            Inventory inventory = PlayerInput.GetPlayerByIndex(playerIndex).GetComponent<PlayerInfo>().Inventory;
 
             foreach (RewardPair reward in flora.Data.Rewards)
             {
-                inventory.AddItem(new ItemAsset
+                inventory.Insert(new ItemAsset
                 {
                     ID = reward.ItemID,
                     Amount = reward.Amount
@@ -26,7 +26,7 @@ public class HarvestScythe : IHarvest
             }
         }
 
-        GridInteraction.RemoveObject(flora.Tile);
+        UnityEngine.Object.Destroy(Grid.Instance.FreeCell(flora.Cell));
         FloraMaster.Instance.Remove(flora);
     }
 

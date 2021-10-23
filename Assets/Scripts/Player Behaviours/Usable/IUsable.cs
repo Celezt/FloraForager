@@ -9,7 +9,6 @@ public interface IUsable : IPlayerInteractable
     /// <summary>
     /// Whitelist users with label.
     /// </summary>
-    /// <param name="labels">Auto generated labels</param>
     /// <returns>To whitelist.</returns>
-    public IList<string> Filter(ItemLabels labels);
+    public ItemLabels Filter();
 }

@@ -7,18 +7,21 @@ using Sirenix.OdinInspector;
 public class SeedItem : IUse, IItem
 {
     [OdinSerialize]
-    public uint ItemStack { get; set; } = 64;
+    public int ItemStack { get; set; } = 64;
     [OdinSerialize]
     public float Cooldown { get; set; } = 2;
 
-    [OdinSerialize, Required] 
-    private string _FloraName;
+    [OdinSerialize]
+    private FloraData _Flora;
 
-    private InventoryObject _Inventory;
+    void IItem.OnInitialize(ItemTypeContext context)
+    {
+
+    }
 
     public void OnEquip(ItemContext context)
     {
-        _Inventory = context.transform.GetComponent<PlayerInfo>().Inventory;
+
     }
 
     public void OnUnequip(ItemContext context)
@@ -36,7 +39,9 @@ public class SeedItem : IUse, IItem
         if (!context.performed)
             yield break;
 
-        FloraMaster.Instance.Add(_FloraName.ToLower());
+        FloraMaster.Instance.Add(_Flora);
+
+        context.Consume();
 
         yield break;
     }

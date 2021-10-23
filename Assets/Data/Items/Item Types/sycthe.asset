@@ -25,21 +25,27 @@ MonoBehaviour:
     - Name: Behaviour
       Entry: 7
       Data: 0|ScytheItem, Assembly-CSharp
-    - Name: ItemStack
+    - Name: IItem.ItemStack
       Entry: 3
       Data: 1
-    - Name: Cooldown
+    - Name: IStar.Star
+      Entry: 3
+      Data: 1
+    - Name: IValue.BaseValue
+      Entry: 3
+      Data: 100
+    - Name: IUse.Cooldown
       Entry: 4
       Data: 0.5
-    - Name: Strength
-      Entry: 4
-      Data: 20
-    - Name: Damage
+    - Name: IDestructor.Damage
       Entry: 4
       Data: 2
     - Name: _modelPrefab
       Entry: 10
       Data: 0
+    - Name: _stunDuration
+      Entry: 4
+      Data: 0.5
     - Name: _radius
       Entry: 4
       Data: 3
@@ -55,3 +61,4 @@ MonoBehaviour:
   Description: 
   Labels:
   - scythe
+  - tool

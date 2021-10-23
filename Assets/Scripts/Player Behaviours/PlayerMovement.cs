@@ -26,8 +26,7 @@ public class PlayerMovement : MonoBehaviour
         get
         {
             float totalMultiplier = 1;
-            foreach (KeyValuePair<Duration, float> mutliplier in _speedMultipliers)
-                totalMultiplier += mutliplier.Value;
+            _speedMultipliers.ForEach(x => totalMultiplier *= x.Value);
 
             return _isRunning ? _baseSpeed * totalMultiplier * _runningSpeedMultiplier : _baseSpeed * totalMultiplier;
         }
@@ -36,10 +35,10 @@ public class PlayerMovement : MonoBehaviour
     /// Base speed of the player.
     /// </summary>
     public float BaseSpeed => _baseSpeed;
-    /// <summary>
-    /// Speed multipliers affecting the player.
-    /// </summary>
-    public IReadOnlyDictionary<Duration, float> SpeedMultipliers => _speedMultipliers;
+
+    public DurationCollection<float> SpeedMultipliers => _speedMultipliers;
+    public DurationCollection ActivaInput => _activeInput;
+
     /// <summary>
     /// Running multiplier.
     /// </summary>
@@ -108,7 +107,8 @@ public class PlayerMovement : MonoBehaviour
         Target,
     }
 
-    private Dictionary<Duration, float> _speedMultipliers = new Dictionary<Duration, float>();
+    private DurationCollection<float> _speedMultipliers = new DurationCollection<float>();
+    private DurationCollection _activeInput = new DurationCollection();
 
     private Vector3 _slopeForward;
     private Vector3 _rawDirection;
@@ -125,37 +125,6 @@ public class PlayerMovement : MonoBehaviour
 
     private PlayerInput _playerInput;
 
-    /// <summary>
-    /// Stack different speed multipliers without overriding any other multiplier. 
-    /// </summary>
-    /// <param name="multiplier">Speed multiplier.</param>
-    /// <param name="duration">Time the multiplier last.</param>
-    /// <returns>Identifier.</returns>
-    public Duration AddSpeedMultiplier(float multiplier, Duration duration)
-    {
-        _speedMultipliers.Add(duration, multiplier);
-        return duration;
-    }
-    /// <summary>
-    /// Stack different speed multipliers without overriding any other multiplier. 
-    /// </summary>
-    /// <param name="multiplier">Speed multiplier.</param>
-    /// <param name="duration">Time the multiplier last.</param>
-    /// <returns>Identifier.</returns>
-    public Duration AddSpeedMultiplier(float multiplier, float duration) => AddSpeedMultiplier(multiplier, new Duration(duration));
-    /// <summary>
-    /// Stack different speed multipliers without overriding any other multiplier. 
-    /// </summary>
-    /// <param name="multiplier">Speed multiplier.</param>
-    /// <returns>Identifier.</returns>
-    public Duration AddSpeedMultiplier(float multiplier) => AddSpeedMultiplier(multiplier, Duration.Infinity);
-    /// <summary>
-    /// Remove existing multiplier.
-    /// </summary>
-    /// <param name="identifier">Duration as a identifier.</param>
-    /// <returns>If exist.</returns>
-    public bool RemoveSpeedMultiplier(Duration identifier) => _speedMultipliers.Remove(identifier);
-    public void ClearSpeedMultiplier() => _speedMultipliers.Clear();
     public void SetRunMultiplier(float multiplier) => _runningSpeedMultiplier = multiplier;
     public void SetDrag(float drag) => _drag = drag;
     public void SetAngularDrag(float angularDrag) => _angularDrag = angularDrag;
@@ -165,6 +134,7 @@ public class PlayerMovement : MonoBehaviour
     public void OnMove(InputAction.CallbackContext context)
     {
         Vector2 value = context.ReadValue<Vector2>();
+
         _rawDirection = new Vector3(value.x, 0, value.y);
         _rigidbody.velocity = new Vector3(0, _rigidbody.velocity.y, 0);
 
@@ -201,6 +171,7 @@ public class PlayerMovement : MonoBehaviour
     private void FixedUpdate()
     {
         Vector3 position = transform.position;
+        Vector3 rawDirection = _activeInput.IsNullOrEmpty() ? _rawDirection : Vector3.zero;
 
         void Movement()
         {
@@ -212,9 +183,9 @@ public class PlayerMovement : MonoBehaviour
                 pivotForward.y = 0f;
                 pivotRight.y = 0f;
 
-                _forward = (pivotForward * _rawDirection.z + pivotRight * _rawDirection.x).normalized;
+                _forward = (pivotForward * rawDirection.z + pivotRight * rawDirection.x).normalized;
 
-                if (_rawDirection != Vector3.zero)
+                if (rawDirection != Vector3.zero)
                     _relativeForward = _forward;
             }
 
@@ -239,10 +210,10 @@ public class PlayerMovement : MonoBehaviour
                     GetDirection(pivotForward, pivotRight);
                     break;
                 default:
-                    if (_rawDirection != Vector3.zero)
-                        _relativeForward = _rawDirection;
+                    if (rawDirection != Vector3.zero)
+                        _relativeForward = rawDirection;
 
-                    _forward = _rawDirection;
+                    _forward = rawDirection;
                     break;
             }
 
@@ -313,14 +284,6 @@ public class PlayerMovement : MonoBehaviour
             _collider.material = _isGrounded ? _groundPhysicMaterial : _fallPhysicMaterial;
         }
 
-        void updateSpeedMultipliers()
-        {
-            foreach (KeyValuePair<Duration, float> multiplier in _speedMultipliers.ToList())
-                if (!multiplier.Key.IsActive)
-                    _speedMultipliers.Remove(multiplier.Key);
-        }
-
-        updateSpeedMultipliers();
         Movement();
         SlopeMovement();
         PhysicMaterialToUse();

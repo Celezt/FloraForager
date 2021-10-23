@@ -12,18 +12,22 @@ public enum Relation
     Loved
 }
 
-public class RelationshipManager : MonoBehaviour
+[System.Serializable]
+public class RelationshipManager
 {
+    private float minRelation, maxRelation;
+    private float curRelation;
 
     private Relation relation;
-    [SerializeField] float minRelation = -100, maxRelation = 100;
-
-    [SerializeField] float curRelation;
 
     public Relation Relation => relation;
 
-    private void Start()
+    public RelationshipManager(float minRelation, float maxRelation, float curRelation)
     {
+        this.minRelation = minRelation;
+        this.maxRelation = maxRelation;
+        this.curRelation = curRelation;
+
         UpdateEnum();
     }
 

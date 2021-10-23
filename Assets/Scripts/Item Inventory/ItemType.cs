@@ -7,7 +7,7 @@ using System.IO;
 using UnityEditor;
 using Newtonsoft.Json;
 
-[CreateAssetMenu(fileName = "New ItemType", menuName = "Inventory/ItemType")]
+[CreateAssetMenu(fileName = "New ItemType", menuName = "Inventory System/ItemType")]
 [System.Serializable]
 public class ItemType : SerializedScriptableObject
 {

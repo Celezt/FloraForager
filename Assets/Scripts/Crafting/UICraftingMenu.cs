@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.InputSystem;
+using TMPro;
 using MyBox;
 
 public class UICraftingMenu : Singleton<UICraftingMenu>
@@ -12,8 +13,8 @@ public class UICraftingMenu : Singleton<UICraftingMenu>
 
     [SerializeField] private GameObject _Description;
     [SerializeField] private Image _DescriptionImage;
-    [SerializeField] private Text _ItemNameText;
-    [SerializeField] private Text _ResourceReqsText;
+    [SerializeField] private TMP_Text _ItemNameText;
+    [SerializeField] private TMP_Text _ResourceReqsText;
 
     private List<GameObject> _CraftableItemObjects;
 
@@ -52,7 +53,7 @@ public class UICraftingMenu : Singleton<UICraftingMenu>
         if (_SelectedItem == null || !CanCraft(_SelectedItem))
             return;
 
-        InventoryObject inventory = PlayerInput.GetPlayerByIndex(0).GetComponent<PlayerInfo>().Inventory;
+        Inventory inventory = PlayerInput.GetPlayerByIndex(0).GetComponent<PlayerInfo>().Inventory;
 
         foreach (ResourceRequirement resReq in _SelectedItem.ResourceReqs)
         {
@@ -62,7 +63,7 @@ public class UICraftingMenu : Singleton<UICraftingMenu>
             inventory.Remove(itemID, amount);
         }
 
-        inventory.AddItem(new ItemAsset
+        inventory.Insert(new ItemAsset
         {
             ID = _SelectedItem.ItemID,
             Amount = 1
@@ -141,7 +142,7 @@ public class UICraftingMenu : Singleton<UICraftingMenu>
 
     public bool CanCraft(CraftableItem craftableItem)
     {
-        InventoryObject inventory = PlayerInput.GetPlayerByIndex(0).GetComponent<PlayerInfo>().Inventory;
+        Inventory inventory = PlayerInput.GetPlayerByIndex(0).GetComponent<PlayerInfo>().Inventory;
 
         foreach (ResourceRequirement resReq in craftableItem.ResourceReqs)
         {

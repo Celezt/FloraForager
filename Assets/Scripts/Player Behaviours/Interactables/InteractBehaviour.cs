@@ -27,6 +27,9 @@ public class InteractBehaviour : MonoBehaviour
     {
         Vector3 position = transform.position;
 
+        if (CanvasUtility.IsPointerOverUIElement()) // Skip if pointing over a UI element.
+            return;
+
         void InteractAtCursor(InputAction.CallbackContext context)
         {
             Ray ray = Camera.main.ScreenPointToRay(_screenPosition);

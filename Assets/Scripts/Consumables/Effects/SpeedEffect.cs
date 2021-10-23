@@ -9,11 +9,10 @@ public struct SpeedEffect : IEffect
     public Duration Duration { get; set; }
 
     public float SpeedMultiplier;
-    [Min(0)]
     public float Time;
 
     void IEffect.OnEffect(UseContext context)
     {
-        Duration = context.transform.GetComponent<PlayerMovement>().AddSpeedMultiplier(SpeedMultiplier, Time);
+        Duration = context.transform.GetComponent<PlayerMovement>().SpeedMultipliers.Add(Time, SpeedMultiplier);
     }
 }

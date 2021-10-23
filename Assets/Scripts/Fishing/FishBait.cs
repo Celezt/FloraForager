@@ -6,9 +6,14 @@ using Sirenix.Serialization;
 public class FishBait : IItem, IBait
 {
     [OdinSerialize]
-    uint IItem.ItemStack { get; set; } = 64;
+    int IItem.ItemStack { get; set; } = 64;
     [OdinSerialize]
     float IBait.Efficiency { get; set; } = 5;
+
+    void IItem.OnInitialize(ItemTypeContext context)
+    {
+
+    }
 
     void IItem.OnEquip(ItemContext context)
     {

@@ -5,22 +5,38 @@ using UnityEngine.EventSystems;
 using UnityEngine.UI;
 using UnityEngine.InputSystem;
 
-public class ItemDragHandler : MonoBehaviour, IDragHandler, IEndDragHandler
+public class ItemDragHandler : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDragHandler
 {
-    private CanvasGroup canvasGroup;
+    private CanvasGroup _canvasGroup;
+    private Transform _dragParent;
+    private Transform _startParent;
+
     public void Awake()
     {
-        canvasGroup = GetComponent<CanvasGroup>();
-    }
-    public void OnDrag(PointerEventData eventData)
-    {
-        transform.position = Mouse.current.position.ReadValue();
-        canvasGroup.alpha = 0.6f;
+        _canvasGroup = GetComponent<CanvasGroup>();
+        _dragParent = GetComponentInParent<InventoryManager>().transform;
     }
 
-    public void OnEndDrag(PointerEventData eventData)
+    void IBeginDragHandler.OnBeginDrag(PointerEventData eventData)
+    {
+        _startParent = transform.parent;
+        transform.SetParent(_dragParent.transform);
+        transform.localPosition = Vector3.zero;
+        _canvasGroup.alpha = 0.8f;
+    }
+
+    void IDragHandler.OnDrag(PointerEventData eventData)
+    {
+        
+        transform.position = Mouse.current.position.ReadValue();
+    }
+
+    void IEndDragHandler.OnEndDrag(PointerEventData eventData)
     {
         transform.localPosition = Vector3.zero;
-        canvasGroup.alpha = 1f;
+        _canvasGroup.alpha = 1f;
+        transform.SetParent(_startParent);
+        transform.localPosition = Vector3.zero;        
     }
+
 }

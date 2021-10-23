@@ -2,16 +2,17 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using TMPro;
 using MyBox;
 
 public class CommissionTracker : Singleton<CommissionTracker>
 {
-    [SerializeField] private Text _Title;
-    [SerializeField] private Text _Quota;
+    [SerializeField] private TMP_Text _Title;
+    [SerializeField] private TMP_Text _Quota;
 
     private CanvasGroup _CanvasGroup;
 
-    private Commission _Commission;
+    private static Commission _Commission;
 
     public Commission Commission => _Commission;
 
@@ -26,15 +27,14 @@ public class CommissionTracker : Singleton<CommissionTracker>
         if (_Commission == null)
             return;
 
-        _Title.text = _Commission.IsCompleted ? "<color=green>" + _Commission.Title + "</color>" : _Commission.Title;
+        _Title.text = _Commission.IsCompleted ? "<color=green>" + _Commission.Data.Title + "</color>" : _Commission.Data.Title;
 
         string quota = string.Empty;
-        foreach (Objective objective in _Commission.Objectives)
+        foreach (IObjective objective in _Commission.Objectives)
         {
-            quota += objective.CurrentAmount + "/" + objective.Amount + " " + objective.ItemID;
-
+            quota += objective.Status;
             if (objective != _Commission.Objectives[_Commission.Objectives.Length - 1])
-                quota += " : ";
+                quota += " | ";
         }
 
         _Quota.text = quota;

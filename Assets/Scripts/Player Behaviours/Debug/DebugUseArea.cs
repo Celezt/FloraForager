@@ -2,23 +2,23 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using Sirenix.OdinInspector;
-using System.Linq;
+using Sirenix.Serialization;
 
-public class DebugUseArea : MonoBehaviour, IUsable, IDestructable
+public class DebugUseArea : MonoBehaviour, IUsable, IResourceObject, IDestructableObject
 {
-    public float Strength { get; set; } = DurabilityStrengths.UNARMED;
-    public float Durability { get; set; } = 10;
-
     [SerializeField, Required] private Material _firstMaterial;
     [SerializeField, Required] private Material _secondMaterial;
+
+    [ItemTypeWithInterface(typeof(IResource))]
+    public ItemType scriptable;
 
     private MeshRenderer _meshRenderer;
 
     private bool _isToggled;
 
-    public IList<string> Filter(ItemLabels labels) => new List<string> { labels.SCYTHE, labels.AXE };
+    ItemLabels IUsable.Filter() => ItemLabels.Scythe | ItemLabels.Axe;
 
-    public void OnUse(UsedContext context)
+    void IUsable.OnUse(UsedContext context)
     {
         if (context.used is IDestructor)
         {
@@ -31,5 +31,15 @@ public class DebugUseArea : MonoBehaviour, IUsable, IDestructable
     private void Awake()
     {
         _meshRenderer = GetComponent<MeshRenderer>();
+    }
+
+    void IDestructableObject.OnDamage(IDestructor destructor, IDestructable destructable, UsedContext context)
+    {
+        Debug.Log(destructor.Damage);
+    }
+
+    void IDestructableObject.OnDestruction(UsedContext context)
+    {
+        Debug.Log("destroyed");
     }
 }
