@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.InputSystem;
+using TMPro;
 using MyBox;
 
 public class UICraftingMenu : Singleton<UICraftingMenu>
@@ -12,8 +13,8 @@ public class UICraftingMenu : Singleton<UICraftingMenu>
 
     [SerializeField] private GameObject _Description;
     [SerializeField] private Image _DescriptionImage;
-    [SerializeField] private Text _ItemNameText;
-    [SerializeField] private Text _ResourceReqsText;
+    [SerializeField] private TMP_Text _ItemNameText;
+    [SerializeField] private TMP_Text _ResourceReqsText;
 
     private List<GameObject> _CraftableItemObjects;
 

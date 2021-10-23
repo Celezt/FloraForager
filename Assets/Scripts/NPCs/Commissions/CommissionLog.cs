@@ -2,6 +2,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.InputSystem;
+using TMPro;
 using MyBox;
 
 /// <summary>
@@ -11,7 +12,7 @@ public class CommissionLog : Singleton<CommissionLog>
 {
     [SerializeField] private GameObject _CommissionPrefab;
     [SerializeField] private Transform _CommissionArea;
-    [SerializeField] private Text _Description;
+    [SerializeField] private TMP_Text _Description;
 
     private List<CommissionObject> _CommissionObjects = new List<CommissionObject>();
     private List<Commission> _Commissions = new List<Commission>();
@@ -51,7 +52,7 @@ public class CommissionLog : Singleton<CommissionLog>
         commission.Object = cs;
         cs.Commission = commission;
 
-        obj.GetComponent<Text>().text = commission.Data.Title;
+        obj.GetComponent<TMP_Text>().text = commission.Data.Title;
 
         _Commissions.Add(commission);
         _CommissionObjects.Add(cs);

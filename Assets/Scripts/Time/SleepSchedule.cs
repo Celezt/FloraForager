@@ -61,6 +61,8 @@ public class SleepSchedule : Singleton<SleepSchedule>
     {
         // sleep
 
+        FadeScreen.Instance.StartFadeIn(_SleepTime);
+
         _PlayerMovement.enabled = false;
         _InteractableArea.enabled = false;
         _PlayerRigidbody.isKinematic = true;
@@ -68,6 +70,8 @@ public class SleepSchedule : Singleton<SleepSchedule>
         yield return new WaitForSeconds(_SleepTime);
 
         // wake up
+
+        FadeScreen.Instance.StartFadeOut(2.0f);
 
         _PlayerMovement.enabled = true;
         _InteractableArea.enabled = true;
