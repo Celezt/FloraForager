@@ -7,7 +7,7 @@ using IngameDebugConsole;
 
 public class PlayerStamina : MonoBehaviour
 {
-    [SerializeField] private GameObject _StaminaSlider;
+    [SerializeField] private Slider _StaminaSlider;
     [SerializeField] private float _MaxStamina = 100.0f;
     [SerializeField] private float _StmWalkingDrain = 0.04f;  // amount stamina drained every second
     [SerializeField] private float _StmRunningDrain = 0.09f;
@@ -17,7 +17,6 @@ public class PlayerStamina : MonoBehaviour
     public System.Action OnStaminaEmptied = delegate { };
 
     private PlayerMovement _PlayerMovement;
-    private Slider _Slider;
 
     private float _Stamina;
     private float _Sleepy; // rate to increase stamina drain rate
@@ -27,14 +26,13 @@ public class PlayerStamina : MonoBehaviour
         get => _Stamina;
         set
         {
-            _Stamina = Mathf.Clamp(_Stamina + value, 0.0f, _MaxStamina);
+            _Stamina = Mathf.Clamp(value, 0.0f, _MaxStamina);
         }
     }
 
     private void Awake()
     {
         _PlayerMovement = GetComponent<PlayerMovement>();
-        _Slider = _StaminaSlider.GetComponentInChildren<Slider>();
 
         DebugLogConsole.AddCommandInstance("player.stamina_change", "Change player's stamina", nameof(ChangeStamina), this);
     }
@@ -73,7 +71,7 @@ public class PlayerStamina : MonoBehaviour
 
     private void LateUpdate()
     {
-        _Slider.value = (_Stamina / _MaxStamina);
+        _StaminaSlider.value = (_Stamina / _MaxStamina);
     }
 
     private void WalkingDrain()

@@ -2,12 +2,13 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using TMPro;
 using MyBox;
 
 public class NPCUI : Singleton<NPCUI>
 {
-    [SerializeField] private Text _Name;
-    [SerializeField] private Text _Relation;
+    [SerializeField] private TMP_Text _Name;
+    [SerializeField] private TMP_Text _Relation;
     [SerializeField] private float _HeightOffset = 2.0f;
 
     private CanvasGroup _CanvasGroup;
