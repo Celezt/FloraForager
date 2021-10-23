@@ -303,6 +303,10 @@ MonoBehaviour:
       m_Calls: []
     m_ActionId: 06d57aed-87b1-4873-81a4-da8abb92da6c
     m_ActionName: UI/TrackedDeviceOrientation
+  - m_PersistentCalls:
+      m_Calls: []
+    m_ActionId: 3dd48922-af30-45d8-88d6-3e57e2ac0fc4
+    m_ActionName: Ground/Hotbar[/Keyboard/1,/Keyboard/2,/Keyboard/3,/Keyboard/4,/Keyboard/5,/Keyboard/6,/Keyboard/7,/Keyboard/8,/Keyboard/9,/Keyboard/0]
   m_NeverAutoSwitchControlSchemes: 0
   m_DefaultControlScheme: 
   m_DefaultActionMap: Ground
@@ -322,16 +326,16 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _rigidbody: {fileID: 2699139005166002770}
   _collider: {fileID: 8143937787667907710}
-  _pivotMode: 0
+  _pivotMode: 1
   _camera: {fileID: 0}
   _pivot: {fileID: 0}
-  _speed: 5
+  _baseSpeed: 6
   _runningSpeedMultiplier: 1.5
   _drag: 8
   _angularDrag: 12
   _groundLayer:
     serializedVersion: 2
-    m_Bits: 1
+    m_Bits: 65
   _groundCheckDistance: 1.5
   _maxSlopeAngle: 45
   _groundPhysicMaterial: {fileID: 13400000, guid: a4767b41799feac47b7800098935937b, type: 2}
@@ -351,7 +355,7 @@ MonoBehaviour:
   _radius: 4
   _interactableLayers:
     serializedVersion: 2
-    m_Bits: 185
+    m_Bits: 209
 --- !u!114 &2280982920848057557
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -382,9 +386,6 @@ MonoBehaviour:
   _StmWalkingDrain: 0.04
   _StmRunningDrain: 0.09
   _StmNightDrain: 7.5
-  OnStaminaDrained:
-    m_PersistentCalls:
-      m_Calls: []
 --- !u!114 &6333730084197885922
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -397,8 +398,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a5242c5c185084c48af25fb662a5a7db, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _inventory: {fileID: 11400000, guid: 33d168e8181e5fd469cf3f018b0c7d5b, type: 2}
-  _playerData: {fileID: 11400000, guid: 8e38f09bfbc2c2f4fade0b50315538de, type: 2}
 --- !u!1 &5178136194200900361
 GameObject:
   m_ObjectHideFlags: 0

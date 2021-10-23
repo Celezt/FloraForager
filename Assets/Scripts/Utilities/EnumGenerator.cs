@@ -34,11 +34,11 @@ public static class EnumGenerator
         contents.AppendLine($"public enum {string.Concat(enumName.FirstCharToUpper().Where(x => !char.IsWhiteSpace(x)))}");
         contents.AppendLine("{");
         for (int i = 0; i < entries.Count; i++)
-            contents.AppendLine($"\t{string.Concat(entries[i].FirstCharToUpper().Where(x => !char.IsWhiteSpace(x) && x != '_'))} = 1 << {i + 1},");
+            contents.AppendLine($"\t{entries[i].ToPascalCase()} = 1 << {i + 1},");
         contents.Append("\tAll = ");
         for (int i = 0; i < entries.Count; i++)
         {
-            contents.Append($" {string.Concat(entries[i].FirstCharToUpper().Where(x => !char.IsWhiteSpace(x) && x != '_'))} ");
+            contents.Append($" {string.Concat(entries[i].ToPascalCase())} ");
             if (i < entries.Count - 1)
                 contents.Append("|");
         }

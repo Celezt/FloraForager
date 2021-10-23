@@ -4,7 +4,6 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEditor;
 using UnityEditorInternal;
-using UnityConstantsGenerator;
 using System.IO;
 
 public class ItemLabelWindow : EditorWindow
@@ -94,7 +93,13 @@ public class ItemLabelWindow : EditorWindow
         if (_activeIndex < 0 || _settings.Labels.Count == 0)
             return;
 
-        if (current.type == EventType.ContextClick)
+        if (current.keyCode == KeyCode.F2)
+        {
+            _isEditing = true;
+            _currentEdit = _settings.Labels[_activeIndex];
+            Repaint();
+        }
+        else if (current.type == EventType.ContextClick)
         {
             GenericMenu contextMenu = new GenericMenu();
             contextMenu.AddItem(new GUIContent("Edit"), false, () =>
@@ -167,7 +172,7 @@ public class ItemLabelWindow : EditorWindow
                     Debug.LogError($"Label name '{_name}' is already in the labels list.");
                 else
                 {
-                    _settings.AddLabel(_name);
+                    _settings.AddLabel(_name.ToPascalCase());
                     _itemLabelWindow._labelsChanged = true;
                 }
 

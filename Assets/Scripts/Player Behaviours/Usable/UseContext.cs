@@ -46,6 +46,13 @@ public readonly struct UseContext
         this.performed = performed;
     }
 
+    /// <summary>
+    /// Create an instance and place it.
+    /// </summary>
+    public void Place(GameObject orginal, Vector3 position) => Place(orginal, position, Quaternion.identity);
+    /// <summary>
+    /// Create an instance and place it.
+    /// </summary>
     public void Place(GameObject orginal, Vector3 position, Quaternion rotation)
     {
         GameObject obj = Object.Instantiate(orginal, position, rotation);
@@ -71,7 +78,7 @@ public readonly struct UseContext
     }
 
     /// <summary>
-    /// Consume the current item
+    /// Consume the current item.
     /// </summary>
     public void Consume(int amount = 1)
     {

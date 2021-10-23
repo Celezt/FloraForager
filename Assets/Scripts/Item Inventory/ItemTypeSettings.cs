@@ -21,11 +21,15 @@ public class ItemTypeSettings : SerializedScriptableSingleton<ItemTypeSettings>
     public IReadOnlyDictionary<string, List<string>> ItemLabelChunk => _itemLabelChunk;
 
     public LabelSettings LabelSettings => _labelSettings;
+    public Sprite DefaultIcon => _defaultIcon;
+    public ItemBehaviour ItemObject => _itemObject; 
 
     [SerializeField]
     private LabelSettings _labelSettings;
     [SerializeField, Tooltip("Default icon used when no other icon is present.")]
     private Sprite _defaultIcon;
+    [SerializeField]
+    private ItemBehaviour _itemObject;
     [OdinSerialize]
     private Dictionary<string, List<string>> _itemLabelChunk = new Dictionary<string, List<string>>();
     [OdinSerialize]
@@ -252,10 +256,10 @@ public class ItemTypeSettings : SerializedScriptableSingleton<ItemTypeSettings>
                                 if (listData.stringValue == oldLabelName)
                                 {
                                     listData.stringValue = newLabelName;
-                                    j += 2 + listLength;
                                     break;
                                 }
                             }
+                            j += 3 + listLength;
                         }
                         j++;
                     }
