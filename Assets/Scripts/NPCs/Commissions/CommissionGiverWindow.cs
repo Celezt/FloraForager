@@ -12,10 +12,11 @@ public class CommissionGiverWindow : Singleton<CommissionGiverWindow>
     [SerializeField] private GameObject _AcceptButton;
     [SerializeField] private GameObject _BackButton;
     [SerializeField] private GameObject _CompleteButton;
-    [SerializeField] private GameObject _CommissionDescription;
+    [SerializeField] private GameObject _DescriptionArea;
 
     [SerializeField] private TMP_Text _Title;
     [SerializeField] private TMP_Text _Description;
+    [SerializeField] private ScrollRect _ScrollRect;
 
     private CanvasGroup _CanvasGroup;
 
@@ -41,7 +42,10 @@ public class CommissionGiverWindow : Singleton<CommissionGiverWindow>
         _CommissionObjects.Clear();
 
         _CommissionArea.gameObject.SetActive(true);
-        _CommissionDescription.SetActive(false);
+        _DescriptionArea.SetActive(false);
+
+        _ScrollRect.content = _CommissionArea.GetComponent<RectTransform>();
+        _ScrollRect.viewport = null;
 
         foreach (Commission commission in commissionGiver.Commissions)
         {
@@ -71,7 +75,7 @@ public class CommissionGiverWindow : Singleton<CommissionGiverWindow>
         }
     }
 
-    public void ShowCommissionInfo(Commission commission)
+    public void ShowDescription(Commission commission)
     {
         _SelectedCommission = commission;
 
@@ -89,7 +93,10 @@ public class CommissionGiverWindow : Singleton<CommissionGiverWindow>
         _BackButton.SetActive(true);
 
         _CommissionArea.gameObject.SetActive(false);
-        _CommissionDescription.SetActive(true);
+        _DescriptionArea.SetActive(true);
+
+        _ScrollRect.content = _Description.GetComponent<RectTransform>();
+        _ScrollRect.viewport = _DescriptionArea.GetComponent<RectTransform>();
 
         string objectives = "<b>Objectives</b>\n<size=20>";
         commission.Objectives.ForEach(o =>

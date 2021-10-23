@@ -35,29 +35,9 @@ public class LoadSceneTrigger : MonoBehaviour
         _Player = PlayerInput.GetPlayerByIndex(0).gameObject;
 
         _NoCollision = true;
-        StartCoroutine(CheckPlayerCollision());
     }
 
-    private void OnTriggerEnter(Collider other)
-    {
-        if (FadeScreen.Instance.IsActive || _NoCollision || other.gameObject != _Player)
-            return;
-
-        FadeScreen.Instance.StartFadeIn(1f);
-        FadeScreen.Instance.OnEndFade += LoadLevel;
-
-        _NoCollision = true;
-    }
-
-    public void LoadLevel()
-    {
-        LoadScene.ObjectToLoadPlayer = _ObjectIDToLoadPlayer;
-        LoadScene.Instance.LoadSceneByName(_SceneToLoad);
-
-        FadeScreen.Instance.OnEndFade -= LoadLevel;
-    }
-
-    private IEnumerator CheckPlayerCollision()
+    private IEnumerator Start()
     {
         yield return new WaitForSeconds(0.1f);
 
@@ -80,6 +60,25 @@ public class LoadSceneTrigger : MonoBehaviour
 
             yield return new WaitForSeconds(0.5f);
         }
+    }
+
+    private void OnTriggerEnter(Collider other)
+    {
+        if (FadeScreen.Instance.IsActive || _NoCollision || other.gameObject != _Player)
+            return;
+
+        FadeScreen.Instance.StartFadeIn(1f);
+        FadeScreen.Instance.OnEndFade += LoadLevel;
+
+        _NoCollision = true;
+    }
+
+    public void LoadLevel()
+    {
+        LoadScene.ObjectToLoadPlayer = _ObjectIDToLoadPlayer;
+        LoadScene.Instance.LoadSceneByName(_SceneToLoad);
+
+        FadeScreen.Instance.OnEndFade -= LoadLevel;
     }
 
 #if UNITY_EDITOR

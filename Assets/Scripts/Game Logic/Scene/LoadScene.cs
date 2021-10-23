@@ -54,6 +54,9 @@ public class LoadScene : Singleton<LoadScene>
 
     private IEnumerator LoadSceneAsync(string sceneName)
     {
+        _ProgressSlider.value = 0.0f;
+        yield return new WaitForSeconds(0.25f);
+
         AsyncOperationHandle asyncLoad = Addressables.LoadSceneAsync(sceneName, LoadSceneMode.Single);
 
         while (!asyncLoad.IsDone)

@@ -26,7 +26,7 @@ public class PlayerStamina : MonoBehaviour
         get => _Stamina;
         set
         {
-            _Stamina = Mathf.Clamp(_Stamina + value, 0.0f, _MaxStamina);
+            _Stamina = Mathf.Clamp(value, 0.0f, _MaxStamina);
         }
     }
 

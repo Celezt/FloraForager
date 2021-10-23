@@ -44,7 +44,10 @@ public class GameTime : Singleton<GameTime>
     public int Month { get; private set; }
     public int Year { get; private set; }
 
-    public string DigitalTime => string.Format("{0:00}:{1:00}", _HourClock, _MinuteClock);
+    public string DigitalTime => string.Format(
+        "<mspace=0.60em>{0:00}</mspace>" +
+        "<mspace=0.30em>:</mspace>" +
+        "<mspace=0.60em>{1:00}</mspace>", _HourClock, _MinuteClock);
     public string Date => string.Format("{0:0000}/{1:00}/{2:00}", Year, _MonthCalendar, _DayCalendar);
 
     private void Start()
@@ -78,6 +81,9 @@ public class GameTime : Singleton<GameTime>
 
         _MinuteClock = (float)_ElapsedTime * (60.0f / _InGameHour) % 60.0f; // keep to common standards of 00:00-24:00
         _HourClock = (int)Hour * (24.0f / _HoursPerDay) % 24.0f;
+
+        _MinuteClock = Mathf.Floor(_MinuteClock);
+        _HourClock = Mathf.Floor(_HourClock);
 
         _DayCalendar = 1 + Day % _DaysPerMonth;
         _MonthCalendar = 1 + Month % _MonthsPerYear;
