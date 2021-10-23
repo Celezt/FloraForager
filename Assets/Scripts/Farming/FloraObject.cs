@@ -17,10 +17,6 @@ public class FloraObject : MonoBehaviour, IUsable
 
     public Flora Flora => _Flora;
 
-    public int Priority => 1;
-    public float Strength { get; set; } = 1;
-    public float Durability { get; set; } = 1;
-
     private void OnDestroy()
     {
         if (_Flora != null)

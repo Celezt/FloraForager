@@ -4,41 +4,38 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using MyBox;
+using Sirenix.Serialization;
 
 /// <summary>
 /// Manages all of the flora in this region
 /// </summary>
-public class FloraMaster : Singleton<FloraMaster>
+[CreateAssetMenu(fileName = "FloraMaster", menuName = "Scriptable Objects/Flora Master")]
+[System.Serializable]
+public class FloraMaster : SerializedScriptableSingleton<FloraMaster>
 {
     [SerializeField] 
     private GameObject _FloraPrefab;
     [SerializeField] 
-    private List<FloraData> _FloraVariants;
-
-    private Dictionary<string, FloraData> _FloraDictionary;
+    private System.Guid _guid;
+    [OdinSerialize]
+    private Dictionary<string, FloraData> _FloraDictionary = new Dictionary<string, FloraData>();
     private List<Flora> _Florae = new List<Flora>();
 
     private void Awake()
     {
-        _FloraDictionary = _FloraVariants.ToDictionary(key => key.Name.ToLower(), value => value);
+        if (_guid == System.Guid.Empty)
+            _guid = System.Guid.NewGuid();
+
+        UpLoad();
     }
 
-    public void Update()
+#if UNITY_EDITOR
+    [UnityEditor.InitializeOnEnterPlayMode]
+    private static void Initialize()
     {
-        if (Mouse.current.leftButton.wasPressedThisFrame)
-        {
-            if (Grid.Instance.HoveredCell != null && Grid.Instance.HoveredCell.HeldObject != null)
-            {
-                Grid.Instance.HoveredCell.HeldObject.TryGetComponent(out FloraObject flora);
-
-                if (flora != null)
-                {
-                    flora.Flora.Watered = true;
-                }
-            }
-            Add("Variant");
-        }
+        FloraMaster.Instance.UpLoad();
     }
+#endif
 
     /// <summary>
     /// creates a flora at currently selected tile based on its name
@@ -120,5 +117,29 @@ public class FloraMaster : Singleton<FloraMaster>
     public void Notify()
     {
         _Florae.ForEach(f => f.Grow());
+    }
+
+    public object UpLoad()
+    {
+        Dictionary<Vector2Int, object> streamables = new Dictionary<Vector2Int, object>();
+
+        _Florae.ForEach(x => streamables.Add(x.Cell.Local, ((IStreamable<object>)x).OnUpload()));
+
+        GameManager.Stream.Load(_guid, streamables);
+
+        return null;
+    }
+
+    public void Load()
+    {
+        foreach (IStreamable<object> stream in _Florae)
+        {
+            string typeName = stream.GetType().ToString();
+
+            Dictionary<string, object> streamables = (Dictionary<string, object>)GameManager.Stream.Get(_guid);
+
+            if (streamables.TryGetValue(typeName, out object value))
+                stream.OnLoad(value);
+        }
     }
 }

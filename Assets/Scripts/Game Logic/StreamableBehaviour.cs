@@ -23,6 +23,7 @@ public class StreamableBehaviour : MonoBehaviour, IStreamable<StreamableBehaviou
     public class Data
     {
         public GameObjectData Transform;
+        public int Stage;
     }
 
     public Data OnUpload() => _data = new Data();
