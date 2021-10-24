@@ -11,7 +11,7 @@ using Sirenix.Serialization;
 /// </summary>
 [CreateAssetMenu(fileName = "FloraMaster", menuName = "Scriptable Objects/Flora Master")]
 [System.Serializable]
-public class FloraMaster : SerializedScriptableSingleton<FloraMaster>
+public class FloraMaster : SerializedScriptableSingleton<FloraMaster>, IStreamer
 {
     [SerializeField] 
     private GameObject _FloraPrefab;
@@ -26,14 +26,14 @@ public class FloraMaster : SerializedScriptableSingleton<FloraMaster>
         if (_guid == System.Guid.Empty)
             _guid = System.Guid.NewGuid();
 
-        UpLoad();
+        GameManager.AddStreamer(this);
     }
 
 #if UNITY_EDITOR
     [UnityEditor.InitializeOnEnterPlayMode]
     private static void Initialize()
     {
-        FloraMaster.Instance.UpLoad();
+        GameManager.AddStreamer(FloraMaster.Instance);
     }
 #endif
 
@@ -119,15 +119,13 @@ public class FloraMaster : SerializedScriptableSingleton<FloraMaster>
         _Florae.ForEach(f => f.Grow());
     }
 
-    public object UpLoad()
+    public void UpLoad()
     {
         Dictionary<Vector2Int, object> streamables = new Dictionary<Vector2Int, object>();
 
         _Florae.ForEach(x => streamables.Add(x.Cell.Local, ((IStreamable<object>)x).OnUpload()));
 
         GameManager.Stream.Load(_guid, streamables);
-
-        return null;
     }
 
     public void Load()
@@ -141,5 +139,10 @@ public class FloraMaster : SerializedScriptableSingleton<FloraMaster>
             if (streamables.TryGetValue(typeName, out object value))
                 stream.OnLoad(value);
         }
+    }
+
+    public void BeforeSaving()
+    {
+        _Florae.ForEach(x => ((IStreamable<object>)x).OnBeforeSaving());
     }
 }

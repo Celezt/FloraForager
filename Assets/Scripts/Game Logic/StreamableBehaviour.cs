@@ -10,7 +10,7 @@ using System.IO;
 using Sirenix.OdinInspector;
 
 [DisallowMultipleComponent, RequireComponent(typeof(GuidComponent))]
-public class StreamableBehaviour : MonoBehaviour, IStreamable<StreamableBehaviour.Data>
+public class StreamableBehaviour : MonoBehaviour, IStreamer, IStreamable<StreamableBehaviour.Data>
 {
     [Button]
     public void SaveButton() => GameManager.SaveGame();
@@ -20,45 +20,31 @@ public class StreamableBehaviour : MonoBehaviour, IStreamable<StreamableBehaviou
 
     private Data _data;
 
+    private Guid _guid;
+
     public class Data
     {
-        public GameObjectData Transform;
-        public int Stage;
+        public string Address;
     }
 
     public Data OnUpload() => _data = new Data();
-    public void OnLoad(object state)
-    {
-        Data data = state as Data;
-        GameObjectData gameObjectData = data.Transform;
-
-        transform.position = gameObjectData.Position;
-        transform.rotation = gameObjectData.Rotation;
-        transform.localScale = gameObjectData.Scale;
-
-        _data = data;
-    }
-
-    private Guid _guid;
+    public void OnLoad(object state) => _data = state as Data;
+    void IStreamable.OnBeforeSaving() { }
 
     public void Start()
     {
         _guid = GetComponent<GuidComponent>().Guid;
 
-        UpLoad();
-
-        InvokeRepeating(nameof(UpdateTransform), 0, 2);
+        GameManager.AddStreamer(this);
     }
 
-    public object UpLoad()
+    public void UpLoad()
     {
         Dictionary<string, object> streamables = new Dictionary<string, object>();
 
         GetComponentsInChildren<IStreamable>().ForEach(x => streamables.Add(x.GetType().ToString(), ((IStreamable<object>)x).OnUpload()));
 
         GameManager.Stream.Load(_guid, streamables);
-
-        return null;
     }
 
     public void Load()
@@ -74,15 +60,13 @@ public class StreamableBehaviour : MonoBehaviour, IStreamable<StreamableBehaviou
         }
     }
 
-    private void UpdateTransform()
+    public void BeforeSaving()
     {
-        _data.Transform = new GameObjectData
-        {
-            Position = transform.position,
-            Rotation = transform.rotation,
-            Scale = transform.localScale,
-            SceneIndex = SceneManager.GetActiveScene().buildIndex,
-            Address = name,
-        };
+        GetComponentsInChildren<IStreamable>().ForEach(x => ((IStreamable<object>)x).OnBeforeSaving());
+    }
+
+    private void OnDestroy()
+    {
+        GameManager.RemoveStreamer(this);
     }
 }

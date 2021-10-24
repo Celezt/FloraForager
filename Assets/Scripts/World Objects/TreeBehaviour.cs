@@ -27,6 +27,11 @@ public class TreeBehaviour : MonoBehaviour, IStreamable<TreeBehaviour.Data>, IUs
         _data = data;
     }
 
+    void IStreamable.OnBeforeSaving()
+    {
+
+    }
+
     [SerializeField]
     ItemLabels IUsable.Filter() => _filter;
 

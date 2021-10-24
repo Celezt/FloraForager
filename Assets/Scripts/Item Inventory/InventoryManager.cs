@@ -15,7 +15,7 @@ public class InventoryManager : MonoBehaviour, IDropHandler
 
     private void Awake()
     {
-        _EventSystem = FindObjectOfType<EventSystem>();
+        _EventSystem = EventSystem.current;
         _raycaster =  GetComponent<GraphicRaycaster>();
     }
 
