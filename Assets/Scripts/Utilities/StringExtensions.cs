@@ -45,7 +45,6 @@ public static class StringExtensions
 
     public static string ToPascalCase(this string input)
     {
-        return input.Split(new[] { "_" }, StringSplitOptions.RemoveEmptyEntries).
-            Select(s => char.ToUpperInvariant(s[0]) + s.Substring(1, s.Length - 1)).Aggregate(string.Empty, (s1, s2) => s1 + s2);
+        return string.Join("", input.Split(new[] { '_', ' ' }, StringSplitOptions.RemoveEmptyEntries).Select(s => s.Substring(0, 1).ToUpper() + s.Substring(1)).ToArray());
     }
 }
