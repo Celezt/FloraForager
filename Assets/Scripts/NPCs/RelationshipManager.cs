@@ -5,11 +5,11 @@ using UnityEngine.InputSystem;
 
 public enum Relation
 {
-    Hated,
-    Disliked,
-    Neutral,
-    Liked,
-    Loved
+    Hated = 0,
+    Disliked = 1,
+    Neutral = 2,
+    Liked = 3,
+    Loved = 4
 }
 
 [System.Serializable]

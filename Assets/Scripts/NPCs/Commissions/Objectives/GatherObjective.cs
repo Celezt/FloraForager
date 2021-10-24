@@ -37,7 +37,7 @@ public class GatherObjective : IObjective
     {
         _Inventory.OnItemChangeCallback -= UpdateStatus;
     }
-    public void Complete()
+    public void Completed()
     {
         _Inventory.Remove(ItemID, Amount);
     }

@@ -4,27 +4,35 @@ using UnityEngine.UI;
 using UnityEngine.InputSystem;
 using MyBox;
 
-public class Commission
+public class Commission : IStreamable<Commission.Data>
 {
-    private CommissionData _Data;     // data used to create this commission
+    private Data _Data;
 
-    private IObjective[] _Objectives; // all of the objectives to be fulfilled to complete this commission
-    private NPC _Giver;               // the NPC who gave out this commission
-    private int _DaysLeft;
+    public class Data
+    {
+        public CommissionData Commission;
+        public int DaysLeft;
+    }
+    public Data OnUpload() => _Data;
+    public void OnLoad(object state)
+    {
+        _Data = state as Data;
+    }
 
     public CommissionObject Object;   // associated object in the log
 
-    public CommissionData Data => _Data;
+    public CommissionData CommissionData => _Data.Commission;
 
-    public IObjective[] Objectives => _Objectives;
-    public NPC Giver => _Giver;
-    public int DaysLeft => _DaysLeft;
+    public string Title => _Data.Commission.Title;
+    public IObjective[] Objectives => _Data.Commission.Objectives;
+    public string Giver => _Data.Commission.Giver;
+    public int DaysLeft => _Data.DaysLeft;
 
     public bool IsCompleted
     {
         get
         {
-            foreach (IObjective objective in _Objectives)
+            foreach (IObjective objective in Objectives)
             {
                 if (!objective.IsCompleted)
                     return false;
@@ -33,46 +41,38 @@ public class Commission
         }
     }
 
-    public Commission(CommissionData data, NPC giver)
+    public Commission(CommissionData data)
     {
-        _Data = data;
-        _Giver = giver;
+        _Data = new Data();
 
-        _Objectives = new IObjective[_Data.Objectives.Length]; // create objectives based on assigned objectives data
-        for (int i = 0; i < _Objectives.Length; ++i)
+        _Data.Commission = data;
+
+        for (int i = 0; i < _Data.Commission.Objectives.Length; ++i)
         {
-            IObjective objectiveData = _Data.Objectives[i];
+            IObjective objectiveData = _Data.Commission.Objectives[i];
 
-            _Objectives[i] = (IObjective)System.Activator.CreateInstance(objectiveData.GetType()); // create new instance
-            _Objectives[i].Initialize(objectiveData); // fill it with data
+            _Data.Commission.Objectives[i] = (IObjective)System.Activator.CreateInstance(objectiveData.GetType()); // create new instance
+            _Data.Commission.Objectives[i].Initialize(objectiveData); // fill it with data
         }
 
-        _DaysLeft = _Data.TimeLimit;
+        _Data.DaysLeft = _Data.Commission.TimeLimit;
     }
 
     public void Complete()
     {
-        _Objectives.ForEach(o => o.Complete());
+        _Data.Commission.Objectives.ForEach(o => o.Completed());
 
         Inventory inventory = PlayerInput.GetPlayerByIndex(0).GetComponent<PlayerInfo>().Inventory;
-        for (int i = 0; i < _Data.Rewards.Length; ++i)
-        {
-            string itemID = _Data.Rewards[i].ItemID;
-            int amount = _Data.Rewards[i].Amount;
 
-            inventory.Insert(new ItemAsset
-            {
-                ID = itemID,
-                Amount = amount
-            });
-        }
+        for (int i = 0; i < _Data.Commission.Rewards.Length; ++i)
+            inventory.Insert(_Data.Commission.Rewards[i].ItemID, _Data.Commission.Rewards[i].Amount);
 
-        _Giver.Relation.AddRelation(_Data.RewardRelations);
+        NPCManager.Instance.Get(Giver).Relation.AddRelation(_Data.Commission.RewardRelation);
     }
 
     public void DayPassed()
     {
-        if (--_DaysLeft <= 0)
+        if (--_Data.DaysLeft <= 0)
         {
             Penalty();
             CommissionLog.Instance.Remove(this);
@@ -81,6 +81,6 @@ public class Commission
 
     public void Penalty()
     {
-        _Giver.Relation.AddRelation(_Data.PenaltyRelations);
+        NPCManager.Instance.Get(Giver).Relation.AddRelation(_Data.Commission.PenaltyRelation);
     }
 }

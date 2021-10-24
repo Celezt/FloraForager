@@ -4,15 +4,15 @@ using UnityEngine;
 
 public class CraftableItem
 {
-    private CraftableItemData _Data;
+    private CraftableItemInfo _Info;
 
-    public string ItemID => _Data.ItemID;
-    public ResourceRequirement[] ResourceReqs => _Data.ResourceReqs;
+    public string ItemID => _Info.ItemID;
+    public ResourceRequirement[] ResourceReqs => _Info.ResourceReqs;
 
     public UICraftableItemObject Object { get; set; }
 
-    public CraftableItem(CraftableItemData data)
+    public CraftableItem(CraftableItemInfo info)
     {
-        _Data = data;
+        _Info = info;
     }
 }

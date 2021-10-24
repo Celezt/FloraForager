@@ -4,7 +4,7 @@ using Sirenix.OdinInspector;
 using MyBox;
 
 [CreateAssetMenu(fileName = "NPC", menuName = "Scriptable Objects/NPC")]
-public class NPCData : SerializedScriptableObject
+public class NPCInfo : SerializedScriptableObject
 {
     [OdinSerialize, Required]
     private string _Name;
@@ -21,7 +21,7 @@ public class NPCData : SerializedScriptableObject
     [OdinSerialize]
     private bool _HasCommissions;
     [OdinSerialize, ShowIf("_HasCommissions"), ListDrawerSettings(Expanded = true)]
-    private CommissionData[] _CommissionsData = new CommissionData[0];
+    private CommissionInfo[] _CommissionsInfo = new CommissionInfo[0];
 
     public string Name => _Name;
 
@@ -30,5 +30,5 @@ public class NPCData : SerializedScriptableObject
     public float StartRelation => _StartRelation;
 
     public bool HasCommissions => _HasCommissions;
-    public CommissionData[] CommissionsData => _CommissionsData;
+    public CommissionInfo[] CommissionsData => _CommissionsInfo;
 }

@@ -11,17 +11,12 @@ public class HarvestPluck : IHarvest
     public bool PluckFromAll = false;
     public int PluckAmount = 1;
 
+    private int[] _Pluck;
+
     [HideInInspector]
     public System.Action OnEmptied = delegate { };
 
-    private int[] _Pluck;
-
-    ItemLabels IUsable.Filter()
-    {
-        throw new System.NotImplementedException();
-    }
-
-    public void Initialize(FloraData data, IHarvest harvestData)
+    public void Initialize(FloraInfo data, IHarvest harvestData)
     {
         _Pluck = System.Array.ConvertAll(data.Rewards, r => r.Amount);
 
@@ -31,37 +26,42 @@ public class HarvestPluck : IHarvest
         PluckAmount = harvestPluck.PluckAmount;
     }
 
-    public void Harvest(Flora flora, int playerIndex)
+    public bool Harvest(Flora flora, int playerIndex)
     {
-        if (flora.Completed)
+        if (!flora.Completed)
+            return false;
+
+        Inventory inventory = PlayerInput.GetPlayerByIndex(playerIndex).GetComponent<PlayerInfo>().Inventory;
+
+        for (int i = 0; i < _Pluck.Length; ++i)
         {
-            Inventory inventory = PlayerInput.GetPlayerByIndex(playerIndex).GetComponent<PlayerInfo>().Inventory;
+            if (_Pluck[i] <= 0)
+                continue;
 
-            for (int i = 0; i < _Pluck.Length; ++i)
+            int emptySpace = inventory.FindEmptySpace(flora.FloraInfo.Rewards[i].ItemID);
+            int amountToPluck = ((_Pluck[i] - PluckAmount) < 0) ? _Pluck[i] : PluckAmount;
+
+            if (emptySpace >= amountToPluck)
             {
-                int amountToPluck = ((_Pluck[i] - PluckAmount) < 0) ? _Pluck[i] : PluckAmount;
-
                 _Pluck[i] -= amountToPluck;
 
                 inventory.Insert(new ItemAsset
                 {
-                    ID = flora.Data.Rewards[i].ItemID,
+                    ID = flora.FloraInfo.Rewards[i].ItemID,
                     Amount = amountToPluck
                 });
 
                 if (!PluckFromAll)
                     break;
             }
-
-            if (_Pluck.All(p => p <= 0)) // if nothing more to pluck
-            {
-                OnEmptied.Invoke();
-
-                UnityEngine.Object.Destroy(Grid.Instance.FreeCell(flora.Cell));
-                FloraMaster.Instance.Remove(flora);
-            }
         }
-    }
 
-    public void OnUse(UsedContext context) { }
+        if (_Pluck.All(p => p <= 0)) // if nothing more to pluck
+        {
+            OnEmptied.Invoke();
+            return true;
+        }
+
+        return false;
+    }
 }

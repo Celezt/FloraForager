@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.InputSystem;
+using UnityEngine.SceneManagement;
 using MyBox;
 using Sirenix.Serialization;
 
@@ -16,30 +17,41 @@ public class FloraMaster : SerializedScriptableSingleton<FloraMaster>
     [SerializeField] 
     private GameObject _FloraPrefab;
     [SerializeField] 
-    private System.Guid _guid;
+    private System.Guid _Guid;
     [OdinSerialize]
-    private Dictionary<string, FloraData> _FloraDictionary = new Dictionary<string, FloraData>();
+    private Dictionary<string, FloraInfo> _FloraDictionary = new Dictionary<string, FloraInfo>();
+
     private List<Flora> _Florae = new List<Flora>();
 
     private void Awake()
     {
-        if (_guid == System.Guid.Empty)
-            _guid = System.Guid.NewGuid();
-
-        UpLoad();
+        SceneManager.sceneLoaded += OnSceneLoaded;
     }
 
 #if UNITY_EDITOR
     [UnityEditor.InitializeOnEnterPlayMode]
     private static void Initialize()
     {
-        FloraMaster.Instance.UpLoad();
+        SceneManager.sceneLoaded += Instance.OnSceneLoaded;
     }
 #endif
 
-    /// <summary>
-    /// creates a flora at currently selected tile based on its name
-    /// </summary>
+    public void OnSceneLoaded(Scene scene, LoadSceneMode mode)
+    {
+        foreach (Flora flora in _Florae)
+        {
+            if (scene.buildIndex == flora.SaveData.SceneIndex)
+            {
+                Cell cell = Grid.Instance.GetCellLocal(flora.SaveData.CellPosition);
+
+                Grid.Instance.UpdateCellsUVs(flora.SaveData.Watered ? CellType.Soil : CellType.Dirt, cell);
+                cell.Occupied = false;
+
+                Create(flora, cell);
+            }
+        }
+    }
+
     public bool Add(string floraName)
     {
         Cell cell = Grid.Instance.HoveredCell;
@@ -55,7 +67,7 @@ public class FloraMaster : SerializedScriptableSingleton<FloraMaster>
         if (!_FloraDictionary.ContainsKey(key))
             return false;
 
-        Flora flora = new Flora(_FloraDictionary[key], cell);
+        Flora flora = new Flora(_FloraDictionary[key], cell.Local);
 
         if (!Create(flora, cell))
             return false;
@@ -64,11 +76,7 @@ public class FloraMaster : SerializedScriptableSingleton<FloraMaster>
 
         return true;
     }
-
-    /// <summary>
-    /// creates a flora at currently selected tile based on its data
-    /// </summary>
-    public bool Add(FloraData floraData)
+    public bool Add(FloraInfo floraInfo)
     {
         Cell cell = Grid.Instance.HoveredCell;
 
@@ -78,7 +86,7 @@ public class FloraMaster : SerializedScriptableSingleton<FloraMaster>
         if (cell.Data.Type != CellType.Dirt && cell.Data.Type != CellType.Soil)
             return false;
 
-        Flora flora = new Flora(floraData, cell);
+        Flora flora = new Flora(floraInfo, cell.Local);
 
         if (!Create(flora, cell))
             return false;
@@ -119,27 +127,37 @@ public class FloraMaster : SerializedScriptableSingleton<FloraMaster>
         _Florae.ForEach(f => f.Grow());
     }
 
-    public object UpLoad()
+    public object Upload()
     {
-        Dictionary<Vector2Int, object> streamables = new Dictionary<Vector2Int, object>();
+        Dictionary<string, object> streamables = new Dictionary<string, object>();
 
-        _Florae.ForEach(x => streamables.Add(x.Cell.Local, ((IStreamable<object>)x).OnUpload()));
+        _Florae.ForEach(x =>
+            streamables.Add(
+                x.Cell.Local.x.ToString() + "," +
+                x.Cell.Local.y.ToString() + " " +
+                x.SaveData.SceneIndex.ToString(), ((IStreamable<object>)x).OnUpload()));
 
-        GameManager.Stream.Load(_guid, streamables);
+        GameManager.Stream.Load(_Guid, streamables);
 
         return null;
     }
-
     public void Load()
     {
-        foreach (IStreamable<object> stream in _Florae)
+        _Florae = new List<Flora>();
+
+        Dictionary<string, object> streamables = (Dictionary<string, object>)GameManager.Stream.Get(_Guid);
+
+        foreach(var item in streamables)
         {
-            string typeName = stream.GetType().ToString();
+            if (!streamables.TryGetValue(item.Key, out object value))
+                continue;
 
-            Dictionary<string, object> streamables = (Dictionary<string, object>)GameManager.Stream.Get(_guid);
+            Flora.Data data = value as Flora.Data;
 
-            if (streamables.TryGetValue(typeName, out object value))
-                stream.OnLoad(value);
+            Flora flora = new Flora(_FloraDictionary[data.Name], data.CellPosition);
+            flora.OnLoad(data);
+
+            _Florae.Add(flora);
         }
     }
 }

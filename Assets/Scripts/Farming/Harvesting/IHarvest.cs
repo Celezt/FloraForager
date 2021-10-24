@@ -1,5 +1,5 @@
-﻿public interface IHarvest : IUsable
+﻿public interface IHarvest
 {
-    public void Initialize(FloraData data, IHarvest harvestData);
-    public void Harvest(Flora flora, int playerIndex);
+    public void Initialize(FloraInfo data, IHarvest harvestData);
+    public bool Harvest(Flora flora, int playerIndex);
 }

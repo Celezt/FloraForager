@@ -1,13 +1,16 @@
+using System.Linq;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.InputSystem;
+using UnityEngine.SceneManagement;
 using TMPro;
 using MyBox;
 
 /// <summary>
 /// Keeps track of and manages all of the accepted commissions
 /// </summary>
+[RequireComponent(typeof(GuidComponent))]
 public class CommissionLog : Singleton<CommissionLog>
 {
     [SerializeField] private GameObject _CommissionPrefab;
@@ -15,7 +18,9 @@ public class CommissionLog : Singleton<CommissionLog>
     [SerializeField] private TMP_Text _Description;
 
     private List<CommissionObject> _CommissionObjects = new List<CommissionObject>();
-    private List<Commission> _Commissions = new List<Commission>();
+    private static List<Commission> _Commissions = new List<Commission>();
+
+    private System.Guid _Guid;
 
     private Commission _Selected; // selected commission in the log
 
@@ -26,10 +31,14 @@ public class CommissionLog : Singleton<CommissionLog>
 
     private void Awake()
     {
+        _Guid = GetComponent<GuidComponent>().Guid;
+
         _CanvasGroup = GetComponent<CanvasGroup>();
         _CanvasGroup.alpha = 0.0f;
 
         _PlayerAction = new PlayerAction();
+
+        SceneManager.sceneLoaded += OnSceneLoaded;
     }
 
     private void OnEnable()
@@ -52,7 +61,7 @@ public class CommissionLog : Singleton<CommissionLog>
         commission.Object = cs;
         cs.Commission = commission;
 
-        obj.GetComponent<TMP_Text>().text = commission.Data.Title;
+        obj.GetComponent<TMP_Text>().text = commission.CommissionData.Title;
 
         _Commissions.Add(commission);
         _CommissionObjects.Add(cs);
@@ -124,7 +133,7 @@ public class CommissionLog : Singleton<CommissionLog>
 
     public bool HasCommission(Commission commission)
     {
-        return _Commissions.Exists(c => c.Data.Title == commission.Data.Title);
+        return _Commissions.Exists(c => c.CommissionData.Title == commission.CommissionData.Title);
     }
 
     public void ShowDescription(Commission commission)
@@ -145,7 +154,7 @@ public class CommissionLog : Singleton<CommissionLog>
         objectives += "</size>";
 
         string rewards = "<b>Rewards</b>\n<size=20>";
-        foreach (RewardPair reward in commission.Data.Rewards)
+        foreach (RewardPair reward in commission.CommissionData.Rewards)
         {
             rewards += reward.Amount + " " + reward.ItemID + "\n";
         }
@@ -153,13 +162,13 @@ public class CommissionLog : Singleton<CommissionLog>
 
         string daysLeft = "<b>Time limit</b>\n<size=20>" + commission.DaysLeft.ToString() + " Days</size>";
 
-        string giver = "<b>Giver</b>\n<size=20>" + commission.Giver.Name + "</size>";
+        string giver = "<b>Giver</b>\n<size=20>" + commission.Giver + "</size>";
 
         string completed = commission.IsCompleted ? "<color=green>(Complete)</color>" : string.Empty;
 
         _Description.text = string.Format("<b>{0}</b>\n<size=20>{1}</size>\n\n{2}\n{3}\n{4}\n\n{5}\n\n{6}",
-            commission.Data.Title,
-            commission.Data.Description,
+            commission.CommissionData.Title,
+            commission.CommissionData.Description,
             objectives, rewards, daysLeft, giver, completed);
     }
 
@@ -185,5 +194,52 @@ public class CommissionLog : Singleton<CommissionLog>
         _CanvasGroup.blocksRaycasts = false;
 
         _Description.text = string.Empty;
+    }
+
+    private void OnSceneLoaded(Scene scene, LoadSceneMode loadSceneMode)
+    {
+        foreach (Commission commission in _Commissions)
+        {
+            GameObject obj = Instantiate(_CommissionPrefab, _CommissionArea);
+
+            CommissionObject cs = obj.GetComponent<CommissionObject>();
+            commission.Object = cs;
+            cs.Commission = commission;
+
+            obj.GetComponent<TMP_Text>().text = commission.CommissionData.Title;
+
+            _CommissionObjects.Add(cs);
+        }
+    }
+
+    public object Upload()
+    {
+        Dictionary<string, object> streamables = new Dictionary<string, object>();
+
+        _Commissions.ForEach(x => 
+            streamables.Add(x.Title, ((IStreamable<object>)x).OnUpload()));
+
+        GameManager.Stream.Load(_Guid, streamables);
+
+        return null;
+    }
+    public void Load()
+    {
+        _Commissions = new List<Commission>();
+
+        Dictionary<string, object> streamables = (Dictionary<string, object>)GameManager.Stream.Get(_Guid);
+
+        foreach (var item in streamables)
+        {
+            if (!streamables.TryGetValue(item.Key, out object value))
+                continue;
+
+            Commission.Data data = value as Commission.Data;
+
+            Commission commission = NPCManager.Instance.Get(data.Commission.Giver).Commissions.FirstOrDefault(c => c.CommissionData.Title == data.Commission.Title);
+            commission.OnLoad(data);
+
+            _Commissions.Add(commission);
+        }
     }
 }

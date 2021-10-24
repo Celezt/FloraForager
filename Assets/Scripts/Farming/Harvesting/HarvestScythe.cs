@@ -3,20 +3,30 @@ using UnityEngine.InputSystem;
 
 public class HarvestScythe : IHarvest
 {
-    ItemLabels IUsable.Filter() => ItemLabels.Scythe;
-
-    public void Initialize(FloraData data, IHarvest harvestData)
+    public void Initialize(FloraInfo data, IHarvest harvestData)
     {
-        
+
     }
 
-    public void Harvest(Flora flora, int playerIndex)
+    public bool Harvest(Flora flora, int playerIndex)
     {
         if (flora.Completed)
         {
             Inventory inventory = PlayerInput.GetPlayerByIndex(playerIndex).GetComponent<PlayerInfo>().Inventory;
 
-            foreach (RewardPair reward in flora.Data.Rewards)
+            bool canHarvest = true;
+            foreach (RewardPair reward in flora.FloraInfo.Rewards)
+            {
+                int emptySpace = inventory.FindEmptySpace(reward.ItemID);
+
+                if (emptySpace < reward.Amount)
+                    canHarvest = false;
+            }
+
+            if (!canHarvest)
+                return false;
+
+            foreach (RewardPair reward in flora.FloraInfo.Rewards)
             {
                 inventory.Insert(new ItemAsset
                 {
@@ -26,9 +36,6 @@ public class HarvestScythe : IHarvest
             }
         }
 
-        UnityEngine.Object.Destroy(Grid.Instance.FreeCell(flora.Cell));
-        FloraMaster.Instance.Remove(flora);
+        return true;
     }
-
-    public void OnUse(UsedContext context) { }
 }

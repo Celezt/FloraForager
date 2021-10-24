@@ -10,7 +10,7 @@ using UnityEngine.InputSystem;
 public class NPCObject : MonoBehaviour, IInteractable
 {
     [SerializeField] 
-    private NPCData _NPCData;
+    private NPCInfo _NPCInfo;
     [SerializeField] 
     private LayerMask _LayerMasks;
 
@@ -21,17 +21,17 @@ public class NPCObject : MonoBehaviour, IInteractable
 
     private void Awake()
     {
-        NPC = NPCManager.Instance.Exists(_NPCData.Name) ?
-            NPCManager.Instance.Get(_NPCData.Name) : 
-            NPCManager.Instance.Add(_NPCData.Name, new NPC(_NPCData));
-
         Bounds = GetComponent<MeshFilter>().mesh.bounds;
+
+        NPC = NPCManager.Instance.Exists(_NPCInfo.Name) ?
+            NPCManager.Instance.Get(_NPCInfo.Name) :
+            NPCManager.Instance.Add(_NPCInfo.Name, new NPC(_NPCInfo));
     }
 
     private void Update()
     {
         Ray ray = Camera.main.ScreenPointToRay(Mouse.current.position.ReadValue());
-        bool collision = Physics.Raycast(ray, out RaycastHit hitInfo, Mathf.Infinity, _LayerMasks) && !EventSystem.current.IsPointerOverGameObject();
+        bool collision = Physics.Raycast(ray, out RaycastHit hitInfo, Mathf.Infinity, _LayerMasks) && !CanvasUtility.IsPointerOverUIElement();
 
         if (collision && hitInfo.transform.gameObject == gameObject)
         {

@@ -6,7 +6,7 @@ using Newtonsoft.Json;
 
 [CreateAssetMenu(fileName = "Flora", menuName = "Scriptable Objects/Flora")]
 [Serializable]
-public class FloraData : SerializedScriptableObject
+public class FloraInfo : SerializedScriptableObject
 {
     [OdinSerialize, VerticalGroup, Required, LabelWidth(80)] 
     private string _Name;
@@ -14,6 +14,8 @@ public class FloraData : SerializedScriptableObject
     private string _Description;
 
     [Title("Harvesting")]
+    [OdinSerialize, VerticalGroup]
+    private ItemLabels _ItemLabels;
     [OdinSerialize, VerticalGroup]
     private IHarvest _HarvestMethod;
     [OdinSerialize, VerticalGroup, PropertySpace(10), ListDrawerSettings(Expanded = true)] 
@@ -27,6 +29,8 @@ public class FloraData : SerializedScriptableObject
 
     public string Name => _Name;
     public string Description => _Description;
+
+    public ItemLabels ItemLabels => _ItemLabels;
     public IHarvest HarvestMethod => _HarvestMethod;
     public RewardPair[] Rewards => _Rewards;
     

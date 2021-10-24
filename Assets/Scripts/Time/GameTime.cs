@@ -1,10 +1,12 @@
 using System.Collections;
+using System.Collections.Generic;
 using UnityEngine;
 using UnityEditor;
 using MyBox;
 using IngameDebugConsole;
 
-public class GameTime : Singleton<GameTime>
+[RequireComponent(typeof(GuidComponent))]
+public class GameTime : Singleton<GameTime>, IStreamable<GameTime.Data>
 {
     [Space(5), Header("Game")]
     [SerializeField, Min(0)] private float _InGameHour = 60.0f; // how long an in-game hour lasts in seconds
@@ -20,7 +22,27 @@ public class GameTime : Singleton<GameTime>
     [SerializeField, Min(0)] private int _DaysPerMonth = 30;
     [SerializeField, Min(0)] private int _MonthsPerYear = 12;
 
-    private static decimal _ElapsedTime = 0.0M;
+    private static Data _Data = new Data();
+    private System.Guid _Guid;
+
+    public class Data
+    {
+        public decimal ElapsedTime = 0.0M;
+    }
+    public Data OnUpload() => _Data;
+    public void OnLoad(object state)
+    {
+        _Data = state as Data;
+    }
+    public object Upload()
+    {
+        GameManager.Stream.Load(_Guid, OnUpload());
+        return null;
+    }
+    public void Load()
+    {
+        OnLoad(GameManager.Stream.Get(_Guid) as Data);
+    }
 
     private float _MinuteClock = 0.0f;
     private float _HourClock = 0.0f;
@@ -28,7 +50,7 @@ public class GameTime : Singleton<GameTime>
     private int _DayCalendar = 0;
     private int _MonthCalendar = 0;
 
-    public decimal ElapsedTime => _ElapsedTime;
+    public decimal ElapsedTime => _Data.ElapsedTime;
     public float InGameHour => _InGameHour;
 
     /// <summary>
@@ -50,16 +72,20 @@ public class GameTime : Singleton<GameTime>
         "<mspace=0.60em>{1:00}</mspace>", _HourClock, _MinuteClock);
     public string Date => string.Format("{0:0000}/{1:00}/{2:00}", Year, _MonthCalendar, _DayCalendar);
 
+    private void Awake()
+    {
+        _Guid = GetComponent<GuidComponent>().Guid;
+    }
+
     private void Start()
     {
         StartCoroutine(UpdateTimeLoop());
-
         DebugLogConsole.AddCommandInstance("time.skip", "Accelerates time from point in current day by given amount in hours", nameof(AccelerateTime), this);
     }
 
     private void Update()
     {
-        _ElapsedTime += (decimal)Time.deltaTime;
+        _Data.ElapsedTime += (decimal)Time.deltaTime;
     }
     
     public IEnumerator UpdateTimeLoop()
@@ -73,13 +99,13 @@ public class GameTime : Singleton<GameTime>
 
     public void UpdateTime()
     {
-        Hour = _CurrentHour + ((float)_ElapsedTime / _InGameHour);
+        Hour = _CurrentHour + ((float)_Data.ElapsedTime / _InGameHour);
 
         Day = _CurrentDay + (Mathf.FloorToInt(Hour) / _HoursPerDay);
         Month = _CurrentMonth + (Day / _DaysPerMonth);
         Year = _CurrentYear + (Month / _MonthsPerYear);
 
-        _MinuteClock = (float)_ElapsedTime * (60.0f / _InGameHour) % 60.0f; // keep to common standards of 00:00-24:00
+        _MinuteClock = (float)_Data.ElapsedTime * (60.0f / _InGameHour) % 60.0f; // keep to common standards of 00:00-24:00
         _HourClock = (int)Hour * (24.0f / _HoursPerDay) % 24.0f;
 
         _MinuteClock = Mathf.Floor(_MinuteClock);
@@ -108,6 +134,6 @@ public class GameTime : Singleton<GameTime>
 
     public void SetElapsedTime(decimal elapsedTime)
     {
-        _ElapsedTime = elapsedTime;
+        _Data.ElapsedTime = elapsedTime;
     }
 }

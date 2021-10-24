@@ -6,6 +6,7 @@ using UnityEngine.InputSystem;
 using UnityEngine.Audio;
 using UnityEngine.AddressableAssets;
 using UnityEngine.ResourceManagement.AsyncOperations;
+using Sirenix.OdinInspector;
 using MyBox;
 
 public class SoundPlayer : Singleton<SoundPlayer>
@@ -218,7 +219,7 @@ public class SoundPlayer : Singleton<SoundPlayer>
         private string _Name;
 
         [Space(5)]
-        [SerializeField]
+        [SerializeField, AssetsOnly]
         private AssetReference _Asset;
         [SerializeField]
         private AudioMixerGroup _Output;
