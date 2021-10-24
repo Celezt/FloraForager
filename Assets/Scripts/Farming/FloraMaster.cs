@@ -12,11 +12,11 @@ using Sirenix.Serialization;
 /// </summary>
 [CreateAssetMenu(fileName = "FloraMaster", menuName = "Scriptable Objects/Flora Master")]
 [System.Serializable]
-public class FloraMaster : SerializedScriptableSingleton<FloraMaster>
+public class FloraMaster : SerializedScriptableSingleton<FloraMaster>, IStreamer
 {
-    [SerializeField] 
+    [SerializeField]
     private GameObject _FloraPrefab;
-    [SerializeField] 
+    [SerializeField]
     private System.Guid _Guid;
     [OdinSerialize]
     private Dictionary<string, FloraInfo> _FloraDictionary = new Dictionary<string, FloraInfo>();
@@ -26,6 +26,11 @@ public class FloraMaster : SerializedScriptableSingleton<FloraMaster>
     private void Awake()
     {
         SceneManager.sceneLoaded += OnSceneLoaded;
+
+        if (_guid == System.Guid.Empty)
+            _guid = System.Guid.NewGuid();
+
+        GameManager.AddStreamer(this);
     }
 
 #if UNITY_EDITOR
@@ -33,6 +38,7 @@ public class FloraMaster : SerializedScriptableSingleton<FloraMaster>
     private static void Initialize()
     {
         SceneManager.sceneLoaded += Instance.OnSceneLoaded;
+        GameManager.AddStreamer(FloraMaster.Instance);
     }
 #endif
 
@@ -127,7 +133,7 @@ public class FloraMaster : SerializedScriptableSingleton<FloraMaster>
         _Florae.ForEach(f => f.Grow());
     }
 
-    public object Upload()
+    public void UpLoad()
     {
         Dictionary<string, object> streamables = new Dictionary<string, object>();
 
@@ -137,9 +143,7 @@ public class FloraMaster : SerializedScriptableSingleton<FloraMaster>
                 x.Cell.Local.y.ToString() + " " +
                 x.SaveData.SceneIndex.ToString(), ((IStreamable<object>)x).OnUpload()));
 
-        GameManager.Stream.Load(_Guid, streamables);
-
-        return null;
+        GameManager.Stream.Load(_guid, streamables);
     }
     public void Load()
     {
@@ -159,5 +163,10 @@ public class FloraMaster : SerializedScriptableSingleton<FloraMaster>
 
             _Florae.Add(flora);
         }
+    }
+
+    public void BeforeSaving()
+    {
+        _Florae.ForEach(x => ((IStreamable<object>)x).OnBeforeSaving());
     }
 }
