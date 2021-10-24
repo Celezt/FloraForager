@@ -4,10 +4,25 @@ using UnityEngine.InputSystem;
 /// <summary>
 /// Controls the flora logic
 /// </summary>
-public class Flora
+public class Flora : IStreamable<Flora.FloraData>
 {
-    private FloraData _Data; // data used to create flora
+    private global::FloraData _Data; // data used to create flora
     private Cell _Cell;      // associated cell
+
+    private FloraData _data;
+
+    public class FloraData
+    {
+        public int Stage;
+        public bool Watered;
+    }
+
+    FloraData IStreamable<FloraData>.OnUpload() => _data = new FloraData();
+
+    void IStreamable.OnLoad(object state)
+    {
+        _data = state as FloraData;
+    }
 
     public System.Action OnGrow = delegate { };
     public System.Action OnWatered = delegate { };
@@ -18,31 +33,31 @@ public class Flora
     private MeshRenderer[] _StagesMeshRenderers;
 
     private float _StageUpdate = 0; // at what stages to update the mesh
-    private int _Stage = 0;         // current advanced stage
+    //private int _Stage = 0;         // current advanced stage
     private int _Mesh = 0;          // current mesh being used
 
-    private bool _Watered;          // if the flora has been watered for this day
+    //private bool _Watered;          // if the flora has been watered for this day
 
     public MeshFilter CurrentMeshFilter => _StagesMeshFilters[_Mesh];
     public MeshRenderer CurrentMeshRenderer => _StagesMeshRenderers[_Mesh];
 
-    public FloraData Data => _Data;
+    public global::FloraData Data => _Data;
     public Cell Cell => _Cell;
 
     public IHarvest HarvestMethod { get; private set; }
 
-    public bool Completed => (_Stage >= _Data.GrowTime);
+    public bool Completed => (_data.Stage >= _Data.GrowTime);
     public bool Watered
     {
-        get => _Watered;
+        get => _data.Watered;
         set
         {
             OnWatered.Invoke();
-            _Cell.Grid.UpdateCellsUVs((_Watered = value) ? CellType.Soil : CellType.Dirt, _Cell);
+            _Cell.Grid.UpdateCellsUVs((_data.Watered = value) ? CellType.Soil : CellType.Dirt, _Cell);
         }
     }
 
-    public Flora(FloraData data, Cell cell)
+    public Flora(global::FloraData data, Cell cell)
     {
         _Data = data;
         _Cell = cell;
@@ -58,10 +73,10 @@ public class Flora
 
     public void Grow()
     {
-        if (Completed || !_Watered)
+        if (Completed || !_data.Watered)
             return;
 
-        if (++_Stage >= (_StageUpdate + _Mesh))
+        if (++_data.Stage >= (_StageUpdate + _Mesh))
         {
             ++_Mesh; // update to next mesh
         }

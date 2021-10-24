@@ -93,6 +93,8 @@ public static class GameManager
         byte[] bytes = File.ReadAllBytes(SaveWorldPath + "debug" + WORLD_FILE_TYPE);
         _stream.StreamedData = (Dictionary<Guid, object>)SerializationUtility.DeserializeValueWeak(bytes, DataFormat.Binary);
 
+        FloraMaster.Instance.Load();
+
         StreamableBehaviour[] streamableBehaviours = UnityEngine.Object.FindObjectsOfType<StreamableBehaviour>();
         for (int i = 0; i < streamableBehaviours.Length; i++)
         {

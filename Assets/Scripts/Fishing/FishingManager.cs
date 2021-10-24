@@ -162,7 +162,7 @@ public class FishingManager : MonoBehaviour
         float gravityForce = _gravity * dragWeight;
         float rodStar = (int)((IStar)rodItem).Star;
         float catchForce = 0;
-        float CatchVelocity = 0;
+        float catchVelocity = 0;
         float catchPoint = 0;
 
         float fishLastChangeTime = 0;
@@ -187,16 +187,16 @@ public class FishingManager : MonoBehaviour
         {
             catchForce = _drag > 0.5f ? Mathf.Lerp(catchForce, dragForce, dragDamp * deltaTime) : 0;    // Player input.
             float acceleration = (-gravityForce + catchForce) / dragWeight;
-            CatchVelocity += acceleration * deltaTime;
-            catchPoint += 0.1f * (CatchVelocity * deltaTime + (acceleration * deltaTime * deltaTime) / 2);
+            catchVelocity += acceleration * deltaTime;
+            catchPoint += 0.1f * (catchVelocity * deltaTime + (acceleration * deltaTime * deltaTime) / 2);
         }
 
         void SetBouncing()
         {
             if (catchPoint > 1)
-                CatchVelocity = 0;
+                catchVelocity = 0;
             else if (catchPoint < 0)
-                CatchVelocity *= -bounciness;
+                catchVelocity *= -bounciness;
         }
 
         void SetCatchArea()

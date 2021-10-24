@@ -6,7 +6,7 @@ public readonly struct ItemContext
 {
     public readonly List<string> labels;
     public readonly Transform transform;
-    public readonly UseBehaviour useBehaviour;
+    public readonly UseBehaviour behaviour;
     public readonly PlayerInfo playerInfo;
     public readonly string name;
     public readonly string id;
@@ -17,7 +17,7 @@ public readonly struct ItemContext
     internal ItemContext(
         List<string> labels,
         Transform transform,
-        UseBehaviour useBehaviour,
+        UseBehaviour behaviour,
         PlayerInfo playerInfo,
         string name,
         string id,
@@ -27,7 +27,7 @@ public readonly struct ItemContext
     {
         this.labels = labels;
         this.transform = transform;
-        this.useBehaviour = useBehaviour;
+        this.behaviour = behaviour;
         this.playerInfo = playerInfo;
         this.name = name;
         this.id = id;

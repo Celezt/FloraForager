@@ -36,7 +36,7 @@ public class ChopItem : IItem, IUse, IDestructor, IStar, IValue
     void IItem.OnEquip(ItemContext context)
     {
 #if UNITY_EDITOR
-        context.useBehaviour.OnDrawGizmosAction = () =>
+        context.behaviour.OnDrawGizmosAction = () =>
         {
             Gizmos.matrix = context.transform.localToWorldMatrix;
             Gizmos.DrawWireCube(_centerOffset, _halfExtents * 2);

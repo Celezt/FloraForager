@@ -7,7 +7,7 @@ using UnityEngine.InputSystem;
 /// <summary>
 /// Controls logic related to the object itself
 /// </summary>
-public class FloraObject : MonoBehaviour, IUsable, IDestructableObject
+public class FloraObject : MonoBehaviour, IUsable
 {
     private Flora _Flora;
 
@@ -16,10 +16,6 @@ public class FloraObject : MonoBehaviour, IUsable, IDestructableObject
     private BoxCollider _Collider;
 
     public Flora Flora => _Flora;
-
-    public int Priority => 1;
-    public float Strength { get; set; } = 1;
-    public float Durability { get; set; } = 1;
 
     private void OnDestroy()
     {
@@ -70,16 +66,6 @@ public class FloraObject : MonoBehaviour, IUsable, IDestructableObject
         Flora.OnHarvest.Invoke();
 
         Flora.HarvestMethod.Harvest(_Flora, context.playerIndex);
-    }
-
-    void IDestructableObject.OnDamage(IDestructor destructor, IDestructable destructable, UsedContext context)
-    {
-        throw new System.NotImplementedException();
-    }
-
-    void IDestructableObject.OnDestruction(UsedContext context)
-    {
-        throw new System.NotImplementedException();
     }
 
     ItemLabels IUsable.Filter()

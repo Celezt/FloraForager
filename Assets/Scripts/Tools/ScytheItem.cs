@@ -46,7 +46,7 @@ public class ScytheItem : IUse, IItem, IDestructor, IStar, IValue
 
         _animator = _scytheTransform.GetComponent<Animator>();
 
-        context.useBehaviour.OnDrawGizmosAction = () =>
+        context.behaviour.OnDrawGizmosAction = () =>
         {
             Gizmos.matrix = context.transform.localToWorldMatrix;
             GizmosC.DrawWireArc(Vector3.zero, Vector3.forward, _radius, cmath.Map(_arc, new MinMaxFloat(1, -1), new MinMaxFloat(0, 360)));
