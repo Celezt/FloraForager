@@ -5,17 +5,14 @@ using UnityEngine.InputSystem;
 public class PlayerInventory : MonoBehaviour
 {
     public PlayerAction PlayerAction => _playerAction;
+    public int PlayerIndex => _playerIndex;
 
-    [SerializeField]
-    private CanvasGroup _canvasGroup;
     [SerializeField]
     private InventoryHandler _inventoryHandler;
     [SerializeField]
     private InventoryHandler _hotbarHandler;
     [SerializeField]
-    private string _id;
-    [SerializeField]
-    private float _frameDegreeSpeed = 4-0f;
+    private float _frameDegreeSpeed = 4.0f;
     [SerializeField]
     private Color _selectColor = Color.white;
 
@@ -27,6 +24,7 @@ public class PlayerInventory : MonoBehaviour
     private bool _isInventoryOpen;
     private float _frameDegree;
     private int _selectedIndex;
+    private int _playerIndex;
 
     public void OnHotbar(InputAction.CallbackContext context)
     {
@@ -89,7 +87,9 @@ public class PlayerInventory : MonoBehaviour
         //if (!GameManager.Instance.Stream.Get<Inventory>(_id).TryGetTarget(out _inventory))
         //    Debug.LogError("Player inventory was not found");
 
-        _inventory = PlayerInput.GetPlayerByIndex(0).GetComponent<PlayerInfo>().Inventory;
+        PlayerInput playerInput = PlayerInput.GetPlayerByIndex(0);
+        _playerIndex = playerInput.playerIndex;
+        _inventory = playerInput.GetComponent<PlayerInfo>().Inventory;
 
         _inventoryHandler.Inventory = _inventory;
         _inventoryHandler.IsItemSelectable = false;

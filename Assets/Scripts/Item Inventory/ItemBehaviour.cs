@@ -9,30 +9,92 @@ public class ItemBehaviour : MonoBehaviour
     private static readonly ExposedProperty TEXTURE_ATTRIBUTE = "Texture";
 
     [SerializeField] private VisualEffect _visualEffect;
+    [SerializeField] private ItemAsset _item;
     [SerializeField] private float _mass = 6;
     [SerializeField] private float _impulse = 20;
     [SerializeField] private LayerMask _groundMask;
-    //[SerializeField] private float 
+    [SerializeField] private float _radius = 2;
+    [SerializeField] private float _startTime = 1;
+    [SerializeField] private float _checkFrequency = 0.5f;
+    [SerializeField] private LayerMask _pickMask;
+    [SerializeField] private float _destroyTimer = 0.5f;
 
-    public void Initialize(Texture2D texture)
+    private Transform _checkTransform;
+    private Inventory _inventory;
+
+    private bool _isdropped = true;
+
+    public void Spawn(ItemAsset item) => Spawn(item, Random.insideUnitCircle.normalized);
+    public void Spawn(ItemAsset item, Vector2 direction)
     {
-        _visualEffect.SetTexture(TEXTURE_ATTRIBUTE, texture);
-        Vector2 randomDirection = Random.insideUnitCircle.normalized;
-        StartCoroutine(Drop(new Vector3(randomDirection.x, 0.8f, randomDirection.y) * _impulse));;
+        _item = item;
+        _visualEffect.SetTexture(TEXTURE_ATTRIBUTE, ItemTypeSettings.Instance.ItemIconChunk[item.ID].texture);
+
+        StartCoroutine(Drop(new Vector3(direction.x, 0.8f, direction.y) * _impulse));
     }
 
-    private void FixedUpdate()
+    private void Start()
     {
-        //Physics.OverlapSphere(transform.position, )
+        InvokeRepeating(nameof(InsideCheck), _startTime, _checkFrequency);
+    }
+
+    private void InsideCheck()
+    {
+        if (!_isdropped)
+            return;
+
+        if (string.IsNullOrEmpty(_item.ID))
+            return;
+
+        Vector3 position = transform.position;
+        Collider[] colliders = Physics.OverlapSphere(position, _radius, _pickMask);
+
+        if (colliders.Length > 0)
+        {
+            _checkTransform = colliders[0].transform;
+
+            if (_inventory == null)
+                if (_checkTransform.TryGetComponent(out PlayerInfo playerInfo))
+                        _inventory = playerInfo.Inventory;
+
+            if (_inventory != null && _inventory.FindEmptySpace(_item.ID) > 0)  // If their is still space left.
+                StartCoroutine(Absorb());
+        }
+        else
+            _inventory = null;
+    }
+
+    private IEnumerator Absorb()
+    {
+        Vector3 position = transform.position;
+
+        while (true)
+        {
+            float deltaTime = Time.fixedDeltaTime;
+            Vector3 checkPosition = _checkTransform.position;
+
+            position = Vector3.MoveTowards(position, checkPosition, 10 * deltaTime);
+
+            if (Vector3.Distance(position, checkPosition) <= 0)
+            {
+                Destroy(gameObject, _destroyTimer);
+            }
+
+            transform.position = position;
+
+            yield return new WaitForFixedUpdate();
+        }
     }
 
     private IEnumerator Drop(Vector3 impulse)
     {
         float deltaTime;
 
-        Vector3 velocity = impulse / _mass;
+        _isdropped = false;
         Vector3 position = transform.position;
+        Vector3 velocity = impulse / _mass;
         Vector3 gravityForce = Physics.gravity * _mass;
+        Vector3 point = Vector3.zero;
 
         void DropPhysics()
         {
@@ -43,16 +105,31 @@ public class ItemBehaviour : MonoBehaviour
 
         while (true)
         {
-            deltaTime = Time.deltaTime;
+            deltaTime = Time.fixedDeltaTime;
+
+            if (Physics.Raycast(position, Vector3.down, out RaycastHit hit, float.MaxValue, _groundMask))
+                point = hit.point;
 
             DropPhysics();
 
-            if (!Physics.Raycast(position, Vector3.down, out RaycastHit hit, float.MaxValue, _groundMask))
+            if (position.y <= point.y)  // End if at or below the hit point.
+            {
+                position.y = point.y;
+                transform.position = position;
+                _isdropped = true;
                 yield break;
+            }
 
             transform.position = position;
 
             yield return new WaitForFixedUpdate();
         }
+    }
+
+    private void OnDestroy()
+    {
+        _visualEffect.Stop();
+
+        _inventory?.Insert(_item.ID, _item.Amount);
     }
 }
