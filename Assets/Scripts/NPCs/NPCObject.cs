@@ -75,8 +75,11 @@ public class NPCObject : MonoBehaviour, IInteractable
         {
             DialogueManager.GetByIndex(context.playerIndex).StartDialogue(NPC.RepeatingDialogue, "You", NPC.Name).Completed += (DialogueManager manager) =>
             {
-                CommissionGiverWindow.Instance.ShowCommissions(NPC);
-                CommissionGiverWindow.Instance.Open();
+                if (NPC.HasCommissions)
+                {
+                    CommissionGiverWindow.Instance.ShowCommissions(NPC);
+                    CommissionGiverWindow.Instance.Open();
+                }
 
                 playerInput.ActivateInput();
             };

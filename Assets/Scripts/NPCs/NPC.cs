@@ -12,6 +12,9 @@ public class NPC : IStreamable<NPC.Data>
 
     private Commission[] _Commissions;
 
+    private bool _HasCommissions;
+    private bool _HasRelation;
+
     public class Data
     {
         public string Name;
@@ -35,17 +38,19 @@ public class NPC : IStreamable<NPC.Data>
     public Commission[] Commissions => _Commissions;
     public PriorityQueue<string> DialogueQueue => _Data.DialogueQueue;
     public string RepeatingDialogue => _Data.RepeatingDialogue;
+    public bool HasCommissions => _HasCommissions;
 
     public NPC(NPCInfo data)
     {
+        _HasCommissions = data.HasCommissions;
+        _HasRelation = data.HasRelation;
+
         _Data = new Data();
 
         _Data.Name = data.Name;
-
         _Data.Relation = new RelationshipManager(data.RelationRange.Min, data.RelationRange.Max, data.StartRelation);
 
-        _Commissions = new Commission[data.CommissionsData.Length];
-        _Data.CommissionsData = new CommissionData[data.CommissionsData.Length];
+        // add dialogue
 
         _Data.DialogueQueue = new PriorityQueue<string>(Heap.MaxHeap);
         for (int i = 0; i < data.InitialDialogue.Length; ++i)
@@ -53,6 +58,11 @@ public class NPC : IStreamable<NPC.Data>
             _Data.DialogueQueue.Enqueue(data.InitialDialogue[i].Dialogue.AssetGUID, data.InitialDialogue[i].Priority);
         }
         _Data.RepeatingDialogue = data.RepeatingDialogue.AssetGUID;
+
+        // add commissions
+
+        _Commissions = new Commission[data.CommissionsData.Length];
+        _Data.CommissionsData = new CommissionData[data.CommissionsData.Length];
 
         for (int i = 0; i < _Commissions.Length; ++i)
         {

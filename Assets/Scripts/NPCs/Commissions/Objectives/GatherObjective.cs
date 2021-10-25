@@ -23,8 +23,6 @@ public class GatherObjective : IObjective
         ItemToGather = gatheringObjective.ItemToGather;
         CurrentAmount = gatheringObjective.CurrentAmount;
 
-        Debug.Log(CurrentAmount);
-
         _ItemName = ItemTypeSettings.Instance.ItemNameChunk[ItemToGather.ID];
     }
 
