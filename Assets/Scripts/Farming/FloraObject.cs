@@ -60,12 +60,9 @@ public class FloraObject : MonoBehaviour, IUsable
 
     public void OnUse(UsedContext context)
     {
-        if (!context.performed)
-            return;
-
         Flora.OnHarvest.Invoke();
 
-        if (Flora.SaveData.Harvest.Harvest(_Flora, context.playerIndex))
+        if (Flora.SaveData.Harvest.Harvest(context, _Flora))
         {
             Destroy(Grid.Instance.FreeCell(_Flora.Cell));
             FloraMaster.Instance.Remove(_Flora);

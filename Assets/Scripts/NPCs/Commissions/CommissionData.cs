@@ -11,6 +11,8 @@ public struct CommissionData
     public float RewardRelation;
     public float PenaltyRelation;
 
-    public RewardPair[] Rewards;
+    public ItemAsset[] Rewards;
     public string Giver;
+
+    public bool Completed;
 }

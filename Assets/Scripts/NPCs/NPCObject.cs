@@ -10,9 +10,13 @@ using UnityEngine.InputSystem;
 public class NPCObject : MonoBehaviour, IInteractable
 {
     [SerializeField] 
-    private NPCInfo _NPCInfo;
+    private string _NameID;
+    [SerializeField]
+    private float _ExitRadius = 5.0f;
     [SerializeField] 
     private LayerMask _LayerMasks;
+
+    private GameObject _Player;
 
     public NPC NPC { get; private set; }
     public Bounds Bounds { get; private set; }
@@ -23,9 +27,7 @@ public class NPCObject : MonoBehaviour, IInteractable
     {
         Bounds = GetComponent<MeshFilter>().mesh.bounds;
 
-        NPC = NPCManager.Instance.Exists(_NPCInfo.Name) ?
-            NPCManager.Instance.Get(_NPCInfo.Name) :
-            NPCManager.Instance.Add(_NPCInfo.Name, new NPC(_NPCInfo));
+        NPC = NPCManager.Instance.Get(_NameID.ToLower());
     }
 
     private void Update()
@@ -41,6 +43,15 @@ public class NPCObject : MonoBehaviour, IInteractable
         {
             NPCUI.Instance.SetActive(null, false);
         }
+
+        if (CommissionGiverWindow.Instance.Opened && _Player != null)
+        {
+            if (Vector3.Distance(transform.position, _Player.transform.position) > _ExitRadius)
+            {
+                CommissionGiverWindow.Instance.Exit();
+                _Player = null;
+            }
+        }
     }
 
     public void OnInteract(InteractContext context)
@@ -48,7 +59,27 @@ public class NPCObject : MonoBehaviour, IInteractable
         if (!context.performed)
             return;
 
-        CommissionGiverWindow.Instance.ShowCommissions(NPC);
-        CommissionGiverWindow.Instance.Open();
+        PlayerInput playerInput = PlayerInput.GetPlayerByIndex(context.playerIndex);
+        _Player = playerInput.gameObject;
+
+        playerInput.DeactivateInput();
+
+        if (NPC.DialogueQueue.Count > 0)
+        {
+            DialogueManager.GetByIndex(context.playerIndex).StartDialogue(NPC.DialogueQueue.Dequeue(), "You", NPC.Name).Completed += (DialogueManager manager) =>
+            {
+                playerInput.ActivateInput();
+            };
+        }
+        else
+        {
+            DialogueManager.GetByIndex(context.playerIndex).StartDialogue(NPC.RepeatingDialogue, "You", NPC.Name).Completed += (DialogueManager manager) =>
+            {
+                CommissionGiverWindow.Instance.ShowCommissions(NPC);
+                CommissionGiverWindow.Instance.Open();
+
+                playerInput.ActivateInput();
+            };
+        }
     }
 }

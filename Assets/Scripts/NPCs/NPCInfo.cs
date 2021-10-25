@@ -1,9 +1,10 @@
 ﻿using UnityEngine;
 using Sirenix.Serialization;
 using Sirenix.OdinInspector;
+using UnityEngine.AddressableAssets;
 using MyBox;
 
-[CreateAssetMenu(fileName = "NPC", menuName = "Scriptable Objects/NPC")]
+[CreateAssetMenu(fileName = "NPC", menuName = "Game Data/NPC")]
 public class NPCInfo : SerializedScriptableObject
 {
     [OdinSerialize, Required]
@@ -21,7 +22,13 @@ public class NPCInfo : SerializedScriptableObject
     [OdinSerialize]
     private bool _HasCommissions;
     [OdinSerialize, ShowIf("_HasCommissions"), ListDrawerSettings(Expanded = true)]
-    private CommissionInfo[] _CommissionsInfo = new CommissionInfo[0];
+    private CommissionInfo[] _CommissionsInfo;
+
+    [Title("Dialogue")]
+    [SerializeField, ListDrawerSettings(Expanded = true)]
+    private DialoguePriority[] _InitialDialogue;
+    [SerializeField]
+    private AssetReferenceText _RepeatingDialogue;
 
     public string Name => _Name;
 
@@ -31,4 +38,7 @@ public class NPCInfo : SerializedScriptableObject
 
     public bool HasCommissions => _HasCommissions;
     public CommissionInfo[] CommissionsData => _CommissionsInfo;
+
+    public DialoguePriority[] InitialDialogue => _InitialDialogue;
+    public AssetReferenceText RepeatingDialogue => _RepeatingDialogue;
 }

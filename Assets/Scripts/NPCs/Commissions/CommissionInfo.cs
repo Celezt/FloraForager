@@ -5,7 +5,7 @@ using UnityEngine.Events;
 using Sirenix.Serialization;
 using Sirenix.OdinInspector;
 
-[CreateAssetMenu(fileName = "Commission", menuName = "Scriptable Objects/Commission")]
+[CreateAssetMenu(fileName = "Commission", menuName = "Game Data/Commission")]
 public class CommissionInfo : SerializedScriptableObject
 {
     [OdinSerialize, Required] 
@@ -17,7 +17,7 @@ public class CommissionInfo : SerializedScriptableObject
     [OdinSerialize] 
     private int _TimeLimit;
     [OdinSerialize, ListDrawerSettings(Expanded = true), Required]
-    private IObjective[] _Objectives = new IObjective[] { new GatherObjective() };
+    private IObjective[] _Objectives;
 
     [Title("Relations")]
     [OdinSerialize] 
@@ -29,7 +29,7 @@ public class CommissionInfo : SerializedScriptableObject
 
     [Title("Rewards")]
     [OdinSerialize, ListDrawerSettings(Expanded = true), Required] 
-    private RewardPair[] _Rewards = new RewardPair[] { new RewardPair() };
+    private ItemAsset[] _Rewards;
 
     public string Title => _Title;
     public string Description => _Description;
@@ -41,5 +41,5 @@ public class CommissionInfo : SerializedScriptableObject
     public float RewardRelations => _RewardRelations;
     public float PenaltyRelations => _PenaltyRelations;
 
-    public RewardPair[] Rewards => _Rewards;
+    public ItemAsset[] Rewards => _Rewards;
 }

@@ -7,10 +7,13 @@ using IngameDebugConsole;
 
 public class SleepSchedule : Singleton<SleepSchedule>
 {
-    [SerializeField, Range(0.0f, 24.0f)] private float _MorningTime = 6.0f; // morning time in 00:00-24:00 range
-    [SerializeField, Range(0.0f, 24.0f)] private float _NightTime = 22.0f;
+    [SerializeField, Range(0.0f, 24.0f)]
+    private float _MorningTime = 6.0f; // morning time in 00:00-24:00 range
+    [SerializeField, Range(0.0f, 24.0f)] 
+    private float _NightTime = 22.0f;
     [Space(5)]
-    [SerializeField, Min(0)] private float _SleepTime = 1.0f;
+    [SerializeField, Min(0)] 
+    private float _SleepTime = 4.0f;
 
     private PlayerStamina _PlayerStamina;
     private PlayerMovement _PlayerMovement;
@@ -81,7 +84,7 @@ public class SleepSchedule : Singleton<SleepSchedule>
 
         _PlayerStamina.Recover();
         FloraMaster.Instance.Notify();
-        CommissionLog.Instance.Notify();
+        CommissionList.Instance.Notify();
 
         GameTime.Instance.AccelerateTime(currentTime, TimeToMorning(currentTime));
 

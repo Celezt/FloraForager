@@ -9,8 +9,8 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 32a782941a06a6f47a65b85be9f118a4, type: 3}
-  m_Name: NPC Manager
+  m_Script: {fileID: 11500000, guid: e0d1e4449c72656439af6c52eae1bbae, type: 3}
+  m_Name: GameTime
   m_EditorClassIdentifier: 
   serializationData:
     SerializedFormat: 2
@@ -21,9 +21,30 @@ MonoBehaviour:
     PrefabModificationsReferencedUnityObjects: []
     PrefabModifications: []
     SerializationNodes:
+    - Name: _InGameHour
+      Entry: 4
+      Data: 60
+    - Name: _CurrentYear
+      Entry: 3
+      Data: 0
+    - Name: _CurrentMonth
+      Entry: 3
+      Data: 0
+    - Name: _CurrentDay
+      Entry: 3
+      Data: 0
+    - Name: _CurrentHour
+      Entry: 3
+      Data: 6
+    - Name: _HoursPerDay
+      Entry: 3
+      Data: 24
+    - Name: _DaysPerMonth
+      Entry: 3
+      Data: 30
+    - Name: _MonthsPerYear
+      Entry: 3
+      Data: 12
     - Name: _Guid
       Entry: 2
-      Data: 8a34ae92a11a4b33821e4c05eb64728f
-  _NPCInfos:
-  - {fileID: 11400000, guid: a1f02cb2ac979ff4080b73872a08728f, type: 2}
-  - {fileID: 11400000, guid: 1c5d3ffd48f6bde4cb114c3caefc2198, type: 2}
+      Data: 34ad1fba4a7544e38eab8d1d69677e83

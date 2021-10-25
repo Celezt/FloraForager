@@ -10,7 +10,7 @@ using Sirenix.Serialization;
 /// <summary>
 /// Manages all of the flora in this region
 /// </summary>
-[CreateAssetMenu(fileName = "FloraMaster", menuName = "Scriptable Objects/Flora Master")]
+[CreateAssetMenu(fileName = "FloraMaster", menuName = "Game Logic/Flora Master")]
 [System.Serializable]
 public class FloraMaster : SerializedScriptableSingleton<FloraMaster>, IStreamer
 {
@@ -21,14 +21,15 @@ public class FloraMaster : SerializedScriptableSingleton<FloraMaster>, IStreamer
     [OdinSerialize]
     private Dictionary<string, FloraInfo> _FloraDictionary = new Dictionary<string, FloraInfo>();
 
+    [System.NonSerialized]
     private List<Flora> _Florae = new List<Flora>();
 
     private void Awake()
     {
         SceneManager.sceneLoaded += OnSceneLoaded;
 
-        if (_guid == System.Guid.Empty)
-            _guid = System.Guid.NewGuid();
+        if (_Guid == System.Guid.Empty)
+            _Guid = System.Guid.NewGuid();
 
         GameManager.AddStreamer(this);
     }
@@ -62,7 +63,7 @@ public class FloraMaster : SerializedScriptableSingleton<FloraMaster>, IStreamer
     {
         Cell cell = Grid.Instance.HoveredCell;
 
-        if (cell == null)
+        if (cell == null || cell.Occupied)
             return false;
 
         if (cell.Data.Type != CellType.Dirt && cell.Data.Type != CellType.Soil)
@@ -86,7 +87,7 @@ public class FloraMaster : SerializedScriptableSingleton<FloraMaster>, IStreamer
     {
         Cell cell = Grid.Instance.HoveredCell;
 
-        if (cell == null)
+        if (cell == null || cell.Occupied)
             return false;
 
         if (cell.Data.Type != CellType.Dirt && cell.Data.Type != CellType.Soil)
@@ -143,7 +144,7 @@ public class FloraMaster : SerializedScriptableSingleton<FloraMaster>, IStreamer
                 x.Cell.Local.y.ToString() + " " +
                 x.SaveData.SceneIndex.ToString(), ((IStreamable<object>)x).OnUpload()));
 
-        GameManager.Stream.Load(_guid, streamables);
+        GameManager.Stream.Load(_Guid, streamables);
     }
     public void Load()
     {
@@ -164,9 +165,12 @@ public class FloraMaster : SerializedScriptableSingleton<FloraMaster>, IStreamer
             _Florae.Add(flora);
         }
     }
-
     public void BeforeSaving()
     {
+        GameManager.Stream.Release(_Guid);
+
+        UpLoad();
+
         _Florae.ForEach(x => ((IStreamable<object>)x).OnBeforeSaving());
     }
 }

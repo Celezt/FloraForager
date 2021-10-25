@@ -1,40 +1,22 @@
 ﻿using System.Collections.Generic;
 using UnityEngine.InputSystem;
+using Sirenix.Serialization;
+using Sirenix.OdinInspector;
 
 public class HarvestScythe : IHarvest
 {
+    [ListDrawerSettings(Expanded = true)]
+    public DropType[] Rewards = new DropType[1] { new DropType { } };
+
     public void Initialize(FloraInfo data, IHarvest harvestData)
     {
-
+        Rewards = (harvestData as HarvestScythe).Rewards;
     }
 
-    public bool Harvest(Flora flora, int playerIndex)
+    public bool Harvest(UsedContext context, Flora flora)
     {
         if (flora.Completed)
-        {
-            Inventory inventory = PlayerInput.GetPlayerByIndex(playerIndex).GetComponent<PlayerInfo>().Inventory;
-
-            bool canHarvest = true;
-            foreach (RewardPair reward in flora.FloraInfo.Rewards)
-            {
-                int emptySpace = inventory.FindEmptySpace(reward.ItemID);
-
-                if (emptySpace < reward.Amount)
-                    canHarvest = false;
-            }
-
-            if (!canHarvest)
-                return false;
-
-            foreach (RewardPair reward in flora.FloraInfo.Rewards)
-            {
-                inventory.Insert(new ItemAsset
-                {
-                    ID = reward.ItemID,
-                    Amount = reward.Amount
-                });
-            }
-        }
+            context.Drop(Rewards);
 
         return true;
     }

@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Text;
 using System.Threading.Tasks;
 using UnityEngine;
+using UnityEngine.AddressableAssets;
 
 public class NPC : IStreamable<NPC.Data>
 {
@@ -16,16 +17,24 @@ public class NPC : IStreamable<NPC.Data>
         public string Name;
         public RelationshipManager Relation;
         public CommissionData[] CommissionsData;
+        public PriorityQueue<string> DialogueQueue;
+        public string RepeatingDialogue;
     }
     public Data OnUpload() => _Data;
     public void OnLoad(object state)
     {
         _Data = state as Data;
     }
+    public void OnBeforeSaving()
+    {
+
+    }
 
     public string Name => _Data.Name;
     public RelationshipManager Relation => _Data.Relation;
     public Commission[] Commissions => _Commissions;
+    public PriorityQueue<string> DialogueQueue => _Data.DialogueQueue;
+    public string RepeatingDialogue => _Data.RepeatingDialogue;
 
     public NPC(NPCInfo data)
     {
@@ -37,6 +46,13 @@ public class NPC : IStreamable<NPC.Data>
 
         _Commissions = new Commission[data.CommissionsData.Length];
         _Data.CommissionsData = new CommissionData[data.CommissionsData.Length];
+
+        _Data.DialogueQueue = new PriorityQueue<string>(Heap.MaxHeap);
+        for (int i = 0; i < data.InitialDialogue.Length; ++i)
+        {
+            _Data.DialogueQueue.Enqueue(data.InitialDialogue[i].Dialogue.AssetGUID, data.InitialDialogue[i].Priority);
+        }
+        _Data.RepeatingDialogue = data.RepeatingDialogue.AssetGUID;
 
         for (int i = 0; i < _Commissions.Length; ++i)
         {
@@ -63,7 +79,21 @@ public class NPC : IStreamable<NPC.Data>
         _Commissions = new Commission[data.CommissionsData.Length];
         for (int i = 0; i < _Commissions.Length; ++i)
         {
+            if (data.CommissionsData[i].Completed)
+                continue;
+
             _Commissions[i] = new Commission(data.CommissionsData[i]);
         }
+    }
+
+    public void RemoveCommission(int pos)
+    {
+        _Commissions[pos] = null;
+        _Data.CommissionsData[pos].Completed = true;
+    }
+
+    public void SetRepeatingDialouge(string address)
+    {
+        _Data.RepeatingDialogue = address;
     }
 }

@@ -1,29 +1,31 @@
 ﻿using UnityEngine;
 using UnityEngine.InputSystem;
 using Sirenix.Serialization;
+using Sirenix.OdinInspector;
 
 [System.Serializable]
 public class GatherObjective : IObjective
 {
-    public string ItemID;
-    public int Amount;
-
-    private string _ItemName;
+    public ItemAsset ItemToGather;
+    [HideInInspector]
+    public int CurrentAmount;
 
     private Inventory _Inventory;
-    private int _CurrentAmount;
+    private string _ItemName;
 
-    public bool IsCompleted => (_CurrentAmount >= Amount);
-    public string Status => $"{_ItemName}: {_CurrentAmount}/{Amount}";
+    public bool IsCompleted => (CurrentAmount >= ItemToGather.Amount);
+    public string Status => $"{_ItemName}: {CurrentAmount}/{ItemToGather.Amount}";
 
     public void Initialize(IObjective objectiveData)
     {
         GatherObjective gatheringObjective = objectiveData as GatherObjective;
 
-        ItemID = gatheringObjective.ItemID;
-        Amount = gatheringObjective.Amount;
+        ItemToGather = gatheringObjective.ItemToGather;
+        CurrentAmount = gatheringObjective.CurrentAmount;
 
-        _ItemName = ItemTypeSettings.Instance.ItemNameChunk[ItemID];
+        Debug.Log(CurrentAmount);
+
+        _ItemName = ItemTypeSettings.Instance.ItemNameChunk[ItemToGather.ID];
     }
 
     public void Accepted()
@@ -31,7 +33,7 @@ public class GatherObjective : IObjective
         _Inventory = PlayerInput.GetPlayerByIndex(0).GetComponent<PlayerInfo>().Inventory;
         _Inventory.OnItemChangeCallback += UpdateStatus;
 
-        _CurrentAmount = _Inventory.FindAmount(ItemID);
+        UpdateStatus();
     }
     public void Removed()
     {
@@ -39,13 +41,13 @@ public class GatherObjective : IObjective
     }
     public void Completed()
     {
-        _Inventory.Remove(ItemID, Amount);
+        _Inventory.Remove(ItemToGather.ID, ItemToGather.Amount);
     }
 
     public void UpdateStatus() { UpdateStatus(0, new ItemAsset { }); }
     public void UpdateStatus(int pos, ItemAsset item)
     {
-        _CurrentAmount = _Inventory.FindAmount(ItemID);
+        CurrentAmount = _Inventory.FindAmount(ItemToGather.ID);
 
         CommissionLog.Instance.UpdateSelected();
         CommissionLog.Instance.CheckCompletion();

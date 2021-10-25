@@ -9,9 +9,9 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 9044493129319138798}
-  - component: {fileID: 989875282880707603}
   - component: {fileID: 6951803243359009162}
   - component: {fileID: 6412959721343927167}
+  - component: {fileID: 2373673086214978736}
   m_Layer: 0
   m_Name: TimeSystem
   m_TagString: Untagged
@@ -33,26 +33,6 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &989875282880707603
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 9044493129319138796}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: e0d1e4449c72656439af6c52eae1bbae, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  _InGameHour: 60
-  _CurrentYear: 0
-  _CurrentMonth: 0
-  _CurrentDay: 0
-  _CurrentHour: 6
-  _HoursPerDay: 24
-  _DaysPerMonth: 30
-  _MonthsPerYear: 12
 --- !u!114 &6951803243359009162
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -145,3 +125,15 @@ MonoBehaviour:
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 4
+--- !u!114 &2373673086214978736
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 9044493129319138796}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 33a9d6a66499e8044af405107e4181fd, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 

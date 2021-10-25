@@ -3,14 +3,14 @@ using UnityEngine;
 using Sirenix.Serialization;
 using Sirenix.OdinInspector;
 
-[CreateAssetMenu(fileName = "CraftableItem", menuName = "Scriptable Objects/Craftable Item")]
+[CreateAssetMenu(fileName = "Craftable Item", menuName = "Game Data/Craftable Item")]
 public class CraftableItemInfo : SerializedScriptableObject
 {
     [OdinSerialize] 
     private string _ItemID; // item to give
-    [OdinSerialize] 
-    private ResourceRequirement[] _ResourceReqs = new ResourceRequirement[1];
+    [OdinSerialize, ListDrawerSettings(Expanded = true)] 
+    private ItemAsset[] _Requirements = new ItemAsset[1];
     
     public string ItemID => _ItemID.ToLower(); // safety check
-    public ResourceRequirement[] ResourceReqs => _ResourceReqs;
+    public ItemAsset[] Requirements => _Requirements;
 }

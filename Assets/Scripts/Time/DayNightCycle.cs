@@ -4,11 +4,16 @@ using UnityEngine;
 
 public class DayNightCycle : MonoBehaviour
 {
-    [SerializeField] private Light _Sun;
-    [SerializeField, Range(0.0f, 360.0f)] private float _Yaw = 30.0f;
-    [SerializeField, Range(1.0f, 10.0f)] private float _Damping = 4.5f;
-    [SerializeField] private Gradient _SunColor;
-    [SerializeField] private AnimationCurve _SunIntensity;
+    [SerializeField] 
+    private Light _Sun;
+    [SerializeField, Range(0.0f, 360.0f)] 
+    private float _Yaw = 30.0f;
+    [SerializeField, Range(1.0f, 10.0f)] 
+    private float _Damping = 4.5f;
+    [SerializeField] 
+    private Gradient _SunColor;
+    [SerializeField] 
+    private AnimationCurve _SunIntensity;
 
     private float _Pitch;
     private float _NewPitch;

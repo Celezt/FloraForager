@@ -6,43 +6,84 @@ using UnityEngine.InputSystem;
 using UnityEngine.SceneManagement;
 using MyBox;
 using Sirenix.Serialization;
+using Sirenix.OdinInspector;
+using UnityEngine.AddressableAssets;
 
-[CreateAssetMenu(fileName = "FloraMaster", menuName = "Scriptable Objects/NPC Manager")]
+[CreateAssetMenu(fileName = "NPC Manager", menuName = "Game Logic/NPC Manager")]
 [System.Serializable]
-public class NPCManager : SerializedScriptableSingleton<NPCManager>
+public class NPCManager : SerializedScriptableSingleton<NPCManager>, IStreamer
 {
     [SerializeField]
     private System.Guid _Guid;
+    [SerializeField]
+    private List<NPCInfo> _NPCInfos;
 
+    [System.NonSerialized]
     private Dictionary<string, NPC> _NPCs = new Dictionary<string, NPC>();
 
-    public bool Exists(string npc)
+    public void Initialize()
     {
-        return _NPCs.ContainsKey(npc);
+        if (_Guid == System.Guid.Empty)
+            _Guid = System.Guid.NewGuid();
+
+        _NPCs = _NPCInfos.ToDictionary(n => n.Name.ToLower(), n => new NPC(n));
+
+        GameManager.AddStreamer(this);
     }
+
+    private void Awake()
+    {
+        Initialize();
+    }
+
+#if UNITY_EDITOR
+    [UnityEditor.InitializeOnEnterPlayMode]
+    private static void PlayModeInitialize()
+    {
+        Instance.Initialize();
+    }
+#endif
 
     public NPC Get(string npc)
     {
-        return _NPCs[npc];
+        return _NPCs[npc.ToLower()];
     }
 
     public NPC Add(string id, NPC npc)
     {
-        return _NPCs[id] = npc;
+        return _NPCs[id.ToLower()] = npc;
     }
 
-    public object Upload()
+    public void EnqueueDialogue(string npc, string address, float priority)
+    {
+        _NPCs[npc].DialogueQueue.Enqueue(address, priority);
+    }
+    public void EnqueueDialogue(string npc, AssetReferenceText asset, float priority)
+    {
+        EnqueueDialogue(npc, asset.AssetGUID, priority);
+    }
+
+    public void SetRepeatingDialogue(string npc, string address)
+    {
+        _NPCs[npc].SetRepeatingDialouge(address);
+    }
+    public void SetRepeatingDialogue(string npc, AssetReferenceText asset)
+    {
+        SetRepeatingDialogue(npc, asset.AssetGUID);
+    }
+
+    public void UpLoad()
     {
         Dictionary<string, object> streamables = new Dictionary<string, object>();
 
         _NPCs.ForEach(x => streamables.Add(x.Key, ((IStreamable<object>)x.Value).OnUpload()));
 
         GameManager.Stream.Load(_Guid, streamables);
-
-        return null;
     }
     public void Load()
     {
+        _NPCs = new Dictionary<string, NPC>();
+
         Dictionary<string, object> streamables = (Dictionary<string, object>)GameManager.Stream.Get(_Guid);
 
         foreach (var item in streamables)
@@ -57,5 +98,9 @@ public class NPCManager : SerializedScriptableSingleton<NPCManager>
 
             Add(npc.Name, npc);
         }
+    }
+    public void BeforeSaving()
+    {
+
     }
 }

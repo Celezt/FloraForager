@@ -24,6 +24,8 @@ public class CommissionGiverWindow : Singleton<CommissionGiverWindow>
     private List<GameObject> _CommissionObjects; // objects in the window list
     private Commission _SelectedCommission; // selected commission in the window
 
+    public bool Opened => _CanvasGroup.alpha > 0.0f;
+
     private void Awake()
     {
         _CanvasGroup = GetComponent<CanvasGroup>();
@@ -61,7 +63,7 @@ public class CommissionGiverWindow : Singleton<CommissionGiverWindow>
 
             _CommissionObjects.Add(obj);
 
-            bool hasComm = CommissionLog.Instance.HasCommission(commission);
+            bool hasComm = CommissionList.Instance.HasCommission(commission);
             bool enoughRelation = (int)_CommissionGiver.Relation.Relation >= (int)commission.CommissionData.MinRelation;
 
             if (hasComm && commission.IsCompleted)
@@ -81,7 +83,7 @@ public class CommissionGiverWindow : Singleton<CommissionGiverWindow>
     {
         _SelectedCommission = commission;
 
-        bool hasComm = CommissionLog.Instance.HasCommission(commission);
+        bool hasComm = CommissionList.Instance.HasCommission(commission);
         bool enoughRelation = (int)_CommissionGiver.Relation.Relation >= (int)commission.CommissionData.MinRelation;
 
         if (hasComm && commission.IsCompleted)
@@ -110,9 +112,9 @@ public class CommissionGiverWindow : Singleton<CommissionGiverWindow>
         objectives += "</size>";
 
         string rewards = "<b>Rewards</b>\n<size=20>";
-        foreach (RewardPair reward in commission.CommissionData.Rewards)
+        foreach (ItemAsset reward in commission.CommissionData.Rewards)
         {
-            rewards += reward.Amount + " " + ItemTypeSettings.Instance.ItemNameChunk[reward.ItemID] + "\n";
+            rewards += reward.Amount + " " + ItemTypeSettings.Instance.ItemNameChunk[reward.ID] + "\n";
         }
         rewards += "</size>";
 
@@ -177,7 +179,7 @@ public class CommissionGiverWindow : Singleton<CommissionGiverWindow>
         {
             if (_SelectedCommission == _CommissionGiver.Commissions[i])
             {
-                _CommissionGiver.Commissions[i] = null;
+                _CommissionGiver.RemoveCommission(i);
             }
         }
 

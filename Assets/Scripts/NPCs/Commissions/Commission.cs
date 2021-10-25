@@ -7,7 +7,7 @@ using MyBox;
 public class Commission : IStreamable<Commission.Data>
 {
     private Data _Data;
-
+    
     public class Data
     {
         public CommissionData Commission;
@@ -17,6 +17,10 @@ public class Commission : IStreamable<Commission.Data>
     public void OnLoad(object state)
     {
         _Data = state as Data;
+    }
+    public void OnBeforeSaving()
+    {
+
     }
 
     public CommissionObject Object;   // associated object in the log
@@ -65,7 +69,7 @@ public class Commission : IStreamable<Commission.Data>
         Inventory inventory = PlayerInput.GetPlayerByIndex(0).GetComponent<PlayerInfo>().Inventory;
 
         for (int i = 0; i < _Data.Commission.Rewards.Length; ++i)
-            inventory.Insert(_Data.Commission.Rewards[i].ItemID, _Data.Commission.Rewards[i].Amount);
+            inventory.Insert(_Data.Commission.Rewards[i]);
 
         NPCManager.Instance.Get(Giver).Relation.AddRelation(_Data.Commission.RewardRelation);
     }

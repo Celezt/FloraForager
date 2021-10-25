@@ -25,8 +25,10 @@ public class Flora : IStreamable<Flora.Data>
     {
         _Data = state as Data;
     }
+    public void OnBeforeSaving() 
+    { 
 
-    void IStreamable.OnBeforeSaving() { }
+    }
 
     public System.Action OnGrow = delegate { };
     public System.Action OnWatered = delegate { };

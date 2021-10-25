@@ -4,12 +4,16 @@ using UnityEngine;
 using UnityEngine.InputSystem;
 using Sirenix.Serialization;
 using Sirenix.OdinInspector;
+using MyBox;
 
 [System.Serializable]
 public class HarvestPluck : IHarvest
 {
     public bool PluckFromAll = false;
     public int PluckAmount = 1;
+
+    [ListDrawerSettings(Expanded = true)]
+    public ItemAsset[] Rewards;
 
     private int[] _Pluck;
 
@@ -18,38 +22,35 @@ public class HarvestPluck : IHarvest
 
     public void Initialize(FloraInfo data, IHarvest harvestData)
     {
-        _Pluck = System.Array.ConvertAll(data.Rewards, r => r.Amount);
-
         HarvestPluck harvestPluck = harvestData as HarvestPluck;
 
         PluckFromAll = harvestPluck.PluckFromAll;
         PluckAmount = harvestPluck.PluckAmount;
+        Rewards = harvestPluck.Rewards;
+
+        _Pluck = System.Array.ConvertAll(Rewards, r => r.Amount);
     }
 
-    public bool Harvest(Flora flora, int playerIndex)
+    public bool Harvest(UsedContext context, Flora flora)
     {
         if (!flora.Completed)
             return false;
 
-        Inventory inventory = PlayerInput.GetPlayerByIndex(playerIndex).GetComponent<PlayerInfo>().Inventory;
+        Inventory inventory = PlayerInput.GetPlayerByIndex(context.playerIndex).GetComponent<PlayerInfo>().Inventory;
 
         for (int i = 0; i < _Pluck.Length; ++i)
         {
             if (_Pluck[i] <= 0)
                 continue;
 
-            int emptySpace = inventory.FindEmptySpace(flora.FloraInfo.Rewards[i].ItemID);
+            int emptySpace = inventory.FindEmptySpace(Rewards[i].ID);
             int amountToPluck = ((_Pluck[i] - PluckAmount) < 0) ? _Pluck[i] : PluckAmount;
 
             if (emptySpace >= amountToPluck)
             {
                 _Pluck[i] -= amountToPluck;
 
-                inventory.Insert(new ItemAsset
-                {
-                    ID = flora.FloraInfo.Rewards[i].ItemID,
-                    Amount = amountToPluck
-                });
+                inventory.Insert(Rewards[i].ID, amountToPluck);
 
                 if (!PluckFromAll)
                     break;

@@ -10,7 +10,6 @@ using MyBox;
 /// <summary>
 /// Keeps track of and manages all of the accepted commissions
 /// </summary>
-[RequireComponent(typeof(GuidComponent))]
 public class CommissionLog : Singleton<CommissionLog>
 {
     [SerializeField] private GameObject _CommissionPrefab;
@@ -18,21 +17,14 @@ public class CommissionLog : Singleton<CommissionLog>
     [SerializeField] private TMP_Text _Description;
 
     private List<CommissionObject> _CommissionObjects = new List<CommissionObject>();
-    private static List<Commission> _Commissions = new List<Commission>();
-
-    private System.Guid _Guid;
 
     private Commission _Selected; // selected commission in the log
 
     private CanvasGroup _CanvasGroup;
     private PlayerAction _PlayerAction;
 
-    public List<Commission> Commissions => _Commissions;
-
     private void Awake()
     {
-        _Guid = GetComponent<GuidComponent>().Guid;
-
         _CanvasGroup = GetComponent<CanvasGroup>();
         _CanvasGroup.alpha = 0.0f;
 
@@ -53,6 +45,23 @@ public class CommissionLog : Singleton<CommissionLog>
         _PlayerAction.Ground.CommissionLog.started -= OnOpenExit;
     }
 
+    private void Update()
+    {
+        if (Mouse.current.leftButton.wasPressedThisFrame)
+        {
+            if (Grid.Instance.HoveredCell != null && Grid.Instance.HoveredCell.HeldObject != null)
+            {
+                Grid.Instance.HoveredCell.HeldObject.TryGetComponent(out FloraObject flora);
+
+                if (flora != null)
+                {
+                    flora.Flora.Watered = true;
+                }
+            }
+            FloraMaster.Instance.Add("Variant");
+        }
+    }
+
     public void Accept(Commission commission)
     {
         GameObject obj = Instantiate(_CommissionPrefab, _CommissionArea); // create object to be added to the log list
@@ -63,7 +72,7 @@ public class CommissionLog : Singleton<CommissionLog>
 
         obj.GetComponent<TMP_Text>().text = commission.CommissionData.Title;
 
-        _Commissions.Add(commission);
+        CommissionList.Instance.Add(commission);
         _CommissionObjects.Add(cs);
 
         commission.Objectives.ForEach(o => o.Accepted());
@@ -89,7 +98,7 @@ public class CommissionLog : Singleton<CommissionLog>
             return;
 
         _CommissionObjects.Remove(commission.Object);
-        _Commissions.Remove(commission);
+        CommissionList.Instance.Remove(commission);
 
         Destroy(commission.Object.gameObject);
 
@@ -126,16 +135,6 @@ public class CommissionLog : Singleton<CommissionLog>
         }
     }
 
-    public void Notify()
-    {
-        _Commissions.ForEach(c => c.DayPassed());
-    }
-
-    public bool HasCommission(Commission commission)
-    {
-        return _Commissions.Exists(c => c.CommissionData.Title == commission.CommissionData.Title);
-    }
-
     public void ShowDescription(Commission commission)
     {
         if (commission == null)
@@ -154,9 +153,9 @@ public class CommissionLog : Singleton<CommissionLog>
         objectives += "</size>";
 
         string rewards = "<b>Rewards</b>\n<size=20>";
-        foreach (RewardPair reward in commission.CommissionData.Rewards)
+        foreach (ItemAsset reward in commission.CommissionData.Rewards)
         {
-            rewards += reward.Amount + " " + reward.ItemID + "\n";
+            rewards += reward.Amount + " " + ItemTypeSettings.Instance.ItemNameChunk[reward.ID] + "\n";
         }
         rewards += "</size>";
 
@@ -198,7 +197,7 @@ public class CommissionLog : Singleton<CommissionLog>
 
     private void OnSceneLoaded(Scene scene, LoadSceneMode loadSceneMode)
     {
-        foreach (Commission commission in _Commissions)
+        foreach (Commission commission in CommissionList.Instance.Commissions)
         {
             GameObject obj = Instantiate(_CommissionPrefab, _CommissionArea);
 
@@ -210,36 +209,7 @@ public class CommissionLog : Singleton<CommissionLog>
 
             _CommissionObjects.Add(cs);
         }
-    }
 
-    public object Upload()
-    {
-        Dictionary<string, object> streamables = new Dictionary<string, object>();
-
-        _Commissions.ForEach(x => 
-            streamables.Add(x.Title, ((IStreamable<object>)x).OnUpload()));
-
-        GameManager.Stream.Load(_Guid, streamables);
-
-        return null;
-    }
-    public void Load()
-    {
-        _Commissions = new List<Commission>();
-
-        Dictionary<string, object> streamables = (Dictionary<string, object>)GameManager.Stream.Get(_Guid);
-
-        foreach (var item in streamables)
-        {
-            if (!streamables.TryGetValue(item.Key, out object value))
-                continue;
-
-            Commission.Data data = value as Commission.Data;
-
-            Commission commission = NPCManager.Instance.Get(data.Commission.Giver).Commissions.FirstOrDefault(c => c.CommissionData.Title == data.Commission.Title);
-            commission.OnLoad(data);
-
-            _Commissions.Add(commission);
-        }
+        CheckCompletion();
     }
 }

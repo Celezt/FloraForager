@@ -3,46 +3,54 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEditor;
 using MyBox;
-using IngameDebugConsole;
+using Sirenix.Serialization;
 
-[RequireComponent(typeof(GuidComponent))]
-public class GameTime : Singleton<GameTime>, IStreamable<GameTime.Data>
+[CreateAssetMenu(fileName = "GameTime", menuName = "Game Logic/GameTime")]
+[System.Serializable]
+public class GameTime : SerializedScriptableSingleton<GameTime>, IStreamer, IStreamable<GameTime.Data>
 {
     [Space(5), Header("Game")]
-    [SerializeField, Min(0)] private float _InGameHour = 60.0f; // how long an in-game hour lasts in seconds
+    [OdinSerialize, Min(0)] private float _InGameHour = 60.0f; // how long an in-game hour lasts in seconds
 
     [Space(5)]
-    [SerializeField, Min(0)] private int _CurrentYear = 0; 
-    [SerializeField, Min(0)] private int _CurrentMonth = 0;
-    [SerializeField, Min(0)] private int _CurrentDay = 0;
-    [SerializeField, Min(0)] private int _CurrentHour = 0;
+    [OdinSerialize, Min(0)] private int _CurrentYear; 
+    [OdinSerialize, Min(0)] private int _CurrentMonth;
+    [OdinSerialize, Min(0)] private int _CurrentDay;
+    [OdinSerialize, Min(0)] private int _CurrentHour = 6;
 
     [Space(5), Header("Calendar")]
-    [SerializeField, Min(0)] private int _HoursPerDay = 24; 
-    [SerializeField, Min(0)] private int _DaysPerMonth = 30;
-    [SerializeField, Min(0)] private int _MonthsPerYear = 12;
+    [OdinSerialize, Min(0)] private int _HoursPerDay = 24; 
+    [OdinSerialize, Min(0)] private int _DaysPerMonth = 30;
+    [OdinSerialize, Min(0)] private int _MonthsPerYear = 12;
 
-    private static Data _Data = new Data();
+    [Space(5), Header("Misc")]
+    [OdinSerialize]
     private System.Guid _Guid;
+
+    [System.NonSerialized]
+    private Data _Data = new Data();
 
     public class Data
     {
         public decimal ElapsedTime = 0.0M;
     }
+
     public Data OnUpload() => _Data;
     public void OnLoad(object state)
     {
         _Data = state as Data;
     }
-    public object Upload()
+    public void OnBeforeSaving() { }
+
+    public void UpLoad()
     {
         GameManager.Stream.Load(_Guid, OnUpload());
-        return null;
     }
     public void Load()
     {
-        OnLoad(GameManager.Stream.Get(_Guid) as Data);
+        OnLoad(GameManager.Stream.Get(_Guid));
     }
+    public void BeforeSaving() { }
 
     private float _MinuteClock = 0.0f;
     private float _HourClock = 0.0f;
@@ -50,7 +58,6 @@ public class GameTime : Singleton<GameTime>, IStreamable<GameTime.Data>
     private int _DayCalendar = 0;
     private int _MonthCalendar = 0;
 
-    public decimal ElapsedTime => _Data.ElapsedTime;
     public float InGameHour => _InGameHour;
 
     /// <summary>
@@ -60,6 +67,12 @@ public class GameTime : Singleton<GameTime>, IStreamable<GameTime.Data>
 
     public float MinuteClock => _MinuteClock;
     public float HourClock => _HourClock;
+
+    public decimal ElapsedTime
+    {
+        get => _Data.ElapsedTime;
+        set => _Data.ElapsedTime = value;
+    }
 
     public float Hour { get; private set; }
     public int Day { get; private set; }
@@ -74,28 +87,19 @@ public class GameTime : Singleton<GameTime>, IStreamable<GameTime.Data>
 
     private void Awake()
     {
-        _Guid = GetComponent<GuidComponent>().Guid;
+        if (_Guid == System.Guid.Empty)
+            _Guid = System.Guid.NewGuid();
+
+        GameManager.AddStreamer(this);
     }
 
-    private void Start()
+#if UNITY_EDITOR
+    [UnityEditor.InitializeOnEnterPlayMode]
+    private static void PlayModeInitialize()
     {
-        StartCoroutine(UpdateTimeLoop());
-        DebugLogConsole.AddCommandInstance("time.skip", "Accelerates time from point in current day by given amount in hours", nameof(AccelerateTime), this);
+        GameManager.AddStreamer(Instance);
     }
-
-    private void Update()
-    {
-        _Data.ElapsedTime += (decimal)Time.deltaTime;
-    }
-    
-    public IEnumerator UpdateTimeLoop()
-    {
-        while (true)
-        {
-            UpdateTime();
-            yield return new WaitForSeconds(0.5f);
-        }
-    }
+#endif
 
     public void UpdateTime()
     {
@@ -123,17 +127,13 @@ public class GameTime : Singleton<GameTime>, IStreamable<GameTime.Data>
     public void AccelerateTime(float from, float hours)
     {
         float elapsedTimeToDay = (int)(Hour / _HoursPerDay) * _HoursPerDay * InGameHour; // total time elapsed to this day
-        float acceleratedTime = (elapsedTimeToDay + 
-            (from * InGameHour) * (_HoursPerDay / 24.0f) + 
-            (hours * InGameHour) * (_HoursPerDay / 24.0f) - 
+        float acceleratedTime = (elapsedTimeToDay +
+            (from * InGameHour) * (_HoursPerDay / 24.0f) +
+            (hours * InGameHour) * (_HoursPerDay / 24.0f) -
             (_CurrentHour * _InGameHour)); // time to accelerate by
 
-        SetElapsedTime((decimal)acceleratedTime);
-        UpdateTime();
-    }
+        _Data.ElapsedTime = (decimal)acceleratedTime;
 
-    public void SetElapsedTime(decimal elapsedTime)
-    {
-        _Data.ElapsedTime = elapsedTime;
+        UpdateTime();
     }
 }
