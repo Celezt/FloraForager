@@ -18,6 +18,8 @@ public class StreamableBehaviour : MonoBehaviour, IStreamer, IStreamable<Streama
     [Button]
     public void LoadButton() => GameManager.LoadGame();
 
+    [SerializeField] private bool _saveIfDestroyed = true;
+
     private Data _data;
 
     private Guid _guid;
@@ -25,11 +27,24 @@ public class StreamableBehaviour : MonoBehaviour, IStreamer, IStreamable<Streama
     public class Data
     {
         public string Address;
+        public bool IsAlive = true;
+        public int SceneIndex;
     }
 
     public Data OnUpload() => _data = new Data();
-    public void OnLoad(object state) => _data = state as Data;
-    void IStreamable.OnBeforeSaving() { }
+    public void OnLoad(object state)
+    {
+        Data data = state as Data;
+
+        if (!data.IsAlive)
+            Destroy(gameObject);
+
+        _data = data;
+    }
+    void IStreamable.OnBeforeSaving() 
+    {
+        _data.SceneIndex = SceneManager.GetActiveScene().buildIndex;
+    }
 
     public void Start()
     {
@@ -67,6 +82,9 @@ public class StreamableBehaviour : MonoBehaviour, IStreamer, IStreamable<Streama
 
     private void OnDestroy()
     {
+        if (_saveIfDestroyed)
+            _data.IsAlive = false;
+
         GameManager.RemoveStreamer(this);
     }
 }

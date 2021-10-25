@@ -13,7 +13,6 @@ public class TransformBehaviour : MonoBehaviour, IStreamable<TransformBehaviour.
         public Vector3 Position;
         public Quaternion Rotation;
         public Vector3 Scale;
-        public int SceneIndex;
     }
 
     Data IStreamable<Data>.OnUpload() => _data = new Data();
@@ -34,7 +33,5 @@ public class TransformBehaviour : MonoBehaviour, IStreamable<TransformBehaviour.
         _data.Position = transform.position;
         _data.Rotation = transform.rotation;
         _data.Scale = transform.localScale;
-
-        _data.SceneIndex = SceneManager.GetActiveScene().buildIndex;
     }
 }

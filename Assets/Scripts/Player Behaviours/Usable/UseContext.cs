@@ -49,13 +49,18 @@ public readonly struct UseContext
     /// <summary>
     /// Create an instance and place it.
     /// </summary>
-    public void Place(GameObject orginal, Vector3 position) => Place(orginal, position, Quaternion.identity);
+    /// <returns>If it was successfully placed.</returns>
+    public bool Place(GameObject orginal, Vector3 position, LayerMask placeMask, bool followNormal = false) => Place(orginal, position, Quaternion.identity, placeMask, followNormal);
     /// <summary>
     /// Create an instance and place it.
     /// </summary>
-    public void Place(GameObject orginal, Vector3 position, Quaternion rotation)
+    /// <returns>If it was successfully placed.</returns>
+    public bool Place(GameObject orginal, Vector3 position, Quaternion rotation, LayerMask placeMask, bool followNormal = false)
     {
-        GameObject obj = Object.Instantiate(orginal, position, rotation);
+        if (!Physics.Raycast(position, Vector3.down, out RaycastHit hit, float.MaxValue, placeMask))
+            return false;
+
+        GameObject obj = Object.Instantiate(orginal, hit.point, followNormal ? Quaternion.LookRotation(Vector3.forward, hit.normal) * rotation : rotation);
 
         IPlaceable[] placeables = obj.GetComponentsInChildren<IPlaceable>();
 
@@ -75,6 +80,8 @@ public readonly struct UseContext
                     ));
             }
         }
+
+        return true;
     }
 
     /// <summary>
