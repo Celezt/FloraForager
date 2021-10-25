@@ -7,7 +7,7 @@ using UnityEngine.EventSystems;
 public class Workbench : MonoBehaviour, IInteractable
 {
     [SerializeField] private float _Radius = 3.5f;
-    [SerializeField] private CraftableItemData[] _CraftableItemsData;
+    [SerializeField] private CraftableItemInfo[] _CraftableItemsData;
 
     private GameObject _Player;
 

@@ -22,78 +22,33 @@ MonoBehaviour:
     PrefabModifications: []
     SerializationNodes:
     - Name: _Name
-      Entry: 1
-      Data: test
+      Entry: 6
+      Data: 
     - Name: _Description
       Entry: 6
       Data: 
+    - Name: _ItemLabels
+      Entry: 3
+      Data: 0
     - Name: _HarvestMethod
       Entry: 7
       Data: 0|HarvestPluck, Assembly-CSharp
-    - Name: _PluckFromAll
+    - Name: PluckFromAll
       Entry: 5
       Data: false
-    - Name: _PluckAmount
+    - Name: PluckAmount
       Entry: 3
       Data: 1
-    - Name: OnEmptied
+    - Name: Rewards
       Entry: 7
-      Data: 1|System.Action, mscorlib
-    - Name: target
-      Entry: 7
-      Data: 2|HarvestPluck+<>c, Assembly-CSharp
-    - Name: 
-      Entry: 8
-      Data: 
-    - Name: declaringType
-      Entry: 7
-      Data: 3|System.RuntimeType, mscorlib
-    - Name: 
-      Entry: 1
-      Data: HarvestPluck+<>c, Assembly-CSharp
-    - Name: 
-      Entry: 8
-      Data: 
-    - Name: methodName
-      Entry: 1
-      Data: <.ctor>b__8_0
-    - Name: delegateType
-      Entry: 7
-      Data: 4|System.RuntimeType, mscorlib
-    - Name: 
-      Entry: 1
-      Data: System.Action, mscorlib
-    - Name: 
-      Entry: 8
-      Data: 
-    - Name: signature
-      Entry: 7
-      Data: 5|System.Type[], mscorlib
-    - Name: 
-      Entry: 12
-      Data: 0
-    - Name: 
-      Entry: 13
-      Data: 
-    - Name: 
-      Entry: 8
-      Data: 
-    - Name: 
-      Entry: 8
-      Data: 
-    - Name: 
-      Entry: 8
-      Data: 
-    - Name: _Rewards
-      Entry: 7
-      Data: 6|RewardPair[], Assembly-CSharp
+      Data: 1|ItemAsset[], Assembly-CSharp
     - Name: 
       Entry: 12
       Data: 1
     - Name: 
       Entry: 7
-      Data: RewardPair, Assembly-CSharp
-    - Name: ItemID
+      Data: ItemAsset, Assembly-CSharp
+    - Name: ID
       Entry: 6
       Data: 
     - Name: Amount
@@ -108,21 +63,57 @@ MonoBehaviour:
     - Name: 
       Entry: 8
       Data: 
-    - Name: _GrowTime
-      Entry: 3
-      Data: 0
-    - Name: _Stages
+    - Name: OnEmptied
       Entry: 7
-      Data: 7|UnityEngine.GameObject[], UnityEngine.CoreModule
+      Data: 2|System.Action, mscorlib
+    - Name: target
+      Entry: 7
+      Data: 3|HarvestPluck+<>c, Assembly-CSharp
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: declaringType
+      Entry: 7
+      Data: 4|System.RuntimeType, mscorlib
+    - Name: 
+      Entry: 1
+      Data: HarvestPluck+<>c, Assembly-CSharp
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: methodName
+      Entry: 1
+      Data: <.ctor>b__7_0
+    - Name: delegateType
+      Entry: 7
+      Data: 5|System.RuntimeType, mscorlib
+    - Name: 
+      Entry: 1
+      Data: System.Action, mscorlib
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: signature
+      Entry: 7
+      Data: 6|System.Type[], mscorlib
     - Name: 
       Entry: 12
-      Data: 1
-    - Name: 
-      Entry: 6
-      Data: 
+      Data: 0
     - Name: 
       Entry: 13
       Data: 
     - Name: 
       Entry: 8
+      Data: 
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: _GrowTime
+      Entry: 3
+      Data: 0
+    - Name: _Stages
+      Entry: 6
       Data: 

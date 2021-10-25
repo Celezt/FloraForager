@@ -191,6 +191,8 @@ public class Inventory : ScriptableObject
                 _items[items[i].Item1] = itemAsset;
                 OnRemoveItemCallback.Invoke(items[i].Item1, itemAsset);
                 OnItemChangeCallback.Invoke(items[i].Item1, itemAsset);
+
+                break;
             }
         }
     }

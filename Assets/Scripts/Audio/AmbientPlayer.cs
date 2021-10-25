@@ -106,7 +106,7 @@ public class AmbientPlayer : Singleton<AmbientPlayer>
     }
 
     [System.Serializable]
-    public class Ambient
+    private class Ambient
     {
         [SerializeField]
         private string _Name;

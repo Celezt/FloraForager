@@ -12,7 +12,7 @@ public class SeedItem : IUse, IItem
     public float Cooldown { get; set; } = 2;
 
     [OdinSerialize]
-    private FloraData _Flora;
+    private FloraInfo _Flora;
 
     void IItem.OnInitialize(ItemTypeContext context)
     {
