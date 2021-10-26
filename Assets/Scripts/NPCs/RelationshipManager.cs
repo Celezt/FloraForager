@@ -15,9 +15,9 @@ public enum Relation
 [System.Serializable]
 public class RelationshipManager
 {
-    private float minRelation, maxRelation;
-    private float curRelation;
-
+    [SerializeField, HideInInspector]
+    private float minRelation, maxRelation, curRelation;
+    [SerializeField, HideInInspector]
     private Relation relation;
 
     public Relation Relation => relation;

@@ -28,7 +28,7 @@ public class NPCInfo : SerializedScriptableObject
     [SerializeField, ListDrawerSettings(Expanded = true)]
     private DialoguePriority[] _InitialDialogue;
     [SerializeField]
-    private AssetReferenceText _RepeatingDialogue;
+    private DialogueElement _RepeatingDialogue;
 
     public string Name => _Name;
 
@@ -40,5 +40,5 @@ public class NPCInfo : SerializedScriptableObject
     public CommissionInfo[] CommissionsData => _CommissionsInfo;
 
     public DialoguePriority[] InitialDialogue => _InitialDialogue;
-    public AssetReferenceText RepeatingDialogue => _RepeatingDialogue;
+    public DialogueElement RepeatingDialogue => _RepeatingDialogue;
 }

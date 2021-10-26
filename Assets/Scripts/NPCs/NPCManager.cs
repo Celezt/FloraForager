@@ -54,22 +54,38 @@ public class NPCManager : SerializedScriptableSingleton<NPCManager>, IStreamer
         return _NPCs[id.ToLower()] = npc;
     }
 
-    public void EnqueueDialogue(string npc, string address, float priority)
+    public void EnqueueDialogue(NPC npc, string address, float priority, params string[] aliases)
     {
-        _NPCs[npc].DialogueQueue.Enqueue(address, priority);
+        npc.DialogueQueue.Enqueue((address, aliases), priority);
     }
-    public void EnqueueDialogue(string npc, AssetReferenceText asset, float priority)
+    public void EnqueueDialogue(NPC npc, AssetReferenceText asset, float priority, params string[] aliases)
     {
-        EnqueueDialogue(npc, asset.AssetGUID, priority);
+        EnqueueDialogue(npc, asset.AssetGUID, priority, aliases);
+    }
+    public void EnqueueDialogue(string npc, string address, float priority, params string[] aliases)
+    {
+        _NPCs[npc].DialogueQueue.Enqueue((address, aliases), priority);
+    }
+    public void EnqueueDialogue(string npc, AssetReferenceText asset, float priority, params string[] aliases)
+    {
+        EnqueueDialogue(npc, asset.AssetGUID, priority, aliases);
     }
 
-    public void SetRepeatingDialogue(string npc, string address)
+    public void SetRepeatingDialogue(NPC npc, string address, params string[] aliases)
     {
-        _NPCs[npc].SetRepeatingDialouge(address);
+        npc.SetRepeatingDialouge(address, aliases);
     }
-    public void SetRepeatingDialogue(string npc, AssetReferenceText asset)
+    public void SetRepeatingDialogue(NPC npc, AssetReferenceText asset, params string[] aliases)
     {
-        SetRepeatingDialogue(npc, asset.AssetGUID);
+        SetRepeatingDialogue(npc, asset.AssetGUID, aliases);
+    }
+    public void SetRepeatingDialogue(string npc, string address, params string[] aliases)
+    {
+        _NPCs[npc].SetRepeatingDialouge(address, aliases);
+    }
+    public void SetRepeatingDialogue(string npc, AssetReferenceText asset, params string[] aliases)
+    {
+        SetRepeatingDialogue(npc, asset.AssetGUID, aliases);
     }
 
     public void UpLoad()

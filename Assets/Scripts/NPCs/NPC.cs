@@ -20,8 +20,8 @@ public class NPC : IStreamable<NPC.Data>
         public string Name;
         public RelationshipManager Relation;
         public CommissionData[] CommissionsData;
-        public PriorityQueue<string> DialogueQueue;
-        public string RepeatingDialogue;
+        public PriorityQueue<(string, string[])> DialogueQueue;
+        public (string, string[]) RepeatingDialogue;
     }
     public Data OnUpload() => _Data;
     public void OnLoad(object state)
@@ -36,8 +36,8 @@ public class NPC : IStreamable<NPC.Data>
     public string Name => _Data.Name;
     public RelationshipManager Relation => _Data.Relation;
     public Commission[] Commissions => _Commissions;
-    public PriorityQueue<string> DialogueQueue => _Data.DialogueQueue;
-    public string RepeatingDialogue => _Data.RepeatingDialogue;
+    public PriorityQueue<(string, string[])> DialogueQueue => _Data.DialogueQueue;
+    public (string, string[]) RepeatingDialogue => _Data.RepeatingDialogue;
     public bool HasCommissions => _HasCommissions;
 
     public NPC(NPCInfo data)
@@ -52,12 +52,15 @@ public class NPC : IStreamable<NPC.Data>
 
         // add dialogue
 
-        _Data.DialogueQueue = new PriorityQueue<string>(Heap.MaxHeap);
+        _Data.DialogueQueue = new PriorityQueue<(string, string[])>(Heap.MaxHeap);
         for (int i = 0; i < data.InitialDialogue.Length; ++i)
         {
-            _Data.DialogueQueue.Enqueue(data.InitialDialogue[i].Dialogue.AssetGUID, data.InitialDialogue[i].Priority);
+            _Data.DialogueQueue.Enqueue((
+                data.InitialDialogue[i].Dialogue.AssetGUID, 
+                data.InitialDialogue[i].Aliases), 
+                data.InitialDialogue[i].Priority);
         }
-        _Data.RepeatingDialogue = data.RepeatingDialogue.AssetGUID;
+        _Data.RepeatingDialogue = (data.RepeatingDialogue.Dialogue.AssetGUID, data.RepeatingDialogue.Aliases);
 
         // add commissions
 
@@ -102,8 +105,8 @@ public class NPC : IStreamable<NPC.Data>
         _Data.CommissionsData[pos].Completed = true;
     }
 
-    public void SetRepeatingDialouge(string address)
+    public void SetRepeatingDialouge(string address, params string[] aliases)
     {
-        _Data.RepeatingDialogue = address;
+        _Data.RepeatingDialogue = (address, aliases);
     }
 }

@@ -15,10 +15,8 @@ public class SleepSchedule : Singleton<SleepSchedule>
     [SerializeField, Min(0)] 
     private float _SleepTime = 4.0f;
 
+    private PlayerInput _PlayerInput;
     private PlayerStamina _PlayerStamina;
-    private PlayerMovement _PlayerMovement;
-    private InteractBehaviour _InteractableArea;
-    private Rigidbody _PlayerRigidbody;
 
     private bool _IsSleeping = false;  // if the player is currently sleeping
     private float _NightToMorning = 0; // total time in hours for player to sleep
@@ -33,12 +31,8 @@ public class SleepSchedule : Singleton<SleepSchedule>
 
     private void Awake()
     {
-        GameObject player = PlayerInput.GetPlayerByIndex(0).gameObject;
-
-        _PlayerMovement = player.GetComponent<PlayerMovement>();
-        _PlayerStamina = player.GetComponent<PlayerStamina>();
-        _InteractableArea = player.GetComponent<InteractBehaviour>();
-        _PlayerRigidbody = player.GetComponent<Rigidbody>();
+        _PlayerInput = PlayerInput.GetPlayerByIndex(0);
+        _PlayerStamina = _PlayerInput.GetComponent<PlayerStamina>();
     }
 
     private void Start()
@@ -48,47 +42,43 @@ public class SleepSchedule : Singleton<SleepSchedule>
         DebugLogConsole.AddCommandInstance("player.sleep", "Activate sleep mode", nameof(ConsoleStartSleeping), this);
     }
 
-    private void ConsoleStartSleeping() => StartSleeping();
-    public bool StartSleeping()
+    private void ConsoleStartSleeping() => StartSleeping(false);
+    public bool StartSleeping(bool penalty)
     {
         if (_IsSleeping)
             return false;
 
         _IsSleeping = true;
-        StartCoroutine(Sleep(GameTime.Instance.CurrentTime));
+        StartCoroutine(Sleep(penalty));
 
         return true;
     }
 
-    private IEnumerator Sleep(float currentTime)
+    private IEnumerator Sleep(bool penalty)
     {
         // sleep
 
+        float currentTime = GameTime.Instance.CurrentTime;
+
+        _PlayerInput.DeactivateInput();
+
         FadeScreen.Instance.StartFadeIn(_SleepTime);
-
-        _PlayerMovement.enabled = false;
-        _InteractableArea.enabled = false;
-        _PlayerRigidbody.isKinematic = true;
-
         yield return new WaitForSeconds(_SleepTime);
+        FadeScreen.Instance.StartFadeOut(2.5f);
 
         // wake up
 
-        FadeScreen.Instance.StartFadeOut(2.0f);
+        _PlayerInput.ActivateInput();
 
-        _PlayerMovement.enabled = true;
-        _InteractableArea.enabled = true;
-        _PlayerRigidbody.isKinematic = false;
-
-        OnSlept.Invoke();
-
-        _PlayerStamina.Recover();
+        _PlayerStamina.Recover(penalty);
         FloraMaster.Instance.Notify();
         CommissionList.Instance.Notify();
 
         GameTime.Instance.AccelerateTime(currentTime, TimeToMorning(currentTime));
 
         _IsSleeping = false;
+
+        OnSlept.Invoke();
     }
 
     public float TimeToNight(float time)

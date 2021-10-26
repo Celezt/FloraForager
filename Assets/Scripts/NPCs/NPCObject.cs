@@ -26,7 +26,6 @@ public class NPCObject : MonoBehaviour, IInteractable
     private void Awake()
     {
         Bounds = GetComponent<MeshFilter>().mesh.bounds;
-
         NPC = NPCManager.Instance.Get(_NameID.ToLower());
     }
 
@@ -66,14 +65,18 @@ public class NPCObject : MonoBehaviour, IInteractable
 
         if (NPC.DialogueQueue.Count > 0)
         {
-            DialogueManager.GetByIndex(context.playerIndex).StartDialogue(NPC.DialogueQueue.Dequeue(), "You", NPC.Name).Completed += (DialogueManager manager) =>
+            (string, string[]) dialogue = NPC.DialogueQueue.Dequeue();
+
+            DialogueManager.GetByIndex(context.playerIndex).StartDialogue(dialogue.Item1, dialogue.Item2).Completed += (DialogueManager manager) =>
             {
                 playerInput.ActivateInput();
             };
         }
         else
         {
-            DialogueManager.GetByIndex(context.playerIndex).StartDialogue(NPC.RepeatingDialogue, "You", NPC.Name).Completed += (DialogueManager manager) =>
+            (string, string[]) dialogue = NPC.RepeatingDialogue;
+
+            DialogueManager.GetByIndex(context.playerIndex).StartDialogue(dialogue.Item1, dialogue.Item2).Completed += (DialogueManager manager) =>
             {
                 if (NPC.HasCommissions)
                 {
