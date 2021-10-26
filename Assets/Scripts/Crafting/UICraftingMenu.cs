@@ -14,7 +14,7 @@ public class UICraftingMenu : Singleton<UICraftingMenu>
     [SerializeField] private GameObject _Description;
     [SerializeField] private Image _DescriptionImage;
     [SerializeField] private TMP_Text _ItemNameText;
-    [SerializeField] private TMP_Text _ResourceReqsText;
+    [SerializeField] private TMP_Text _RequirementsText;
 
     private List<GameObject> _CraftableItemObjects;
 
@@ -105,20 +105,22 @@ public class UICraftingMenu : Singleton<UICraftingMenu>
 
         _SelectedItem = craftableItem;
 
-        string resReqs = string.Empty;
+        string requirements = string.Empty;
         for (int i = 0; i < craftableItem.Requirements.Length; ++i)
         {
             ItemAsset requirement = craftableItem.Requirements[i];
 
-            resReqs += requirement.Amount + " " + ItemTypeSettings.Instance.ItemNameChunk[requirement.ID];
+            requirements += requirement.Amount + " " + ItemTypeSettings.Instance.ItemNameChunk[requirement.ID];
 
             if (i != (craftableItem.Requirements.Length - 1))
-                resReqs += "\n";
+                requirements += "\n";
         }
 
         _ItemNameText.text = ItemTypeSettings.Instance.ItemNameChunk[craftableItem.ItemID];
-        _ResourceReqsText.text = resReqs;
+        _RequirementsText.text = requirements;
         _DescriptionImage.sprite = ItemTypeSettings.Instance.ItemIconChunk[craftableItem.ItemID];
+
+        LayoutRebuilder.ForceRebuildLayoutImmediate(_Description.GetComponent<RectTransform>());
     }
 
     public void Open()

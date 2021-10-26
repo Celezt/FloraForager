@@ -3,11 +3,14 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.EventSystems;
+using Sirenix.OdinInspector;
 
 public class Workbench : MonoBehaviour, IInteractable
 {
-    [SerializeField] private float _Radius = 3.5f;
-    [SerializeField] private CraftableItemInfo[] _CraftableItemsData;
+    [SerializeField] 
+    private float _Radius = 3.5f;
+    [SerializeField, AssetList(Path = "Data/Craftable Items", AutoPopulate = true)] 
+    private CraftableItemInfo[] _CraftableItemsData;
 
     private GameObject _Player;
 

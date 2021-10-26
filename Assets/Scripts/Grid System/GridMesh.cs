@@ -46,6 +46,9 @@ public class GridMesh : MonoBehaviour
         Vertices = Mesh.vertices;
         Triangles = Mesh.triangles;
         UVs = Mesh.uv;
+
+        if (!Application.isEditor)
+            _MeshRenderer.enabled = false;
     }
 
 #if UNITY_EDITOR
