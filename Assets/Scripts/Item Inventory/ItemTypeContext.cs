@@ -5,20 +5,20 @@ using UnityEngine;
 public struct ItemTypeContext
 {
     public readonly Transform transform;
-    public readonly UseBehaviour useBehaviour;
+    public readonly UseBehaviour behaviour;
     public readonly PlayerInfo playerInfo;
     public readonly int playerIndex;
     public readonly int slotIndex;
 
     internal ItemTypeContext(
         Transform transform,
-        UseBehaviour useBehaviour,
+        UseBehaviour behaviour,
         PlayerInfo playerInfo,
         int playerIndex,
         int slotIndex)
     {
         this.transform = transform;
-        this.useBehaviour = useBehaviour;
+        this.behaviour = behaviour;
         this.playerInfo = playerInfo;
         this.playerIndex = playerIndex;
         this.slotIndex = slotIndex;

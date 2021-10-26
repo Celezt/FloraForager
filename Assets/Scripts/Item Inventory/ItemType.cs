@@ -9,6 +9,7 @@ using Newtonsoft.Json;
 
 [CreateAssetMenu(fileName = "New ItemType", menuName = "Inventory System/ItemType")]
 [System.Serializable]
+[InlineEditor]
 public class ItemType : SerializedScriptableObject
 {
 #if UNITY_EDITOR

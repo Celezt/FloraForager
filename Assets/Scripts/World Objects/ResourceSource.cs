@@ -5,7 +5,7 @@ using UnityEngine.Events;
 using UnityEngine.EventSystems;
 using UnityEngine.InputSystem;
 
-public abstract class ResourceSource : MonoBehaviour, IUsable, IDestructableObject
+public abstract class ResourceSource : MonoBehaviour, IUsable
 {
     [SerializeField] private ResourceSourceData _Data;
     [SerializeField] private LayerMask _LayerMasks;
@@ -155,15 +155,4 @@ public abstract class ResourceSource : MonoBehaviour, IUsable, IDestructableObje
     }
 
     public abstract ItemLabels Filter();
-
-    void IDestructableObject.OnDamage(IDestructor destructor, IDestructable destructable, UsedContext context)
-    {
-        throw new System.NotImplementedException();
-    }
-
-    void IDestructableObject.OnDestruction(UsedContext context)
-    {
-        throw new System.NotImplementedException();
-    }
-
 }

@@ -4,13 +4,10 @@ using UnityEngine;
 using Sirenix.OdinInspector;
 using Sirenix.Serialization;
 
-public class DebugUseArea : MonoBehaviour, IUsable, IResourceObject, IDestructableObject
+public class DebugUseArea : MonoBehaviour, IUsable
 {
     [SerializeField, Required] private Material _firstMaterial;
     [SerializeField, Required] private Material _secondMaterial;
-
-    [ItemTypeWithInterface(typeof(IResource))]
-    public ItemType scriptable;
 
     private MeshRenderer _meshRenderer;
 
@@ -31,15 +28,5 @@ public class DebugUseArea : MonoBehaviour, IUsable, IResourceObject, IDestructab
     private void Awake()
     {
         _meshRenderer = GetComponent<MeshRenderer>();
-    }
-
-    void IDestructableObject.OnDamage(IDestructor destructor, IDestructable destructable, UsedContext context)
-    {
-        Debug.Log(destructor.Damage);
-    }
-
-    void IDestructableObject.OnDestruction(UsedContext context)
-    {
-        Debug.Log("destroyed");
     }
 }

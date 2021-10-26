@@ -10,7 +10,7 @@ using System.IO;
 using Sirenix.OdinInspector;
 
 [DisallowMultipleComponent, RequireComponent(typeof(GuidComponent))]
-public class StreamableBehaviour : MonoBehaviour, IStreamableObject<StreamableBehaviour.Data>
+public class StreamableBehaviour : MonoBehaviour, IStreamable<StreamableBehaviour.Data>
 {
     [Button]
     public void SaveButton() => GameManager.SaveGame();
@@ -53,7 +53,7 @@ public class StreamableBehaviour : MonoBehaviour, IStreamableObject<StreamableBe
     {
         Dictionary<string, object> streamables = new Dictionary<string, object>();
 
-        GetComponentsInChildren<IStreamableObject>().ForEach(x => streamables.Add(x.GetType().ToString(), ((IStreamableObject<object>)x).OnUpload()));
+        GetComponentsInChildren<IStreamable>().ForEach(x => streamables.Add(x.GetType().ToString(), ((IStreamable<object>)x).OnUpload()));
 
         GameManager.Stream.Load(_guid, streamables);
 
@@ -62,7 +62,7 @@ public class StreamableBehaviour : MonoBehaviour, IStreamableObject<StreamableBe
 
     public void Load()
     {
-        foreach (IStreamableObject<object> stream in GetComponentsInChildren<IStreamableObject>())
+        foreach (IStreamable<object> stream in GetComponentsInChildren<IStreamable>())
         {
             string typeName = stream.GetType().ToString();
 
