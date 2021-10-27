@@ -4,7 +4,7 @@ using UnityEngine;
 using Sirenix.Serialization;
 using Sirenix.OdinInspector;
 
-public class SeedItem : IUse, IItem
+public class SeedItem : IUse
 {
     [OdinSerialize]
     public int ItemStack { get; set; } = 64;

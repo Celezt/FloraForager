@@ -32,5 +32,6 @@ public enum ItemLabels
 	Floor = 1 << 25,
 	Fence = 1 << 26,
 	Bush = 1 << 27,
-	All =  Wood | Stone | Mineral | Metal | Food | Vegetable | Fish | Crop | Seed | Fruit | RootFruit | AnimalProduct | Scythe | Axe | Pickaxe | Hoe | Rod | WateringCan | Tool | Storage | Tree | Flower | Decoration | Furniture | Floor | Fence | Bush 
+	Log = 1 << 28,
+	All =  Wood | Stone | Mineral | Metal | Food | Vegetable | Fish | Crop | Seed | Fruit | RootFruit | AnimalProduct | Scythe | Axe | Pickaxe | Hoe | Rod | WateringCan | Tool | Storage | Tree | Flower | Decoration | Furniture | Floor | Fence | Bush | Log 
 }

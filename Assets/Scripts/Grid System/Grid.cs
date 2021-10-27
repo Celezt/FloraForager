@@ -78,6 +78,9 @@ public class Grid : Singleton<Grid> // One grid per level
 
         gameObject.transform.position = cell.Middle;
 
+        if (gameObject.TryGetComponent(out MeshFilter meshFilter))
+            gameObject.transform.position += Vector3.up * meshFilter.mesh.bounds.extents.y;
+
         return true;
     }
 

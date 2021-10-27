@@ -22,7 +22,7 @@ public class FloraInfo : SerializedScriptableObject
     [Title("Growth")]
     [OdinSerialize, MinValue(0)] 
     private int _GrowTime = 0; // growth time in days
-    [OdinSerialize, AssetSelector(Paths = "Assets/Models/Flora"), ListDrawerSettings(Expanded = true)] 
+    [OdinSerialize, AssetSelector(Paths = "Assets/Models/Flora"), AssetsOnly, ListDrawerSettings(Expanded = true)] 
     private GameObject[] _Stages; // Number of visual growth stages this flora has [0 = start, x = final]
 
     public string Name => _Name;

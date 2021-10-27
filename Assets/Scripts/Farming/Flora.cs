@@ -44,7 +44,7 @@ public class Flora : IStreamable<Flora.Data>
     public MeshRenderer CurrentMeshRenderer => _StagesMeshRenderers[_Data.Mesh];
 
     public FloraInfo FloraInfo => _FloraInfo;
-    public Data SaveData => _Data;
+    public Data FloraData => _Data;
     public Cell Cell => Grid.Instance.GetCellLocal(_Data.CellPosition);
 
     public bool Completed => (_Data.Stage >= _FloraInfo.GrowTime);
@@ -53,7 +53,6 @@ public class Flora : IStreamable<Flora.Data>
         get => _Data.Watered;
         set
         {
-            OnWatered.Invoke();
             Grid.Instance.UpdateCellsUVs((_Data.Watered = value) ? CellType.Soil : CellType.Dirt, Cell);
         }
     }
@@ -92,5 +91,15 @@ public class Flora : IStreamable<Flora.Data>
             OnCompleted.Invoke();
 
         Watered = false;
+    }
+
+    public bool Water()
+    {
+        if (_Data.Watered)
+            return false;
+
+        OnWatered.Invoke();
+
+        return Watered = true;
     }
 }

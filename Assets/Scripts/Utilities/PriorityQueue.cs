@@ -9,7 +9,7 @@ public enum Heap
 }
 
 [System.Serializable]
-public class PriorityQueue<T> : IComparer<float>
+public class PriorityQueue<T>
 {
     [System.Serializable]
     private struct Element
@@ -44,7 +44,6 @@ public class PriorityQueue<T> : IComparer<float>
         priorityQueue.Add(new Element { Item = element, Priority = priority }); // Add to end of list
         MoveUp(Count - 1);
     }
-
     public T Dequeue()
     {
         if (Count <= 0) // No data available
@@ -60,11 +59,45 @@ public class PriorityQueue<T> : IComparer<float>
         return root;
     }
 
+    public void Remove(int pos)
+    {
+        if (pos < 0 || pos >= Count)
+            return;
+
+        priorityQueue[pos] = priorityQueue[Count - 1];
+        priorityQueue.RemoveAt(Count - 1);
+
+        MoveDown(pos);
+    }
+    public void Remove(T element)
+    {
+        Remove(Find(element));
+    }
+
+    public bool Contains(T element)
+    {
+        for (int i = 0; i < priorityQueue.Count; i++)
+        {
+            if (priorityQueue[i].Item.Equals(element))
+                return true;
+        }
+        return false;
+    }
+    public int Find(T element)
+    {
+        for (int i = 0; i < priorityQueue.Count; i++)
+        {
+            if (priorityQueue[i].Item.Equals(element))
+                return i;
+        }
+        return -1;
+    }
+
     private void MoveUp(int pos)
     {
         if (pos <= 0) // We have reached root
             return;
-        
+
         int parent = Parent(pos);
         if (Compare(priorityQueue[pos].Priority, priorityQueue[parent].Priority) == (int)heap)
         {
@@ -95,24 +128,14 @@ public class PriorityQueue<T> : IComparer<float>
         }
     }
 
-    public bool Contains(string Element)
-    {
-        for (int i = 0; i < priorityQueue.Count; i++)
-        {
-            if (priorityQueue[i].Item.Equals(Element))
-                return true;
-        }
-        return false;
-    }
-
-    protected void Swap(int first, int second)
+    private void Swap(int first, int second)
     {
         Element tmp = priorityQueue[first];
         priorityQueue[first] = priorityQueue[second];
         priorityQueue[second] = tmp;
     }
 
-    public int Compare(float x, float y)
+    private int Compare(float x, float y)
     {
         return Comparer<float>.Default.Compare(x, y);
     }

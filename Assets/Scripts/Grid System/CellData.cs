@@ -7,7 +7,7 @@ using Sirenix.OdinInspector;
 public class CellData
 {
     [HorizontalGroup("Group")]
-    [HorizontalGroup("Group/Left", LabelWidth = 80, Width = 260)]
+    [HorizontalGroup("Group/Left", LabelWidth = 80, Width = 260), SceneObjectsOnly]
     public GameObject HeldObject;
     [HorizontalGroup("Group/Right", LabelWidth = 30, Width = 130)]
     public CellType Type;

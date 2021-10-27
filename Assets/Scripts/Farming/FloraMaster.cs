@@ -47,11 +47,11 @@ public class FloraMaster : SerializedScriptableSingleton<FloraMaster>, IStreamer
     {
         foreach (Flora flora in _Florae)
         {
-            if (scene.buildIndex == flora.SaveData.SceneIndex)
+            if (scene.buildIndex == flora.FloraData.SceneIndex)
             {
-                Cell cell = Grid.Instance.GetCellLocal(flora.SaveData.CellPosition);
+                Cell cell = Grid.Instance.GetCellLocal(flora.FloraData.CellPosition);
 
-                Grid.Instance.UpdateCellsUVs(flora.SaveData.Watered ? CellType.Soil : CellType.Dirt, cell);
+                Grid.Instance.UpdateCellsUVs(flora.FloraData.Watered ? CellType.Soil : CellType.Dirt, cell);
                 cell.Occupied = false;
 
                 Create(flora, cell);
@@ -142,7 +142,7 @@ public class FloraMaster : SerializedScriptableSingleton<FloraMaster>, IStreamer
             streamables.Add(
                 x.Cell.Local.x.ToString() + "," +
                 x.Cell.Local.y.ToString() + " " +
-                x.SaveData.SceneIndex.ToString(), ((IStreamable<object>)x).OnUpload()));
+                x.FloraData.SceneIndex.ToString(), ((IStreamable<object>)x).OnUpload()));
 
         GameManager.Stream.Load(_Guid, streamables);
     }
