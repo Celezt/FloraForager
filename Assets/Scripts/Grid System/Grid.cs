@@ -129,7 +129,7 @@ public class Grid : Singleton<Grid> // One grid per level
             float tileTexProcRow = 1.0f / _GridMesh.TexTilesPerRow;
             float tileTexProcCol = 1.0f / _GridMesh.TexTilesPerCol;
 
-            float proc = (int)cell.Data.Type / (float)_GridMesh.TexTilesPerRow;
+            float proc = (int)cell.Type / (float)_GridMesh.TexTilesPerRow;
             float dFix = 0.00f; // dilation
 
             _GridMesh.UVs[cell.MeshIndex * 4 + 0] = new Vector2(proc + dFix, 0.0f + dFix); // bottom-left

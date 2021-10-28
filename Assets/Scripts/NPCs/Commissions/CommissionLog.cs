@@ -49,15 +49,6 @@ public class CommissionLog : Singleton<CommissionLog>
     {
         if (Mouse.current.leftButton.wasPressedThisFrame)
         {
-            if (Grid.Instance.HoveredCell != null && Grid.Instance.HoveredCell.HeldObject != null)
-            {
-                Grid.Instance.HoveredCell.HeldObject.TryGetComponent(out FloraObject flora);
-
-                if (flora != null)
-                {
-                    flora.Flora.Watered = true;
-                }
-            }
             FloraMaster.Instance.Add("Variant");
         }
     }

@@ -7,8 +7,6 @@ public class Cell
     private Grid _Grid; // associated grid
     private List<Cell> _Neighbours;
 
-    private GameObject _HeldObject;
-
     private CellData _Data;
 
     // properties
@@ -22,9 +20,9 @@ public class Cell
     public Grid Grid => _Grid;
     public List<Cell> Neighbours => _Neighbours;
 
-    public GameObject HeldObject => _HeldObject;
+    public GameObject HeldObject => _Data.HeldObject;
+    public CellType Type => _Data.Type;
 
-    public CellData Data => _Data;
     public Vector3 World => _PositionWorld;
     public Vector2Int Local => _PositionLocal;
     public Vector2Int Size => _Size;
@@ -50,7 +48,7 @@ public class Cell
         if (Occupied)
             return false;
 
-        _HeldObject = gameObject;
+        _Data.HeldObject = gameObject;
 
         return (Occupied = true);
     }
@@ -62,7 +60,7 @@ public class Cell
 
         Occupied = false;
 
-        return _HeldObject;
+        return _Data.HeldObject;
     }
 
     public void SetType(CellType type)

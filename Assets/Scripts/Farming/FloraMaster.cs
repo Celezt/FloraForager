@@ -66,7 +66,7 @@ public class FloraMaster : SerializedScriptableSingleton<FloraMaster>, IStreamer
         if (cell == null || cell.Occupied)
             return false;
 
-        if (cell.Data.Type != CellType.Dirt && cell.Data.Type != CellType.Soil)
+        if (cell.Type != CellType.Dirt && cell.Type != CellType.Soil)
             return false;
 
         string key = floraName.ToLower();
@@ -90,7 +90,7 @@ public class FloraMaster : SerializedScriptableSingleton<FloraMaster>, IStreamer
         if (cell == null || cell.Occupied)
             return false;
 
-        if (cell.Data.Type != CellType.Dirt && cell.Data.Type != CellType.Soil)
+        if (cell.Type != CellType.Dirt && cell.Type != CellType.Soil)
             return false;
 
         Flora flora = new Flora(floraInfo, cell.Local);

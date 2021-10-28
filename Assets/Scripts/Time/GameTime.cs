@@ -13,15 +13,18 @@ public class GameTime : SerializedScriptableSingleton<GameTime>, IStreamer, IStr
     [OdinSerialize, Min(0)] private float _InGameHour = 60.0f; // how long an in-game hour lasts in seconds
 
     [Space(5)]
-    [OdinSerialize, Min(0)] private int _CurrentYear; 
+    [OdinSerialize, Min(0)] private int _CurrentYear;
     [OdinSerialize, Min(0)] private int _CurrentMonth;
     [OdinSerialize, Min(0)] private int _CurrentDay;
     [OdinSerialize, Min(0)] private int _CurrentHour = 6;
 
     [Space(5), Header("Calendar")]
-    [OdinSerialize, Min(0)] private int _HoursPerDay = 24; 
+    [OdinSerialize, Min(0)] private int _HoursPerDay = 24;
     [OdinSerialize, Min(0)] private int _DaysPerMonth = 30;
     [OdinSerialize, Min(0)] private int _MonthsPerYear = 12;
+
+    [OdinSerialize]
+    private readonly string[] Weekdays = { "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday" };
 
     [Space(5), Header("Misc")]
     [OdinSerialize]
@@ -83,7 +86,11 @@ public class GameTime : SerializedScriptableSingleton<GameTime>, IStreamer, IStr
         "<mspace=0.60em>{0:00}</mspace>" +
         "<mspace=0.30em>:</mspace>" +
         "<mspace=0.60em>{1:00}</mspace>", _HourClock, _MinuteClock);
-    public string Date => string.Format("{0:0000}/{1:00}/{2:00}", Year, _MonthCalendar, _DayCalendar);
+    public string Date => string.Format("{0:0000}/{1:00}/{2:00}", 
+        Year, _MonthCalendar, _DayCalendar);
+    public string Weekday => string.Format("{0} {1:00}/{2:00}", 
+        Weekdays[(_DayCalendar - 1) % Weekdays.Length].Substring(0, 3),
+        _DayCalendar, _MonthCalendar);
 
     private void Awake()
     {
@@ -118,7 +125,7 @@ public class GameTime : SerializedScriptableSingleton<GameTime>, IStreamer, IStr
         _DayCalendar = 1 + Day % _DaysPerMonth;
         _MonthCalendar = 1 + Month % _MonthsPerYear;
 
-        GameTimeUI.Instance.UpdateText(Date, DigitalTime);
+        GameTimeUI.Instance.UpdateText(Weekday, DigitalTime);
     }
 
     /// <summary>
