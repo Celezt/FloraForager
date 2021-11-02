@@ -10,7 +10,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 00a108d415261c34b9fe06714b46e722, type: 3}
-  m_Name: debug_watering_can
+  m_Name: watering_can
   m_EditorClassIdentifier: 
   serializationData:
     SerializedFormat: 2
@@ -32,23 +32,23 @@ MonoBehaviour:
       Data: 1
     - Name: Star
       Entry: 3
-      Data: 1
+      Data: 2
     - Name: _Radius
       Entry: 4
       Data: 2.5
     - Name: _Arc
       Entry: 4
-      Data: 0.9
-    - Name: _AdditionalUses
+      Data: 1.6
+    - Name: _MaxUses
       Entry: 3
-      Data: 3
+      Data: 5
     - Name: 
       Entry: 8
       Data: 
   Icon: {fileID: 0}
   Name: Watering Can
-  ID: debug_watering_can
-  Description: testing water can
+  ID: watering_can
+  Description: 
   Labels:
-  - Tool
   - WateringCan
+  - Tool

@@ -56,9 +56,9 @@ public class FishingManager : MonoBehaviour
             return;
         }
 
-        ItemType item = ItemTypeSettings.Instance.ItemTypeChunk[fishID];
+        ItemType fishType = ItemTypeSettings.Instance.ItemTypeChunk[fishID];
 
-        if (!(item.Behaviour is FishItem))
+        if (!(fishType.Behaviour is FishItem))
         {
             Debug.LogWarning($"{fishID} is not a fish.");
             return;
@@ -70,15 +70,18 @@ public class FishingManager : MonoBehaviour
             return;
         }
 
-        RodItem rodItem = (RodItem)ItemTypeSettings.Instance.ItemTypeChunk[rodID].Behaviour;
+        ItemType rodType = ItemTypeSettings.Instance.ItemTypeChunk[rodID];
 
-        if (!(item.Behaviour is FishItem))
+        if (!(rodType.Behaviour is RodItem))
         {
             Debug.LogWarning($"{rodID} is not a rod.");
             return;
         }
         
-        FishItem fishItem = (FishItem)item.Behaviour;
+        FishItem fishItem = (FishItem)fishType.Behaviour;
+        RodItem rodItem = (RodItem)rodType.Behaviour;
+
+        _fishPointTransform.GetComponent<Image>().sprite = ItemTypeSettings.Instance.ItemIconChunk[fishID];
 
         _toggleTransform.gameObject.SetActive(true);
 

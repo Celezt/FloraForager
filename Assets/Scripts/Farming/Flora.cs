@@ -14,7 +14,7 @@ public class Flora : IStreamable<Flora.Data>
     {
         public string Name;
         public Vector2Int CellPosition;
-        public IHarvest Harvest;
+        public IHarvest HarvestMethod;
         public int Stage;
         public int Mesh;
         public bool Watered;
@@ -71,8 +71,8 @@ public class Flora : IStreamable<Flora.Data>
 
         _StageUpdate = (_FloraInfo.GrowTime + 1f) / _FloraInfo.Stages.Length;
 
-        _Data.Harvest = (IHarvest)System.Activator.CreateInstance(_FloraInfo.HarvestMethod.GetType()); // create a new instance of the harvest method
-        _Data.Harvest.Initialize(_FloraInfo, _FloraInfo.HarvestMethod); // fill it with new data
+        _Data.HarvestMethod = (IHarvest)System.Activator.CreateInstance(_FloraInfo.HarvestMethod.GetType()); // create a new instance of the harvest method
+        _Data.HarvestMethod.Initialize(_FloraInfo, _FloraInfo.HarvestMethod); 
     }
 
     public void Grow()
@@ -101,5 +101,10 @@ public class Flora : IStreamable<Flora.Data>
         OnWatered.Invoke();
 
         return Watered = true;
+    }
+
+    public bool Harvest(UsedContext context)
+    {
+        return _Data.HarvestMethod.Harvest(context, this);
     }
 }

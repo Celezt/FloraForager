@@ -63,38 +63,6 @@ public class Grid : Singleton<Grid> // One grid per level
             HoveredCell = null;
     }
 
-    /// <summary>
-    /// place an object at specified tile
-    /// </summary>
-    /// <param name="gameObject">object to be placed</param>
-    /// <returns>false if object cannot be placed</returns>
-    public bool OccupyCell(Cell cell, GameObject gameObject)
-    {
-        if (cell == null)
-            return false;
-
-        if (!cell.Occupy(gameObject))
-            return false;
-
-        gameObject.transform.position = cell.Middle;
-
-        if (gameObject.TryGetComponent(out MeshFilter meshFilter))
-            gameObject.transform.position += Vector3.up * meshFilter.mesh.bounds.extents.y;
-
-        return true;
-    }
-
-    /// <summary>
-    /// frees object from cell, does not destroy
-    /// </summary>
-    public GameObject FreeCell(Cell cell)
-    {
-        if (cell == null)
-            return null;
-
-        return cell.Free();
-    }
-
     public Cell GetCellLocal(int x, int z)
     {
         if (!WithinGrid(x, z))

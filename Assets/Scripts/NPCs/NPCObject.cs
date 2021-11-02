@@ -67,10 +67,14 @@ public class NPCObject : MonoBehaviour, IInteractable
         {
             (string, string[]) dialogue = NPC.DialogueQueue.Dequeue();
 
-            DialogueManager.GetByIndex(context.playerIndex).StartDialogue(dialogue.Item1, dialogue.Item2).Completed += (DialogueManager manager) =>
+            void CompleteAction(DialogueManager manager)
             {
                 playerInput.ActivateInput();
+
+                manager.Completed -= CompleteAction;
             };
+
+            DialogueManager.GetByIndex(context.playerIndex).StartDialogue(dialogue.Item1, dialogue.Item2).Completed += CompleteAction;
         }
         else
         {
@@ -78,11 +82,15 @@ public class NPCObject : MonoBehaviour, IInteractable
 
             if (!string.IsNullOrWhiteSpace(dialogue.Item1))
             {
-                DialogueManager.GetByIndex(context.playerIndex).StartDialogue(dialogue.Item1, dialogue.Item2).Completed += (DialogueManager manager) =>
+                void CompleteAction(DialogueManager manager)
                 {
-                    OpenCommissionWindow();
                     playerInput.ActivateInput();
+                    OpenCommissionWindow();
+
+                    manager.Completed -= CompleteAction;
                 };
+
+                DialogueManager.GetByIndex(context.playerIndex).StartDialogue(dialogue.Item1, dialogue.Item2).Completed += CompleteAction;
             }
             else
             {

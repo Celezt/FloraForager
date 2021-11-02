@@ -14,7 +14,7 @@ public class CellMesh : MonoBehaviour
     public CellData Data = new CellData(null, CellType.Empty);
 
     [Space(10)]
-    public Material Terrain;
+    public Material GridMaterial;
 
     public Vector2Int Size { get; private set; } = Vector2Int.one;
 
@@ -100,7 +100,7 @@ public class CellMesh : MonoBehaviour
         _MeshFilter = GetComponent<MeshFilter>();
         _MeshRenderer = GetComponent<MeshRenderer>();
 
-        _MeshRenderer.material = Terrain;
+        _MeshRenderer.material = GridMaterial;
 
         _Mesh = new Mesh();
         _MeshFilter.mesh = _Mesh;

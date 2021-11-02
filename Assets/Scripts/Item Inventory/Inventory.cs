@@ -282,6 +282,32 @@ public class Inventory : ScriptableObject
         return false;
     }
 
+    /// <summary>
+    /// Find all instances with given labels.
+    /// </summary>
+    /// <returns>(index, amount)</returns>
+    public List<(int, int)> FindAllByLabels(ItemLabels itemLabels)
+    {
+        List<(int, int)> found = new List<(int, int)>();
+        for (int i = 0; i < _items.Count; ++i)
+        {
+            if (string.IsNullOrEmpty(_items[i].ID))
+                continue;
+
+            List<string> labels = ItemTypeSettings.Instance.ItemLabelChunk[_items[i].ID];
+
+            foreach (string label in labels)
+            {
+                if (Enum.TryParse(label, true, out ItemLabels itemLabel) && itemLabels.HasFlag(itemLabel))
+                {
+                    found.Add((i, _items[i].Amount));
+                    break;
+                }
+            }
+        }
+        return found;
+    }
+
     private void Deserialize()
     {
         Addressables.LoadAssetAsync<TextAsset>("inventory").Completed += (handle) =>

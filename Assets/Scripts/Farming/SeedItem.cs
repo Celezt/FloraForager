@@ -6,12 +6,13 @@ using Sirenix.OdinInspector;
 
 public class SeedItem : IUse
 {
-    [OdinSerialize]
-    public int ItemStack { get; set; } = 64;
-    [OdinSerialize]
-    public float Cooldown { get; set; } = 2;
+    [OdinSerialize, PropertyOrder(int.MinValue)]
+    int IItem.ItemStack { get; set; } = 32;
+    [OdinSerialize, PropertyOrder(int.MinValue + 1)]
+    float IUse.Cooldown { get; set; } = 0.05f;
 
-    [OdinSerialize]
+    [Title("Seed Behaviour")]
+    [SerializeField, AssetSelector(Paths = "Assets/Data/Flora"), AssetsOnly]
     private FloraInfo _Flora;
 
     void IItem.OnInitialize(ItemTypeContext context)

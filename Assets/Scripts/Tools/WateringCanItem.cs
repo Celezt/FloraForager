@@ -16,18 +16,17 @@ public class WateringCanItem : IUse, IStar
 
     [Title("Tool Behaviour")]
     [SerializeField]
-    private float _Radius = 2.5f;
+    private int _MaxUses = 5;
+    [Space(10)]
     [SerializeField]
-    private float _Arc = 0.9f;
+    private float _Radius = 2.75f;
     [SerializeField]
-    private int _AdditionalUses = 3;
+    private float _Arc = 1.6f;
 
-    private int _MaxUses;
     private int _UsesLeft;
 
     public void OnInitialize(ItemTypeContext context)
     {
-        _MaxUses = (int)Star * 2 + _AdditionalUses;
         _UsesLeft = 0;
     }
 
@@ -51,12 +50,15 @@ public class WateringCanItem : IUse, IStar
         if (!context.started)
             yield break;
 
+        Cell cell;
+        if ((cell = Grid.Instance.HoveredCell) == null)
+            yield break;
+
         Ray ray = Camera.main.ScreenPointToRay(Mouse.current.position.ReadValue());
         Physics.Raycast(ray, out RaycastHit hitInfo, Mathf.Infinity, LayerMask.NameToLayer("Grid"));
 
-        if (PointInArc(hitInfo.point, context.transform.position, context.transform.eulerAngles.y, _Radius))
+        if (MathUtility.PointInArc(hitInfo.point, context.transform.position, context.transform.localEulerAngles.y, _Arc, _Radius))
         {
-            Cell cell = Grid.Instance.HoveredCell;
             if (cell.Type == CellType.Water)
             {
                 _UsesLeft = _MaxUses;
@@ -74,44 +76,5 @@ public class WateringCanItem : IUse, IStar
         }
 
         yield break;
-    }
-
-    private bool PointInArc(Vector3 point, Vector3 position, float directionAngle, float radius)
-    {
-        float range = Mathf.Sqrt(
-            Mathf.Pow(point.x - position.x, 2) +
-            Mathf.Pow(point.z - position.z, 2));
-        float angle = Mathf.Atan2(
-            point.z - position.z,
-            point.x - position.x) * Mathf.Rad2Deg;
-
-        float leftAngle = 90.0f - directionAngle - Mathf.Rad2Deg * _Arc;
-        float rightAngle = 90.0f - directionAngle + Mathf.Rad2Deg * _Arc;
-
-        bool inArc = false;
-        if (range > radius)
-        {
-            inArc = false;
-        }
-        else if (leftAngle < rightAngle)
-        {
-            if (angle > leftAngle && angle < rightAngle)
-            {
-                inArc = true;
-            }
-        }
-        else if (leftAngle > rightAngle)
-        {
-            if (angle > leftAngle)
-            {
-                inArc = true;
-            }
-            else if (angle < rightAngle)
-            {
-                inArc = true;
-            }
-        }
-
-        return inArc;
     }
 }

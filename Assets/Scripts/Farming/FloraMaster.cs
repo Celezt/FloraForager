@@ -105,13 +105,11 @@ public class FloraMaster : SerializedScriptableSingleton<FloraMaster>, IStreamer
 
     public bool Create(Flora flora, Cell cell)
     {
-        GameObject obj = Instantiate(_FloraPrefab);
-
-        if (!Grid.Instance.OccupyCell(cell, obj))
-        {
-            Destroy(obj);
+        if (cell.Occupied)
             return false;
-        }
+
+        GameObject obj = Instantiate(_FloraPrefab);
+        cell.Occupy(obj);
 
         FloraObject floraObject = obj.GetComponent<FloraObject>();
         floraObject.Initialize(flora);
