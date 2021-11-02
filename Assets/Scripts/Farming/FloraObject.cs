@@ -17,10 +17,6 @@ public class FloraObject : MonoBehaviour, IUsable
 
     public Flora Flora => _Flora;
 
-    public int Priority => 1;
-    public float Strength { get; set; } = 1;
-    public float Durability { get; set; } = 1;
-
     private void OnDestroy()
     {
         if (_Flora != null)
@@ -64,16 +60,14 @@ public class FloraObject : MonoBehaviour, IUsable
 
     public void OnUse(UsedContext context)
     {
-        if (!context.performed)
-            return;
-
         Flora.OnHarvest.Invoke();
 
-        Flora.HarvestMethod.Harvest(_Flora, context.playerIndex);
+        if (Flora.SaveData.Harvest.Harvest(context, _Flora))
+        {
+            Destroy(Grid.Instance.FreeCell(_Flora.Cell));
+            FloraMaster.Instance.Remove(_Flora);
+        }
     }
 
-    ItemLabels IUsable.Filter()
-    {
-        throw new System.NotImplementedException();
-    }
+    ItemLabels IUsable.Filter() => _Flora.FloraInfo.ItemLabels;
 }

@@ -7,7 +7,7 @@ public interface IObjective
 
     public void Accepted();
     public void Removed();
-    public void Complete();
+    public void Completed();
 
     public void UpdateStatus();
 }

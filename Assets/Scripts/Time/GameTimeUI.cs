@@ -7,8 +7,10 @@ using MyBox;
 
 public class GameTimeUI : Singleton<GameTimeUI>
 {
-    [SerializeField] private TMP_Text _Date;
-    [SerializeField] private TMP_Text _Time;
+    [SerializeField] 
+    private TMP_Text _Date;
+    [SerializeField] 
+    private TMP_Text _Time;
 
     public void UpdateText(string date, string time)
     {

@@ -10,7 +10,7 @@ using System.IO;
 using Sirenix.OdinInspector;
 
 [DisallowMultipleComponent, RequireComponent(typeof(GuidComponent))]
-public class StreamableBehaviour : MonoBehaviour, IStreamable<StreamableBehaviour.Data>
+public class StreamableBehaviour : MonoBehaviour, IStreamer, IStreamable<StreamableBehaviour.Data>
 {
     [Button]
     public void SaveButton() => GameManager.SaveGame();
@@ -18,46 +18,48 @@ public class StreamableBehaviour : MonoBehaviour, IStreamable<StreamableBehaviou
     [Button]
     public void LoadButton() => GameManager.LoadGame();
 
+    [SerializeField] private bool _saveIfDestroyed = true;
+
     private Data _data;
+
+    private Guid _guid;
 
     public class Data
     {
-        public GameObjectData Transform;
+        public string Address;
+        public bool IsAlive = true;
+        public int SceneIndex;
     }
 
     public Data OnUpload() => _data = new Data();
     public void OnLoad(object state)
     {
         Data data = state as Data;
-        GameObjectData gameObjectData = data.Transform;
 
-        transform.position = gameObjectData.Position;
-        transform.rotation = gameObjectData.Rotation;
-        transform.localScale = gameObjectData.Scale;
+        if (!data.IsAlive)
+            Destroy(gameObject);
 
         _data = data;
     }
-
-    private Guid _guid;
+    void IStreamable.OnBeforeSaving() 
+    {
+        _data.SceneIndex = SceneManager.GetActiveScene().buildIndex;
+    }
 
     public void Start()
     {
         _guid = GetComponent<GuidComponent>().Guid;
 
-        UpLoad();
-
-        InvokeRepeating(nameof(UpdateTransform), 0, 2);
+        GameManager.AddStreamer(this);
     }
 
-    public object UpLoad()
+    public void UpLoad()
     {
         Dictionary<string, object> streamables = new Dictionary<string, object>();
 
         GetComponentsInChildren<IStreamable>().ForEach(x => streamables.Add(x.GetType().ToString(), ((IStreamable<object>)x).OnUpload()));
 
         GameManager.Stream.Load(_guid, streamables);
-
-        return null;
     }
 
     public void Load()
@@ -73,15 +75,16 @@ public class StreamableBehaviour : MonoBehaviour, IStreamable<StreamableBehaviou
         }
     }
 
-    private void UpdateTransform()
+    public void BeforeSaving()
     {
-        _data.Transform = new GameObjectData
-        {
-            Position = transform.position,
-            Rotation = transform.rotation,
-            Scale = transform.localScale,
-            SceneIndex = SceneManager.GetActiveScene().buildIndex,
-            Address = name,
-        };
+        GetComponentsInChildren<IStreamable>().ForEach(x => ((IStreamable<object>)x).OnBeforeSaving());
+    }
+
+    private void OnDestroy()
+    {
+        if (_saveIfDestroyed)
+            _data.IsAlive = false;
+
+        GameManager.RemoveStreamer(this);
     }
 }

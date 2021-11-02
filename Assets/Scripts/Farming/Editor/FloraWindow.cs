@@ -26,7 +26,7 @@ public class FloraWindow : OdinMenuEditorWindow
         _CustomFlora = new CustomFlora();
 
         tree.Add("Create New", _CustomFlora);
-        tree.AddAllAssetsAtPath("Flora", TYPE_PATH, typeof(FloraData));
+        tree.AddAllAssetsAtPath("Flora", TYPE_PATH, typeof(FloraInfo));
 
         return tree;
     }
@@ -34,7 +34,7 @@ public class FloraWindow : OdinMenuEditorWindow
     protected override void OnBeginDrawEditors()
     {
         OdinMenuTreeSelection selected = this.MenuTree.Selection;
-        FloraData asset = selected.SelectedValue as FloraData;
+        FloraInfo asset = selected.SelectedValue as FloraInfo;
 
         SirenixEditorGUI.BeginHorizontalToolbar();
         {
@@ -72,11 +72,11 @@ public class FloraWindow : OdinMenuEditorWindow
     public class CustomFlora
     {
         [InlineEditor(ObjectFieldMode = InlineEditorObjectFieldModes.Hidden)]
-        public FloraData FloraData;
+        public FloraInfo FloraData;
 
         public CustomFlora()
         {
-            FloraData = ScriptableObject.CreateInstance<FloraData>();
+            FloraData = ScriptableObject.CreateInstance<FloraInfo>();
         }
 
         public void Create()
@@ -85,7 +85,7 @@ public class FloraWindow : OdinMenuEditorWindow
             AssetDatabase.SaveAssets();
             AssetDatabase.Refresh();
 
-            FloraData = ScriptableObject.CreateInstance<FloraData>();
+            FloraData = ScriptableObject.CreateInstance<FloraInfo>();
         }
 
         public void Destroy()

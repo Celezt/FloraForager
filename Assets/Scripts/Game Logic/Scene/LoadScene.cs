@@ -57,11 +57,11 @@ public class LoadScene : Singleton<LoadScene>
         _ProgressSlider.value = 0.0f;
         yield return new WaitForSeconds(0.25f);
 
-        AsyncOperationHandle asyncLoad = Addressables.LoadSceneAsync(sceneName, LoadSceneMode.Single);
+        AsyncOperation asyncLoad = SceneManager.LoadSceneAsync(sceneName, LoadSceneMode.Single);
 
-        while (!asyncLoad.IsDone)
+        while (!asyncLoad.isDone)
         {
-            _ProgressSlider.value = asyncLoad.PercentComplete;
+            _ProgressSlider.value = asyncLoad.progress / 0.9f;
             yield return null;
         }
 

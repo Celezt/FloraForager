@@ -3,51 +3,67 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.InputSystem;
+using UnityEngine.SceneManagement;
 using MyBox;
+using Sirenix.Serialization;
 
 /// <summary>
 /// Manages all of the flora in this region
 /// </summary>
-public class FloraMaster : Singleton<FloraMaster>
+[CreateAssetMenu(fileName = "FloraMaster", menuName = "Game Logic/Flora Master")]
+[System.Serializable]
+public class FloraMaster : SerializedScriptableSingleton<FloraMaster>, IStreamer
 {
-    [SerializeField] 
+    [SerializeField]
     private GameObject _FloraPrefab;
-    [SerializeField] 
-    private List<FloraData> _FloraVariants;
+    [SerializeField]
+    private System.Guid _Guid;
+    [OdinSerialize]
+    private Dictionary<string, FloraInfo> _FloraDictionary = new Dictionary<string, FloraInfo>();
 
-    private Dictionary<string, FloraData> _FloraDictionary;
+    [System.NonSerialized]
     private List<Flora> _Florae = new List<Flora>();
 
     private void Awake()
     {
-        _FloraDictionary = _FloraVariants.ToDictionary(key => key.Name.ToLower(), value => value);
+        SceneManager.sceneLoaded += OnSceneLoaded;
+
+        if (_Guid == System.Guid.Empty)
+            _Guid = System.Guid.NewGuid();
+
+        GameManager.AddStreamer(this);
     }
 
-    public void Update()
+#if UNITY_EDITOR
+    [UnityEditor.InitializeOnEnterPlayMode]
+    private static void Initialize()
     {
-        if (Mouse.current.leftButton.wasPressedThisFrame)
-        {
-            if (Grid.Instance.HoveredCell != null && Grid.Instance.HoveredCell.HeldObject != null)
-            {
-                Grid.Instance.HoveredCell.HeldObject.TryGetComponent(out FloraObject flora);
+        SceneManager.sceneLoaded += Instance.OnSceneLoaded;
+        GameManager.AddStreamer(FloraMaster.Instance);
+    }
+#endif
 
-                if (flora != null)
-                {
-                    flora.Flora.Watered = true;
-                }
+    public void OnSceneLoaded(Scene scene, LoadSceneMode mode)
+    {
+        foreach (Flora flora in _Florae)
+        {
+            if (scene.buildIndex == flora.SaveData.SceneIndex)
+            {
+                Cell cell = Grid.Instance.GetCellLocal(flora.SaveData.CellPosition);
+
+                Grid.Instance.UpdateCellsUVs(flora.SaveData.Watered ? CellType.Soil : CellType.Dirt, cell);
+                cell.Occupied = false;
+
+                Create(flora, cell);
             }
-            Add("Variant");
         }
     }
 
-    /// <summary>
-    /// creates a flora at currently selected tile based on its name
-    /// </summary>
     public bool Add(string floraName)
     {
         Cell cell = Grid.Instance.HoveredCell;
 
-        if (cell == null)
+        if (cell == null || cell.Occupied)
             return false;
 
         if (cell.Data.Type != CellType.Dirt && cell.Data.Type != CellType.Soil)
@@ -58,7 +74,7 @@ public class FloraMaster : Singleton<FloraMaster>
         if (!_FloraDictionary.ContainsKey(key))
             return false;
 
-        Flora flora = new Flora(_FloraDictionary[key], cell);
+        Flora flora = new Flora(_FloraDictionary[key], cell.Local);
 
         if (!Create(flora, cell))
             return false;
@@ -67,21 +83,17 @@ public class FloraMaster : Singleton<FloraMaster>
 
         return true;
     }
-
-    /// <summary>
-    /// creates a flora at currently selected tile based on its data
-    /// </summary>
-    public bool Add(FloraData floraData)
+    public bool Add(FloraInfo floraInfo)
     {
         Cell cell = Grid.Instance.HoveredCell;
 
-        if (cell == null)
+        if (cell == null || cell.Occupied)
             return false;
 
         if (cell.Data.Type != CellType.Dirt && cell.Data.Type != CellType.Soil)
             return false;
 
-        Flora flora = new Flora(floraData, cell);
+        Flora flora = new Flora(floraInfo, cell.Local);
 
         if (!Create(flora, cell))
             return false;
@@ -120,5 +132,45 @@ public class FloraMaster : Singleton<FloraMaster>
     public void Notify()
     {
         _Florae.ForEach(f => f.Grow());
+    }
+
+    public void UpLoad()
+    {
+        Dictionary<string, object> streamables = new Dictionary<string, object>();
+
+        _Florae.ForEach(x =>
+            streamables.Add(
+                x.Cell.Local.x.ToString() + "," +
+                x.Cell.Local.y.ToString() + " " +
+                x.SaveData.SceneIndex.ToString(), ((IStreamable<object>)x).OnUpload()));
+
+        GameManager.Stream.Load(_Guid, streamables);
+    }
+    public void Load()
+    {
+        _Florae = new List<Flora>();
+
+        Dictionary<string, object> streamables = (Dictionary<string, object>)GameManager.Stream.Get(_Guid);
+
+        foreach(var item in streamables)
+        {
+            if (!streamables.TryGetValue(item.Key, out object value))
+                continue;
+
+            Flora.Data data = value as Flora.Data;
+
+            Flora flora = new Flora(_FloraDictionary[data.Name], data.CellPosition);
+            flora.OnLoad(data);
+
+            _Florae.Add(flora);
+        }
+    }
+    public void BeforeSaving()
+    {
+        GameManager.Stream.Release(_Guid);
+
+        UpLoad();
+
+        _Florae.ForEach(x => ((IStreamable<object>)x).OnBeforeSaving());
     }
 }

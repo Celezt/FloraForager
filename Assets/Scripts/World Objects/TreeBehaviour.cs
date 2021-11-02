@@ -1,3 +1,4 @@
+using System.Linq;
 using Sirenix.OdinInspector;
 using System.Collections;
 using System.Collections.Generic;
@@ -26,6 +27,11 @@ public class TreeBehaviour : MonoBehaviour, IStreamable<TreeBehaviour.Data>, IUs
         _data = data;
     }
 
+    void IStreamable.OnBeforeSaving()
+    {
+
+    }
+
     [SerializeField]
     ItemLabels IUsable.Filter() => _filter;
 
@@ -34,29 +40,11 @@ public class TreeBehaviour : MonoBehaviour, IStreamable<TreeBehaviour.Data>, IUs
         if (!(context.used is IDestructor))
             return;
 
-        IDestructor destructor = context.used as IDestructor;
-        int usedStar = (int)Stars.One;
-        int star = (int)_star;
-
-        if (context.used is IStar)
-            usedStar = (int)(context.used as IStar).Star;
-
-        if (usedStar + 1 >= star)   // Can damage if at least one star below.
-            _durability = Mathf.Clamp(_durability - destructor.Damage * cmath.Map(usedStar / star, new MinMaxFloat(1, 5), new MinMaxFloat(1, 2)), 0, float.MaxValue);
+        context.Damage(ref _durability, new MinMaxFloat(1, 2), _star);
 
         if (_durability <= 0)
         {
-            ItemTypeSettings settings = ItemTypeSettings.Instance;
-
-            for (int i = 0; i < _drops.Count; i++)
-            {
-                int rate = _drops[i].DropRate.RandomInRangeInclusive();
-                //_drops[i].Item
-                for (int j = 0; j < rate; j++)
-                {
-                    Instantiate(settings.ItemObject, transform.position, Quaternion.identity).Initialize(settings.DefaultIcon.texture);
-                }
-            }
+            context.Drop(_drops);
 
             Destroy(gameObject);
         }

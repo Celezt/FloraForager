@@ -19,7 +19,9 @@ public class CommissionTracker : Singleton<CommissionTracker>
     private void Awake()
     {
         _CanvasGroup = GetComponent<CanvasGroup>();
-        _CanvasGroup.alpha = 0.0f;
+        _CanvasGroup.alpha = (_Commission != null) ? 1.0f : 0.0f;
+
+        UpdateTracker();
     }
 
     public void UpdateTracker()
@@ -27,7 +29,7 @@ public class CommissionTracker : Singleton<CommissionTracker>
         if (_Commission == null)
             return;
 
-        _Title.text = _Commission.IsCompleted ? "<color=green>" + _Commission.Data.Title + "</color>" : _Commission.Data.Title;
+        _Title.text = _Commission.IsCompleted ? "<color=green>" + _Commission.CommissionData.Title + "</color>" : _Commission.CommissionData.Title;
 
         string quota = string.Empty;
         foreach (IObjective objective in _Commission.Objectives)

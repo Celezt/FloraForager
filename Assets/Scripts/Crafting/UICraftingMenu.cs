@@ -14,7 +14,7 @@ public class UICraftingMenu : Singleton<UICraftingMenu>
     [SerializeField] private GameObject _Description;
     [SerializeField] private Image _DescriptionImage;
     [SerializeField] private TMP_Text _ItemNameText;
-    [SerializeField] private TMP_Text _ResourceReqsText;
+    [SerializeField] private TMP_Text _RequirementsText;
 
     private List<GameObject> _CraftableItemObjects;
 
@@ -55,12 +55,9 @@ public class UICraftingMenu : Singleton<UICraftingMenu>
 
         Inventory inventory = PlayerInput.GetPlayerByIndex(0).GetComponent<PlayerInfo>().Inventory;
 
-        foreach (ResourceRequirement resReq in _SelectedItem.ResourceReqs)
+        foreach (ItemAsset requirement in _SelectedItem.Requirements)
         {
-            string itemID = resReq.ItemID;
-            int amount = resReq.Amount;
-
-            inventory.Remove(itemID, amount);
+            inventory.Remove(requirement.ID, requirement.Amount);
         }
 
         inventory.Insert(new ItemAsset
@@ -108,20 +105,22 @@ public class UICraftingMenu : Singleton<UICraftingMenu>
 
         _SelectedItem = craftableItem;
 
-        string resReqs = string.Empty;
-        for (int i = 0; i < craftableItem.ResourceReqs.Length; ++i)
+        string requirements = string.Empty;
+        for (int i = 0; i < craftableItem.Requirements.Length; ++i)
         {
-            ResourceRequirement resReq = craftableItem.ResourceReqs[i];
+            ItemAsset requirement = craftableItem.Requirements[i];
 
-            resReqs += resReq.Amount + " " + ItemTypeSettings.Instance.ItemNameChunk[resReq.ItemID];
+            requirements += requirement.Amount + " " + ItemTypeSettings.Instance.ItemNameChunk[requirement.ID];
 
-            if (i != (craftableItem.ResourceReqs.Length - 1))
-                resReqs += "\n";
+            if (i != (craftableItem.Requirements.Length - 1))
+                requirements += "\n";
         }
 
         _ItemNameText.text = ItemTypeSettings.Instance.ItemNameChunk[craftableItem.ItemID];
-        _ResourceReqsText.text = resReqs;
+        _RequirementsText.text = requirements;
         _DescriptionImage.sprite = ItemTypeSettings.Instance.ItemIconChunk[craftableItem.ItemID];
+
+        LayoutRebuilder.ForceRebuildLayoutImmediate(_Description.GetComponent<RectTransform>());
     }
 
     public void Open()
@@ -144,12 +143,9 @@ public class UICraftingMenu : Singleton<UICraftingMenu>
     {
         Inventory inventory = PlayerInput.GetPlayerByIndex(0).GetComponent<PlayerInfo>().Inventory;
 
-        foreach (ResourceRequirement resReq in craftableItem.ResourceReqs)
+        foreach (ItemAsset requirement in craftableItem.Requirements)
         {
-            string itemID = resReq.ItemID;
-            int amount = resReq.Amount;
-
-            if (!inventory.FindEnough(itemID, amount))
+            if (!inventory.FindEnough(requirement.ID, requirement.Amount))
                 return false;
         }
 

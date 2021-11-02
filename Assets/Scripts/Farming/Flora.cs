@@ -1,13 +1,34 @@
 ﻿using UnityEngine;
 using UnityEngine.InputSystem;
+using UnityEngine.SceneManagement;
 
 /// <summary>
 /// Controls the flora logic
 /// </summary>
-public class Flora
+public class Flora : IStreamable<Flora.Data>
 {
-    private FloraData _Data; // data used to create flora
-    private Cell _Cell;      // associated cell
+    private FloraInfo _FloraInfo; // data used to create flora
+    private Data _Data;
+
+    public class Data
+    {
+        public string Name;
+        public Vector2Int CellPosition;
+        public IHarvest Harvest;
+        public int Stage;
+        public int Mesh;
+        public bool Watered;
+        public int SceneIndex;
+    }
+    public Data OnUpload() => _Data;
+    public void OnLoad(object state)
+    {
+        _Data = state as Data;
+    }
+    public void OnBeforeSaving() 
+    { 
+
+    }
 
     public System.Action OnGrow = delegate { };
     public System.Action OnWatered = delegate { };
@@ -18,52 +39,51 @@ public class Flora
     private MeshRenderer[] _StagesMeshRenderers;
 
     private float _StageUpdate = 0; // at what stages to update the mesh
-    private int _Stage = 0;         // current advanced stage
-    private int _Mesh = 0;          // current mesh being used
 
-    private bool _Watered;          // if the flora has been watered for this day
+    public MeshFilter CurrentMeshFilter => _StagesMeshFilters[_Data.Mesh];
+    public MeshRenderer CurrentMeshRenderer => _StagesMeshRenderers[_Data.Mesh];
 
-    public MeshFilter CurrentMeshFilter => _StagesMeshFilters[_Mesh];
-    public MeshRenderer CurrentMeshRenderer => _StagesMeshRenderers[_Mesh];
+    public FloraInfo FloraInfo => _FloraInfo;
+    public Data SaveData => _Data;
+    public Cell Cell => Grid.Instance.GetCellLocal(_Data.CellPosition);
 
-    public FloraData Data => _Data;
-    public Cell Cell => _Cell;
-
-    public IHarvest HarvestMethod { get; private set; }
-
-    public bool Completed => (_Stage >= _Data.GrowTime);
+    public bool Completed => (_Data.Stage >= _FloraInfo.GrowTime);
     public bool Watered
     {
-        get => _Watered;
+        get => _Data.Watered;
         set
         {
             OnWatered.Invoke();
-            _Cell.Grid.UpdateCellsUVs((_Watered = value) ? CellType.Soil : CellType.Dirt, _Cell);
+            Grid.Instance.UpdateCellsUVs((_Data.Watered = value) ? CellType.Soil : CellType.Dirt, Cell);
         }
     }
 
-    public Flora(FloraData data, Cell cell)
+    public Flora(FloraInfo floraInfo, Vector2Int cellPos)
     {
-        _Data = data;
-        _Cell = cell;
+        _FloraInfo = floraInfo;
+        _Data = new Data();
 
-        _StagesMeshFilters = System.Array.ConvertAll(_Data.Stages, mf => mf.GetComponent<MeshFilter>()); // extract mesh and materials from objects
-        _StagesMeshRenderers = System.Array.ConvertAll(_Data.Stages, mr => mr.GetComponent<MeshRenderer>());
+        _Data.Name = _FloraInfo.Name;
+        _Data.CellPosition = cellPos;
+        _Data.SceneIndex = SceneManager.GetActiveScene().buildIndex;
 
-        _StageUpdate = (_Data.GrowTime + 1f) / _Data.Stages.Length;
+        _StagesMeshFilters = System.Array.ConvertAll(_FloraInfo.Stages, mf => mf.GetComponent<MeshFilter>()); // extract mesh and materials from objects
+        _StagesMeshRenderers = System.Array.ConvertAll(_FloraInfo.Stages, mr => mr.GetComponent<MeshRenderer>());
 
-        HarvestMethod = (IHarvest)System.Activator.CreateInstance(_Data.HarvestMethod.GetType()); // create a new instance of the harvest method
-        HarvestMethod.Initialize(data, _Data.HarvestMethod); // fill it with new data
+        _StageUpdate = (_FloraInfo.GrowTime + 1f) / _FloraInfo.Stages.Length;
+
+        _Data.Harvest = (IHarvest)System.Activator.CreateInstance(_FloraInfo.HarvestMethod.GetType()); // create a new instance of the harvest method
+        _Data.Harvest.Initialize(_FloraInfo, _FloraInfo.HarvestMethod); // fill it with new data
     }
 
     public void Grow()
     {
-        if (Completed || !_Watered)
+        if (Completed || !_Data.Watered)
             return;
 
-        if (++_Stage >= (_StageUpdate + _Mesh))
+        if (++_Data.Stage >= (_StageUpdate + _Data.Mesh))
         {
-            ++_Mesh; // update to next mesh
+            ++_Data.Mesh; // update to next mesh
         }
 
         OnGrow.Invoke();

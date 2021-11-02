@@ -7,11 +7,18 @@ using IngameDebugConsole;
 
 public class PlayerStamina : MonoBehaviour
 {
-    [SerializeField] private Slider _StaminaSlider;
-    [SerializeField] private float _MaxStamina = 100.0f;
-    [SerializeField] private float _StmWalkingDrain = 0.04f;  // amount stamina drained every second
-    [SerializeField] private float _StmRunningDrain = 0.09f;
-    [SerializeField] private float _StmNightDrain = 7.5f;
+    [SerializeField] 
+    private Slider _StaminaSlider;
+    [SerializeField] 
+    private float _MaxStamina = 100.0f;
+    [SerializeField] 
+    private float _StmWalkingDrain = 0.04f;  // amount stamina drained every second
+    [SerializeField] 
+    private float _StmRunningDrain = 0.09f;
+    [SerializeField] 
+    private float _StmNightDrain = 7.5f;
+    [SerializeField, Range(0.0f, 1.0f)] 
+    private float _StmPassOutPenalty = 0.25f; // percentage of stamina lost
 
     public System.Action OnStaminaDrained = delegate { };
     public System.Action OnStaminaEmptied = delegate { };
@@ -65,7 +72,7 @@ public class PlayerStamina : MonoBehaviour
         if (_Stamina <= 0.0f && !SleepSchedule.Instance.IsSleeping)
         {
             OnStaminaEmptied.Invoke();
-            SleepSchedule.Instance.StartSleeping();
+            SleepSchedule.Instance.StartSleeping(true);
         }
     }
 
@@ -109,8 +116,8 @@ public class PlayerStamina : MonoBehaviour
         _Stamina -= staminaDrain * Time.deltaTime;
     }
 
-    public void Recover()
+    public void Recover(bool penalty)
     {
-        _Stamina = _MaxStamina;
+        _Stamina = (penalty) ? _MaxStamina * (1.0f - _StmPassOutPenalty) : _MaxStamina;
     }
 }

@@ -5,19 +5,19 @@ using UnityEngine.InputSystem;
 
 public enum Relation
 {
-    Hated,
-    Disliked,
-    Neutral,
-    Liked,
-    Loved
+    Hated = 0,
+    Disliked = 1,
+    Neutral = 2,
+    Liked = 3,
+    Loved = 4
 }
 
 [System.Serializable]
 public class RelationshipManager
 {
-    private float minRelation, maxRelation;
-    private float curRelation;
-
+    [SerializeField, HideInInspector]
+    private float minRelation, maxRelation, curRelation;
+    [SerializeField, HideInInspector]
     private Relation relation;
 
     public Relation Relation => relation;

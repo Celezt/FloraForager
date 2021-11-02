@@ -28,13 +28,15 @@ public class InventoryHandler : MonoBehaviour
     private ItemSlot[] _slots;
 
     private Inventory _inventory;
-    ItemTypeSettings _settings;
+    private ItemTypeSettings _settings;
+    private EventSystem _eventSystem;
 
     private bool _isItemSelectable;
 
     private void Start()
     {
         _settings = ItemTypeSettings.Instance;
+        _eventSystem = EventSystem.current;
 
         void SetEmptyIcon(int index)
         {

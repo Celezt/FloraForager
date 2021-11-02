@@ -248,7 +248,7 @@ GameObject:
   - component: {fileID: 2474916603823505788}
   - component: {fileID: 2331333923138306418}
   - component: {fileID: 151427729462025641}
-  m_Layer: 5
+  m_Layer: 9
   m_Name: Amount
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -459,7 +459,7 @@ GameObject:
   - component: {fileID: 7647464458042171490}
   - component: {fileID: 1411907260766255118}
   - component: {fileID: 3280401591545307772}
-  m_Layer: 5
+  m_Layer: 9
   m_Name: Icon
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -671,7 +671,19 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 7894998245526998646}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 7179275048552550690}
+        m_TargetAssemblyTypeName: ItemSlot, Assembly-CSharp
+        m_MethodName: OnSelect
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!114 &7179275048552550690
 MonoBehaviour:
   m_ObjectHideFlags: 0

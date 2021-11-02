@@ -30,9 +30,14 @@ public class Inventory : ScriptableObject
     /// <summary>
     /// Select first existing item.
     /// </summary>
-    public void SelectFirst()
+    public void SelectFirst() => TrySelectItem(0);
+
+    /// <summary>
+    /// Try select at index. If no item exist, try next to it and continue until one is found.
+    /// </summary>
+    public void TrySelectItem(int index)
     {
-        for (int i = 0; i < _items.Count; i++)
+        for (int i = index; i < _items.Count; i++)
             if (!string.IsNullOrEmpty(_items[i].ID))
             {
                 SetSelectedItem(i);
@@ -43,6 +48,9 @@ public class Inventory : ScriptableObject
     public void SetSelectedItem(int index) 
     {
         if (string.IsNullOrEmpty(_items[index].ID))
+            return;
+
+        if (index == _selectedIndex)    // If not already selected.
             return;
 
         _selectedItem = _items[index];
@@ -99,7 +107,7 @@ public class Inventory : ScriptableObject
                 _items[foundItems[i].Item1] = itemAsset;
                 OnItemChangeCallback.Invoke(foundItems[i].Item1, itemAsset);
 
-                if (amountToAdd - addAmount < 0)
+                if (amountToAdd - addAmount <= 0)
                     return true;
                 else
                     amountToAdd -= addAmount;
@@ -117,7 +125,7 @@ public class Inventory : ScriptableObject
             _items[newIndex] = itemAsset;
             OnItemChangeCallback.Invoke(newIndex, itemAsset);
 
-            if (amountToAdd - stack < 0)
+            if (amountToAdd - stack <= 0)
                 return true;
             else
                 amountToAdd -= stack;
@@ -137,6 +145,10 @@ public class Inventory : ScriptableObject
                 OnRemoveItemCallback.Invoke(index, itemAsset);
                 _items[index] = itemAsset.Amount > 0 ? itemAsset : new ItemAsset { };
                 OnItemChangeCallback.Invoke(index, itemAsset);
+
+                if (itemAsset.Amount <= 0)
+                    TrySelectItem(index + 1);
+
                 return true;
             }
         }
@@ -151,6 +163,10 @@ public class Inventory : ScriptableObject
             _items[index] = empty;
             OnRemoveItemCallback.Invoke(index, empty);
             OnItemChangeCallback.Invoke(index, empty);
+
+            if (index == _selectedIndex)
+                SelectFirst();
+
             return true;
         }
         return false;
@@ -175,6 +191,8 @@ public class Inventory : ScriptableObject
                 _items[items[i].Item1] = itemAsset;
                 OnRemoveItemCallback.Invoke(items[i].Item1, itemAsset);
                 OnItemChangeCallback.Invoke(items[i].Item1, itemAsset);
+
+                break;
             }
         }
     }
@@ -236,7 +254,7 @@ public class Inventory : ScriptableObject
     /// </summary>
     public int FindEmptySpace(string id)
     {
-        int stack = (int)ItemTypeSettings.Instance.ItemTypeChunk[id].Behaviour.ItemStack;
+        int stack = ItemTypeSettings.Instance.ItemTypeChunk[id].Behaviour.ItemStack;
         int amountLeft = 0;
         for (int i = 0; i < _items.Count; i++)
         {

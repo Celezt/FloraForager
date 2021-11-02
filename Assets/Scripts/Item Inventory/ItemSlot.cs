@@ -5,7 +5,7 @@ using TMPro;
 using UnityEngine.UI;
 using UnityEngine.EventSystems;
 
-public class ItemSlot : MonoBehaviour, ISelectHandler
+public class ItemSlot : MonoBehaviour
 {
     public InventoryHandler InventoryHandler { get; set; }
     public int Index { get; set; }
@@ -27,10 +27,9 @@ public class ItemSlot : MonoBehaviour, ISelectHandler
     [SerializeField]
     private RectTransform _frameTransform;
 
-    public void OnSelect(BaseEventData eventData)
+    public void OnSelect()
     {
         if (InventoryHandler.IsItemSelectable)                      // If items inside of the handler is selectable.
-            if (InventoryHandler.Inventory.SelectedIndex != Index)  // If not already selected.
-                InventoryHandler.Inventory.SetSelectedItem(Index);
+            InventoryHandler.Inventory.SetSelectedItem(Index);
     }
 }
