@@ -13,7 +13,8 @@ public class CellMesh : MonoBehaviour
 {
     public CellData Data = new CellData(null, CellType.Empty);
 
-    public Material Terrain;
+    [Space(10)]
+    public Material GridMaterial;
 
     public Vector2Int Size { get; private set; } = Vector2Int.one;
 
@@ -39,6 +40,15 @@ public class CellMesh : MonoBehaviour
             Mathf.FloorToInt(transform.position.x), 
             transform.position.y, 
             Mathf.FloorToInt(transform.position.z));
+
+        GameObject heldObject = Data.HeldObject;
+
+        if (heldObject != null)
+        {
+            heldObject.transform.position = gameObject.transform.position;
+            if (heldObject.TryGetComponent(out MeshFilter meshFilter))
+                heldObject.transform.position += Vector3.up * meshFilter.sharedMesh.bounds.extents.y;
+        }
     }
 
     public Vector3[] GetWorldVertices()
@@ -90,7 +100,7 @@ public class CellMesh : MonoBehaviour
         _MeshFilter = GetComponent<MeshFilter>();
         _MeshRenderer = GetComponent<MeshRenderer>();
 
-        _MeshRenderer.material = Terrain;
+        _MeshRenderer.material = GridMaterial;
 
         _Mesh = new Mesh();
         _MeshFilter.mesh = _Mesh;

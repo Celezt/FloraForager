@@ -24,6 +24,8 @@ public class CommissionGiverWindow : Singleton<CommissionGiverWindow>
     private List<GameObject> _CommissionObjects; // objects in the window list
     private Commission _SelectedCommission; // selected commission in the window
 
+    public bool Opened => _CanvasGroup.alpha > 0.0f;
+
     private void Awake()
     {
         _CanvasGroup = GetComponent<CanvasGroup>();
@@ -56,17 +58,19 @@ public class CommissionGiverWindow : Singleton<CommissionGiverWindow>
 
             TMP_Text commText = obj.GetComponent<TMP_Text>();
 
-            commText.text = commission.Data.Title;
+            commText.text = commission.CommissionData.Title;
             obj.GetComponent<CGCommissionObject>().Commission = commission;
 
             _CommissionObjects.Add(obj);
 
-            bool hasCoom = CommissionLog.Instance.HasCommission(commission);
-            if (hasCoom && commission.IsCompleted)
+            bool hasComm = CommissionList.Instance.HasCommission(commission);
+            bool enoughRelation = (int)_CommissionGiver.Relation.Relation >= (int)commission.CommissionData.MinRelation;
+
+            if (hasComm && commission.IsCompleted)
             {
                 commText.color = Color.green;
             }
-            else if (hasCoom) // fade out commissions that are already assigned
+            else if (hasComm || !enoughRelation) // fade out commissions that are already assigned
             {
                 Color c = commText.color;
                 c.a = 0.5f;
@@ -79,13 +83,15 @@ public class CommissionGiverWindow : Singleton<CommissionGiverWindow>
     {
         _SelectedCommission = commission;
 
-        bool hasCoom = CommissionLog.Instance.HasCommission(commission);
-        if (hasCoom && commission.IsCompleted)
+        bool hasComm = CommissionList.Instance.HasCommission(commission);
+        bool enoughRelation = (int)_CommissionGiver.Relation.Relation >= (int)commission.CommissionData.MinRelation;
+
+        if (hasComm && commission.IsCompleted)
         {
             _AcceptButton.SetActive(false);
             _CompleteButton.SetActive(true);
         }
-        else if (!hasCoom)
+        else if (!hasComm && enoughRelation)
         {
             _AcceptButton.SetActive(true);
         }
@@ -106,20 +112,22 @@ public class CommissionGiverWindow : Singleton<CommissionGiverWindow>
         objectives += "</size>";
 
         string rewards = "<b>Rewards</b>\n<size=20>";
-        foreach (RewardPair reward in commission.Data.Rewards)
+        foreach (ItemAsset reward in commission.CommissionData.Rewards)
         {
-            rewards += reward.Amount + " " + ItemTypeSettings.Instance.ItemNameChunk[reward.ItemID] + "\n";
+            rewards += reward.Amount + " " + ItemTypeSettings.Instance.ItemNameChunk[reward.ID] + "\n";
         }
         rewards += "</size>";
 
         string daysLeft = "<b>Time limit</b>\n<size=20>" + commission.DaysLeft.ToString() + " Days</size>";
 
+        string minRelation = "<b>Minimum Relations</b>\n<size=20>" + commission.CommissionData.MinRelation + "</size>";
+
         string completed = commission.IsCompleted ? "<color=green>(Complete)</color>" : string.Empty;
 
-        _Description.text = string.Format("<b>{0}</b>\n<size=20>{1}</size>\n\n{2}\n{3}\n{4}\n\n{5}",
-            commission.Data.Title,
-            commission.Data.Description,
-            objectives, rewards, daysLeft, completed);
+        _Description.text = string.Format("<b>{0}</b>\n<size=20>{1}</size>\n\n{2}\n{3}\n{4}\n\n{5}\n\n{6}",
+            commission.CommissionData.Title,
+            commission.CommissionData.Description,
+            objectives, rewards, daysLeft, minRelation, completed);
     }
 
     public void Open()
@@ -171,7 +179,7 @@ public class CommissionGiverWindow : Singleton<CommissionGiverWindow>
         {
             if (_SelectedCommission == _CommissionGiver.Commissions[i])
             {
-                _CommissionGiver.Commissions[i] = null;
+                _CommissionGiver.RemoveCommission(i);
             }
         }
 

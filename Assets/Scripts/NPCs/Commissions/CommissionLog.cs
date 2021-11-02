@@ -1,7 +1,9 @@
+using System.Linq;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.InputSystem;
+using UnityEngine.SceneManagement;
 using TMPro;
 using MyBox;
 
@@ -15,14 +17,11 @@ public class CommissionLog : Singleton<CommissionLog>
     [SerializeField] private TMP_Text _Description;
 
     private List<CommissionObject> _CommissionObjects = new List<CommissionObject>();
-    private List<Commission> _Commissions = new List<Commission>();
 
     private Commission _Selected; // selected commission in the log
 
     private CanvasGroup _CanvasGroup;
     private PlayerAction _PlayerAction;
-
-    public List<Commission> Commissions => _Commissions;
 
     private void Awake()
     {
@@ -30,6 +29,8 @@ public class CommissionLog : Singleton<CommissionLog>
         _CanvasGroup.alpha = 0.0f;
 
         _PlayerAction = new PlayerAction();
+
+        SceneManager.sceneLoaded += OnSceneLoaded;
     }
 
     private void OnEnable()
@@ -44,6 +45,14 @@ public class CommissionLog : Singleton<CommissionLog>
         _PlayerAction.Ground.CommissionLog.started -= OnOpenExit;
     }
 
+    private void Update()
+    {
+        if (Mouse.current.leftButton.wasPressedThisFrame)
+        {
+            FloraMaster.Instance.Add("Variant");
+        }
+    }
+
     public void Accept(Commission commission)
     {
         GameObject obj = Instantiate(_CommissionPrefab, _CommissionArea); // create object to be added to the log list
@@ -52,9 +61,9 @@ public class CommissionLog : Singleton<CommissionLog>
         commission.Object = cs;
         cs.Commission = commission;
 
-        obj.GetComponent<TMP_Text>().text = commission.Data.Title;
+        obj.GetComponent<TMP_Text>().text = commission.CommissionData.Title;
 
-        _Commissions.Add(commission);
+        CommissionList.Instance.Add(commission);
         _CommissionObjects.Add(cs);
 
         commission.Objectives.ForEach(o => o.Accepted());
@@ -80,7 +89,7 @@ public class CommissionLog : Singleton<CommissionLog>
             return;
 
         _CommissionObjects.Remove(commission.Object);
-        _Commissions.Remove(commission);
+        CommissionList.Instance.Remove(commission);
 
         Destroy(commission.Object.gameObject);
 
@@ -117,16 +126,6 @@ public class CommissionLog : Singleton<CommissionLog>
         }
     }
 
-    public void Notify()
-    {
-        _Commissions.ForEach(c => c.DayPassed());
-    }
-
-    public bool HasCommission(Commission commission)
-    {
-        return _Commissions.Exists(c => c.Data.Title == commission.Data.Title);
-    }
-
     public void ShowDescription(Commission commission)
     {
         if (commission == null)
@@ -145,21 +144,21 @@ public class CommissionLog : Singleton<CommissionLog>
         objectives += "</size>";
 
         string rewards = "<b>Rewards</b>\n<size=20>";
-        foreach (RewardPair reward in commission.Data.Rewards)
+        foreach (ItemAsset reward in commission.CommissionData.Rewards)
         {
-            rewards += reward.Amount + " " + reward.ItemID + "\n";
+            rewards += reward.Amount + " " + ItemTypeSettings.Instance.ItemNameChunk[reward.ID] + "\n";
         }
         rewards += "</size>";
 
         string daysLeft = "<b>Time limit</b>\n<size=20>" + commission.DaysLeft.ToString() + " Days</size>";
 
-        string giver = "<b>Giver</b>\n<size=20>" + commission.Giver.Name + "</size>";
+        string giver = "<b>Giver</b>\n<size=20>" + commission.Giver + "</size>";
 
         string completed = commission.IsCompleted ? "<color=green>(Complete)</color>" : string.Empty;
 
         _Description.text = string.Format("<b>{0}</b>\n<size=20>{1}</size>\n\n{2}\n{3}\n{4}\n\n{5}\n\n{6}",
-            commission.Data.Title,
-            commission.Data.Description,
+            commission.CommissionData.Title,
+            commission.CommissionData.Description,
             objectives, rewards, daysLeft, giver, completed);
     }
 
@@ -185,5 +184,23 @@ public class CommissionLog : Singleton<CommissionLog>
         _CanvasGroup.blocksRaycasts = false;
 
         _Description.text = string.Empty;
+    }
+
+    private void OnSceneLoaded(Scene scene, LoadSceneMode loadSceneMode)
+    {
+        foreach (Commission commission in CommissionList.Instance.Commissions)
+        {
+            GameObject obj = Instantiate(_CommissionPrefab, _CommissionArea);
+
+            CommissionObject cs = obj.GetComponent<CommissionObject>();
+            commission.Object = cs;
+            cs.Commission = commission;
+
+            obj.GetComponent<TMP_Text>().text = commission.CommissionData.Title;
+
+            _CommissionObjects.Add(cs);
+        }
+
+        CheckCompletion();
     }
 }

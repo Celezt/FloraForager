@@ -3,12 +3,13 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEditor;
+using MyBox;
 
 public class LoadSceneTrigger : MonoBehaviour
 {
     [SerializeField]
     private string _ObjectID = string.Empty; // only needs to be unique in this scene to act as an identifier for loading position & rotation
-    [SerializeField]
+    [SerializeField, Scene]
     private string _SceneToLoad;
 
     [Header("Next Scene Load")]

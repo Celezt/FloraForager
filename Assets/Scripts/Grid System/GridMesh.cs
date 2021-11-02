@@ -46,6 +46,9 @@ public class GridMesh : MonoBehaviour
         Vertices = Mesh.vertices;
         Triangles = Mesh.triangles;
         UVs = Mesh.uv;
+
+        if (!Application.isEditor)
+            _MeshRenderer.enabled = false;
     }
 
 #if UNITY_EDITOR
@@ -133,7 +136,7 @@ public class GridMesh : MonoBehaviour
 
             CellMesh mesh = cellObject.GetComponent<CellMesh>();
 
-            mesh.Terrain = _MeshRenderer.sharedMaterial;
+            mesh.GridMaterial = _MeshRenderer.sharedMaterial;
             mesh.Initialize(CellsData[i]);
 
             cells[i] = mesh;

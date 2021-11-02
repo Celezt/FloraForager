@@ -51,7 +51,7 @@ public class FloraObject : MonoBehaviour, IUsable
         }
 
         transform.position = _Flora.Cell.Middle;
-        transform.position += Vector3.up * (_MeshFilter.mesh.bounds.size.y / 2.0f);
+        transform.position += Vector3.up * _MeshFilter.mesh.bounds.extents.y;
 
         _Collider.center = new Vector3(0, 
             _MeshFilter.mesh.bounds.center.y + 
@@ -60,16 +60,14 @@ public class FloraObject : MonoBehaviour, IUsable
 
     public void OnUse(UsedContext context)
     {
-        if (!context.performed)
-            return;
-
         Flora.OnHarvest.Invoke();
 
-        Flora.HarvestMethod.Harvest(_Flora, context.playerIndex);
+        if (Flora.Harvest(context))
+        {
+            Destroy(_Flora.Cell.Free());
+            FloraMaster.Instance.Remove(_Flora);
+        }
     }
 
-    ItemLabels IUsable.Filter()
-    {
-        throw new System.NotImplementedException();
-    }
+    ItemLabels IUsable.Filter() => _Flora.FloraInfo.ItemLabels;
 }
