@@ -35,10 +35,10 @@ public class Grid : Singleton<Grid> // One grid per level
         for (int i = 0; i < _MeshFilter.mesh.vertices.Length; i += 4)
         {
             Vector2Int pos = new Vector2Int(i % _Width, i / _Width);
-            Vector3 worldPosition = _MeshFilter.mesh.vertices[pos.x + pos.y * _Width];
+            Vector3 worldPosition = transform.TransformPoint(_MeshFilter.mesh.vertices[pos.x + pos.y * _Width]);
 
-            int x = Mathf.FloorToInt(worldPosition.x - transform.position.x - _Position.x);
-            int z = Mathf.FloorToInt(worldPosition.z - transform.position.z - _Position.z);
+            int x = Mathf.FloorToInt(worldPosition.x - _Position.x);
+            int z = Mathf.FloorToInt(worldPosition.z - _Position.z);
 
             _Cells[x + z * _Width] = new Cell(this, _GridMesh.CellsData[i / 4],
                 worldPosition,
@@ -54,10 +54,7 @@ public class Grid : Singleton<Grid> // One grid per level
         Ray ray = Camera.main.ScreenPointToRay(Mouse.current.position.ReadValue());
         if (Physics.Raycast(ray, out RaycastHit hitInfo, Mathf.Infinity, _LayerMasks))
         {
-            int x = Mathf.FloorToInt(hitInfo.point.x - transform.position.x - _Position.x);
-            int z = Mathf.FloorToInt(hitInfo.point.z - transform.position.z - _Position.z);
-
-            HoveredCell = GetCellLocal(x, z);
+            HoveredCell = GetCellWorld(hitInfo.point);
         }
         else
             HoveredCell = null;
@@ -77,8 +74,8 @@ public class Grid : Singleton<Grid> // One grid per level
 
     public Cell GetCellWorld(Vector3 worldPos)
     {
-        int x = Mathf.FloorToInt(worldPos.x - transform.position.x - _Position.x);
-        int z = Mathf.FloorToInt(worldPos.z - transform.position.z - _Position.z);
+        int x = Mathf.FloorToInt(worldPos.x - _Position.x);
+        int z = Mathf.FloorToInt(worldPos.z - _Position.z);
 
         return GetCellLocal(x, z);
     }
@@ -116,7 +113,7 @@ public class Grid : Singleton<Grid> // One grid per level
 
         for (int i = 0; i < _MeshFilter.mesh.vertices.Length; ++i)
         {
-            Vector3 vertex = _MeshFilter.mesh.vertices[i];
+            Vector3 vertex = transform.TransformPoint(_MeshFilter.mesh.vertices[i]);
 
             if (vertex.x < min.x)
                 min.x = vertex.x;
@@ -148,10 +145,10 @@ public class Grid : Singleton<Grid> // One grid per level
         for (int i = 0; i < _MeshFilter.mesh.vertices.Length; i += 4)
         {
             Vector2Int pos = new Vector2Int(i % _Width, i / _Width);
-            Vector3 worldPosition = _MeshFilter.mesh.vertices[pos.x + pos.y * _Width];
+            Vector3 worldPosition = transform.TransformPoint(_MeshFilter.mesh.vertices[pos.x + pos.y * _Width]);
 
-            int xPos = Mathf.FloorToInt(worldPosition.x - transform.position.x - _Position.x);
-            int zPos = Mathf.FloorToInt(worldPosition.z - transform.position.z - _Position.z);
+            int xPos = Mathf.FloorToInt(worldPosition.x - _Position.x);
+            int zPos = Mathf.FloorToInt(worldPosition.z - _Position.z);
 
             Cell cell = _Cells[xPos + zPos * _Width];
 

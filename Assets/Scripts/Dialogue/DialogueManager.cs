@@ -218,12 +218,11 @@ public class DialogueManager : MonoBehaviour
     private void Awake()
     {
         DialogueUtility.InitializeAllTags(this, _currentLayer, _tags);
+        _dialogues.Add(_playerIndex, this);
     }
 
     private void Start()
     {
-        _dialogues.Add(_playerIndex, this);
-
         DebugLogConsole.AddCommandInstance("dialogue.cancel", "Cancel current dialogue", nameof(CancelDialogue), this);
         DebugLogConsole.AddCommandInstance("dialogue.start", "Start dialogue", nameof(StartDialogueConsole), this);
         DebugLogConsole.AddCommandInstance("dialogue.speed", "Sets auto text speed", nameof(SetAutoTextSpeedConsole), this);
