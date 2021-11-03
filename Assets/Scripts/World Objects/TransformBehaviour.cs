@@ -21,6 +21,7 @@ public class TransformBehaviour : MonoBehaviour, IStreamable<TransformBehaviour.
     {
         Data data = state as Data;
 
+
         transform.position = data.Position;
         transform.rotation = data.Rotation;
         transform.localScale = data.Scale;
