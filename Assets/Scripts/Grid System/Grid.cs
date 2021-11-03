@@ -63,35 +63,6 @@ public class Grid : Singleton<Grid> // One grid per level
             HoveredCell = null;
     }
 
-    /// <summary>
-    /// place an object at specified tile
-    /// </summary>
-    /// <param name="gameObject">object to be placed</param>
-    /// <returns>false if object cannot be placed</returns>
-    public bool OccupyCell(Cell cell, GameObject gameObject)
-    {
-        if (cell == null)
-            return false;
-
-        if (!cell.Occupy(gameObject))
-            return false;
-
-        gameObject.transform.position = cell.Middle;
-
-        return true;
-    }
-
-    /// <summary>
-    /// frees object from cell, does not destroy
-    /// </summary>
-    public GameObject FreeCell(Cell cell)
-    {
-        if (cell == null)
-            return null;
-
-        return cell.Free();
-    }
-
     public Cell GetCellLocal(int x, int z)
     {
         if (!WithinGrid(x, z))
@@ -126,7 +97,7 @@ public class Grid : Singleton<Grid> // One grid per level
             float tileTexProcRow = 1.0f / _GridMesh.TexTilesPerRow;
             float tileTexProcCol = 1.0f / _GridMesh.TexTilesPerCol;
 
-            float proc = (int)cell.Data.Type / (float)_GridMesh.TexTilesPerRow;
+            float proc = (int)cell.Type / (float)_GridMesh.TexTilesPerRow;
             float dFix = 0.00f; // dilation
 
             _GridMesh.UVs[cell.MeshIndex * 4 + 0] = new Vector2(proc + dFix, 0.0f + dFix); // bottom-left

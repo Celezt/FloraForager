@@ -54,6 +54,23 @@ public class NPCManager : SerializedScriptableSingleton<NPCManager>, IStreamer
         return _NPCs[id.ToLower()] = npc;
     }
 
+    public void RemoveDialogue(NPC npc, int pos)
+    {
+        npc.DialogueQueue.Remove(pos);
+    }
+    public void RemoveDialogue(NPC npc, (string, string[]) dialogue)
+    {
+        npc.DialogueQueue.Remove(dialogue);
+    }
+    public void RemoveDialogue(string npc, int pos)
+    {
+        Get(npc).DialogueQueue.Remove(pos);
+    }
+    public void RemoveDialogue(string npc, (string, string[]) dialogue)
+    {
+        Get(npc).DialogueQueue.Remove(dialogue);
+    }
+
     public void EnqueueDialogue(NPC npc, string address, float priority, params string[] aliases)
     {
         npc.DialogueQueue.Enqueue((address, aliases), priority);
@@ -64,7 +81,7 @@ public class NPCManager : SerializedScriptableSingleton<NPCManager>, IStreamer
     }
     public void EnqueueDialogue(string npc, string address, float priority, params string[] aliases)
     {
-        _NPCs[npc].DialogueQueue.Enqueue((address, aliases), priority);
+        Get(npc).DialogueQueue.Enqueue((address, aliases), priority);
     }
     public void EnqueueDialogue(string npc, AssetReferenceText asset, float priority, params string[] aliases)
     {
@@ -81,7 +98,7 @@ public class NPCManager : SerializedScriptableSingleton<NPCManager>, IStreamer
     }
     public void SetRepeatingDialogue(string npc, string address, params string[] aliases)
     {
-        _NPCs[npc].SetRepeatingDialouge(address, aliases);
+        Get(npc).SetRepeatingDialouge(address, aliases);
     }
     public void SetRepeatingDialogue(string npc, AssetReferenceText asset, params string[] aliases)
     {

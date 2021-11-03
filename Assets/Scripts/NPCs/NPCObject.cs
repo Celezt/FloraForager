@@ -67,25 +67,44 @@ public class NPCObject : MonoBehaviour, IInteractable
         {
             (string, string[]) dialogue = NPC.DialogueQueue.Dequeue();
 
-            DialogueManager.GetByIndex(context.playerIndex).StartDialogue(dialogue.Item1, dialogue.Item2).Completed += (DialogueManager manager) =>
+            void CompleteAction(DialogueManager manager)
             {
                 playerInput.ActivateInput();
+
+                manager.Completed -= CompleteAction;
             };
+
+            DialogueManager.GetByIndex(context.playerIndex).StartDialogue(dialogue.Item1, dialogue.Item2).Completed += CompleteAction;
         }
         else
         {
             (string, string[]) dialogue = NPC.RepeatingDialogue;
 
-            DialogueManager.GetByIndex(context.playerIndex).StartDialogue(dialogue.Item1, dialogue.Item2).Completed += (DialogueManager manager) =>
+            if (!string.IsNullOrWhiteSpace(dialogue.Item1))
             {
-                if (NPC.HasCommissions)
+                void CompleteAction(DialogueManager manager)
                 {
-                    CommissionGiverWindow.Instance.ShowCommissions(NPC);
-                    CommissionGiverWindow.Instance.Open();
-                }
+                    playerInput.ActivateInput();
+                    OpenCommissionWindow();
 
-                playerInput.ActivateInput();
-            };
+                    manager.Completed -= CompleteAction;
+                };
+
+                DialogueManager.GetByIndex(context.playerIndex).StartDialogue(dialogue.Item1, dialogue.Item2).Completed += CompleteAction;
+            }
+            else
+            {
+                OpenCommissionWindow();
+            }
+        }
+
+        void OpenCommissionWindow()
+        {
+            if (NPC.HasCommissions)
+            {
+                CommissionGiverWindow.Instance.ShowCommissions(NPC);
+                CommissionGiverWindow.Instance.Open();
+            }
         }
     }
 }

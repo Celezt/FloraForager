@@ -29,13 +29,16 @@ public class GatherObjective : IObjective
     public void Accepted()
     {
         _Inventory = PlayerInput.GetPlayerByIndex(0).GetComponent<PlayerInfo>().Inventory;
-        _Inventory.OnItemChangeCallback += UpdateStatus;
+
+        _Inventory.OnAddItemCallback += UpdateStatus;
+        _Inventory.OnRemoveItemCallback += UpdateStatus;
 
         UpdateStatus();
     }
     public void Removed()
     {
-        _Inventory.OnItemChangeCallback -= UpdateStatus;
+        _Inventory.OnAddItemCallback -= UpdateStatus;
+        _Inventory.OnRemoveItemCallback -= UpdateStatus;
     }
     public void Completed()
     {

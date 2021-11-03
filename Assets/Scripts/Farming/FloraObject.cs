@@ -51,7 +51,7 @@ public class FloraObject : MonoBehaviour, IUsable
         }
 
         transform.position = _Flora.Cell.Middle;
-        transform.position += Vector3.up * (_MeshFilter.mesh.bounds.size.y / 2.0f);
+        transform.position += Vector3.up * _MeshFilter.mesh.bounds.extents.y;
 
         _Collider.center = new Vector3(0, 
             _MeshFilter.mesh.bounds.center.y + 
@@ -62,9 +62,9 @@ public class FloraObject : MonoBehaviour, IUsable
     {
         Flora.OnHarvest.Invoke();
 
-        if (Flora.SaveData.Harvest.Harvest(context, _Flora))
+        if (Flora.Harvest(context))
         {
-            Destroy(Grid.Instance.FreeCell(_Flora.Cell));
+            Destroy(_Flora.Cell.Free());
             FloraMaster.Instance.Remove(_Flora);
         }
     }

@@ -71,7 +71,7 @@ public class NPC : IStreamable<NPC.Data>
         {
             CommissionInfo info = data.CommissionsData[i];
 
-            _Data.CommissionsData[i] = new CommissionData 
+            _Data.CommissionsData[i] = new CommissionData
             {
                 Title = info.Title,
                 Description = info.Description,
@@ -81,7 +81,8 @@ public class NPC : IStreamable<NPC.Data>
                 RewardRelation = info.RewardRelations,
                 PenaltyRelation = info.PenaltyRelations,
                 Rewards = info.Rewards,
-                Giver = Name
+                Giver = Name,
+                Completed = false
             };
 
             _Commissions[i] = new Commission(_Data.CommissionsData[i]);

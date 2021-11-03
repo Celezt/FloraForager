@@ -14,7 +14,7 @@ public class Flora : IStreamable<Flora.Data>
     {
         public string Name;
         public Vector2Int CellPosition;
-        public IHarvest Harvest;
+        public IHarvest HarvestMethod;
         public int Stage;
         public int Mesh;
         public bool Watered;
@@ -44,7 +44,7 @@ public class Flora : IStreamable<Flora.Data>
     public MeshRenderer CurrentMeshRenderer => _StagesMeshRenderers[_Data.Mesh];
 
     public FloraInfo FloraInfo => _FloraInfo;
-    public Data SaveData => _Data;
+    public Data FloraData => _Data;
     public Cell Cell => Grid.Instance.GetCellLocal(_Data.CellPosition);
 
     public bool Completed => (_Data.Stage >= _FloraInfo.GrowTime);
@@ -53,7 +53,6 @@ public class Flora : IStreamable<Flora.Data>
         get => _Data.Watered;
         set
         {
-            OnWatered.Invoke();
             Grid.Instance.UpdateCellsUVs((_Data.Watered = value) ? CellType.Soil : CellType.Dirt, Cell);
         }
     }
@@ -72,8 +71,8 @@ public class Flora : IStreamable<Flora.Data>
 
         _StageUpdate = (_FloraInfo.GrowTime + 1f) / _FloraInfo.Stages.Length;
 
-        _Data.Harvest = (IHarvest)System.Activator.CreateInstance(_FloraInfo.HarvestMethod.GetType()); // create a new instance of the harvest method
-        _Data.Harvest.Initialize(_FloraInfo, _FloraInfo.HarvestMethod); // fill it with new data
+        _Data.HarvestMethod = (IHarvest)System.Activator.CreateInstance(_FloraInfo.HarvestMethod.GetType()); // create a new instance of the harvest method
+        _Data.HarvestMethod.Initialize(_FloraInfo, _FloraInfo.HarvestMethod); 
     }
 
     public void Grow()
@@ -92,5 +91,20 @@ public class Flora : IStreamable<Flora.Data>
             OnCompleted.Invoke();
 
         Watered = false;
+    }
+
+    public bool Water()
+    {
+        if (_Data.Watered)
+            return false;
+
+        OnWatered.Invoke();
+
+        return Watered = true;
+    }
+
+    public bool Harvest(UsedContext context)
+    {
+        return _Data.HarvestMethod.Harvest(context, this);
     }
 }

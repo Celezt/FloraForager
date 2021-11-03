@@ -15,5 +15,8 @@ public enum Items
 	Birow = 1 << 8,
 	WoodenChest = 1 << 9,
 	Rock = 1 << 10,
-	All =  Sycthe | Porock | Floatish | SimpleRod | Spookish | Axe | Pickaxe | Birow | WoodenChest | Rock 
+	Log = 1 << 11,
+	FishBait = 1 << 12,
+	WateringCan = 1 << 13,
+	All =  Sycthe | Porock | Floatish | SimpleRod | Spookish | Axe | Pickaxe | Birow | WoodenChest | Rock | Log | FishBait | WateringCan 
 }
