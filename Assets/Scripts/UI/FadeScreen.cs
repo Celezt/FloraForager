@@ -45,12 +45,15 @@ public class FadeScreen : Singleton<FadeScreen>
         OnStartFade.Invoke();
 
         _CanvasGroup.alpha = 0.0f;
+
         for (float i = 0; i <= fadeTime; i += Time.deltaTime)
         {
             _CanvasGroup.alpha = i / fadeTime;
             yield return null;
         }
+
         _CanvasGroup.alpha = 1.0f;
+        _CanvasGroup.blocksRaycasts = true;
 
         OnEndFade.Invoke();
         _CoroutineIsRunning = false;
@@ -60,11 +63,14 @@ public class FadeScreen : Singleton<FadeScreen>
         OnStartFade.Invoke();
 
         _CanvasGroup.alpha = 1.0f;
+        _CanvasGroup.blocksRaycasts = false;
+
         for (float i = fadeTime; i >= 0; i -= Time.deltaTime)
         {
             _CanvasGroup.alpha = i / fadeTime;
             yield return null;
         }
+
         _CanvasGroup.alpha = 0.0f;
 
         OnEndFade.Invoke();

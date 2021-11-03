@@ -7,14 +7,14 @@ using UnityEngine.SceneManagement;
 /// </summary>
 public class Flora : IStreamable<Flora.Data>
 {
-    private FloraInfo _FloraInfo; // data used to create flora
+    private FloraInfo _Info; // data used to create flora
     private Data _Data;
 
     public class Data
     {
         public string Name;
         public Vector2Int CellPosition;
-        public IHarvest Harvest;
+        public IHarvest HarvestMethod;
         public int Stage;
         public int Mesh;
         public bool Watered;
@@ -43,36 +43,28 @@ public class Flora : IStreamable<Flora.Data>
     public MeshFilter CurrentMeshFilter => _StagesMeshFilters[_Data.Mesh];
     public MeshRenderer CurrentMeshRenderer => _StagesMeshRenderers[_Data.Mesh];
 
-    public FloraInfo FloraInfo => _FloraInfo;
+    public FloraInfo Info => _Info;
     public Data FloraData => _Data;
     public Cell Cell => Grid.Instance.GetCellLocal(_Data.CellPosition);
 
-    public bool Completed => (_Data.Stage >= _FloraInfo.GrowTime);
-    public bool Watered
-    {
-        get => _Data.Watered;
-        set
-        {
-            Grid.Instance.UpdateCellsUVs((_Data.Watered = value) ? CellType.Soil : CellType.Dirt, Cell);
-        }
-    }
+    public bool Completed => (_Data.Stage >= _Info.GrowTime);
 
     public Flora(FloraInfo floraInfo, Vector2Int cellPos)
     {
-        _FloraInfo = floraInfo;
+        _Info = floraInfo;
         _Data = new Data();
 
-        _Data.Name = _FloraInfo.Name;
+        _Data.Name = _Info.Name;
         _Data.CellPosition = cellPos;
         _Data.SceneIndex = SceneManager.GetActiveScene().buildIndex;
 
-        _StagesMeshFilters = System.Array.ConvertAll(_FloraInfo.Stages, mf => mf.GetComponent<MeshFilter>()); // extract mesh and materials from objects
-        _StagesMeshRenderers = System.Array.ConvertAll(_FloraInfo.Stages, mr => mr.GetComponent<MeshRenderer>());
+        _StagesMeshFilters = System.Array.ConvertAll(_Info.Stages, mf => mf.GetComponent<MeshFilter>()); // extract mesh and materials from objects
+        _StagesMeshRenderers = System.Array.ConvertAll(_Info.Stages, mr => mr.GetComponent<MeshRenderer>());
 
-        _StageUpdate = (_FloraInfo.GrowTime + 1f) / _FloraInfo.Stages.Length;
+        _StageUpdate = (_Info.GrowTime + 1f) / _Info.Stages.Length;
 
-        _Data.Harvest = (IHarvest)System.Activator.CreateInstance(_FloraInfo.HarvestMethod.GetType()); // create a new instance of the harvest method
-        _Data.Harvest.Initialize(_FloraInfo, _FloraInfo.HarvestMethod); // fill it with new data
+        _Data.HarvestMethod = (IHarvest)System.Activator.CreateInstance(_Info.HarvestMethod.GetType()); // create a new instance of the harvest method
+        _Data.HarvestMethod.Initialize(_Info, _Info.HarvestMethod); 
     }
 
     public void Grow()
@@ -90,7 +82,7 @@ public class Flora : IStreamable<Flora.Data>
         if (Completed)
             OnCompleted.Invoke();
 
-        Watered = false;
+        _Data.Watered = false;
     }
 
     public bool Water()
@@ -100,6 +92,11 @@ public class Flora : IStreamable<Flora.Data>
 
         OnWatered.Invoke();
 
-        return Watered = true;
+        return _Data.Watered = true;
+    }
+
+    public bool Harvest(UsedContext context)
+    {
+        return _Data.HarvestMethod.Harvest(context, this);
     }
 }

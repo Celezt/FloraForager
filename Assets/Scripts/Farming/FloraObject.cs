@@ -62,12 +62,12 @@ public class FloraObject : MonoBehaviour, IUsable
     {
         Flora.OnHarvest.Invoke();
 
-        if (Flora.FloraData.Harvest.Harvest(context, _Flora))
+        if (Flora.Harvest(context))
         {
-            Destroy(Grid.Instance.FreeCell(_Flora.Cell));
+            Destroy(_Flora.Cell.Free());
             FloraMaster.Instance.Remove(_Flora);
         }
     }
 
-    ItemLabels IUsable.Filter() => _Flora.FloraInfo.ItemLabels;
+    ItemLabels IUsable.Filter() => _Flora.Info.ItemLabels;
 }

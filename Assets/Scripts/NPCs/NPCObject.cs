@@ -19,30 +19,16 @@ public class NPCObject : MonoBehaviour, IInteractable
     private GameObject _Player;
 
     public NPC NPC { get; private set; }
-    public Bounds Bounds { get; private set; }
 
     public int Priority => 3;
 
     private void Awake()
     {
-        Bounds = GetComponent<MeshFilter>().mesh.bounds;
         NPC = NPCManager.Instance.Get(_NameID.ToLower());
     }
 
     private void Update()
     {
-        Ray ray = Camera.main.ScreenPointToRay(Mouse.current.position.ReadValue());
-        bool collision = Physics.Raycast(ray, out RaycastHit hitInfo, Mathf.Infinity, _LayerMasks) && !CanvasUtility.IsPointerOverUIElement();
-
-        if (collision && hitInfo.transform.gameObject == gameObject)
-        {
-            NPCUI.Instance.SetActive(this, true);
-        }
-        else if ((collision && !hitInfo.transform.CompareTag("NPC")) || !collision)
-        {
-            NPCUI.Instance.SetActive(null, false);
-        }
-
         if (CommissionGiverWindow.Instance.Opened && _Player != null)
         {
             if (Vector3.Distance(transform.position, _Player.transform.position) > _ExitRadius)
@@ -67,10 +53,14 @@ public class NPCObject : MonoBehaviour, IInteractable
         {
             (string, string[]) dialogue = NPC.DialogueQueue.Dequeue();
 
-            DialogueManager.GetByIndex(context.playerIndex).StartDialogue(dialogue.Item1, dialogue.Item2).Completed += (DialogueManager manager) =>
+            void CompleteAction(DialogueManager manager)
             {
                 playerInput.ActivateInput();
+
+                manager.Completed -= CompleteAction;
             };
+
+            DialogueManager.GetByIndex(context.playerIndex).StartDialogue(dialogue.Item1, dialogue.Item2).Completed += CompleteAction;
         }
         else
         {
@@ -78,11 +68,15 @@ public class NPCObject : MonoBehaviour, IInteractable
 
             if (!string.IsNullOrWhiteSpace(dialogue.Item1))
             {
-                DialogueManager.GetByIndex(context.playerIndex).StartDialogue(dialogue.Item1, dialogue.Item2).Completed += (DialogueManager manager) =>
+                void CompleteAction(DialogueManager manager)
                 {
-                    OpenCommissionWindow();
                     playerInput.ActivateInput();
+                    OpenCommissionWindow();
+
+                    manager.Completed -= CompleteAction;
                 };
+
+                DialogueManager.GetByIndex(context.playerIndex).StartDialogue(dialogue.Item1, dialogue.Item2).Completed += CompleteAction;
             }
             else
             {

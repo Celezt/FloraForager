@@ -136,7 +136,7 @@ public class GridMesh : MonoBehaviour
 
             CellMesh mesh = cellObject.GetComponent<CellMesh>();
 
-            mesh.Terrain = _MeshRenderer.sharedMaterial;
+            mesh.GridMaterial = _MeshRenderer.sharedMaterial;
             mesh.Initialize(CellsData[i]);
 
             cells[i] = mesh;

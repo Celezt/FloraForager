@@ -50,8 +50,6 @@ public class FloraMaster : SerializedScriptableSingleton<FloraMaster>, IStreamer
             if (scene.buildIndex == flora.FloraData.SceneIndex)
             {
                 Cell cell = Grid.Instance.GetCellLocal(flora.FloraData.CellPosition);
-
-                Grid.Instance.UpdateCellsUVs(flora.FloraData.Watered ? CellType.Soil : CellType.Dirt, cell);
                 cell.Occupied = false;
 
                 Create(flora, cell);
@@ -66,7 +64,7 @@ public class FloraMaster : SerializedScriptableSingleton<FloraMaster>, IStreamer
         if (cell == null || cell.Occupied)
             return false;
 
-        if (cell.Type != CellType.Dirt && cell.Type != CellType.Soil)
+        if (cell.Type != CellType.Soil)
             return false;
 
         string key = floraName.ToLower();
@@ -90,7 +88,7 @@ public class FloraMaster : SerializedScriptableSingleton<FloraMaster>, IStreamer
         if (cell == null || cell.Occupied)
             return false;
 
-        if (cell.Type != CellType.Dirt && cell.Type != CellType.Soil)
+        if (cell.Type != CellType.Soil)
             return false;
 
         Flora flora = new Flora(floraInfo, cell.Local);
@@ -105,16 +103,15 @@ public class FloraMaster : SerializedScriptableSingleton<FloraMaster>, IStreamer
 
     public bool Create(Flora flora, Cell cell)
     {
-        GameObject obj = Instantiate(_FloraPrefab);
-
-        if (!Grid.Instance.OccupyCell(cell, obj))
-        {
-            Destroy(obj);
+        if (cell.Occupied)
             return false;
-        }
+
+        GameObject obj = Instantiate(_FloraPrefab);
 
         FloraObject floraObject = obj.GetComponent<FloraObject>();
         floraObject.Initialize(flora);
+
+        cell.Occupy(obj);
 
         return true;
     }

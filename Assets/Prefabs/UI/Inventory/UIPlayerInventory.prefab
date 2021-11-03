@@ -1,5 +1,17 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
+--- !u!225 &2254959441854015310
+CanvasGroup:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1036572624086415019}
+  m_Enabled: 1
+  m_Alpha: 0
+  m_Interactable: 1
+  m_BlocksRaycasts: 1
+  m_IgnoreParentGroups: 0
 --- !u!114 &1685045980275709680
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -37,7 +49,7 @@ RectTransform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1046482696284642258}
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
@@ -75,10 +87,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b654e0132c3bcb646bad9e81d5c19f57, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _canvasGroup: {fileID: 4873708492331576370}
   _inventoryHandler: {fileID: 1685045980275709680}
   _hotbarHandler: {fileID: 2524127421015297097}
-  _id: player_inventory_0
   _frameDegreeSpeed: 4
   _selectColor: {r: 0.8509804, g: 0.7732616, b: 0.50980395, a: 1}
 --- !u!1 &3766424314486714410
@@ -168,6 +178,18 @@ CanvasGroup:
   m_Alpha: 1
   m_Interactable: 0
   m_BlocksRaycasts: 0
+  m_IgnoreParentGroups: 0
+--- !u!225 &2980290975252220862
+CanvasGroup:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6978091086836701191}
+  m_Enabled: 1
+  m_Alpha: 1
+  m_Interactable: 1
+  m_BlocksRaycasts: 1
   m_IgnoreParentGroups: 0
 --- !u!114 &2524127421015297097
 MonoBehaviour:
@@ -1769,7 +1791,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 7187814780625911233, guid: 9d75c6149eb0d0f449a9d2597baefb65, type: 3}
       propertyPath: m_AnchoredPosition.y
-      value: 49.8
+      value: 49.80005
       objectReference: {fileID: 0}
     - target: {fileID: 7187814780625911233, guid: 9d75c6149eb0d0f449a9d2597baefb65, type: 3}
       propertyPath: m_LocalEulerAnglesHint.x
@@ -4208,14 +4230,14 @@ PrefabInstance:
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 9d75c6149eb0d0f449a9d2597baefb65, type: 3}
---- !u!224 &1222008098664331392 stripped
-RectTransform:
-  m_CorrespondingSourceObject: {fileID: 7187814780625911233, guid: 9d75c6149eb0d0f449a9d2597baefb65, type: 3}
-  m_PrefabInstance: {fileID: 8301627877083563329}
-  m_PrefabAsset: {fileID: 0}
 --- !u!1 &1036572624086415019 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 9031946919611167722, guid: 9d75c6149eb0d0f449a9d2597baefb65, type: 3}
+  m_PrefabInstance: {fileID: 8301627877083563329}
+  m_PrefabAsset: {fileID: 0}
+--- !u!224 &1222008098664331392 stripped
+RectTransform:
+  m_CorrespondingSourceObject: {fileID: 7187814780625911233, guid: 9d75c6149eb0d0f449a9d2597baefb65, type: 3}
   m_PrefabInstance: {fileID: 8301627877083563329}
   m_PrefabAsset: {fileID: 0}
 --- !u!1001 &8360067435470926523

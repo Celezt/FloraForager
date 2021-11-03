@@ -21,28 +21,28 @@ public class CommissionLog : Singleton<CommissionLog>
     private Commission _Selected; // selected commission in the log
 
     private CanvasGroup _CanvasGroup;
-    private PlayerAction _PlayerAction;
+
+    private PlayerInput _PlayerInput;
 
     private void Awake()
     {
         _CanvasGroup = GetComponent<CanvasGroup>();
         _CanvasGroup.alpha = 0.0f;
 
-        _PlayerAction = new PlayerAction();
+        _PlayerInput = PlayerInput.GetPlayerByIndex(0);
 
         SceneManager.sceneLoaded += OnSceneLoaded;
     }
 
     private void OnEnable()
     {
-        _PlayerAction.Enable();
-        _PlayerAction.Ground.CommissionLog.started += OnOpenExit;
+        _PlayerInput.actions["CommissionLog"].started += OnOpenExit;
     }
 
     private void OnDisable()
     {
-        _PlayerAction.Disable();
-        _PlayerAction.Ground.CommissionLog.started -= OnOpenExit;
+        if (_PlayerInput != null)
+            _PlayerInput.actions["CommissionLog"].started -= OnOpenExit;
     }
 
     private void Update()
