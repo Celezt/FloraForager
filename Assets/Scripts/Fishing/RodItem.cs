@@ -37,8 +37,8 @@ public class RodItem : IUse, IStar, IValue
     [Space(10)]
     [SerializeField]
     private float _Radius = 8.0f;
-    [SerializeField]
-    private float _Arc = 1.5f;
+    [SerializeField, Range(0.0f, 360.0f)]
+    private float _Arc = 60.0f;
 
     void IItem.OnInitialize(ItemTypeContext context)
     {

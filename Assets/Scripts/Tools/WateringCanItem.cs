@@ -20,8 +20,8 @@ public class WateringCanItem : IUse, IStar
     [Space(10)]
     [SerializeField]
     private float _Radius = 2.75f;
-    [SerializeField]
-    private float _Arc = 1.6f;
+    [SerializeField, Range(0.0f, 360.0f)]
+    private float _Arc = 270.0f;
 
     private int _UsesLeft;
 

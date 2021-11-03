@@ -34,7 +34,15 @@ public class GridWindow : OdinEditorWindow
     protected override void OnBeforeSerialize()
     {
         for (int i = 0; i < _CellsMesh.Length; ++i)
-            _CellsMesh[i].Initialize(_CellsData[i]);
+        {
+            CellMesh mesh = _CellsMesh[i];
+            CellData data = _CellsData[i];
+
+            if (mesh == null || data == null)
+                continue;
+
+            mesh.Initialize(data);
+        }
     }
 
     [PropertySpace(5)]
