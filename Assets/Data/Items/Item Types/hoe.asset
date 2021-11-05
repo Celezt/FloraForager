@@ -10,7 +10,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 00a108d415261c34b9fe06714b46e722, type: 3}
-  m_Name: simple_rod
+  m_Name: hoe
   m_EditorClassIdentifier: 
   serializationData:
     SerializedFormat: 2
@@ -23,47 +23,29 @@ MonoBehaviour:
     SerializationNodes:
     - Name: Behaviour
       Entry: 7
-      Data: 0|RodItem, Assembly-CSharp
-    - Name: IItem.ItemStack
+      Data: 0|HoeItem, Assembly-CSharp
+    - Name: Cooldown
+      Entry: 4
+      Data: 0.05
+    - Name: ItemStack
       Entry: 3
       Data: 1
-    - Name: IStar.Star
+    - Name: Star
       Entry: 3
       Data: 1
-    - Name: IValue.BaseValue
-      Entry: 3
-      Data: 200
-    - Name: IUse.Cooldown
-      Entry: 4
-      Data: 1
-    - Name: _catchSize
-      Entry: 4
-      Data: 0.2
-    - Name: _weight
-      Entry: 4
-      Data: 6
-    - Name: _dragForce
-      Entry: 4
-      Data: 100
-    - Name: _dragDamp
-      Entry: 4
-      Data: 10
-    - Name: _bounciness
-      Entry: 4
-      Data: 0.5
     - Name: _Radius
       Entry: 4
-      Data: 8
+      Data: 2.75
     - Name: _Arc
       Entry: 4
-      Data: 60
+      Data: 360
     - Name: 
       Entry: 8
       Data: 
   Icon: {fileID: 0}
-  Name: Simple Rod
-  ID: simple_rod
+  Name: Hoe
+  ID: hoe
   Description: 
   Labels:
-  - rod
-  - tool
+  - Tool
+  - Hoe

@@ -37,8 +37,8 @@ public class UICraftingMenu : Singleton<UICraftingMenu>
         _CanvasGroup = GetComponent<CanvasGroup>();
         _CanvasGroup.alpha = 0.0f;
 
-        _Canvas = transform.parent.GetComponent<Canvas>();
-        _CanvasRect = transform.parent.GetComponent<RectTransform>();
+        _Canvas = transform.root.GetComponent<Canvas>();
+        _CanvasRect = _Canvas.GetComponent<RectTransform>();
 
         _CraftableItemObjects = new List<GameObject>();
     }

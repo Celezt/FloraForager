@@ -69,5 +69,5 @@ public class FloraObject : MonoBehaviour, IUsable
         }
     }
 
-    ItemLabels IUsable.Filter() => _Flora.FloraInfo.ItemLabels;
+    ItemLabels IUsable.Filter() => _Flora.Info.ItemLabels;
 }

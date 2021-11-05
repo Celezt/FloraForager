@@ -4,7 +4,6 @@ using UnityEngine;
 using UnityEngine.InputSystem;
 public class PlayerInventory : MonoBehaviour
 {
-    public PlayerAction PlayerAction => _playerAction;
     public int PlayerIndex => _playerIndex;
 
     [SerializeField]
@@ -18,8 +17,8 @@ public class PlayerInventory : MonoBehaviour
 
     private List<RectTransform> _hotbarFrameTransforms = new List<RectTransform>();
 
-    private PlayerAction _playerAction;
     private Inventory _inventory;
+    private PlayerInput _playerInput;
 
     private bool _isInventoryOpen;
     private float _frameDegree;
@@ -48,14 +47,20 @@ public class PlayerInventory : MonoBehaviour
 
         if (_isInventoryOpen)
         {
+            UIStateVisibility.Instance.Hide("player_hud");
+
             Show(_inventoryHandler.GetComponent<CanvasGroup>());
             Hide(_hotbarHandler.GetComponent<CanvasGroup>());
+
             Time.timeScale = 0;
         }
         else
         {
+            UIStateVisibility.Instance.Show("player_hud");
+
             Show(_hotbarHandler.GetComponent<CanvasGroup>());
             Hide(_inventoryHandler.GetComponent<CanvasGroup>());
+
             Time.timeScale = 1;
         }
     }
@@ -69,14 +74,14 @@ public class PlayerInventory : MonoBehaviour
 
     public void Show(CanvasGroup canvasGroup)
     {
-        canvasGroup.interactable = true;
         canvasGroup.alpha = 1f;
+        canvasGroup.interactable = true;
         canvasGroup.blocksRaycasts = true;
     }
 
     private void Awake()
     {
-        _playerAction = new PlayerAction();
+        _playerInput = PlayerInput.GetPlayerByIndex(_playerIndex);
     }
 
     private void Start()
@@ -180,15 +185,16 @@ public class PlayerInventory : MonoBehaviour
 
     private void OnEnable()
     {
-        _playerAction.Enable();
-        _playerAction.Ground.Inventory.started += OnInventory;
-        _playerAction.Ground.Hotbar.started += OnHotbar;
+        _playerInput.actions["Inventory"].started += OnInventory;
+        _playerInput.actions["Hotbar"].started += OnHotbar;
     }
 
     private void OnDisable()
     {
-        _playerAction.Disable();
-        _playerAction.Ground.Inventory.started -= OnInventory;
-        _playerAction.Ground.Hotbar.started -= OnHotbar;
+        if (_playerInput != null)
+        {
+            _playerInput.actions["Inventory"].started -= OnInventory;
+            _playerInput.actions["Hotbar"].started -= OnHotbar;
+        }
     }
 }
