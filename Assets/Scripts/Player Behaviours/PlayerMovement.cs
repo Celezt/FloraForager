@@ -14,7 +14,7 @@ public class PlayerMovement : MonoBehaviour
     /// <summary>
     /// Unprocessed input direction.
     /// </summary>
-    public Vector3 RawDirection => _rawInputValue;
+    public Vector3 RawInputValue => _rawInputValue;
     /// <summary>
     /// Forward direction accounting for ground normal.
     /// </summary>
@@ -61,10 +61,10 @@ public class PlayerMovement : MonoBehaviour
     /// <summary>
     /// Player's unlerped forward direction relative to the camera or the target. Never zero.
     /// </summary>
-    public Vector2 RelativeForward
+    public Vector3 RelativeForward
     {
-        get => _relativeForward.xz();
-        set => _relativeForward = value != Vector2.zero ? value.normalized.xz() : _relativeForward;
+        get => _relativeForward;
+        set => _relativeForward = value != Vector3.zero ? value.normalized : _relativeForward;
     }
     /// <summary>
     /// Unlerped rotation
@@ -128,7 +128,7 @@ public class PlayerMovement : MonoBehaviour
     private PlayerInput _playerInput;
 
     /// <summary>
-    /// Instantly set forward direction.
+    /// Instantly set relative forward direction.
     /// </summary>
     /// <param name="forward">Direction.</param>
     public void SetDirection(Vector2 forward)
@@ -176,7 +176,7 @@ public class PlayerMovement : MonoBehaviour
 
     private void Start()
     {
-        DebugLogConsole.AddCommandInstance("player.direction", "Sets player's forward direction value", nameof(SetDirection), this);
+        DebugLogConsole.AddCommandInstance("player.direction", "Sets player's relative forward direction value", nameof(SetDirection), this);
         DebugLogConsole.AddCommandInstance("player.speed", "Sets player's base speed value", nameof(SetBaseSpeed), this);
         DebugLogConsole.AddCommandInstance("player.run", "Sets player's run multiplier", nameof(SetRunMultiplier), this);
         DebugLogConsole.AddCommandInstance("player.drag", "Sets player's drag value", nameof(SetDrag), this);
