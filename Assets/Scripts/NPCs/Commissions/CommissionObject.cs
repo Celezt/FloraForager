@@ -16,17 +16,17 @@ public class CommissionObject : MonoBehaviour
 
     public void Select()
     {
-        _Text.color = Color.red;
+        _Text.color = _NormalColor + new Color(-0.3f, -0.3f, -0.3f, 1.0f);
         CommissionLog.Instance.ShowDescription(Commission);
     }
 
     public void Deselect()
     {
-        _Text.color = (Commission.IsCompleted) ? Color.green : _NormalColor;
+        _Text.color = (Commission.IsCompleted) ? _NormalColor + new Color(-0.2f, 0.5f, -0.2f, 1.0f) : _NormalColor;
     }
 
     public void IsCompleted()
     {
-        _Text.color = (Commission.IsCompleted) ? Color.green : _NormalColor;
+        _Text.color = (Commission.IsCompleted) ? _NormalColor + new Color(-0.2f, 0.5f, -0.2f, 1.0f) : _NormalColor;
     }
 }

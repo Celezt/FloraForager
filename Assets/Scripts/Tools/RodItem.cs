@@ -83,7 +83,7 @@ public class RodItem : IUse, IStar, IValue
 
         int fishBaitIndex = items.First().Item1; // select first found bait to use
 
-        FishBait fishBait = ItemTypeSettings.Instance.ItemTypeChunk[inventory.Get(fishBaitIndex).ID].Behaviour as FishBait;
+        FishBaitItem fishBait = ItemTypeSettings.Instance.ItemTypeChunk[inventory.Get(fishBaitIndex).ID].Behaviour as FishBaitItem;
         RodItem rodItem = ItemTypeSettings.Instance.ItemTypeChunk[context.id].Behaviour as RodItem;
 
         string fishID = FishPool.Instance.GetFish(fishBait);
@@ -98,6 +98,8 @@ public class RodItem : IUse, IStar, IValue
 
         void PlayAction()
         {
+            UIStateVisibility.Instance.Hide("inventory");
+
             PlayerInput.GetPlayerByIndex(context.playerIndex).DeactivateInput();
 
             fishingManager.OnCatchCallback -= CatchAction;
@@ -109,6 +111,7 @@ public class RodItem : IUse, IStar, IValue
         };
         void CatchAction()
         {
+            UIStateVisibility.Instance.Show("inventory");
             PlayerInput.GetPlayerByIndex(context.playerIndex).ActivateInput();
 
             inventory.RemoveAt(fishBaitIndex, 1);
@@ -118,6 +121,7 @@ public class RodItem : IUse, IStar, IValue
         };
         void FleeAction()
         {
+            UIStateVisibility.Instance.Show("inventory");
             PlayerInput.GetPlayerByIndex(context.playerIndex).ActivateInput();
 
             inventory.RemoveAt(fishBaitIndex, 1);

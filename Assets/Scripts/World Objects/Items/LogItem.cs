@@ -13,9 +13,9 @@ public class LogItem : IUse
     [OdinSerialize, PropertyOrder(int.MinValue + 1)]
     public float Cooldown { get; set; } = 0.5f;
 
-    [OdinSerialize, AssetList(Path = "Data/Dialogues")]
+    [SerializeField, AssetList(Path = "Data/Dialogues"), AssetsOnly]
     private TextAsset _LogText;
-    [OdinSerialize, Tooltip("[optional] add more aliases when reading the log")]
+    [SerializeField, Tooltip("[optional] add more aliases when reading the log")]
     private string[] _AdditionalAliases = new string[1];
 
     void IItem.OnInitialize(ItemTypeContext context)
@@ -51,9 +51,12 @@ public class LogItem : IUse
         if (_AdditionalAliases != null)
             aliases = aliases.Concat(_AdditionalAliases).ToArray();
 
-        DialogueManager.GetByIndex(context.playerIndex).StartDialogue(_LogText.name, aliases).Completed += (DialogueManager manager) =>
+        DialogueManager.GetByIndex(context.playerIndex).StartDialogue(_LogText.name, aliases).Completed += CompleteAction;
+
+        void CompleteAction(DialogueManager manager)
         {
             playerInput.ActivateInput();
+            manager.Completed -= CompleteAction;
         };
     }
 }

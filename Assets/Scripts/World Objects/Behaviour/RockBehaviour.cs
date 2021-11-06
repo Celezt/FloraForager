@@ -23,7 +23,6 @@ public class RockBehaviour : MonoBehaviour, IStreamable<RockBehaviour.Data>, IUs
         Data data = state as Data;
         _data = data;
     }
-
     void IStreamable.OnBeforeSaving()
     {
 

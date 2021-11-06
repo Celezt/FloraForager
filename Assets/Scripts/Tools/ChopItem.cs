@@ -7,7 +7,7 @@ using UnityEditor;
 using UnityEngine.InputSystem;
 using System.Linq;
 
-public class ChopItem : IItem, IUse, IDestructor, IStar, IValue
+public class ChopItem : IUse, IDestructor, IStar, IValue
 {
     [OdinSerialize, PropertyOrder(float.MinValue)]
     int IItem.ItemStack { get; set; } = 1;

@@ -4,7 +4,7 @@ using UnityEngine;
 using Sirenix.Serialization;
 using Sirenix.OdinInspector;
 
-public class FishBait : IItem, IBait, IStar
+public class FishBaitItem : IItem, IBait, IStar
 {
     [OdinSerialize, PropertyOrder(int.MinValue)]
     int IItem.ItemStack { get; set; } = 64;

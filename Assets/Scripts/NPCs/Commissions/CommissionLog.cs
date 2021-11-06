@@ -22,27 +22,28 @@ public class CommissionLog : Singleton<CommissionLog>
 
     private CanvasGroup _CanvasGroup;
 
-    private PlayerInput _PlayerInput;
+    private PlayerAction _PlayerAction;
 
     private void Awake()
     {
         _CanvasGroup = GetComponent<CanvasGroup>();
         _CanvasGroup.alpha = 0.0f;
 
-        _PlayerInput = PlayerInput.GetPlayerByIndex(0);
+        _PlayerAction = new PlayerAction();
 
         SceneManager.sceneLoaded += OnSceneLoaded;
     }
 
     private void OnEnable()
     {
-        _PlayerInput.actions["CommissionLog"].started += OnOpenExit;
+        _PlayerAction.Enable();
+        _PlayerAction.Ground.CommissionLog.started += OnOpenExit;
     }
 
     private void OnDisable()
     {
-        if (_PlayerInput != null)
-            _PlayerInput.actions["CommissionLog"].started -= OnOpenExit;
+        _PlayerAction.Disable();
+        _PlayerAction.Ground.CommissionLog.started -= OnOpenExit;
     }
 
     private void Update()
@@ -136,28 +137,27 @@ public class CommissionLog : Singleton<CommissionLog>
 
         _Selected = commission;
 
-        string objectives = "<b>Objectives</b>\n<size=20>";
+        string objectives = "<u><b>Objectives</b></u>\n<size=22>";
         commission.Objectives.ForEach(o =>
         {
             objectives += o.Status + '\n';
         });
         objectives += "</size>";
 
-        string rewards = "<b>Rewards</b>\n<size=20>";
+        string rewards = "<u><b>Rewards</b></u>\n<size=22>";
         foreach (ItemAsset reward in commission.CommissionData.Rewards)
         {
             rewards += reward.Amount + " " + ItemTypeSettings.Instance.ItemNameChunk[reward.ID] + "\n";
         }
         rewards += "</size>";
 
-        string daysLeft = "<b>Time limit</b>\n<size=20>" + commission.DaysLeft.ToString() + " Days</size>";
+        string daysLeft = "<u><b>Time limit</b></u>\n<size=22>" + commission.DaysLeft.ToString() + " Days</size>";
 
-        string giver = "<b>Giver</b>\n<size=20>" + commission.Giver + "</size>";
+        string giver = "<u><b>Giver</b></u>\n<size=22>" + commission.Giver + "</size>";
 
         string completed = commission.IsCompleted ? "<color=green>(Complete)</color>" : string.Empty;
 
-        _Description.text = string.Format("<b>{0}</b>\n<size=20>{1}</size>\n\n{2}\n{3}\n{4}\n\n{5}\n\n{6}",
-            commission.CommissionData.Title,
+        _Description.text = string.Format("<u><b>Description</b></u>\n<size=22>{0}</size>\n\n{1}\n{2}\n{3}\n\n{4}\n\n{5}",
             commission.CommissionData.Description,
             objectives, rewards, daysLeft, giver, completed);
     }

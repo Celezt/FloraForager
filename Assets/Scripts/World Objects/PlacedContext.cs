@@ -11,6 +11,7 @@ public struct PlacedContext
     public readonly string name;
     public readonly string id;
     public readonly int playerIndex;
+    public readonly string address;
 
     internal PlacedContext(
     IItem item,
@@ -19,7 +20,8 @@ public struct PlacedContext
     UseBehaviour behaviour,
     string name,
     string id,
-    int playerIndex)
+    int playerIndex,
+    string address)
     {
         this.item = item;
         this.labels = labels;
@@ -28,5 +30,6 @@ public struct PlacedContext
         this.name = name;
         this.id = id;
         this.playerIndex = playerIndex;
+        this.address = address;
     }
 }
