@@ -1,3 +1,4 @@
+using System.Linq;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -10,7 +11,9 @@ public class PauseMenu : MonoBehaviour
     private CanvasGroup _CanvasGroup;
 
     private PlayerAction _PlayerAction;
+
     private float _CurrentTimeScale;
+    private string[] _ShownStates;
 
     private void Awake()
     {
@@ -46,14 +49,15 @@ public class PauseMenu : MonoBehaviour
         if (_CanvasGroup.alpha == 1.0f)
         {
             _CurrentTimeScale = Time.timeScale;
-            UIStateVisibility.Instance.Hide("inventory", "player_hud");
+            _ShownStates = UIStateVisibility.Instance.GetShownStates();
 
             Time.timeScale = 0.0f;
+            UIStateVisibility.Instance.Hide("inventory", "player_hud");
         }
         else
         {
             Time.timeScale = _CurrentTimeScale;
-            UIStateVisibility.Instance.Show("inventory", "player_hud");
+            UIStateVisibility.Instance.Show(_ShownStates);
         }
     }
 

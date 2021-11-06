@@ -16,8 +16,11 @@ public class HarvestScythe : IHarvest
     public bool Harvest(UsedContext context, Flora flora)
     {
         if (flora.Completed)
-            context.Drop(Rewards);
+        {
+            context.Drop(flora.Cell.HeldObject.transform.position, Rewards);
+            return true;
+        }
 
-        return true;
+        return false;
     }
 }
