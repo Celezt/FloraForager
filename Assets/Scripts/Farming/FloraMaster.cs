@@ -64,7 +64,7 @@ public class FloraMaster : SerializedScriptableSingleton<FloraMaster>, IStreamer
         if (cell == null || cell.Occupied)
             return false;
 
-        if (cell.Type != CellType.Soil)
+        if (cell.Type != CellType.Dirt)
             return false;
 
         string key = floraName.ToLower();
@@ -88,7 +88,7 @@ public class FloraMaster : SerializedScriptableSingleton<FloraMaster>, IStreamer
         if (cell == null || cell.Occupied)
             return false;
 
-        if (cell.Type != CellType.Soil)
+        if (cell.Type != CellType.Dirt)
             return false;
 
         Flora flora = new Flora(floraInfo, cell.Local);
@@ -149,7 +149,7 @@ public class FloraMaster : SerializedScriptableSingleton<FloraMaster>, IStreamer
 
         Dictionary<string, object> streamables = (Dictionary<string, object>)GameManager.Stream.Get(_Guid);
 
-        foreach(var item in streamables)
+        foreach (var item in streamables)
         {
             if (!streamables.TryGetValue(item.Key, out object value))
                 continue;

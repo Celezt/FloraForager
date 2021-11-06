@@ -13,11 +13,12 @@ public class LoadScene : Singleton<LoadScene>
     [SerializeField]
     private Slider _ProgressSlider;
 
+    public static System.Action OnSceneBeingLoaded = delegate { };
+    public static string ObjectToLoadPlayer = string.Empty;
+
     private CanvasGroup _CanvasGroup;
 
     private bool _SceneIsLoading = false;
-
-    public static string ObjectToLoadPlayer = string.Empty;
 
     private void Awake()
     {
@@ -56,6 +57,8 @@ public class LoadScene : Singleton<LoadScene>
     {
         _ProgressSlider.value = 0.0f;
         yield return new WaitForSeconds(0.25f);
+
+        OnSceneBeingLoaded.Invoke();
 
         AsyncOperation asyncLoad = SceneManager.LoadSceneAsync(sceneName, LoadSceneMode.Single);
 

@@ -12,13 +12,14 @@ public class Flora : IStreamable<Flora.Data>
 
     public class Data
     {
-        public string Name;
         public Vector2Int CellPosition;
+        public int SceneIndex;
+
+        public string Name;
         public IHarvest HarvestMethod;
         public int Stage;
         public int Mesh;
         public bool Watered;
-        public int SceneIndex;
     }
     public Data OnUpload() => _Data;
     public void OnLoad(object state)
