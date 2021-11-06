@@ -51,6 +51,9 @@ public class StreamableBehaviour : MonoBehaviour, IStreamer, IStreamable<Streama
         _guid = GetComponent<GuidComponent>().Guid;
 
         GameManager.AddStreamer(this);
+
+        if (GameManager.Stream.StreamedData.ContainsKey(_guid))
+            Load();
     }
 
     public void UpLoad()
@@ -68,7 +71,7 @@ public class StreamableBehaviour : MonoBehaviour, IStreamer, IStreamable<Streama
         {
             string typeName = stream.GetType().ToString();
 
-            Dictionary<string, object>  streamables = (Dictionary<string, object>)GameManager.Stream.Get(_guid);
+            Dictionary<string, object> streamables = (Dictionary<string, object>)GameManager.Stream.Get(_guid);
 
             if (streamables.TryGetValue(typeName, out object value))
                 stream.OnLoad(value);

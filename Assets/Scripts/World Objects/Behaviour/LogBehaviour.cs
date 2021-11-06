@@ -1,9 +1,11 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.InputSystem;
+using MyBox;
 
-public class LogBehaviour : StreamableBehaviour, IInteractable
+public class LogBehaviour : MonoBehaviour, IInteractable
 {
     [SerializeField]
     private string _LogID;

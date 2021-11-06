@@ -98,6 +98,15 @@ public partial class @PlayerAction : IInputActionCollection2, IDisposable
                     ""processors"": """",
                     ""interactions"": """",
                     ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""Pause"",
+                    ""type"": ""Button"",
+                    ""id"": ""f291d24c-1e81-4153-839f-701f89134a58"",
+                    ""expectedControlType"": ""Button"",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
                 }
             ],
             ""bindings"": [
@@ -373,6 +382,17 @@ public partial class @PlayerAction : IInputActionCollection2, IDisposable
                     ""processors"": ""Scale(factor=10)"",
                     ""groups"": ""KeyboardAndMouse"",
                     ""action"": ""Hotbar"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""f0daa757-a499-4c68-9346-e70192738e51"",
+                    ""path"": ""<Keyboard>/escape"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": ""KeyboardAndMouse"",
+                    ""action"": ""Pause"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
                 }
@@ -864,6 +884,7 @@ public partial class @PlayerAction : IInputActionCollection2, IDisposable
         m_Ground_Inventory = m_Ground.FindAction("Inventory", throwIfNotFound: true);
         m_Ground_Hotbar = m_Ground.FindAction("Hotbar", throwIfNotFound: true);
         m_Ground_CommissionLog = m_Ground.FindAction("CommissionLog", throwIfNotFound: true);
+        m_Ground_Pause = m_Ground.FindAction("Pause", throwIfNotFound: true);
         // Fishing
         m_Fishing = asset.FindActionMap("Fishing", throwIfNotFound: true);
         m_Fishing_Drag = m_Fishing.FindAction("Drag", throwIfNotFound: true);
@@ -946,6 +967,7 @@ public partial class @PlayerAction : IInputActionCollection2, IDisposable
     private readonly InputAction m_Ground_Inventory;
     private readonly InputAction m_Ground_Hotbar;
     private readonly InputAction m_Ground_CommissionLog;
+    private readonly InputAction m_Ground_Pause;
     public struct GroundActions
     {
         private @PlayerAction m_Wrapper;
@@ -958,6 +980,7 @@ public partial class @PlayerAction : IInputActionCollection2, IDisposable
         public InputAction @Inventory => m_Wrapper.m_Ground_Inventory;
         public InputAction @Hotbar => m_Wrapper.m_Ground_Hotbar;
         public InputAction @CommissionLog => m_Wrapper.m_Ground_CommissionLog;
+        public InputAction @Pause => m_Wrapper.m_Ground_Pause;
         public InputActionMap Get() { return m_Wrapper.m_Ground; }
         public void Enable() { Get().Enable(); }
         public void Disable() { Get().Disable(); }
@@ -991,6 +1014,9 @@ public partial class @PlayerAction : IInputActionCollection2, IDisposable
                 @CommissionLog.started -= m_Wrapper.m_GroundActionsCallbackInterface.OnCommissionLog;
                 @CommissionLog.performed -= m_Wrapper.m_GroundActionsCallbackInterface.OnCommissionLog;
                 @CommissionLog.canceled -= m_Wrapper.m_GroundActionsCallbackInterface.OnCommissionLog;
+                @Pause.started -= m_Wrapper.m_GroundActionsCallbackInterface.OnPause;
+                @Pause.performed -= m_Wrapper.m_GroundActionsCallbackInterface.OnPause;
+                @Pause.canceled -= m_Wrapper.m_GroundActionsCallbackInterface.OnPause;
             }
             m_Wrapper.m_GroundActionsCallbackInterface = instance;
             if (instance != null)
@@ -1019,6 +1045,9 @@ public partial class @PlayerAction : IInputActionCollection2, IDisposable
                 @CommissionLog.started += instance.OnCommissionLog;
                 @CommissionLog.performed += instance.OnCommissionLog;
                 @CommissionLog.canceled += instance.OnCommissionLog;
+                @Pause.started += instance.OnPause;
+                @Pause.performed += instance.OnPause;
+                @Pause.canceled += instance.OnPause;
             }
         }
     }
@@ -1189,6 +1218,7 @@ public partial class @PlayerAction : IInputActionCollection2, IDisposable
         void OnInventory(InputAction.CallbackContext context);
         void OnHotbar(InputAction.CallbackContext context);
         void OnCommissionLog(InputAction.CallbackContext context);
+        void OnPause(InputAction.CallbackContext context);
     }
     public interface IFishingActions
     {

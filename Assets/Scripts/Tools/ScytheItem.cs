@@ -8,7 +8,7 @@ using System.Linq;
 using Celezt.Mathematics;
 using MyBox;
 
-public class ScytheItem : IUse, IItem, IDestructor, IStar, IValue
+public class ScytheItem : IUse, IDestructor, IStar, IValue
 {
     [OdinSerialize, PropertyOrder(float.MinValue)]
     int IItem.ItemStack { get; set; } = 1;
