@@ -6,6 +6,7 @@ using UnityEngine.InputSystem;
 using MyBox;
 using IngameDebugConsole;
 using Celezt.Time;
+using Celezt.Mathematics;
 using System.Linq;
 using Sirenix.OdinInspector;
 
@@ -14,7 +15,7 @@ public class PlayerMovement : MonoBehaviour
     /// <summary>
     /// Unprocessed input direction.
     /// </summary>
-    public Vector3 RawInputValue => _rawInputValue;
+    public Vector3 RawInputValue => _activeInput.IsNullOrEmpty() ? _rawInputValue : Vector3.zero;
     /// <summary>
     /// Forward direction accounting for ground normal.
     /// </summary>
@@ -90,6 +91,7 @@ public class PlayerMovement : MonoBehaviour
 
     [SerializeField] private Rigidbody _rigidbody;
     [SerializeField] private Collider _collider;
+    [SerializeField] private AnimationBehaviour _animationBehaviour;
     [SerializeField] private PivotMode _pivotMode;
     [SerializeField, ConditionalField(nameof(_pivotMode), false, PivotMode.Camera)] private Camera _camera;
     [SerializeField, ConditionalField(nameof(_pivotMode), false, PivotMode.Target)] private Transform _pivot;
@@ -121,6 +123,7 @@ public class PlayerMovement : MonoBehaviour
     private Vector3 _forward;
     private Quaternion _rotation;
     private float _groundAngle;
+    private float _speed01;
     private bool _isRunning;
     private bool _isGrounded;
     private bool _isOnLedge;
@@ -187,12 +190,11 @@ public class PlayerMovement : MonoBehaviour
     private void FixedUpdate()
     {
         Vector3 position = transform.position;
+        Vector3 inputValue = _activeInput.IsNullOrEmpty() ? _rawInputValue : Vector3.zero;    // If input is enabled.
+        float fixedDeltaTime = Time.fixedDeltaTime;
 
         void Movement()
         {
-            float fixedDeltaTime = Time.fixedDeltaTime;
-            Vector3 inputValue = _activeInput.IsNullOrEmpty() ? _rawInputValue : Vector3.zero;    // If input is enabled.
-
             void GetDirection(Vector3 pivotForward, Vector3 pivotRight)
             {
                 pivotForward.y = 0f;
@@ -291,9 +293,20 @@ public class PlayerMovement : MonoBehaviour
             _collider.material = _isGrounded ? _groundPhysicMaterial : _fallPhysicMaterial;
         }
 
+        void Animation()
+        {
+            if (_animationBehaviour == null)
+                return;
+
+            _speed01 = Mathf.Lerp(_speed01, _isRunning ? cmath.Map(inputValue.magnitude, new MinMaxFloat(0, 1), new MinMaxFloat(0.2f, 1)) 
+                : cmath.Map(inputValue.magnitude, new MinMaxFloat(0, 1), new MinMaxFloat(0, 0.2f)), _drag * fixedDeltaTime);
+            _animationBehaviour.Velocity = _speed01;
+        }
+
         Movement();
         SlopeMovement();
         PhysicMaterialToUse();
+        Animation();
     }
 
     private void SetBaseSpeed(float speed) => _baseSpeed = speed;
