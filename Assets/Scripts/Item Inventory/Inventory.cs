@@ -308,6 +308,11 @@ public class Inventory : ScriptableObject
         return found;
     }
 
+    private void Serialize()
+    {
+
+    }
+
     private void Deserialize()
     {
         Addressables.LoadAssetAsync<TextAsset>("inventory").Completed += (handle) =>

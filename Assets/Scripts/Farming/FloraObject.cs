@@ -60,8 +60,6 @@ public class FloraObject : MonoBehaviour, IUsable
 
     public void OnUse(UsedContext context)
     {
-        Flora.OnHarvest.Invoke();
-
         if (Flora.Harvest(context))
         {
             Destroy(_Flora.Cell.Free());

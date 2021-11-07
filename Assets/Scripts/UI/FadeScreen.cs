@@ -7,9 +7,9 @@ using MyBox;
 public class FadeScreen : Singleton<FadeScreen>
 {
     [HideInInspector]
-    public System.Action OnStartFade = delegate { };
+    public event System.Action OnStartFade = delegate { };
     [HideInInspector]
-    public System.Action OnEndFade = delegate { };
+    public event System.Action OnEndFade = delegate { };
 
     private CanvasGroup _CanvasGroup;
 

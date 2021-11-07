@@ -13,7 +13,7 @@ public class LoadScene : Singleton<LoadScene>
     [SerializeField]
     private Slider _ProgressSlider;
 
-    public static System.Action OnSceneBeingLoaded = delegate { };
+    public static event System.Action OnSceneBeingLoaded = delegate { };
     public static string ObjectToLoadPlayer = string.Empty;
 
     private CanvasGroup _CanvasGroup;
