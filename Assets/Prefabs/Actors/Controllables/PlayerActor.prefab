@@ -279,7 +279,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _rigidbody: {fileID: 2699139005166002770}
   _collider: {fileID: 8143937787667907710}
-  _animationBehaviour: {fileID: 3235910350969906420}
+  _animationBehaviour: {fileID: 6224667691323518546}
   _pivotMode: 1
   _camera: {fileID: 0}
   _pivot: {fileID: 0}
@@ -335,7 +335,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 693ae75940fef8c49ae0b265687be59b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _StaminaSlider: {fileID: 0}
   _MaxStamina: 100
   _WalkingDrain: 0.04
   _RunningDrain: 0.09
@@ -432,7 +431,7 @@ Animator:
   m_HasTransformHierarchy: 1
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorControllerStateOnDisable: 0
---- !u!114 &3235910350969906420
+--- !u!114 &6224667691323518546
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -444,8 +443,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1569bd37b9bddb14988c24a7fc71737a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _headTransform: {fileID: 5274020111453889136}
   _animator: {fileID: 6835544909525107328}
+  _target: {x: 0, y: 0, z: 0}
 --- !u!1001 &8041753996542739196
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -635,10 +634,5 @@ GameObject:
 --- !u!4 &7498693329119307031 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: -8679921383154817045, guid: 2b038fae91686c14caa74e9ba6937122, type: 3}
-  m_PrefabInstance: {fileID: 8041753996542739196}
-  m_PrefabAsset: {fileID: 0}
---- !u!4 &5274020111453889136 stripped
-Transform:
-  m_CorrespondingSourceObject: {fileID: -6437022662903750516, guid: 2b038fae91686c14caa74e9ba6937122, type: 3}
   m_PrefabInstance: {fileID: 8041753996542739196}
   m_PrefabAsset: {fileID: 0}
