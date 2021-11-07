@@ -21,7 +21,7 @@ public class SleepSchedule : Singleton<SleepSchedule>
     private bool _IsSleeping = false;  // if the player is currently sleeping
     private float _NightToMorning = 0; // total time in hours for player to sleep
 
-    public System.Action OnSlept = delegate { };
+    public event System.Action OnSlept = delegate { };
 
     public float MorningTime => _MorningTime;
     public float NightTime => _NightTime;

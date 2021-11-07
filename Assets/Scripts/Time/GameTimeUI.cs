@@ -5,16 +5,16 @@ using UnityEngine.UI;
 using TMPro;
 using MyBox;
 
-public class GameTimeUI : Singleton<GameTimeUI>
+public class GameTimeUI : MonoBehaviour
 {
     [SerializeField] 
     private TMP_Text _Date;
     [SerializeField] 
     private TMP_Text _Time;
 
-    public void UpdateText(string date, string time)
+    public void LateUpdate()
     {
-        _Date.text = date;
-        _Time.text = time;
+        _Date.text = GameTime.Instance.Weekday;
+        _Time.text = GameTime.Instance.DigitalTime;
     }
 }

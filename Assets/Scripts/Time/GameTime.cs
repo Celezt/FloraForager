@@ -124,8 +124,6 @@ public class GameTime : SerializedScriptableSingleton<GameTime>, IStreamer, IStr
 
         _DayCalendar = 1 + Day % _DaysPerMonth;
         _MonthCalendar = 1 + Month % _MonthsPerYear;
-
-        GameTimeUI.Instance.UpdateText(Weekday, DigitalTime);
     }
 
     /// <summary>
