@@ -96,6 +96,9 @@ public class RodItem : IUse, IStar, IValue
         fishingManager.OnPlayCallback += PlayAction;
         fishingManager.StartFishing(fishID, context.id);
 
+        PlayerMovement playerMovement = PlayerInput.GetPlayerByIndex(context.playerIndex).GetComponent<PlayerMovement>();
+        playerMovement.SetDirection((hitInfo.point - context.transform.position).normalized.xz());
+
         void PlayAction()
         {
             UIStateVisibility.Instance.Hide("inventory");

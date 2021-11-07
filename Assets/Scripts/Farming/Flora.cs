@@ -31,10 +31,10 @@ public class Flora : IStreamable<Flora.Data>
 
     }
 
-    public System.Action OnGrow = delegate { };
-    public System.Action OnWatered = delegate { };
-    public System.Action OnCompleted = delegate { };
-    public System.Action OnHarvest = delegate { };
+    public event System.Action OnGrow = delegate { };
+    public event System.Action OnWatered = delegate { };
+    public event System.Action OnCompleted = delegate { };
+    public event System.Action OnHarvest = delegate { };
 
     private MeshFilter[] _StagesMeshFilters;
     private MeshRenderer[] _StagesMeshRenderers;
@@ -98,6 +98,7 @@ public class Flora : IStreamable<Flora.Data>
 
     public bool Harvest(UsedContext context)
     {
+        OnHarvest.Invoke();
         return _Data.HarvestMethod.Harvest(context, this);
     }
 }

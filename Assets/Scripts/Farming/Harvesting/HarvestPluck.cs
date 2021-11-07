@@ -18,7 +18,7 @@ public class HarvestPluck : IHarvest
     private int[] _Pluck;
 
     [HideInInspector]
-    public System.Action OnEmptied = delegate { };
+    public event System.Action OnEmptied = delegate { };
 
     public void Initialize(FloraInfo data, IHarvest harvestData)
     {

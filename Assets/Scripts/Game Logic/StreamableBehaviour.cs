@@ -50,10 +50,10 @@ public class StreamableBehaviour : MonoBehaviour, IStreamer, IStreamable<Streama
     {
         _guid = GetComponent<GuidComponent>().Guid;
 
-        GameManager.AddStreamer(this);
-
         if (GameManager.Stream.StreamedData.ContainsKey(_guid))
             Load();
+
+        GameManager.AddStreamer(this);
     }
 
     public void UpLoad()
