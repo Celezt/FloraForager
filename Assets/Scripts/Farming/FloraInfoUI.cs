@@ -11,13 +11,12 @@ using TMPro;
 
 public class FloraInfoUI : MonoBehaviour
 {
-    [SerializeField] private LayerMask _LayerMasks;
     [SerializeField] private SpriteAtlas _WaterDropAtlas;
     [SerializeField] private TMP_Text _Name;
     [SerializeField] private TMP_Text _Status;
     [SerializeField] private TMP_Text _Stage;
     [SerializeField] private Image _WateredImage;
-    [SerializeField] private float _HeightOffset = 2.0f;
+    [SerializeField] private float _HeightOffset = 0.5f;
 
     private CanvasGroup _CanvasGroup;
 
@@ -66,7 +65,9 @@ public class FloraInfoUI : MonoBehaviour
     private void Show(FloraObject flora)
     {
         _FloraObject = flora;
-        _FloraBounds = flora.GetComponent<MeshFilter>().mesh.bounds;
+
+        if (flora.TryGetComponent(out MeshFilter meshFilter))
+            _FloraBounds = meshFilter.mesh.bounds;
 
         UpdateWindow();
 
@@ -76,6 +77,8 @@ public class FloraInfoUI : MonoBehaviour
     private void Hide()
     {
         _FloraObject = null;
+        _FloraBounds = new Bounds();
+
         _CanvasGroup.alpha = 0.0f;
     }
 
@@ -98,7 +101,7 @@ public class FloraInfoUI : MonoBehaviour
     private string GetStatus()
     {
         if (_FloraObject.Flora.Completed)
-            return "Completed";
+            return "Done";
         else if (_FloraObject.Flora.FloraData.Watered)
             return "Growing";
         else 

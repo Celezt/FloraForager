@@ -76,13 +76,13 @@ public class PauseMenu : MonoBehaviour
         UIStateVisibility.Instance.Show("confirm_menu");
 
         ConfirmMenu.Instance.SetMenu("Return to Main Menu?", 
-        new UnityAction(() => 
-        {
-            SceneManager.LoadScene("MainMenu");
-        }), 
-        new UnityAction(() => 
-        {
-            UIStateVisibility.Instance.Hide("confirm_menu");
-        }));
+            new UnityAction(() => 
+            {
+                SceneManager.LoadScene("MainMenu");
+            }), 
+            new UnityAction(() => 
+            {
+                UIStateVisibility.Instance.Hide("confirm_menu");
+            }));
     }
 }
