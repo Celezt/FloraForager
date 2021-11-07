@@ -91,7 +91,7 @@ public class PlayerMovement : MonoBehaviour
 
     [SerializeField] private Rigidbody _rigidbody;
     [SerializeField] private Collider _collider;
-    [SerializeField] private AnimationBehaviour _animationBehaviour;
+    [SerializeField] private HumanoidAnimationBehaviour _animationBehaviour;
     [SerializeField] private PivotMode _pivotMode;
     [SerializeField, ConditionalField(nameof(_pivotMode), false, PivotMode.Camera)] private Camera _camera;
     [SerializeField, ConditionalField(nameof(_pivotMode), false, PivotMode.Target)] private Transform _pivot;
@@ -298,8 +298,8 @@ public class PlayerMovement : MonoBehaviour
             if (_animationBehaviour == null)
                 return;
 
-            _speed01 = Mathf.Lerp(_speed01, _isRunning ? cmath.Map(inputValue.magnitude, new MinMaxFloat(0, 1), new MinMaxFloat(0.2f, 1)) 
-                : cmath.Map(inputValue.magnitude, new MinMaxFloat(0, 1), new MinMaxFloat(0, 0.2f)), _drag * fixedDeltaTime);
+            _speed01 = Mathf.Lerp(_speed01, _isRunning ? cmath.Map(inputValue.magnitude, new MinMaxFloat(0, 1), new MinMaxFloat(0.3f, 1)) 
+                : cmath.Map(inputValue.magnitude, new MinMaxFloat(0, 1), new MinMaxFloat(0, 0.3f)), _drag * fixedDeltaTime);
             _animationBehaviour.Velocity = _speed01;
         }
 
