@@ -20,9 +20,7 @@ public class LoadSceneTrigger : MonoBehaviour
     [SerializeField]
     private Quaternion _PlayerLoadRotation;
 
-    private GameObject _Player;
     private BoxCollider _Collider;
-
     private bool _NoCollision;
 
     public string ObjectID => _ObjectID;
@@ -33,8 +31,6 @@ public class LoadSceneTrigger : MonoBehaviour
     private void Awake()
     {
         _Collider = GetComponent<BoxCollider>();
-        _Player = PlayerInput.GetPlayerByIndex(0).gameObject;
-
         _NoCollision = true;
     }
 
@@ -49,7 +45,7 @@ public class LoadSceneTrigger : MonoBehaviour
             Collider[] colliders = Physics.OverlapBox(transform.position, _Collider.size / 2.0f, transform.rotation);
             foreach (Collider collider in colliders)
             {
-                if (collider.gameObject == _Player)
+                if (collider.CompareTag("Player"))
                 {
                     _NoCollision = true;
                     break;
@@ -65,7 +61,7 @@ public class LoadSceneTrigger : MonoBehaviour
 
     private void OnTriggerEnter(Collider other)
     {
-        if (FadeScreen.Instance.IsActive || _NoCollision || other.gameObject != _Player)
+        if (FadeScreen.Instance.IsActive || _NoCollision || !other.CompareTag("Player"))
             return;
 
         FadeScreen.Instance.StartFadeIn(1f);
