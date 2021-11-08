@@ -15,7 +15,8 @@ MonoBehaviour:
   serializationData:
     SerializedFormat: 2
     SerializedBytes: 
-    ReferencedUnityObjects: []
+    ReferencedUnityObjects:
+    - {fileID: -7102883963023437372, guid: 71f23000df5978a4797f072ce373111b, type: 3}
     SerializedBytesString: 
     Prefab: {fileID: 0}
     PrefabModificationsReferencedUnityObjects: []
@@ -35,13 +36,16 @@ MonoBehaviour:
       Data: 100
     - Name: IUse.Cooldown
       Entry: 4
-      Data: 0.6
+      Data: 1
     - Name: IDestructor.Damage
       Entry: 4
       Data: 2
+    - Name: _clip
+      Entry: 10
+      Data: 0
     - Name: _stunDuration
       Entry: 4
-      Data: 0.6
+      Data: 1
     - Name: _halfExtents
       Entry: 7
       Data: UnityEngine.Vector3, UnityEngine.CoreModule
