@@ -34,8 +34,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0}
   m_AnchorMax: {x: 0.5, y: 0}
-  m_AnchoredPosition: {x: 0, y: 168.76862}
-  m_SizeDelta: {x: 1200, y: 337.5371}
+  m_AnchoredPosition: {x: 0, y: 20}
+  m_SizeDelta: {x: 1200, y: 340}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &3229370261077358951
 MonoBehaviour:
@@ -498,8 +498,16 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 8629494932851282839, guid: 294476bd6d62e974b98aa7d781c6b673, type: 3}
       propertyPath: m_fontSize
-      value: 51.45
+      value: 48.3
       objectReference: {fileID: 0}
+    - target: {fileID: 8629494932851282839, guid: 294476bd6d62e974b98aa7d781c6b673, type: 3}
+      propertyPath: m_fontAsset
+      value: 
+      objectReference: {fileID: 11400000, guid: 3de56de749fc4914499215788d0b06bb, type: 2}
+    - target: {fileID: 8629494932851282839, guid: 294476bd6d62e974b98aa7d781c6b673, type: 3}
+      propertyPath: m_sharedMaterial
+      value: 
+      objectReference: {fileID: 2100000, guid: 985fc63ab620c9349904e2bd9ecb9c0e, type: 2}
     - target: {fileID: 9209978732451989560, guid: 294476bd6d62e974b98aa7d781c6b673, type: 3}
       propertyPath: m_Name
       value: UINamecard
@@ -759,6 +767,10 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 5830356909527953900}
     m_Modifications:
+    - target: {fileID: 1710193736344431147, guid: 9d75c6149eb0d0f449a9d2597baefb65, type: 3}
+      propertyPath: m_FlexibleWidth
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 1710193736344431147, guid: 9d75c6149eb0d0f449a9d2597baefb65, type: 3}
       propertyPath: m_FlexibleHeight
       value: 0.2
@@ -1237,10 +1249,6 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 9096923240872544947}
     m_Modifications:
-    - target: {fileID: 1710193736344431147, guid: 9d75c6149eb0d0f449a9d2597baefb65, type: 3}
-      propertyPath: m_FlexibleWidth
-      value: 0.3
-      objectReference: {fileID: 0}
     - target: {fileID: 7187814780625911233, guid: 9d75c6149eb0d0f449a9d2597baefb65, type: 3}
       propertyPath: m_Pivot.x
       value: 0.5
@@ -1556,6 +1564,10 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 5830356909527953900}
     m_Modifications:
+    - target: {fileID: 1710193736344431147, guid: 9d75c6149eb0d0f449a9d2597baefb65, type: 3}
+      propertyPath: m_FlexibleWidth
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 1710193736344431147, guid: 9d75c6149eb0d0f449a9d2597baefb65, type: 3}
       propertyPath: m_FlexibleHeight
       value: 0.8

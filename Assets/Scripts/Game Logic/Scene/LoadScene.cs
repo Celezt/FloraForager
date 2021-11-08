@@ -13,11 +13,12 @@ public class LoadScene : Singleton<LoadScene>
     [SerializeField]
     private Slider _ProgressSlider;
 
+    public static event System.Action OnSceneBeingLoaded = delegate { };
+    public static string ObjectToLoadPlayer = string.Empty;
+
     private CanvasGroup _CanvasGroup;
 
     private bool _SceneIsLoading = false;
-
-    public static string ObjectToLoadPlayer = string.Empty;
 
     private void Awake()
     {
@@ -57,6 +58,8 @@ public class LoadScene : Singleton<LoadScene>
         _ProgressSlider.value = 0.0f;
         yield return new WaitForSeconds(0.25f);
 
+        OnSceneBeingLoaded.Invoke();
+
         AsyncOperation asyncLoad = SceneManager.LoadSceneAsync(sceneName, LoadSceneMode.Single);
 
         while (!asyncLoad.isDone)
@@ -73,6 +76,7 @@ public class LoadScene : Singleton<LoadScene>
         if (!string.IsNullOrWhiteSpace(ObjectToLoadPlayer))
         {
             GameObject player = PlayerInput.GetPlayerByIndex(0).gameObject;
+            PlayerMovement playerMovement = player.GetComponent<PlayerMovement>();
             Bounds playerBounds = player.GetComponent<Collider>().bounds;
 
             LoadSceneTrigger[] triggers = FindObjectsOfType<LoadSceneTrigger>();
@@ -81,7 +85,7 @@ public class LoadScene : Singleton<LoadScene>
                 if (trigger.ObjectID == ObjectToLoadPlayer)
                 {
                     player.transform.position = trigger.PlayerPosition + Vector3.up * playerBounds.extents.y;
-                    player.transform.rotation = trigger.PlayerRotation; // TODO: does not work, fix somehow
+                    playerMovement.SetDirection((trigger.PlayerRotation * Vector3.forward).xz()); // TODO: does not work, fix somehow
 
                     break;
                 }

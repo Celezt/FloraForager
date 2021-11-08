@@ -83,9 +83,9 @@ public class GameTime : SerializedScriptableSingleton<GameTime>, IStreamer, IStr
     public int Year { get; private set; }
 
     public string DigitalTime => string.Format(
-        "<mspace=0.60em>{0:00}</mspace>" +
+        "<mspace=0.75em>{0:00}</mspace>" +
         "<mspace=0.30em>:</mspace>" +
-        "<mspace=0.60em>{1:00}</mspace>", _HourClock, _MinuteClock);
+        "<mspace=0.75em>{1:00}</mspace>", _HourClock, _MinuteClock);
     public string Date => string.Format("{0:0000}/{1:00}/{2:00}", 
         Year, _MonthCalendar, _DayCalendar);
     public string Weekday => string.Format("{0} {1:00}/{2:00}", 
@@ -124,8 +124,6 @@ public class GameTime : SerializedScriptableSingleton<GameTime>, IStreamer, IStr
 
         _DayCalendar = 1 + Day % _DaysPerMonth;
         _MonthCalendar = 1 + Month % _MonthsPerYear;
-
-        GameTimeUI.Instance.UpdateText(Weekday, DigitalTime);
     }
 
     /// <summary>

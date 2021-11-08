@@ -23,7 +23,6 @@ public class RockBehaviour : MonoBehaviour, IStreamable<RockBehaviour.Data>, IUs
         Data data = state as Data;
         _data = data;
     }
-
     void IStreamable.OnBeforeSaving()
     {
 
@@ -41,8 +40,7 @@ public class RockBehaviour : MonoBehaviour, IStreamable<RockBehaviour.Data>, IUs
 
         if (_durability <= 0)
         {
-            context.Drop(_drops);
-
+            context.Drop(transform.position, _drops);
             Destroy(gameObject);
         }
     }

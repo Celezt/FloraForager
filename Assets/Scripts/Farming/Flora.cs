@@ -12,13 +12,14 @@ public class Flora : IStreamable<Flora.Data>
 
     public class Data
     {
-        public string Name;
         public Vector2Int CellPosition;
+        public int SceneIndex;
+
+        public string Name;
         public IHarvest HarvestMethod;
         public int Stage;
         public int Mesh;
         public bool Watered;
-        public int SceneIndex;
     }
     public Data OnUpload() => _Data;
     public void OnLoad(object state)
@@ -30,10 +31,10 @@ public class Flora : IStreamable<Flora.Data>
 
     }
 
-    public System.Action OnGrow = delegate { };
-    public System.Action OnWatered = delegate { };
-    public System.Action OnCompleted = delegate { };
-    public System.Action OnHarvest = delegate { };
+    public event System.Action OnGrow = delegate { };
+    public event System.Action OnWatered = delegate { };
+    public event System.Action OnCompleted = delegate { };
+    public event System.Action OnHarvest = delegate { };
 
     private MeshFilter[] _StagesMeshFilters;
     private MeshRenderer[] _StagesMeshRenderers;
@@ -97,6 +98,7 @@ public class Flora : IStreamable<Flora.Data>
 
     public bool Harvest(UsedContext context)
     {
+        OnHarvest.Invoke();
         return _Data.HarvestMethod.Harvest(context, this);
     }
 }

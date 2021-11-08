@@ -18,7 +18,7 @@ public class PlayerInventory : MonoBehaviour
     private List<RectTransform> _hotbarFrameTransforms = new List<RectTransform>();
 
     private Inventory _inventory;
-    private PlayerInput _playerInput;
+    private PlayerAction _playerAction;
 
     private bool _isInventoryOpen;
     private float _frameDegree;
@@ -27,6 +27,9 @@ public class PlayerInventory : MonoBehaviour
 
     public void OnHotbar(InputAction.CallbackContext context)
     {
+        if (DebugManager.DebugMode)
+            return;
+
         float value = context.ReadValue<float>();
 
         if (_isInventoryOpen)
@@ -81,7 +84,7 @@ public class PlayerInventory : MonoBehaviour
 
     private void Awake()
     {
-        _playerInput = PlayerInput.GetPlayerByIndex(_playerIndex);
+        _playerAction = new PlayerAction();
     }
 
     private void Start()
@@ -93,6 +96,7 @@ public class PlayerInventory : MonoBehaviour
         //    Debug.LogError("Player inventory was not found");
 
         PlayerInput playerInput = PlayerInput.GetPlayerByIndex(0);
+
         _playerIndex = playerInput.playerIndex;
         _inventory = playerInput.GetComponent<PlayerInfo>().Inventory;
 
@@ -185,16 +189,15 @@ public class PlayerInventory : MonoBehaviour
 
     private void OnEnable()
     {
-        _playerInput.actions["Inventory"].started += OnInventory;
-        _playerInput.actions["Hotbar"].started += OnHotbar;
+        _playerAction.Enable();
+        _playerAction.Ground.Inventory.started += OnInventory;
+        _playerAction.Ground.Hotbar.started += OnHotbar;
     }
 
     private void OnDisable()
     {
-        if (_playerInput != null)
-        {
-            _playerInput.actions["Inventory"].started -= OnInventory;
-            _playerInput.actions["Hotbar"].started -= OnHotbar;
-        }
+        _playerAction.Disable();
+        _playerAction.Ground.Inventory.started -= OnInventory;
+        _playerAction.Ground.Hotbar.started -= OnHotbar;
     }
 }

@@ -50,17 +50,17 @@ public readonly struct UseContext
     /// Create an instance and place it.
     /// </summary>
     /// <returns>If it was successfully placed.</returns>
-    public bool Place(GameObject orginal, Vector3 position, LayerMask placeMask, bool followNormal = false) => Place(orginal, position, Quaternion.identity, placeMask, followNormal);
+    public bool Place(GameObject original, Vector3 position, LayerMask placeMask, bool followNormal = false) => Place(original, position, Quaternion.identity, placeMask, followNormal);
     /// <summary>
     /// Create an instance and place it.
     /// </summary>
     /// <returns>If it was successfully placed.</returns>
-    public bool Place(GameObject orginal, Vector3 position, Quaternion rotation, LayerMask placeMask, bool followNormal = false)
+    public bool Place(GameObject original, Vector3 position, Quaternion rotation, LayerMask placeMask, bool followNormal = false)
     {
         if (!Physics.Raycast(position, Vector3.down, out RaycastHit hit, float.MaxValue, placeMask))
             return false;
 
-        GameObject obj = Object.Instantiate(orginal, hit.point, followNormal ? Quaternion.LookRotation(Vector3.forward, hit.normal) * rotation : rotation);
+        GameObject obj = Object.Instantiate(original, hit.point, followNormal ? Quaternion.LookRotation(Vector3.forward, hit.normal) * rotation : rotation);
 
         IPlaceable[] placeables = obj.GetComponentsInChildren<IPlaceable>();
 
@@ -70,18 +70,46 @@ public readonly struct UseContext
             {
                 placeables[i].OnPlace(new PlacedContext
                     (
-                        _itemType as IItem,
+                        _itemType as IUse,
                         _itemType.Labels,
                         transform,
                         behaviour,
                         name,
                         id,
-                        playerIndex
+                        playerIndex,
+                        original.name
                     ));
             }
         }
 
         return true;
+    }
+
+    public void Place(GameObject original, Cell cell, Quaternion rotation, bool followNormal = false)
+    {
+        GameObject obj = Object.Instantiate(original, cell.Middle, followNormal ? Quaternion.LookRotation(Vector3.forward, Vector3.up) * rotation : rotation);
+        
+        cell.Occupy(obj);
+
+        IPlaceable[] placeables = obj.GetComponentsInChildren<IPlaceable>();
+
+        if (placeables != null)
+        {
+            for (int i = 0; i < placeables.Length; i++)
+            {
+                placeables[i].OnPlace(new PlacedContext
+                    (
+                        _itemType as IUse,
+                        _itemType.Labels,
+                        transform,
+                        behaviour,
+                        name,
+                        id,
+                        playerIndex,
+                        original.name
+                    ));
+            }
+        }
     }
 
     /// <summary>

@@ -15,7 +15,8 @@ MonoBehaviour:
   serializationData:
     SerializedFormat: 2
     SerializedBytes: 
-    ReferencedUnityObjects: []
+    ReferencedUnityObjects:
+    - {fileID: 2559919514944511368, guid: 1f29d06801e01cd45beb27e3c137217b, type: 3}
     SerializedBytesString: 
     Prefab: {fileID: 0}
     PrefabModificationsReferencedUnityObjects: []
@@ -23,31 +24,43 @@ MonoBehaviour:
     SerializationNodes:
     - Name: Behaviour
       Entry: 7
-      Data: 0|Container, Assembly-CSharp
+      Data: 0|PlaceableItem, Assembly-CSharp
     - Name: IItem.ItemStack
       Entry: 3
-      Data: 0
-    - Name: IStar.Star
-      Entry: 3
-      Data: 1
-    - Name: IDestructable.Durability
+      Data: 16
+    - Name: _placeRange
       Entry: 4
-      Data: 1
-    - Name: IPlace.PlaceableObject
-      Entry: 6
-      Data: 
-    - Name: IDrop.Drops
+      Data: 3
+    - Name: _followNormal
+      Entry: 5
+      Data: false
+    - Name: _placeMask
       Entry: 7
-      Data: 1|System.Collections.Generic.List`1[[DropType, Assembly-CSharp]], mscorlib
+      Data: UnityEngine.LayerMask, UnityEngine.CoreModule
+    - Name: 
+      Entry: 3
+      Data: 8
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: _AllowedTypes
+      Entry: 7
+      Data: 1|CellType[], Assembly-CSharp
     - Name: 
       Entry: 12
-      Data: 0
+      Data: 1
+    - Name: 
+      Entry: 3
+      Data: 1
     - Name: 
       Entry: 13
       Data: 
     - Name: 
       Entry: 8
       Data: 
+    - Name: _placeableObject
+      Entry: 10
+      Data: 0
     - Name: 
       Entry: 8
       Data: 

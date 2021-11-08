@@ -6,14 +6,16 @@ using UnityEngine.InputSystem;
 using MyBox;
 using IngameDebugConsole;
 using Celezt.Time;
+using Celezt.Mathematics;
 using System.Linq;
+using Sirenix.OdinInspector;
 
 public class PlayerMovement : MonoBehaviour
 {
     /// <summary>
     /// Unprocessed input direction.
     /// </summary>
-    public Vector3 RawDirection => _rawDirection;
+    public Vector3 RawInputValue => _activeInput.IsNullOrEmpty() ? _rawInputValue : Vector3.zero;
     /// <summary>
     /// Forward direction accounting for ground normal.
     /// </summary>
@@ -35,10 +37,8 @@ public class PlayerMovement : MonoBehaviour
     /// Base speed of the player.
     /// </summary>
     public float BaseSpeed => _baseSpeed;
-
     public DurationCollection<float> SpeedMultipliers => _speedMultipliers;
     public DurationCollection ActivaInput => _activeInput;
-
     /// <summary>
     /// Running multiplier.
     /// </summary>
@@ -60,17 +60,21 @@ public class PlayerMovement : MonoBehaviour
         set => _velocity = value;
     }
     /// <summary>
-    /// Unslerped rotation.
+    /// Player's unlerped forward direction relative to the camera or the target. Never zero.
     /// </summary>
-    public Quaternion RawRotation => _rawRotation;
+    public Vector3 RelativeForward
+    {
+        get => _relativeForward;
+        set => _relativeForward = value != Vector3.zero ? value.normalized : _relativeForward;
+    }
+    /// <summary>
+    /// Unlerped rotation
+    /// </summary>
+    public Quaternion RawRotation => Quaternion.LookRotation(_relativeForward, Vector3.up);
     /// <summary>
     /// Current rotation of the player.
     /// </summary>
-    public Quaternion Rotation
-    {
-        get => _rotation;
-        set => _rotation = value;
-    }
+    public Quaternion Rotation => _rotation;
     /// <summary>
     /// If currently running.
     /// </summary>
@@ -87,6 +91,7 @@ public class PlayerMovement : MonoBehaviour
 
     [SerializeField] private Rigidbody _rigidbody;
     [SerializeField] private Collider _collider;
+    [SerializeField] private HumanoidAnimationBehaviour _animationBehaviour;
     [SerializeField] private PivotMode _pivotMode;
     [SerializeField, ConditionalField(nameof(_pivotMode), false, PivotMode.Camera)] private Camera _camera;
     [SerializeField, ConditionalField(nameof(_pivotMode), false, PivotMode.Target)] private Transform _pivot;
@@ -111,20 +116,33 @@ public class PlayerMovement : MonoBehaviour
     private DurationCollection _activeInput = new DurationCollection();
 
     private Vector3 _slopeForward;
-    private Vector3 _rawDirection;
+    private Vector3 _rawInputValue;
     private Vector3 _rawVelocity;
     private Vector3 _relativeForward;
     private Vector3 _velocity;
     private Vector3 _forward;
-    private Quaternion _rawRotation;
     private Quaternion _rotation;
     private float _groundAngle;
+    private float _speed01;
     private bool _isRunning;
     private bool _isGrounded;
     private bool _isOnLedge;
 
     private PlayerInput _playerInput;
 
+    /// <summary>
+    /// Instantly set relative forward direction.
+    /// </summary>
+    /// <param name="forward">Direction.</param>
+    public void SetDirection(Vector2 forward)
+    {
+        if (forward == Vector2.zero)
+            return;
+
+        _relativeForward = forward.xz().normalized;
+        _rotation = RawRotation;
+        _rigidbody.MoveRotation(_rotation);
+    }
     public void SetRunMultiplier(float multiplier) => _runningSpeedMultiplier = multiplier;
     public void SetDrag(float drag) => _drag = drag;
     public void SetAngularDrag(float angularDrag) => _angularDrag = angularDrag;
@@ -135,7 +153,7 @@ public class PlayerMovement : MonoBehaviour
     {
         Vector2 value = context.ReadValue<Vector2>();
 
-        _rawDirection = new Vector3(value.x, 0, value.y);
+        _rawInputValue = new Vector3(value.x, 0, value.y);
         _rigidbody.velocity = new Vector3(0, _rigidbody.velocity.y, 0);
 
         //if (context.canceled)
@@ -161,6 +179,7 @@ public class PlayerMovement : MonoBehaviour
 
     private void Start()
     {
+        DebugLogConsole.AddCommandInstance("player.direction", "Sets player's relative forward direction value", nameof(SetDirection), this);
         DebugLogConsole.AddCommandInstance("player.speed", "Sets player's base speed value", nameof(SetBaseSpeed), this);
         DebugLogConsole.AddCommandInstance("player.run", "Sets player's run multiplier", nameof(SetRunMultiplier), this);
         DebugLogConsole.AddCommandInstance("player.drag", "Sets player's drag value", nameof(SetDrag), this);
@@ -171,26 +190,22 @@ public class PlayerMovement : MonoBehaviour
     private void FixedUpdate()
     {
         Vector3 position = transform.position;
-        Vector3 rawDirection = _activeInput.IsNullOrEmpty() ? _rawDirection : Vector3.zero;
+        Vector3 inputValue = _activeInput.IsNullOrEmpty() ? _rawInputValue : Vector3.zero;    // If input is enabled.
+        float fixedDeltaTime = Time.fixedDeltaTime;
 
         void Movement()
         {
-            float fixedDeltaTime = Time.fixedDeltaTime;
-            _rawRotation = _rigidbody.rotation;
-
             void GetDirection(Vector3 pivotForward, Vector3 pivotRight)
             {
                 pivotForward.y = 0f;
                 pivotRight.y = 0f;
 
-                _forward = (pivotForward * rawDirection.z + pivotRight * rawDirection.x).normalized;
+                _forward = (pivotForward * inputValue.z + pivotRight * inputValue.x).normalized;
 
-                if (rawDirection != Vector3.zero)
+                if (inputValue != Vector3.zero)
                     _relativeForward = _forward;
             }
 
-            Vector3 pivotForward = Vector3.zero;
-            Vector3 pivotRight = Vector3.zero;
             switch (_pivotMode)
             {
                 case PivotMode.Camera:
@@ -198,22 +213,16 @@ public class PlayerMovement : MonoBehaviour
                         _camera = Camera.main;
 
                     Transform cameraTransform = _camera.transform;
-                    pivotForward = cameraTransform.forward;
-                    pivotRight = cameraTransform.right;
-
-                    GetDirection(pivotForward, pivotRight);
+                    GetDirection(cameraTransform.forward, cameraTransform.right);
                     break;
                 case PivotMode.Target:
-                    pivotForward = _pivot.forward;
-                    pivotRight = _pivot.right;
-
-                    GetDirection(pivotForward, pivotRight);
+                    GetDirection(_pivot.forward, _pivot.right);
                     break;
                 default:
-                    if (rawDirection != Vector3.zero)
-                        _relativeForward = rawDirection;
+                    if (inputValue != Vector3.zero)
+                        _relativeForward = inputValue;
 
-                    _forward = rawDirection;
+                    _forward = inputValue;
                     break;
             }
 
@@ -229,7 +238,7 @@ public class PlayerMovement : MonoBehaviour
 
             void FixedRotate()
             {
-                _rotation = Quaternion.Slerp(_rawRotation, Quaternion.LookRotation(_relativeForward, Vector3.up), _angularDrag * fixedDeltaTime);
+                _rotation = Quaternion.Slerp(_rigidbody.rotation, RawRotation, _angularDrag * fixedDeltaTime);
                 _rigidbody.MoveRotation(_rotation);
             }
 
@@ -284,9 +293,20 @@ public class PlayerMovement : MonoBehaviour
             _collider.material = _isGrounded ? _groundPhysicMaterial : _fallPhysicMaterial;
         }
 
+        void Animation()
+        {
+            if (_animationBehaviour == null)
+                return;
+
+            _speed01 = Mathf.Lerp(_speed01, _isRunning ? cmath.Map(inputValue.magnitude, new MinMaxFloat(0, 1), new MinMaxFloat(0.3f, 1)) 
+                : cmath.Map(inputValue.magnitude, new MinMaxFloat(0, 1), new MinMaxFloat(0, 0.3f)), _drag * fixedDeltaTime);
+            _animationBehaviour.Velocity = _speed01;
+        }
+
         Movement();
         SlopeMovement();
         PhysicMaterialToUse();
+        Animation();
     }
 
     private void SetBaseSpeed(float speed) => _baseSpeed = speed;

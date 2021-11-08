@@ -44,8 +44,7 @@ public class TreeBehaviour : MonoBehaviour, IStreamable<TreeBehaviour.Data>, IUs
 
         if (_durability <= 0)
         {
-            context.Drop(_drops);
-
+            context.Drop(transform.position, _drops);
             Destroy(gameObject);
         }
     }

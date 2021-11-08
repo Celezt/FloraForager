@@ -12,7 +12,7 @@ public class FishPool : Singleton<FishPool>
     [SerializeField, ListDrawerSettings(Expanded = true)]
     private List<FishPoolItem> _FishPool;
 
-    public string GetFish(FishBait bait)
+    public string GetFish(FishBaitItem bait)
     {
         CreateTable(bait, out List<FishPoolItem> fishes, out float sumProbabilities);
 
@@ -30,7 +30,7 @@ public class FishPool : Singleton<FishPool>
         return string.Empty;
     }
 
-    private void CreateTable(FishBait bait, out List<FishPoolItem> fishes, out float sumProbabilities)
+    private void CreateTable(FishBaitItem bait, out List<FishPoolItem> fishes, out float sumProbabilities)
     {
         fishes = new List<FishPoolItem>();
         sumProbabilities = 0.0f;

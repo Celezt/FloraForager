@@ -71,7 +71,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0cfc55175b8d81b4db5de5ab11e96c68, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _filter: 16384
+  _filter: 32768
   _star: 1
   _durability: 10
   _drops:
@@ -79,7 +79,6 @@ MonoBehaviour:
     DropRate:
       Min: 1
       Max: 2
-  _shakeTransform: {fileID: 3630835197820946878}
 --- !u!114 &7601324173234069211
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -92,6 +91,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 70aa17180d08078449ee357df185a426, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _saveIfDestroyed: 1
 --- !u!114 &6792902814104324864
 MonoBehaviour:
   m_ObjectHideFlags: 0

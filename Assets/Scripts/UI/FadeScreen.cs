@@ -7,15 +7,14 @@ using MyBox;
 public class FadeScreen : Singleton<FadeScreen>
 {
     [HideInInspector]
-    public System.Action OnStartFade = delegate { };
+    public event System.Action OnStartFade = delegate { };
     [HideInInspector]
-    public System.Action OnEndFade = delegate { };
+    public event System.Action OnEndFade = delegate { };
 
     private CanvasGroup _CanvasGroup;
+    private Coroutine _FadeCoroutine;
 
-    private bool _CoroutineIsRunning;
-
-    public bool IsActive => _CoroutineIsRunning;
+    public bool IsActive => _FadeCoroutine != null;
     public float Value => _CanvasGroup.alpha;
 
     private void Awake()
@@ -25,19 +24,17 @@ public class FadeScreen : Singleton<FadeScreen>
 
     public void StartFadeIn(float fadeTime)
     {
-        if (!_CoroutineIsRunning)
-        {
-            StartCoroutine(FadeIn(fadeTime));
-            _CoroutineIsRunning = true;
-        }
+        if (_FadeCoroutine != null)
+            StopCoroutine(_FadeCoroutine);
+        
+        _FadeCoroutine = StartCoroutine(FadeIn(fadeTime));
     }
     public void StartFadeOut(float fadeTime)
     {
-        if (!_CoroutineIsRunning)
-        {
-            StartCoroutine(FadeOut(fadeTime));
-            _CoroutineIsRunning = true;
-        }
+        if (_FadeCoroutine != null)
+            StopCoroutine(_FadeCoroutine);
+        
+        _FadeCoroutine = StartCoroutine(FadeOut(fadeTime));
     }
 
     private IEnumerator FadeIn(float fadeTime)
@@ -55,8 +52,8 @@ public class FadeScreen : Singleton<FadeScreen>
         _CanvasGroup.alpha = 1.0f;
         _CanvasGroup.blocksRaycasts = true;
 
+        _FadeCoroutine = null;
         OnEndFade.Invoke();
-        _CoroutineIsRunning = false;
     }
     private IEnumerator FadeOut(float fadeTime)
     {
@@ -73,8 +70,8 @@ public class FadeScreen : Singleton<FadeScreen>
 
         _CanvasGroup.alpha = 0.0f;
 
+        _FadeCoroutine = null;
         OnEndFade.Invoke();
-        _CoroutineIsRunning = false;
     }
 
     public void SetFade(float fade)

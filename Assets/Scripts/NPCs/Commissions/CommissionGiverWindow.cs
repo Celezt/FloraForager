@@ -104,28 +104,27 @@ public class CommissionGiverWindow : Singleton<CommissionGiverWindow>
         _ScrollRect.content = _Description.GetComponent<RectTransform>();
         _ScrollRect.viewport = _DescriptionArea.GetComponent<RectTransform>();
 
-        string objectives = "<b>Objectives</b>\n<size=20>";
+        string objectives = "<u><b>Objectives</b></u>\n<size=22>";
         commission.Objectives.ForEach(o =>
         {
             objectives += o.Status + '\n';
         });
         objectives += "</size>";
 
-        string rewards = "<b>Rewards</b>\n<size=20>";
+        string rewards = "<u><b>Rewards</b></u>\n<size=22>";
         foreach (ItemAsset reward in commission.CommissionData.Rewards)
         {
             rewards += reward.Amount + " " + ItemTypeSettings.Instance.ItemNameChunk[reward.ID] + "\n";
         }
         rewards += "</size>";
 
-        string daysLeft = "<b>Time limit</b>\n<size=20>" + commission.DaysLeft.ToString() + " Days</size>";
+        string daysLeft = "<u><b>Time limit</b></u>\n<size=22>" + commission.DaysLeft.ToString() + " Days</size>";
 
-        string minRelation = "<b>Minimum Relations</b>\n<size=20>" + commission.CommissionData.MinRelation + "</size>";
+        string minRelation = "<u><b>Minimum Relations</b></u>\n<size=22>" + commission.CommissionData.MinRelation + "</size>";
 
         string completed = commission.IsCompleted ? "<color=green>(Complete)</color>" : string.Empty;
 
-        _Description.text = string.Format("<b>{0}</b>\n<size=20>{1}</size>\n\n{2}\n{3}\n{4}\n\n{5}\n\n{6}",
-            commission.CommissionData.Title,
+        _Description.text = string.Format("<u><b>Description</b></u>\n<size=22>{0}</size>\n\n{1}\n{2}\n{3}\n\n{4}\n\n{5}",
             commission.CommissionData.Description,
             objectives, rewards, daysLeft, minRelation, completed);
     }

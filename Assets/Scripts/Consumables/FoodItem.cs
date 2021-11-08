@@ -6,7 +6,7 @@ using Sirenix.Serialization;
 using MyBox;
 using Sirenix.OdinInspector;
 
-public class FoodItem : IUse, IItem, IStar, IValue
+public class FoodItem : IUse, IStar, IValue
 {
     [OdinSerialize, PropertyOrder(float.MinValue)]
     public int ItemStack { get; set; } = 64;
@@ -48,7 +48,7 @@ public class FoodItem : IUse, IItem, IStar, IValue
     {
         if (context.started)
         {
-            _playerStamina.Stamina = _staminaChange;
+            _playerStamina.Stamina += _staminaChange;
 
             foreach (IEffect effect in _effects)
                 if (!effect.Duration.IsActive)

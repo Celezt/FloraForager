@@ -65,14 +65,14 @@ public readonly struct UsedContext
         return true;
     }
 
-    public void Drop(IList<DropType> drops, int dropStack = 1)
+    public void Drop(Vector3 position, IList<DropType> drops, int dropStack = 1)
     {
         for (int i = 0; i < drops.Count; i++)
         {
             int rate = drops[i].DropRate.RandomInRangeInclusive();
 
             for (int j = 0; j < rate; j++)
-                UnityEngine.Object.Instantiate(ItemTypeSettings.Instance.ItemObject, transform.position, Quaternion.identity)
+                UnityEngine.Object.Instantiate(ItemTypeSettings.Instance.ItemObject, position, Quaternion.identity)
                     .Spawn(new ItemAsset { ID = drops[i].Item.Extract().GetRandom().ToString().ToSnakeCase(), Amount = dropStack });
         }
     }

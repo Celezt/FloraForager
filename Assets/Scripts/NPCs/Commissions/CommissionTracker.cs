@@ -10,6 +10,8 @@ public class CommissionTracker : Singleton<CommissionTracker>
     [SerializeField] private TMP_Text _Title;
     [SerializeField] private TMP_Text _Quota;
 
+    private Color _TitleColor;
+
     private CanvasGroup _CanvasGroup;
 
     private static Commission _Commission;
@@ -21,6 +23,8 @@ public class CommissionTracker : Singleton<CommissionTracker>
         _CanvasGroup = GetComponent<CanvasGroup>();
         _CanvasGroup.alpha = (_Commission != null) ? 1.0f : 0.0f;
 
+        _TitleColor = _Title.color;
+
         UpdateTracker();
     }
 
@@ -29,7 +33,8 @@ public class CommissionTracker : Singleton<CommissionTracker>
         if (_Commission == null)
             return;
 
-        _Title.text = _Commission.IsCompleted ? "<color=green>" + _Commission.CommissionData.Title + "</color>" : _Commission.CommissionData.Title;
+        _Title.text = _Commission.CommissionData.Title;
+        _Title.color = _Commission.IsCompleted ? _TitleColor + new Color(-0.2f, 0.5f, -0.2f, 1.0f) : _TitleColor;
 
         string quota = string.Empty;
         foreach (IObjective objective in _Commission.Objectives)
