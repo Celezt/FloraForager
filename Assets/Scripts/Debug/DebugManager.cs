@@ -16,7 +16,11 @@ public class DebugManager : Singleton<DebugManager>
     /// <summary>
     /// If debug mode is on or off.
     /// </summary>
-    public static bool DebugMode = false;
+    public static bool DebugMode => _debugMode;
+    /// <summary>
+    /// If command field is in focus.
+    /// </summary>
+    public static bool IsFocused => _isFocused;
     /// <summary>
     /// Callbacks for debug mode on events.
     /// </summary>
@@ -30,19 +34,20 @@ public class DebugManager : Singleton<DebugManager>
 
     private InputField _inputField;
 
-    private bool _isFocus;
+    private static bool _isFocused;
+    private static bool _debugMode;
 
     private void Awake()
     {
         DebugLogManager.Instance.OnLogWindowShown += new System.Action(() => 
-        { 
-            DebugMode = true;
+        {
+            _debugMode = true;
             StartCoroutine(IsCommandConsoleFocused());
             OnDebugModeOn.Invoke();
         });
         DebugLogManager.Instance.OnLogWindowHidden += new System.Action(() => 
-        { 
-            DebugMode = false;
+        {
+            _debugMode = false;
             OnDebugModeOff.Invoke();
         });
 
@@ -51,7 +56,7 @@ public class DebugManager : Singleton<DebugManager>
 
     private void OnDisable()
     {
-        DebugMode = false;
+        _debugMode = false;
     }
 
     private IEnumerator IsCommandConsoleFocused()
@@ -59,7 +64,7 @@ public class DebugManager : Singleton<DebugManager>
         bool oldIsFocused = !_inputField.isFocused;
         PlayerInput playerInput = PlayerInput.GetPlayerByIndex(0);
 
-        while (DebugMode)
+        while (_debugMode)
         {
             bool isFocused = _inputField.isFocused;
 
@@ -67,15 +72,15 @@ public class DebugManager : Singleton<DebugManager>
             {
                 if (isFocused)
                 {
-                    if (!_isFocus)
+                    if (!_isFocused)
                     {
-                        _isFocus = true;
+                        _isFocused = true;
                         playerInput.DeactivateInput();
                     }
                 }
                 else
                 {
-                    _isFocus = false;
+                    _isFocused = false;
                     playerInput.ActivateInput();
                 }
             }

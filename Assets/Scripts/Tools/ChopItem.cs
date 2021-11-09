@@ -22,6 +22,8 @@ public class ChopItem : IUse, IDestructor, IStar, IValue
 
     [Title("Tool Behaviour")]
     [SerializeField]
+    private AnimationClip _clip;
+    [SerializeField]
     private float _stunDuration = 0.6f;
     [SerializeField]
     private Vector3 _halfExtents = new Vector3(0.5f, 1.0f, 0.5f);
@@ -59,8 +61,9 @@ public class ChopItem : IUse, IDestructor, IStar, IValue
         if (!context.started)
             yield break;
 
-        context.transform.GetComponent<PlayerMovement>().ActivaInput.Add(_stunDuration);
-        
+        context.transform.GetComponentInChildren<PlayerMovement>().ActivaInput.Add(_stunDuration);
+        context.transform.GetComponentInChildren<HumanoidAnimationBehaviour>().CustomMotionRaise(_clip);
+
         Collider[] colliders = Physics.OverlapBox(context.transform.position + context.transform.rotation * _centerOffset, _halfExtents, context.transform.rotation, LayerMask.NameToLayer("default"));
         List<Collider> usableColliders = new List<Collider>(colliders.Length);
 

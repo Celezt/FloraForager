@@ -27,7 +27,7 @@ public class PlayerInventory : MonoBehaviour
 
     public void OnHotbar(InputAction.CallbackContext context)
     {
-        if (DebugManager.DebugMode)
+        if (DebugManager.IsFocused)
             return;
 
         float value = context.ReadValue<float>();
@@ -43,7 +43,7 @@ public class PlayerInventory : MonoBehaviour
 
     public void OnInventory(InputAction.CallbackContext context)
     {
-        if (DebugManager.DebugMode)
+        if (DebugManager.IsFocused)
             return; 
 
         _isInventoryOpen = !_isInventoryOpen;

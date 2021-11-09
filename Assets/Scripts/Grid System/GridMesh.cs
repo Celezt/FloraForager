@@ -56,7 +56,8 @@ public class GridMesh : MonoBehaviour
     [Button]
     private void Clear()
     {
-        Mesh.Clear();
+        if (_MeshFilter.sharedMesh != null)
+            Mesh.Clear();
         CellsData = null;
     }
 
