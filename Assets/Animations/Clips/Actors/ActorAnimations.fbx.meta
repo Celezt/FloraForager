@@ -135,7 +135,9 @@ ModelImporter:
       transforms and has rotation animation that will be discarded.\n\t'DEF-foot.R'
       has scale animation that will be discarded.\n\nClip 'Humanoid|Run' has import
       animation warnings that might lower retargeting quality:\nNote: Activate translation
-      DOF on avatar to improve retargeting quality.\n\t'DEF-upper_arm.L' has scale
+      DOF on avatar to improve retargeting quality.\n\t'DEF-spine.005' is inbetween
+      humanoid transforms and has rotation animation that will be discarded.\n\t'DEF-spine.005'
+      has scale animation that will be discarded.\n\t'DEF-upper_arm.L' has scale
       animation that will be discarded.\n\t'DEF-upper_arm.L.001' is inbetween humanoid
       transforms and has rotation animation that will be discarded.\n\t'DEF-forearm.L'
       has scale animation that will be discarded.\n\t'DEF-forearm.L.001' is inbetween
@@ -250,6 +252,8 @@ ModelImporter:
         weight: 1
       - path: Humanoid/DEF-root/DEF-spine/DEF-spine.001/DEF-spine.002/DEF-spine.003/DEF-shoulder.L/DEF-upper_arm.L/DEF-upper_arm.L.001/DEF-forearm.L/DEF-forearm.L.001/DEF-hand.L
         weight: 1
+      - path: Humanoid/DEF-root/DEF-spine/DEF-spine.001/DEF-spine.002/DEF-spine.003/DEF-shoulder.L/DEF-upper_arm.L/DEF-upper_arm.L.001/DEF-forearm.L/DEF-forearm.L.001/DEF-hand.L/DEF-hold.L
+        weight: 1
       - path: Humanoid/DEF-root/DEF-spine/DEF-spine.001/DEF-spine.002/DEF-spine.003/DEF-shoulder.R
         weight: 1
       - path: Humanoid/DEF-root/DEF-spine/DEF-spine.001/DEF-spine.002/DEF-spine.003/DEF-shoulder.R/DEF-upper_arm.R
@@ -261,6 +265,8 @@ ModelImporter:
       - path: Humanoid/DEF-root/DEF-spine/DEF-spine.001/DEF-spine.002/DEF-spine.003/DEF-shoulder.R/DEF-upper_arm.R/DEF-upper_arm.R.001/DEF-forearm.R/DEF-forearm.R.001
         weight: 1
       - path: Humanoid/DEF-root/DEF-spine/DEF-spine.001/DEF-spine.002/DEF-spine.003/DEF-shoulder.R/DEF-upper_arm.R/DEF-upper_arm.R.001/DEF-forearm.R/DEF-forearm.R.001/DEF-hand.R
+        weight: 1
+      - path: Humanoid/DEF-root/DEF-spine/DEF-spine.001/DEF-spine.002/DEF-spine.003/DEF-shoulder.R/DEF-upper_arm.R/DEF-upper_arm.R.001/DEF-forearm.R/DEF-forearm.R.001/DEF-hand.R/DEF-hold.R
         weight: 1
       - path: Humanoid/DEF-root/DEF-spine/DEF-spine.001/DEF-spine.002/DEF-spine.003/DEF-spine.004
         weight: 1
@@ -535,6 +541,8 @@ ModelImporter:
         weight: 1
       - path: Humanoid/DEF-root/DEF-spine/DEF-spine.001/DEF-spine.002/DEF-spine.003/DEF-shoulder.L/DEF-upper_arm.L/DEF-upper_arm.L.001/DEF-forearm.L/DEF-forearm.L.001/DEF-hand.L
         weight: 1
+      - path: Humanoid/DEF-root/DEF-spine/DEF-spine.001/DEF-spine.002/DEF-spine.003/DEF-shoulder.L/DEF-upper_arm.L/DEF-upper_arm.L.001/DEF-forearm.L/DEF-forearm.L.001/DEF-hand.L/DEF-hold.L
+        weight: 1
       - path: Humanoid/DEF-root/DEF-spine/DEF-spine.001/DEF-spine.002/DEF-spine.003/DEF-shoulder.R
         weight: 1
       - path: Humanoid/DEF-root/DEF-spine/DEF-spine.001/DEF-spine.002/DEF-spine.003/DEF-shoulder.R/DEF-upper_arm.R
@@ -546,6 +554,8 @@ ModelImporter:
       - path: Humanoid/DEF-root/DEF-spine/DEF-spine.001/DEF-spine.002/DEF-spine.003/DEF-shoulder.R/DEF-upper_arm.R/DEF-upper_arm.R.001/DEF-forearm.R/DEF-forearm.R.001
         weight: 1
       - path: Humanoid/DEF-root/DEF-spine/DEF-spine.001/DEF-spine.002/DEF-spine.003/DEF-shoulder.R/DEF-upper_arm.R/DEF-upper_arm.R.001/DEF-forearm.R/DEF-forearm.R.001/DEF-hand.R
+        weight: 1
+      - path: Humanoid/DEF-root/DEF-spine/DEF-spine.001/DEF-spine.002/DEF-spine.003/DEF-shoulder.R/DEF-upper_arm.R/DEF-upper_arm.R.001/DEF-forearm.R/DEF-forearm.R.001/DEF-hand.R/DEF-hold.R
         weight: 1
       - path: Humanoid/DEF-root/DEF-spine/DEF-spine.001/DEF-spine.002/DEF-spine.003/DEF-spine.004
         weight: 1
@@ -1105,6 +1115,8 @@ ModelImporter:
         weight: 1
       - path: Humanoid/DEF-root/DEF-spine/DEF-spine.001/DEF-spine.002/DEF-spine.003/DEF-shoulder.L/DEF-upper_arm.L/DEF-upper_arm.L.001/DEF-forearm.L/DEF-forearm.L.001/DEF-hand.L
         weight: 1
+      - path: Humanoid/DEF-root/DEF-spine/DEF-spine.001/DEF-spine.002/DEF-spine.003/DEF-shoulder.L/DEF-upper_arm.L/DEF-upper_arm.L.001/DEF-forearm.L/DEF-forearm.L.001/DEF-hand.L/DEF-hold.L
+        weight: 1
       - path: Humanoid/DEF-root/DEF-spine/DEF-spine.001/DEF-spine.002/DEF-spine.003/DEF-shoulder.R
         weight: 1
       - path: Humanoid/DEF-root/DEF-spine/DEF-spine.001/DEF-spine.002/DEF-spine.003/DEF-shoulder.R/DEF-upper_arm.R
@@ -1116,6 +1128,8 @@ ModelImporter:
       - path: Humanoid/DEF-root/DEF-spine/DEF-spine.001/DEF-spine.002/DEF-spine.003/DEF-shoulder.R/DEF-upper_arm.R/DEF-upper_arm.R.001/DEF-forearm.R/DEF-forearm.R.001
         weight: 1
       - path: Humanoid/DEF-root/DEF-spine/DEF-spine.001/DEF-spine.002/DEF-spine.003/DEF-shoulder.R/DEF-upper_arm.R/DEF-upper_arm.R.001/DEF-forearm.R/DEF-forearm.R.001/DEF-hand.R
+        weight: 1
+      - path: Humanoid/DEF-root/DEF-spine/DEF-spine.001/DEF-spine.002/DEF-spine.003/DEF-shoulder.R/DEF-upper_arm.R/DEF-upper_arm.R.001/DEF-forearm.R/DEF-forearm.R.001/DEF-hand.R/DEF-hold.R
         weight: 1
       - path: Humanoid/DEF-root/DEF-spine/DEF-spine.001/DEF-spine.002/DEF-spine.003/DEF-spine.004
         weight: 1
@@ -1390,6 +1404,8 @@ ModelImporter:
         weight: 1
       - path: Humanoid/DEF-root/DEF-spine/DEF-spine.001/DEF-spine.002/DEF-spine.003/DEF-shoulder.L/DEF-upper_arm.L/DEF-upper_arm.L.001/DEF-forearm.L/DEF-forearm.L.001/DEF-hand.L
         weight: 1
+      - path: Humanoid/DEF-root/DEF-spine/DEF-spine.001/DEF-spine.002/DEF-spine.003/DEF-shoulder.L/DEF-upper_arm.L/DEF-upper_arm.L.001/DEF-forearm.L/DEF-forearm.L.001/DEF-hand.L/DEF-hold.L
+        weight: 1
       - path: Humanoid/DEF-root/DEF-spine/DEF-spine.001/DEF-spine.002/DEF-spine.003/DEF-shoulder.R
         weight: 1
       - path: Humanoid/DEF-root/DEF-spine/DEF-spine.001/DEF-spine.002/DEF-spine.003/DEF-shoulder.R/DEF-upper_arm.R
@@ -1401,6 +1417,8 @@ ModelImporter:
       - path: Humanoid/DEF-root/DEF-spine/DEF-spine.001/DEF-spine.002/DEF-spine.003/DEF-shoulder.R/DEF-upper_arm.R/DEF-upper_arm.R.001/DEF-forearm.R/DEF-forearm.R.001
         weight: 1
       - path: Humanoid/DEF-root/DEF-spine/DEF-spine.001/DEF-spine.002/DEF-spine.003/DEF-shoulder.R/DEF-upper_arm.R/DEF-upper_arm.R.001/DEF-forearm.R/DEF-forearm.R.001/DEF-hand.R
+        weight: 1
+      - path: Humanoid/DEF-root/DEF-spine/DEF-spine.001/DEF-spine.002/DEF-spine.003/DEF-shoulder.R/DEF-upper_arm.R/DEF-upper_arm.R.001/DEF-forearm.R/DEF-forearm.R.001/DEF-hand.R/DEF-hold.R
         weight: 1
       - path: Humanoid/DEF-root/DEF-spine/DEF-spine.001/DEF-spine.002/DEF-spine.003/DEF-spine.004
         weight: 1
@@ -1675,6 +1693,8 @@ ModelImporter:
         weight: 1
       - path: Humanoid/DEF-root/DEF-spine/DEF-spine.001/DEF-spine.002/DEF-spine.003/DEF-shoulder.L/DEF-upper_arm.L/DEF-upper_arm.L.001/DEF-forearm.L/DEF-forearm.L.001/DEF-hand.L
         weight: 1
+      - path: Humanoid/DEF-root/DEF-spine/DEF-spine.001/DEF-spine.002/DEF-spine.003/DEF-shoulder.L/DEF-upper_arm.L/DEF-upper_arm.L.001/DEF-forearm.L/DEF-forearm.L.001/DEF-hand.L/DEF-hold.L
+        weight: 1
       - path: Humanoid/DEF-root/DEF-spine/DEF-spine.001/DEF-spine.002/DEF-spine.003/DEF-shoulder.R
         weight: 1
       - path: Humanoid/DEF-root/DEF-spine/DEF-spine.001/DEF-spine.002/DEF-spine.003/DEF-shoulder.R/DEF-upper_arm.R
@@ -1686,6 +1706,8 @@ ModelImporter:
       - path: Humanoid/DEF-root/DEF-spine/DEF-spine.001/DEF-spine.002/DEF-spine.003/DEF-shoulder.R/DEF-upper_arm.R/DEF-upper_arm.R.001/DEF-forearm.R/DEF-forearm.R.001
         weight: 1
       - path: Humanoid/DEF-root/DEF-spine/DEF-spine.001/DEF-spine.002/DEF-spine.003/DEF-shoulder.R/DEF-upper_arm.R/DEF-upper_arm.R.001/DEF-forearm.R/DEF-forearm.R.001/DEF-hand.R
+        weight: 1
+      - path: Humanoid/DEF-root/DEF-spine/DEF-spine.001/DEF-spine.002/DEF-spine.003/DEF-shoulder.R/DEF-upper_arm.R/DEF-upper_arm.R.001/DEF-forearm.R/DEF-forearm.R.001/DEF-hand.R/DEF-hold.R
         weight: 1
       - path: Humanoid/DEF-root/DEF-spine/DEF-spine.001/DEF-spine.002/DEF-spine.003/DEF-spine.004
         weight: 1

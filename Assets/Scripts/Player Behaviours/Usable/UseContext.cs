@@ -119,4 +119,12 @@ public readonly struct UseContext
     {
         behaviour.ConsumeCurrentItem(amount);
     }
+
+    /// <summary>
+    /// Call object with usable.
+    /// </summary>
+    public void CallUsable(IUsable usable)
+    {
+        behaviour.CallUsable(this, usable);
+    }
 }

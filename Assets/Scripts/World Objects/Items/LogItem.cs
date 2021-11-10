@@ -38,7 +38,7 @@ public class LogItem : IUse
 
     }
 
-    public IEnumerable<IUsable> OnUse(UseContext context)
+    public IEnumerator OnUse(UseContext context)
     {
         if (!context.started)
             yield break;
