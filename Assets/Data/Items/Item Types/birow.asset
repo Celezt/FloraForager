@@ -28,9 +28,12 @@ MonoBehaviour:
     - Name: IItem.ItemStack
       Entry: 3
       Data: 64
-    - Name: IStar.Star
-      Entry: 3
-      Data: 1
+    - Name: _placeRange
+      Entry: 4
+      Data: 0
+    - Name: _followNormal
+      Entry: 5
+      Data: false
     - Name: _placeMask
       Entry: 7
       Data: UnityEngine.LayerMask, UnityEngine.CoreModule
@@ -40,9 +43,21 @@ MonoBehaviour:
     - Name: 
       Entry: 8
       Data: 
-    - Name: _followNormal
-      Entry: 5
-      Data: false
+    - Name: _AllowedTypes
+      Entry: 7
+      Data: 1|CellType[], Assembly-CSharp
+    - Name: 
+      Entry: 12
+      Data: 1
+    - Name: 
+      Entry: 3
+      Data: 3
+    - Name: 
+      Entry: 13
+      Data: 
+    - Name: 
+      Entry: 8
+      Data: 
     - Name: _placeableObject
       Entry: 10
       Data: 0
