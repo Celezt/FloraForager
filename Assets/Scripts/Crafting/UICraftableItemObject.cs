@@ -18,7 +18,7 @@ public class UICraftableItemObject : MonoBehaviour
 
     private void Start()
     {
-        _Image.sprite = ItemTypeSettings.Instance.ItemIconChunk[CraftableItem.ItemID];
+        _Image.sprite = ItemTypeSettings.Instance.ItemIconChunk[CraftableItem.Item.ID];
     }
 
     public void Select()

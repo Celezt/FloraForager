@@ -64,11 +64,7 @@ public class UICraftingMenu : Singleton<UICraftingMenu>
             inventory.Remove(requirement.ID, requirement.Amount);
         }
 
-        inventory.Insert(new ItemAsset
-        {
-            ID = _SelectedItem.ItemID,
-            Amount = 1
-        });
+        inventory.Insert(_SelectedItem.Item);
     }
 
     public void ShowCraftableItems(Workbench workbench)
@@ -120,14 +116,14 @@ public class UICraftingMenu : Singleton<UICraftingMenu>
                 requirements += "\n";
         }
 
-        Stars? star = (ItemTypeSettings.Instance.ItemTypeChunk[craftableItem.ItemID].Behaviour as IStar)?.Star;
+        Stars? star = (ItemTypeSettings.Instance.ItemTypeChunk[craftableItem.Item.ID].Behaviour as IStar)?.Star;
         
         int index = star.HasValue ? (int)star : 0;
         Sprite starSprite = _StarsAtlas.GetSprite($"stars_{index}");
 
-        _ItemNameText.text = ItemTypeSettings.Instance.ItemNameChunk[craftableItem.ItemID];
+        _ItemNameText.text = ItemTypeSettings.Instance.ItemNameChunk[craftableItem.Item.ID];
         _ItemStarsImage.sprite = starSprite;
-        _ItemImage.sprite = ItemTypeSettings.Instance.ItemIconChunk[craftableItem.ItemID];
+        _ItemImage.sprite = ItemTypeSettings.Instance.ItemIconChunk[craftableItem.Item.ID];
         _RequirementsText.text = requirements;
 
 

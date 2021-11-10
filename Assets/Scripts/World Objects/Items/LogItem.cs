@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.InputSystem;
+using UnityEngine.AddressableAssets;
 using Sirenix.Serialization;
 using Sirenix.OdinInspector;
 
