@@ -1,3 +1,4 @@
+using IngameDebugConsole;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -82,9 +83,15 @@ public class PlayerInventory : MonoBehaviour
         canvasGroup.blocksRaycasts = true;
     }
 
+    public void Give(string id, int amount) => _inventory.InsertUntilFull(id, amount);
+    public void Remove(string id, int amount) => _inventory.Remove(id, amount);
+
     private void Awake()
     {
         _playerAction = new PlayerAction();
+
+        DebugLogConsole.AddCommandInstance("player.give", "Adds item to existing player inventory", nameof(Give), this);
+        DebugLogConsole.AddCommandInstance("player.remove", "Removes item from existing player inventory", nameof(Remove), this);
     }
 
     private void Start()

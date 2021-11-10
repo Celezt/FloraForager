@@ -89,7 +89,11 @@ public class Inventory
     public bool InsertUntilFull(ItemAsset item)
     {
         int amountToAdd = item.Amount;
-        int stack = (int)ItemTypeSettings.Instance.ItemTypeChunk[item.ID].Behaviour.ItemStack;
+
+        if (!ItemTypeSettings.Instance.ItemTypeChunk.TryGetValue(item.ID, out ItemType itemType))    // If it exit.
+            return false;
+
+        int stack = (int)itemType.Behaviour.ItemStack;
 
         {
             List<(int, int)> foundItems = FindAll(item.ID);
