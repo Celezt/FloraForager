@@ -307,23 +307,6 @@ public class Inventory
         return found;
     }
 
-    private void Deserialize()
-    {
-        Addressables.LoadAssetAsync<TextAsset>("inventory").Completed += (handle) =>
-        {
-            InventoryAsset tmp = JsonConvert.DeserializeObject<InventoryAsset>(handle.Result.text);
-
-            for (int i = 0; i < tmp.Items.Length; i++)
-            {
-                _items.Add(tmp.Items[i]);
-            }
-
-            Addressables.Release(handle);
-
-            OnInventoryInitalizeCallback.Invoke(_items);
-        };
-    }
-
     public void Initialize(List<ItemAsset> items)
     {
         for (int i = 0; i < items.Count; ++i)

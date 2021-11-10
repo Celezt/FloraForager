@@ -101,7 +101,7 @@ public class UseBehaviour : MonoBehaviour
             foreach (KeyValuePair<string, ItemType> itemType in itemTypeChunk)
                 itemType.Value?.Behaviour?.OnInitialize(itemTypeContext);
         };
-        
+
         _playerInfo.Inventory.OnItemMoveCallback += (beforeIndex, afterIndex, beforeItem, afterItem) =>
         {
             if (beforeIndex == _slotIndex)
