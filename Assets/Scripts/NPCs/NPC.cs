@@ -27,6 +27,15 @@ public class NPC : IStreamable<NPC.Data>
     public void OnLoad(object state)
     {
         _Data = state as Data;
+
+        _Commissions = new Commission[_Data.CommissionsData.Length];
+        for (int i = 0; i < _Commissions.Length; ++i)
+        {
+            if (_Data.CommissionsData[i].Completed)
+                continue;
+
+            _Commissions[i] = new Commission(_Data.CommissionsData[i]);
+        }
     }
     public void OnBeforeSaving()
     {
@@ -88,15 +97,15 @@ public class NPC : IStreamable<NPC.Data>
             _Commissions[i] = new Commission(_Data.CommissionsData[i]);
         }
     }
-    public NPC(Data data) 
-    {
-        _Commissions = new Commission[data.CommissionsData.Length];
-        for (int i = 0; i < _Commissions.Length; ++i)
-        {
-            if (data.CommissionsData[i].Completed)
-                continue;
 
-            _Commissions[i] = new Commission(data.CommissionsData[i]);
+    public void SetCommission(Commission commission)
+    {
+        for (int i = _Commissions.Length - 1; i >= 0; --i)
+        {
+            if (_Commissions[i].Title == commission.Title && _Commissions[i].Giver == commission.Giver)
+            {
+                _Commissions[i] = commission;
+            }
         }
     }
 

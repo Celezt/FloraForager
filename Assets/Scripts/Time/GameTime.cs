@@ -23,6 +23,10 @@ public class GameTime : SerializedScriptableSingleton<GameTime>, IStreamer, IStr
     [OdinSerialize, Min(0)] private int _DaysPerMonth = 30;
     [OdinSerialize, Min(0)] private int _MonthsPerYear = 12;
 
+    [Space(5)]
+    [OdinSerialize]
+    private float _DigitalTimeUpdateFrequency = 5.0f;
+
     [OdinSerialize]
     private readonly string[] Weekdays = { "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday" };
 
@@ -35,7 +39,7 @@ public class GameTime : SerializedScriptableSingleton<GameTime>, IStreamer, IStr
 
     public class Data
     {
-        public decimal ElapsedTime = 0.0M;
+        public decimal ElapsedTime;
     }
 
     public Data OnUpload() => _Data;
@@ -44,16 +48,6 @@ public class GameTime : SerializedScriptableSingleton<GameTime>, IStreamer, IStr
         _Data = state as Data;
     }
     public void OnBeforeSaving() { }
-
-    public void UpLoad()
-    {
-        GameManager.Stream.Load(_Guid, OnUpload());
-    }
-    public void Load()
-    {
-        OnLoad(GameManager.Stream.Get(_Guid));
-    }
-    public void BeforeSaving() { }
 
     private float _MinuteClock = 0.0f;
     private float _HourClock = 0.0f;
@@ -64,12 +58,12 @@ public class GameTime : SerializedScriptableSingleton<GameTime>, IStreamer, IStr
     public float InGameHour => _InGameHour;
 
     /// <summary>
-    /// game time in common format 0.0-24.0
+    /// current time in day in common format 0.0-24.0
     /// </summary>
-    public float CurrentTime => HourClock + (_MinuteClock / 60.0f);
+    public float CurrentTime => HourClock +  (MinuteClock / 60.0f);
 
-    public float MinuteClock => _MinuteClock;
     public float HourClock => _HourClock;
+    public float MinuteClock => _MinuteClock;
 
     public decimal ElapsedTime
     {
@@ -85,7 +79,7 @@ public class GameTime : SerializedScriptableSingleton<GameTime>, IStreamer, IStr
     public string DigitalTime => string.Format(
         "<mspace=0.75em>{0:00}</mspace>" +
         "<mspace=0.30em>:</mspace>" +
-        "<mspace=0.75em>{1:00}</mspace>", _HourClock, _MinuteClock);
+        "<mspace=0.75em>{1:00}</mspace>", _HourClock, Mathf.Floor(_MinuteClock / _DigitalTimeUpdateFrequency) * _DigitalTimeUpdateFrequency);
     public string Date => string.Format("{0:0000}/{1:00}/{2:00}", 
         Year, _MonthCalendar, _DayCalendar);
     public string Weekday => string.Format("{0} {1:00}/{2:00}", 
@@ -137,8 +131,30 @@ public class GameTime : SerializedScriptableSingleton<GameTime>, IStreamer, IStr
             (hours * InGameHour) * (_HoursPerDay / 24.0f) -
             (_CurrentHour * _InGameHour)); // time to accelerate by
 
-        _Data.ElapsedTime = (decimal)acceleratedTime;
+        ElapsedTime = (decimal)acceleratedTime;
 
         UpdateTime();
+    }
+
+    public void UpLoad()
+    {
+        GameManager.Stream.Load(_Guid, OnUpload());
+    }
+    public void Load()
+    {
+        _Data = new Data();
+
+        if (!GameManager.Stream.TryGet(_Guid, out object value))
+            return;
+
+        OnLoad(value);
+    }
+    public void BeforeSaving()
+    {
+        GameManager.Stream.Release(_Guid);
+
+        UpLoad();
+
+        OnBeforeSaving();
     }
 }

@@ -30,20 +30,22 @@ public class CommissionLog : Singleton<CommissionLog>
         _CanvasGroup.alpha = 0.0f;
 
         _PlayerAction = new PlayerAction();
-
-        SceneManager.sceneLoaded += OnSceneLoaded;
     }
 
     private void OnEnable()
     {
         _PlayerAction.Enable();
         _PlayerAction.Ground.CommissionLog.started += OnOpenExit;
+
+        SceneManager.sceneLoaded += OnSceneLoaded;
     }
 
     private void OnDisable()
     {
         _PlayerAction.Disable();
         _PlayerAction.Ground.CommissionLog.started -= OnOpenExit;
+
+        SceneManager.sceneLoaded -= OnSceneLoaded;
     }
 
     private void Update()
@@ -199,6 +201,8 @@ public class CommissionLog : Singleton<CommissionLog>
             obj.GetComponent<TMP_Text>().text = commission.CommissionData.Title;
 
             _CommissionObjects.Add(cs);
+
+            commission.Objectives.ForEach(o => o.Accepted());
         }
 
         CheckCompletion();

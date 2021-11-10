@@ -11,7 +11,7 @@ public class NPCInfoUI : MonoBehaviour
     [SerializeField] private LayerMask _LayerMasks;
     [SerializeField] private TMP_Text _Name;
     [SerializeField] private TMP_Text _Relation;
-    [SerializeField] private float _HeightOffset = 2.0f;
+    [SerializeField] private float _HeightOffset = 0.2f;
 
     private CanvasGroup _CanvasGroup;
 
@@ -26,7 +26,7 @@ public class NPCInfoUI : MonoBehaviour
         _CanvasGroup = GetComponent<CanvasGroup>();
         _CanvasGroup.alpha = 0.0f;
 
-        _Canvas = transform.root.GetComponent<Canvas>();
+        _Canvas = GetComponentInParent<Canvas>().rootCanvas;
         _CanvasRect = _Canvas.GetComponent<RectTransform>();
     }
 
@@ -57,7 +57,9 @@ public class NPCInfoUI : MonoBehaviour
     private void Show(NPCObject npc)
     {
         _NPCObject = npc;
-        _NPCBounds = npc.GetComponent<MeshFilter>().mesh.bounds;
+
+        if (npc.TryGetComponent(out MeshFilter meshFilter))
+            _NPCBounds = meshFilter.mesh.bounds;
 
         UpdateWindow();
 
@@ -73,7 +75,7 @@ public class NPCInfoUI : MonoBehaviour
     private void UpdatePosition()
     {
         transform.position = CanvasUtility.WorldToCanvasPosition(_Canvas, _CanvasRect, Camera.main,
-            _NPCObject.transform.position + Vector3.up * _NPCBounds.size.y * _HeightOffset);
+            _NPCObject.transform.position + Vector3.up * (_NPCBounds.size.y + _HeightOffset));
     }
 
     private void UpdateWindow()

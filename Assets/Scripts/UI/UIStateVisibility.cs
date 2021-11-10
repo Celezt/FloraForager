@@ -99,6 +99,14 @@ public class UIStateVisibility : Singleton<UIStateVisibility>
         return states.ToArray();
     }
 
+    public GameObject Get(string key)
+    {
+        if (!_StatesDictionary.ContainsKey(key))
+            return null;
+
+        return _StatesDictionary[key];
+    }
+
     [System.Serializable]
     private class UIState
     {

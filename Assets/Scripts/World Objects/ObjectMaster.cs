@@ -16,20 +16,20 @@ public class ObjectMaster : SerializedScriptableSingleton<ObjectMaster>, IStream
 
     private void Awake()
     {
-        SceneManager.sceneLoaded += OnSceneLoaded;
-
         if (_Guid == System.Guid.Empty)
             _Guid = System.Guid.NewGuid();
 
         GameManager.AddStreamer(this);
+
+        SceneManager.sceneLoaded += OnSceneLoaded;
     }
 
 #if UNITY_EDITOR
     [UnityEditor.InitializeOnEnterPlayMode]
     private static void Initialize()
     {
-        SceneManager.sceneLoaded += Instance.OnSceneLoaded;
         GameManager.AddStreamer(Instance);
+        SceneManager.sceneLoaded += Instance.OnSceneLoaded;
     }
 #endif
 
@@ -110,13 +110,8 @@ public class ObjectMaster : SerializedScriptableSingleton<ObjectMaster>, IStream
     {
         _Objects = new Dictionary<string, ObjectData>();
 
-        Dictionary<string, object> streamables = (Dictionary<string, object>)GameManager.Stream.Get(_Guid);
-
-        if (streamables == null)
-        {
-            Debug.LogError("trying to load without having saved first");
+        if (!GameManager.Stream.TryGet(_Guid, out Dictionary<string, object> streamables))
             return;
-        }
 
         foreach (KeyValuePair<string, object> item in streamables)
         {

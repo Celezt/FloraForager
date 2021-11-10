@@ -10,15 +10,15 @@ using UnityEngine.InputSystem;
 
 public static class GameManager
 {
-    public const string WORLDS_PATH = "/Worlds/";
-    public const string PLAYERS_PATH = "/Players/";
-    public const string WORLD_FILE_TYPE = ".wld";
-    public const string PLAYER_FILE_TYPE = ".plr";
+    public const string SAVES_PATH = "/Saves/";
+    public const string SAVE_FILE_TYPE = ".sav";
+
+    public static string SAVE_NAME = string.Empty;
 
     public static StreamData Stream => _stream;
 
     private static StreamData _stream = new StreamData();
-    private static InitalizeGame _initalizeGame = new InitalizeGame();
+    private static InitializeGame _initializeGame = new InitializeGame();
 
     private static HashSet<IStreamer> _streamers = new HashSet<IStreamer>();
 
@@ -30,44 +30,15 @@ public static class GameManager
 
     public static bool RemoveStreamer(IStreamer streamer) => _streamers.Remove(streamer);
 
-    public static string SavePlayerPath
-    {
-        get
-        {
-#if UNITY_STANDALONE_WIN
-            try
-            {
-                string path = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments).Replace("\\", "/") + "/My Games/" + Application.productName + PLAYERS_PATH;
-                Directory.CreateDirectory(path);
-                return path;
-            }
-            catch (Exception e)
-            {
-                throw e;
-            }
-#else
-            try
-            {
-                string path = Application.persistentDataPath + PLAYERS_PATH;
-                Directory.CreateDirectory(path);
-                return path;
-            }
-            catch (Exception e)
-            {
-                throw e;
-            }
-#endif
-        }
-    }
 
-    public static string SaveWorldPath
+    public static string SavePath
     {
         get
         {
 #if UNITY_STANDALONE_WIN
             try
             {
-                string path = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments).Replace("\\", "/") + "/My Games/" + Application.productName + WORLDS_PATH;
+                string path = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments).Replace("\\", "/") + "/My Games/" + Application.productName + SAVES_PATH;
                 Directory.CreateDirectory(path);
                 return path;
             }
@@ -96,25 +67,66 @@ public static class GameManager
             streamer.BeforeSaving();
 
         byte[] bytes = SerializationUtility.SerializeValue(_stream.StreamedData, DataFormat.Binary);
-        File.WriteAllBytes(SaveWorldPath + "debug" + WORLD_FILE_TYPE, bytes);
+        File.WriteAllBytes(SavePath + SAVE_NAME + SAVE_FILE_TYPE, bytes);
     }
 
     public static void LoadGame()
     {
-
-        byte[] bytes = File.ReadAllBytes(SaveWorldPath + "debug" + WORLD_FILE_TYPE);
+        byte[] bytes = File.ReadAllBytes(SavePath + SAVE_NAME + SAVE_FILE_TYPE);
         _stream.StreamedData = (Dictionary<Guid, object>)SerializationUtility.DeserializeValueWeak(bytes, DataFormat.Binary);
+
+        if (_stream.StreamedData == null) // if failed to load
+            _stream.StreamedData = new Dictionary<Guid, object>();
 
         foreach (IStreamer streamer in _streamers)
             streamer.Load();
     }
 
-    public class InitalizeGame
+    public static string[] GetSaves()
+    {
+        return Directory.GetFiles(SavePath, string.Format("*{0}", SAVE_FILE_TYPE));
+    }
+    public static bool SaveExists(string fileName)
+    {
+        return File.Exists(SavePath + fileName + SAVE_FILE_TYPE);
+    }
+
+    /// <summary>
+    /// Creates an empty save and also overrides the current one with the same name if found
+    /// </summary>
+    public static void CreateSave(string fileName)
+    {
+        try
+        {
+            File.Create(SavePath + fileName + SAVE_FILE_TYPE).Close();
+        }
+        catch (IOException e)
+        {
+            Console.WriteLine(e.Message);
+        }
+    }
+
+    /// <summary>
+    /// Deletes specified save if found
+    /// </summary>
+    public static void DeleteSave(string fileName)
+    {
+        try
+        {
+            File.Delete(SavePath + fileName + SAVE_FILE_TYPE);
+        } 
+        catch (IOException e)
+        {
+            Console.WriteLine(e.Message);
+        }
+    }
+
+    public class InitializeGame
     {
         [RuntimeInitializeOnLoadMethod]
-        static void Initalize()
+        static void Initialize()
         {
-            _initalizeGame.LoadOrder();
+            _initializeGame.LoadOrder();
         }
 
         private void LoadOrder()
@@ -164,6 +176,16 @@ public static class GameManager
             _streamedData.TryGetValue(guid, out object obj);
 
             return obj;
+        }
+
+        public bool TryGet<T>(Guid guid, out T value) where T : class
+        {
+            bool result = _streamedData.TryGetValue(guid, out object obj);
+
+            if ((value = obj as T) == null)
+                return false;
+
+            return result;
         }
     }
 }

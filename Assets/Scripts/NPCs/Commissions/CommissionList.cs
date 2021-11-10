@@ -43,7 +43,7 @@ public class CommissionList : SerializedScriptableSingleton<CommissionList>, ISt
 
     public bool Remove(Commission commission)
     {
-        if (commission == null || _Commissions.Contains(commission))
+        if (commission == null || !_Commissions.Contains(commission))
             return false;
 
         _Commissions.Remove(commission);
@@ -58,7 +58,9 @@ public class CommissionList : SerializedScriptableSingleton<CommissionList>, ISt
 
     public bool HasCommission(Commission commission)
     {
-        return _Commissions.Exists(c => c.CommissionData.Title == commission.CommissionData.Title);
+        return _Commissions.Exists(c => 
+        c.CommissionData.Title == commission.CommissionData.Title && 
+        c.CommissionData.Giver == commission.CommissionData.Giver);
     }
 
     public void UpLoad()
@@ -74,16 +76,17 @@ public class CommissionList : SerializedScriptableSingleton<CommissionList>, ISt
     {
         _Commissions = new List<Commission>();
 
-        Dictionary<string, object> streamables = (Dictionary<string, object>)GameManager.Stream.Get(_Guid);
+        if (!GameManager.Stream.TryGet(_Guid, out Dictionary<string, object> streamables))
+            return;
 
-        foreach (var item in streamables)
+        foreach (KeyValuePair<string, object> item in streamables)
         {
             if (!streamables.TryGetValue(item.Key, out object value))
                 continue;
 
             Commission.Data data = value as Commission.Data;
 
-            Commission commission = new Commission(data.Commission);
+            Commission commission = new Commission();
             commission.OnLoad(data);
 
             _Commissions.Add(commission);
