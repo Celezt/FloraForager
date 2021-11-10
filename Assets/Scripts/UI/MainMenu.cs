@@ -1,18 +1,92 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
+using UnityEngine.Events;
+using UnityEngine.SceneManagement;
+using Sirenix.OdinInspector;
+using MyBox;
 
 public class MainMenu : MonoBehaviour
 {
-    // Start is called before the first frame update
-    void Start()
+    [SerializeField]
+    private Button _ContinueButton;
+    [SerializeField]
+    private Button _StartNewButton;
+    [SerializeField]
+    private Button _SettingsButton;
+    [SerializeField]
+    private Button _QuitButton;
+
+    [Space(10)]
+    [SerializeField]
+    private bool _LoadFirstScene;
+    [SerializeField, Scene, ShowIf("_LoadFirstScene")]
+    private string _FirstSceneName;
+
+    private GameObject _ConfirmMenu;
+
+    private string[] _SaveFiles;
+    private const string SAVE_NAME = "save";
+
+    private void Awake()
     {
-        
+        _SaveFiles = GameManager.GetSaves();
+        _ContinueButton.interactable = GameManager.SaveExists(SAVE_NAME);
+
+        GameManager.SAVE_NAME = SAVE_NAME;
+        Time.timeScale = 1.0f;
     }
 
-    // Update is called once per frame
-    void Update()
+    public void OnContinue()
     {
-        
+        if (!GameManager.SaveExists(SAVE_NAME))
+            return;
+
+        GameManager.LoadGame();
+
+        if (PlayerDataMaster.Instance.Exists(0) && PlayerDataMaster.Instance.Get(0).SaveData.SceneIndex != 0) // hard-coded for now
+            LoadScene.Instance.LoadSceneByIndex(PlayerDataMaster.Instance.Get(0).SaveData.SceneIndex);
+        else
+        {
+            if (_LoadFirstScene)
+                LoadScene.Instance.LoadSceneByName(_FirstSceneName);
+            else
+                LoadScene.Instance.LoadSceneByIndex(SceneManager.GetActiveScene().buildIndex + 1);
+        }
+    }
+
+    public void OnStartNew()
+    {
+        if (GameManager.SaveExists(SAVE_NAME))
+        {
+            if (_ConfirmMenu != null)
+                return;
+
+            _ConfirmMenu = ConfirmMenuFactory.Instance.CreateMenu("This will delete your current save, are you sure?",
+                new UnityAction(() => 
+                {
+                    GameManager.DeleteSave(SAVE_NAME);
+                    GameManager.CreateSave(SAVE_NAME);
+
+                    OnContinue();
+                }), 
+                new UnityAction(() => { }));
+        }
+        else
+        {
+            GameManager.CreateSave(SAVE_NAME);
+            OnContinue();
+        }
+    }
+
+    public void OnSettings()
+    {
+
+    }
+
+    public void OnQuit()
+    {
+        ConsoleUtility.QuitGame();
     }
 }

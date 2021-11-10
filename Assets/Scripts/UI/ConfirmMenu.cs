@@ -4,7 +4,7 @@ using UnityEngine.Events;
 using TMPro;
 using MyBox;
 
-public class ConfirmMenu : Singleton<ConfirmMenu>
+public class ConfirmMenu : MonoBehaviour
 {
     [SerializeField]
     private TMP_Text _WarningText;
@@ -13,9 +13,9 @@ public class ConfirmMenu : Singleton<ConfirmMenu>
     [SerializeField] 
     private Button _NoButton = null;
 
-    private void Start()
+    private void OnDisable()
     {
-        gameObject.SetActive(false);
+        Destroy(gameObject);
     }
 
     public void SetMenu(string warningText, UnityAction yesAction, UnityAction noAction)
@@ -34,11 +34,13 @@ public class ConfirmMenu : Singleton<ConfirmMenu>
     {
         _YesButton.onClick.RemoveAllListeners();
         _YesButton.onClick.AddListener(yesAction);
+        _YesButton.onClick.AddListener(new UnityAction(() => Destroy(gameObject)));
     }
 
     public void NoAction(UnityAction noAction)
     {
         _NoButton.onClick.RemoveAllListeners();
         _NoButton.onClick.AddListener(noAction);
+        _NoButton.onClick.AddListener(new UnityAction(() => Destroy(gameObject)));
     }
 }

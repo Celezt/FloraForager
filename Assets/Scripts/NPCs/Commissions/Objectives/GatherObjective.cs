@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using System.Collections.Generic;
+using UnityEngine;
 using UnityEngine.InputSystem;
 using Sirenix.Serialization;
 using Sirenix.OdinInspector;
@@ -32,6 +33,7 @@ public class GatherObjective : IObjective
 
         _Inventory.OnAddItemCallback += UpdateStatus;
         _Inventory.OnRemoveItemCallback += UpdateStatus;
+        _Inventory.OnInventoryInitalizeCallback += UpdateStatus;
 
         UpdateStatus();
     }
@@ -39,19 +41,27 @@ public class GatherObjective : IObjective
     {
         _Inventory.OnAddItemCallback -= UpdateStatus;
         _Inventory.OnRemoveItemCallback -= UpdateStatus;
+        _Inventory.OnInventoryInitalizeCallback -= UpdateStatus;
     }
     public void Completed()
     {
         _Inventory.Remove(ItemToGather.ID, ItemToGather.Amount);
     }
 
-    public void UpdateStatus() { UpdateStatus(0, new ItemAsset { }); }
-    public void UpdateStatus(int pos, ItemAsset item)
+    public void UpdateStatus() 
     {
         CurrentAmount = _Inventory.FindAmount(ItemToGather.ID);
 
         CommissionLog.Instance.UpdateSelected();
         CommissionLog.Instance.CheckCompletion();
         CommissionTracker.Instance.UpdateTracker();
+    }
+    public void UpdateStatus(int pos, ItemAsset item)
+    {
+        UpdateStatus();
+    }
+    public void UpdateStatus(List<ItemAsset> items)
+    {
+        UpdateStatus();
     }
 }

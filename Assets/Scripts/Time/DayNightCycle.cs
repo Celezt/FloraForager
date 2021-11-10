@@ -26,7 +26,7 @@ public class DayNightCycle : MonoBehaviour
 
     private void Start()
     {
-        _MorningOffset = (360.0f / 24.0f) * (SleepSchedule.Instance.MorningTime - 0.75f);
+        _MorningOffset = (360.0f / 24.0f) * SleepSchedule.Instance.MorningTime;
     }
 
     private void LateUpdate()
@@ -36,11 +36,11 @@ public class DayNightCycle : MonoBehaviour
         _Sun.color = _SunColor.Evaluate(time);
         _Sun.intensity = _SunIntensity.Evaluate(time);
 
-        float pitch = 360.0f * (GameTime.Instance.CurrentTime / 24.0f) - _MorningOffset;
+        float pitch = 360.0f * time - _MorningOffset;
         _CurrentRotation = Quaternion.Euler(pitch, _Yaw, 0.0f);
 
         float angleDiff = Quaternion.Angle(_NewRotation, _CurrentRotation);
-        _NewRotation = (angleDiff < 5.0f) ? Quaternion.Slerp(_NewRotation, _CurrentRotation, _Damping * Time.deltaTime) : _CurrentRotation;
+        _NewRotation = (angleDiff < 2.5f) ? Quaternion.Slerp(_NewRotation, _CurrentRotation, _Damping * Time.deltaTime) : _CurrentRotation;
 
         _Sun.transform.localRotation = _NewRotation;
     }

@@ -27,6 +27,14 @@ public class NPCObject : MonoBehaviour, IInteractable
         NPC = NPCManager.Instance.Get(_NameID.ToLower());
     }
 
+    private void Start()
+    {
+        foreach (Commission commission in CommissionList.Instance.Commissions)
+        {
+            NPC.SetCommission(commission);
+        }
+    }
+
     private void Update()
     {
         if (CommissionGiverWindow.Instance.Opened && _Player != null)

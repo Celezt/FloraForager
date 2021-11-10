@@ -147,9 +147,10 @@ public class FloraMaster : SerializedScriptableSingleton<FloraMaster>, IStreamer
     {
         _Florae = new List<Flora>();
 
-        Dictionary<string, object> streamables = (Dictionary<string, object>)GameManager.Stream.Get(_Guid);
+        if (!GameManager.Stream.TryGet(_Guid, out Dictionary<string, object> streamables))
+            return;
 
-        foreach (var item in streamables)
+        foreach (KeyValuePair<string, object> item in streamables)
         {
             if (!streamables.TryGetValue(item.Key, out object value))
                 continue;
