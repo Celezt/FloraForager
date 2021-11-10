@@ -1,6 +1,6 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
---- !u!114 &-4329354979953170067
+--- !u!114 &-1188775369291935495
 MonoBehaviour:
   m_ObjectHideFlags: 11
   m_CorrespondingSourceObject: {fileID: 0}
@@ -20,9 +20,9 @@ Material:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: mtl_main_character_hair
-  m_Shader: {fileID: 4800000, guid: 6ea049e9f2f0d4ec693322ebc817af04, type: 3}
-  m_ShaderKeywords: _RIMLIGHTING _SECONDARYLOBE _STRANDDIR_BITANGENT
+  m_Name: mtl_fiona_pants
+  m_Shader: {fileID: -6465566751694194690, guid: 603a3da43b565e14ab673e565db769ca, type: 3}
+  m_ShaderKeywords: 
   m_LightmapFlags: 4
   m_EnableInstancingVariants: 0
   m_DoubleSidedGI: 0
@@ -32,12 +32,20 @@ Material:
   m_SavedProperties:
     serializedVersion: 3
     m_TexEnvs:
+    - Texture2D_69d67ff2a7db4bebb2be3303c6443a5d:
+        m_Texture: {fileID: 2800000, guid: f63e998c79d8fec4998fb37445f8c275, type: 3}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - Texture2D_90a0867895974cd0bea0dc263ed9dd56:
+        m_Texture: {fileID: 2800000, guid: 8990d0726c8e0e64ab45026478ea1fb9, type: 3}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
     - _BaseMap:
-        m_Texture: {fileID: 2800000, guid: 99d2a15a9b495a649a5028f693ea90ed, type: 3}
+        m_Texture: {fileID: 0}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _BumpMap:
-        m_Texture: {fileID: 2800000, guid: c3bb1d5298b924d80959c9f822ffe414, type: 3}
+        m_Texture: {fileID: 0}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _DetailAlbedoMap:
@@ -57,10 +65,6 @@ Material:
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _MainTex:
-        m_Texture: {fileID: 2800000, guid: 99d2a15a9b495a649a5028f693ea90ed, type: 3}
-        m_Scale: {x: 1, y: 1}
-        m_Offset: {x: 0, y: 0}
-    - _MaskMap:
         m_Texture: {fileID: 0}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
@@ -93,22 +97,17 @@ Material:
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     m_Floats:
+    - Vector1_a2e9699f78f544689a67cf9cb140dd9c: 0.8
     - _AlphaClip: 0
-    - _AmbientReflection: 0.815
-    - _ApplyNormal: 0
     - _Blend: 0
     - _BumpScale: 1
     - _ClearCoatMask: 0
     - _ClearCoatSmoothness: 0
-    - _Coverage: 1
     - _Cull: 2
-    - _Culling: 0
-    - _Cutoff: 0.506
+    - _Cutoff: 0.5
     - _DetailAlbedoMapScale: 1
     - _DetailNormalMapScale: 1
     - _DstBlend: 0
-    - _EnableMaskMap: 0
-    - _EnableVFACE: 0
     - _EnvironmentReflections: 1
     - _GlossMapScale: 1
     - _Glossiness: 0
@@ -118,42 +117,18 @@ Material:
     - _OcclusionStrength: 1
     - _Parallax: 0.02
     - _QueueOffset: 0
-    - _ReadMask: 255
     - _ReceiveShadows: 1
-    - _Rim: 1
-    - _RimFrequency: 0
-    - _RimMinPower: 1
-    - _RimPerPositionFrequency: 1
-    - _RimPower: 2
-    - _RimTransmissionIntensity: 6
-    - _SecondaryLobe: 1
-    - _SecondarySpecularExponent: 0.8
-    - _SecondarySpecularShift: 0.122
-    - _ShadowCull: 0
     - _Smoothness: 0.5
     - _SmoothnessTextureChannel: 0
-    - _SpecularExponent: 0.85
     - _SpecularHighlights: 1
-    - _SpecularShift: 0.1
     - _SrcBlend: 1
-    - _Stencil: 0
-    - _StencilComp: 8
-    - _StencilFail: 0
-    - _StencilOp: 0
-    - _StencilZFail: 0
-    - _StrandDir: 0
     - _Surface: 0
     - _UVSec: 0
     - _WorkflowMode: 1
-    - _WriteMask: 255
     - _ZWrite: 1
     m_Colors:
-    - _BaseColor: {r: 0.26415092, g: 0.17457399, b: 0.1457814, a: 1}
+    - _BaseColor: {r: 0.39157265, g: 0.18447497, b: 0.12213881, a: 1}
     - _Color: {r: 1, g: 1, b: 1, a: 1}
     - _EmissionColor: {r: 0, g: 0, b: 0, a: 1}
-    - _RimColor: {r: 0.2924528, g: 0.15439625, b: 0.06759523, a: 1}
-    - _SecondaryColor: {r: 0.7735849, g: 0.61602545, b: 0.52910286, a: 1}
-    - _SecondarySpecularTint: {r: 0.6037736, g: 0.576054, b: 0.26486292, a: 1}
     - _SpecColor: {r: 0.2, g: 0.2, b: 0.2, a: 1}
-    - _SpecularTint: {r: 1.7169812, g: 0.96689636, b: 0.753204, a: 1}
   m_BuildTextureStacks: []

@@ -434,6 +434,8 @@ public class ItemTypeSettings : SerializedScriptableSingleton<ItemTypeSettings>
 
         string oldName = _itemNameChunk[id];
         _itemNameChunk[id] = newName;
+
+        EnumGenerator.Generate("Items", "Assets/Data/Generated", _itemNameChunk.Values.ToList());
     }
 #endif
 }
