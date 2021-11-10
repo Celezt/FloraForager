@@ -23,16 +23,13 @@ public class ScytheItem : IUse, IDestructor, IStar, IValue
 
     [Title("Tool Behaviour")]
     [SerializeField]
+    private AnimationClip _clip;
+    [SerializeField]
     private float _stunDuration = 0.5f;
     [SerializeField]
     private float _radius = 3f;
     [SerializeField]
     private float _arc = 0.4f;
-    [SerializeField, AssetsOnly]
-    private GameObject _modelPrefab { get; set; }
-
-    private Transform _scytheTransform;
-    private Animator _animator;
 
     void IItem.OnInitialize(ItemTypeContext context)
     {
@@ -41,11 +38,6 @@ public class ScytheItem : IUse, IDestructor, IStar, IValue
 
     void IItem.OnEquip(ItemContext context)
     {
-        _scytheTransform = GameObject.Instantiate(_modelPrefab, context.transform.position, Quaternion.identity).transform;
-        _scytheTransform.parent = context.transform;
-
-        _animator = _scytheTransform.GetComponent<Animator>();
-
         context.behaviour.OnDrawGizmosAction = () =>
         {
             Gizmos.matrix = context.transform.localToWorldMatrix;
@@ -55,7 +47,7 @@ public class ScytheItem : IUse, IDestructor, IStar, IValue
 
     void IItem.OnUnequip(ItemContext context)
     {
-        GameObject.Destroy(_scytheTransform.gameObject);
+
     }
 
     void IItem.OnUpdate(ItemContext context)
@@ -68,9 +60,8 @@ public class ScytheItem : IUse, IDestructor, IStar, IValue
         if (!context.started)
             yield break;
 
-        _animator.SetTrigger("hit");
-
-        context.transform.GetComponent<PlayerMovement>().ActivaInput.Add(_stunDuration);
+        context.transform.GetComponentInChildren<PlayerMovement>().ActivaInput.Add(_stunDuration);
+        context.transform.GetComponentInChildren<HumanoidAnimationBehaviour>().CustomMotionRaise(_clip);
 
         Collider[] colliders = PhysicsC.OverlapArc(context.transform.position, context.transform.forward, Vector3.up, _radius, _arc, LayerMask.NameToLayer("default"));
 
