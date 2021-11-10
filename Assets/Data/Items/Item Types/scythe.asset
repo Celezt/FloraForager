@@ -10,13 +10,14 @@ MonoBehaviour:
   m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 00a108d415261c34b9fe06714b46e722, type: 3}
-  m_Name: sycthe
+  m_Name: scythe
   m_EditorClassIdentifier: 
   serializationData:
     SerializedFormat: 2
     SerializedBytes: 
     ReferencedUnityObjects:
-    - {fileID: 7855364109653012003, guid: 4128454e94bc5d94da50779aff78d2b4, type: 3}
+    - {fileID: -806904893743546587, guid: 71f23000df5978a4797f072ce373111b, type: 3}
+    - {fileID: 919132149155446097, guid: 5a1057dee949e7f459d3dc90a0328545, type: 3}
     SerializedBytesString: 
     Prefab: {fileID: 0}
     PrefabModificationsReferencedUnityObjects: []
@@ -36,14 +37,20 @@ MonoBehaviour:
       Data: 100
     - Name: IUse.Cooldown
       Entry: 4
-      Data: 0.5
+      Data: 1
     - Name: IDestructor.Damage
       Entry: 4
       Data: 2
-    - Name: _modelPrefab
+    - Name: _clip
       Entry: 10
       Data: 0
+    - Name: _model
+      Entry: 10
+      Data: 1
     - Name: _stunDuration
+      Entry: 4
+      Data: 1
+    - Name: _onUse
       Entry: 4
       Data: 0.5
     - Name: _radius
@@ -56,9 +63,11 @@ MonoBehaviour:
       Entry: 8
       Data: 
   Icon: {fileID: 0}
-  Name: Sycthe
-  ID: sycthe
+  Name: Scythe
+  ID: scythe
   Description: 
   Labels:
   - scythe
   - tool
+  - Scythe
+  - Tool

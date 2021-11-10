@@ -10,6 +10,10 @@ public class HumanoidAnimationBehaviour : MonoBehaviour
     private static readonly int CUSTOM_TRIGGER_HASH = Animator.StringToHash("CustomTrigger");
 
     /// <summary>
+    /// Transform to hold items.
+    /// </summary>
+    public Transform HoldTransform => _holdTransform;
+    /// <summary>
     /// Speed between 0 and 1.
     /// </summary>
     public float WalkSpeed
@@ -17,13 +21,13 @@ public class HumanoidAnimationBehaviour : MonoBehaviour
         get => _walkSpeed;
         set => _walkSpeed = Mathf.Clamp01(value);
     }
-
     /// <summary>
     /// If currently running a custom animation.
     /// </summary>
     public bool IsCustomMotionRunning => _isCustomMotionRunning;
      
     [SerializeField] private Animator _animator;
+    [SerializeField] private Transform _holdTransform;
     [SerializeField] private Vector3 _target;
 
     private AnimatorOverrideController _animatorOverrideController;

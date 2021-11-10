@@ -45,7 +45,7 @@ public class PlaceableItem : IUse
 
     }
 
-    IEnumerable<IUsable> IUse.OnUse(UseContext context)
+    IEnumerator IUse.OnUse(UseContext context)
     {
         if (!context.started)
             yield break;

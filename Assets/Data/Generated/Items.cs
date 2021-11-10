@@ -5,7 +5,7 @@ using System;
 [Flags]
 public enum Items
 {
-	Sycthe = 1 << 1,
+	Scythe = 1 << 1,
 	Porock = 1 << 2,
 	Floatish = 1 << 3,
 	SimpleRod = 1 << 4,
@@ -19,5 +19,5 @@ public enum Items
 	FishBait = 1 << 12,
 	WateringCan = 1 << 13,
 	Hoe = 1 << 14,
-	All =  Sycthe | Porock | Floatish | SimpleRod | Spookish | Axe | Pickaxe | Birow | WoodenChest | Rock | Log | FishBait | WateringCan | Hoe 
+	All =  Scythe | Porock | Floatish | SimpleRod | Spookish | Axe | Pickaxe | Birow | WoodenChest | Rock | Log | FishBait | WateringCan | Hoe 
 }
