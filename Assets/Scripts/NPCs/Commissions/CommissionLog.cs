@@ -166,6 +166,9 @@ public class CommissionLog : Singleton<CommissionLog>
 
     public void OnOpenExit(InputAction.CallbackContext context)
     {
+        if (DebugManager.IsFocused)
+            return;
+
         if (_CanvasGroup.alpha == 1.0f)
         {
             Exit();

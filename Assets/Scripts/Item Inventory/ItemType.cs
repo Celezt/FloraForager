@@ -18,6 +18,9 @@ public class ItemType : SerializedScriptableObject
     [PreviewField(120), HideLabel]
     [HorizontalGroup("Group 1", 120)]
     public Sprite Icon;
+#if UNITY_EDITOR
+    [OnValueChanged(nameof(OnNameChange))]
+#endif
     [VerticalGroup("Group 1/Right"), LabelWidth(80)]
     public string Name;
     [SerializeField, VerticalGroup("Group 1/Right"), LabelWidth(80), ReadOnly]
@@ -30,23 +33,21 @@ public class ItemType : SerializedScriptableObject
     [HideInInspector]
     public List<string> Labels = new List<string>();
 
+#if UNITY_EDITOR
+    private bool _initialized;
+
+    private SerializedObject _serializedObject;
+    private SerializedProperty _idProperty;
+
     private void Awake()
     {
-#if UNITY_EDITOR
         _initialized = false;
 
         Create();
 
         if (_initialized)
             Rename();
-#endif
     }
-
-#if UNITY_EDITOR
-    private bool _initialized;
-
-    private SerializedObject _serializedObject;
-    private SerializedProperty _idProperty;
 
     public void Create()
     {
@@ -90,18 +91,13 @@ public class ItemType : SerializedScriptableObject
 
         _serializedObject.ApplyModifiedProperties();
     }
-    private void OnValidate()
-    {
-        ItemTypeSettings settings = ItemTypeSettings.Instance;
-
-        if (settings == null)
-            return;
-
-        if (!string.IsNullOrEmpty(Name))
-            settings.ChangeName(ID, Name);
-    }
 
     private void OnIconChange() => ItemTypeSettings.Instance.ChangeIcon(ID, Icon);
+    private void OnNameChange()
+    {
+        if (!string.IsNullOrEmpty(Name)) 
+            ItemTypeSettings.Instance.ChangeName(ID, Name);
+    }
 
     public class DescriptorDeleteDetector : UnityEditor.AssetModificationProcessor
     {

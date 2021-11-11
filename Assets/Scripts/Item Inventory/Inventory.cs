@@ -89,7 +89,11 @@ public class Inventory
     public bool InsertUntilFull(ItemAsset item)
     {
         int amountToAdd = item.Amount;
-        int stack = (int)ItemTypeSettings.Instance.ItemTypeChunk[item.ID].Behaviour.ItemStack;
+
+        if (!ItemTypeSettings.Instance.ItemTypeChunk.TryGetValue(item.ID, out ItemType itemType))    // If it exit.
+            return false;
+
+        int stack = (int)itemType.Behaviour.ItemStack;
 
         {
             List<(int, int)> foundItems = FindAll(item.ID);
@@ -305,23 +309,6 @@ public class Inventory
             }
         }
         return found;
-    }
-
-    private void Deserialize()
-    {
-        Addressables.LoadAssetAsync<TextAsset>("inventory").Completed += (handle) =>
-        {
-            InventoryAsset tmp = JsonConvert.DeserializeObject<InventoryAsset>(handle.Result.text);
-
-            for (int i = 0; i < tmp.Items.Length; i++)
-            {
-                _items.Add(tmp.Items[i]);
-            }
-
-            Addressables.Release(handle);
-
-            OnInventoryInitalizeCallback.Invoke(_items);
-        };
     }
 
     public void Initialize(List<ItemAsset> items)
