@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using UnityEngine;
+using MyBox;
 
 [CreateAssetMenu(fileName = "ObjectRespawn", menuName = "Game Logic/Object Respawn")]
 [System.Serializable]
@@ -23,6 +24,19 @@ public class ObjectRespawn : SerializedScriptableSingleton<ObjectRespawn>, IStre
         GameManager.AddStreamer(this);
     }
 
+#if UNITY_EDITOR
+    [UnityEditor.InitializeOnEnterPlayMode]
+    private static void Initialize()
+    {
+        GameManager.AddStreamer(Instance);
+    }
+#endif
+
+    public void Add(Guid guid, int days)
+    {
+        _Objects.Add((guid, days));
+    }
+
     public void Notify()
     {
         for (int i = _Objects.Count - 1; i >= 0; --i)
@@ -31,8 +45,14 @@ public class ObjectRespawn : SerializedScriptableSingleton<ObjectRespawn>, IStre
 
             if (--item.Item2 <= 0)
             {
-                if (GameManager.Stream.StreamedData.ContainsKey(item.Item1))
-                    ((StreamableBehaviour.Data)GameManager.Stream.StreamedData[item.Item1]).IsAlive = true;
+                if (GameManager.Stream.TryGet(item.Item1, out Dictionary<string, object> streamables))
+                {
+                    string typeName = typeof(StreamableBehaviour).ToString();
+                    if (streamables.TryGetValue(typeName, out object value))
+                    {
+                        (value as StreamableBehaviour.Data).IsAlive = true;
+                    }
+                }
 
                 _Objects.RemoveAt(i);
             }
@@ -43,14 +63,21 @@ public class ObjectRespawn : SerializedScriptableSingleton<ObjectRespawn>, IStre
 
     public void UpLoad()
     {
-        throw new NotImplementedException();
+        GameManager.Stream.Load(_Guid, _Objects);
     }
     public void Load()
     {
-        throw new NotImplementedException();
+        _Objects.Clear();
+
+        if (!GameManager.Stream.TryGet(_Guid, out List<(Guid, int)> streamables))
+            return;
+
+        _Objects = streamables;
     }
     public void BeforeSaving()
     {
-        throw new NotImplementedException();
+        GameManager.Stream.Release(_Guid);
+
+        UpLoad();
     }
 }

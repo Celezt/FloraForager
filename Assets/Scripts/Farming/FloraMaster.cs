@@ -145,7 +145,7 @@ public class FloraMaster : SerializedScriptableSingleton<FloraMaster>, IStreamer
     }
     public void Load()
     {
-        _Florae = new List<Flora>();
+        _Florae.Clear();
 
         if (!GameManager.Stream.TryGet(_Guid, out Dictionary<string, object> streamables))
             return;
@@ -169,6 +169,6 @@ public class FloraMaster : SerializedScriptableSingleton<FloraMaster>, IStreamer
 
         UpLoad();
 
-        _Florae.ForEach(x => ((IStreamable<object>)x).OnBeforeSaving());
+        _Florae.ForEach(x => x.OnBeforeSaving());
     }
 }

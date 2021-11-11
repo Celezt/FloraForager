@@ -12,6 +12,8 @@ public class MusicPlayer : Singleton<MusicPlayer>
     [SerializeField]
     private AudioSource _AudioSource;
     [SerializeField]
+    private AudioMixerGroup _Output;
+    [SerializeField]
     private bool _Loop;
     [SerializeField]
     private bool _Shuffle;
@@ -81,7 +83,7 @@ public class MusicPlayer : Singleton<MusicPlayer>
             AudioClip audioClip = asyncLoad.Result as AudioClip;
 
             _AudioSource.clip = audioClip;
-            _AudioSource.outputAudioMixerGroup = music.Output;
+            _AudioSource.outputAudioMixerGroup = _Output;
             _AudioSource.volume = music.Volume;
             _AudioSource.pitch = music.Pitch;
             _AudioSource.Play();
@@ -133,12 +135,8 @@ public class MusicPlayer : Singleton<MusicPlayer>
     {
         [SerializeField]
         private string _Name;
-
-        [Space(5)]
         [SerializeField]
         private AssetReference _Asset;
-        [SerializeField]
-        private AudioMixerGroup _Output;
 
         [Space(5)]
         [SerializeField, Range(0.0f, 1.0f)]
@@ -149,7 +147,6 @@ public class MusicPlayer : Singleton<MusicPlayer>
         public string Name => _Name;
 
         public AssetReference Asset => _Asset;
-        public AudioMixerGroup Output => _Output;
 
         public float Volume => _Volume;
         public float Pitch => _Pitch;
