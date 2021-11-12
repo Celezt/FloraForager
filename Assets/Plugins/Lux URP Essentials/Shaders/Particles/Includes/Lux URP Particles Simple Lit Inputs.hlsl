@@ -3,7 +3,9 @@
 #ifndef LIGHTWEIGHT_PARTICLES_SIMPLE_LIT_INPUT_INCLUDED
 #define LIGHTWEIGHT_PARTICLES_SIMPLE_LIT_INPUT_INCLUDED
 
-#include "Packages/com.unity.render-pipelines.universal/ShaderLibrary/Particles.hlsl"
+//#include "Packages/com.unity.render-pipelines.universal/Shaders/Particles/ParticlesLitInput.hlsl"
+#include "Packages/com.unity.render-pipelines.universal/Shaders/Particles/ParticlesInput.hlsl"
+
 
 CBUFFER_START(UnityPerMaterial)
     float4 _SoftParticleFadeParams;
@@ -27,15 +29,16 @@ CBUFFER_START(UnityPerMaterial)
     half _Transmission;
     half _TransmissionDistortion;
 
-//  Tessellation
-    float _Tess;
-    float2 _TessRange;
-
+    #if defined(_USESTESSELLATION)
+        float _Tess;
+        float2 _TessRange;
+    #endif
 CBUFFER_END
 
 TEXTURE2D(_SpecGlossMap); SAMPLER(sampler_SpecGlossMap);
-
 float4 _CameraDepthTexture_TexelSize;
+
+    #include "Packages/com.unity.render-pipelines.universal/ShaderLibrary/Particles.hlsl"
 
 
 #define SOFT_PARTICLE_NEAR_FADE _SoftParticleFadeParams.x

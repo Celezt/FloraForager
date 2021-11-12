@@ -268,7 +268,7 @@ bend.y = 0; //input.color.b * 0.3; // * fBranchAmp;
                 
                 outSurfaceData.albedo = albedoAlpha.rgb;
                 outSurfaceData.metallic = 0;
-                outSurfaceData.specular = _SpecColor;
+                outSurfaceData.specular = _SpecColor.rgb;
             
             //  Normal Map
                 #if defined (_NORMALMAP)
@@ -310,7 +310,7 @@ bend.y = 0; //input.color.b * 0.3; // * fBranchAmp;
                 inputData.viewDirectionWS = viewDirWS;
                 
                 #if defined(REQUIRES_VERTEX_SHADOW_COORD_INTERPOLATOR)
-                    inputData.shadowCoord = input.shadowCoord;
+                    inputData.shadowCoord = input.shadowCDDDDDDDDDDDDDDDDDDDoord;
                 #elif defined(MAIN_LIGHT_CALCULATE_SHADOWS)
                     inputData.shadowCoord = TransformWorldToShadowCoord(inputData.positionWS);
                 #else
@@ -553,11 +553,14 @@ bend.y = 0; //input.color.b * 0.3; // * fBranchAmp;
                 outSurfaceData.alpha = Alpha(albedoAlpha.a, 1, _Cutoff);
                 outSurfaceData.albedo = albedoAlpha.rgb;
                 outSurfaceData.metallic = 0;
-                outSurfaceData.specular = _SpecColor;
+                outSurfaceData.specular = _SpecColor.rgb;
                 outSurfaceData.smoothness = _Smoothness;
                 outSurfaceData.normalTS = half3(0,0,1); //SampleNormal(uv, TEXTURE2D_ARGS(_BumpMap, sampler_BumpMap));
                 outSurfaceData.occlusion = 1;
                 outSurfaceData.emission = 0;
+
+                outSurfaceData.clearCoatMask = 0;
+                outSurfaceData.clearCoatSmoothness = 0;
             }
 
         //  Finally include the meta pass related stuff  

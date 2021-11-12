@@ -1,4 +1,7 @@
-﻿using UnityEngine;
+﻿// vr: https://forum.unity.com/threads/released-lux-urp-essentials.712619/page-17#post-6474737
+
+
+using UnityEngine;
 using UnityEngine.Experimental.Rendering;
 using UnityEngine.Rendering;
 
@@ -79,8 +82,6 @@ namespace Lux_SRP_GrassDisplacement
 
         private FilteringSettings transparentFilterSettings { get; set; }
 
-//private ProfilingSampler psGrassDisplacement;
-
         public GrassDisplacementPass()
         {
             m_GrassDisplacementFX.Init("_Lux_DisplacementRT");
@@ -112,9 +113,6 @@ namespace Lux_SRP_GrassDisplacement
             worldToCameraMatrix.SetRow(1, new Vector4(0,0,1,0) ); //last is z pos
             worldToCameraMatrix.SetRow(2, new Vector4(0,1,0,0) ); //last is y pos
             worldToCameraMatrix.SetRow(3, new Vector4(0,0,0,1) );
-
-//psGrassDisplacement = new ProfilingSampler("k_RenderGrassDisplacementFXTag");
-
         }
 
         public override void Execute(ScriptableRenderContext context, ref UnityEngine.Rendering.Universal.RenderingData renderingData)
@@ -122,8 +120,6 @@ namespace Lux_SRP_GrassDisplacement
             CommandBuffer cmd = CommandBufferPool.Get(k_RenderGrassDisplacementFXTag);
 
             using (new ProfilingSample(cmd, k_RenderGrassDisplacementFXTag))
-        //	This wil spam a lot of errors...
-            //using (new ProfilingScope(cmd, psGrassDisplacement))
             {
                 context.ExecuteCommandBuffer(cmd);
                 cmd.Clear();
@@ -189,8 +185,7 @@ namespace Lux_SRP_GrassDisplacement
 //cmd.SetGlobalTexture("_Lux_DisplacementRT", m_GrassDisplacementFX.Identifier() );
                     //}
                     //else {
-                        //cmd.SetSinglePassStereo(SinglePassStereoMode.SideBySide);
-                        cmd.SetSinglePassStereo(SinglePassStereoMode.None);   
+                        cmd.SetSinglePassStereo(SinglePassStereoMode.SideBySide);   
                     //}
                 }
             }
