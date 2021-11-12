@@ -55,7 +55,7 @@ public class RelationshipManager
 
         NPC npc = NPCManager.Instance?.Get(npcName);
 
-        if (npc == null)
+        if (npc == null || npc.RelationDialogue == null)
             return;
 
         for (int i = npc.RelationDialogue.Count - 1; i >= 0; --i)
