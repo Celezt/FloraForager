@@ -16,20 +16,20 @@ public class ObjectMaster : SerializedScriptableSingleton<ObjectMaster>, IStream
 
     private void Awake()
     {
-        SceneManager.sceneLoaded += OnSceneLoaded;
-
         if (_Guid == System.Guid.Empty)
             _Guid = System.Guid.NewGuid();
 
         GameManager.AddStreamer(this);
+
+        SceneManager.sceneLoaded += OnSceneLoaded;
     }
 
 #if UNITY_EDITOR
     [UnityEditor.InitializeOnEnterPlayMode]
     private static void Initialize()
     {
-        SceneManager.sceneLoaded += Instance.OnSceneLoaded;
         GameManager.AddStreamer(Instance);
+        SceneManager.sceneLoaded += Instance.OnSceneLoaded;
     }
 #endif
 
@@ -97,34 +97,16 @@ public class ObjectMaster : SerializedScriptableSingleton<ObjectMaster>, IStream
 
     public void UpLoad()
     {
-        Dictionary<string, object> streamables = new Dictionary<string, object>();
-
-        foreach (KeyValuePair<string, ObjectData> item in _Objects)
-        {
-            streamables.Add(item.Key, item.Value);
-        }
-
-        GameManager.Stream.Load(_Guid, streamables);
+        GameManager.Stream.Load(_Guid, _Objects);
     }
     public void Load()
     {
-        _Objects = new Dictionary<string, ObjectData>();
+        _Objects.Clear();
 
-        Dictionary<string, object> streamables = (Dictionary<string, object>)GameManager.Stream.Get(_Guid);
-
-        if (streamables == null)
-        {
-            Debug.LogError("trying to load without having saved first");
+        if (!GameManager.Stream.TryGet(_Guid, out Dictionary<string, ObjectData> objects))
             return;
-        }
 
-        foreach (KeyValuePair<string, object> item in streamables)
-        {
-            if (!streamables.TryGetValue(item.Key, out object value))
-                continue;
-
-            _Objects[item.Key] = value as ObjectData;
-        }
+        _Objects = objects;
     }
     public void BeforeSaving()
     {

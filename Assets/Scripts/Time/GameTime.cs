@@ -3,14 +3,19 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEditor;
 using MyBox;
+using Sirenix.OdinInspector;
 using Sirenix.Serialization;
 
 [CreateAssetMenu(fileName = "GameTime", menuName = "Game Logic/GameTime")]
 [System.Serializable]
 public class GameTime : SerializedScriptableSingleton<GameTime>, IStreamer, IStreamable<GameTime.Data>
 {
-    [Space(5), Header("Game")]
-    [OdinSerialize, Min(0)] private float _InGameHour = 60.0f; // how long an in-game hour lasts in seconds
+    [OdinSerialize]
+    private System.Guid _Guid;
+
+    [Space(5)]
+    [OdinSerialize, Min(0), LabelText("Seconds Per In-Game Hour")] 
+    private float _InGameHour = 60.0f; // how long an in-game hour lasts in seconds
 
     [Space(5)]
     [OdinSerialize, Min(0)] private int _CurrentYear;
@@ -18,24 +23,25 @@ public class GameTime : SerializedScriptableSingleton<GameTime>, IStreamer, IStr
     [OdinSerialize, Min(0)] private int _CurrentDay;
     [OdinSerialize, Min(0)] private int _CurrentHour = 6;
 
-    [Space(5), Header("Calendar")]
+    [Space(5)]
     [OdinSerialize, Min(0)] private int _HoursPerDay = 24;
     [OdinSerialize, Min(0)] private int _DaysPerMonth = 30;
     [OdinSerialize, Min(0)] private int _MonthsPerYear = 12;
 
+    [Space(5)]
     [OdinSerialize]
-    private readonly string[] Weekdays = { "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday" };
+    private float _ClockUpdateFrequency = 5.0f;
 
-    [Space(5), Header("Misc")]
-    [OdinSerialize]
-    private System.Guid _Guid;
+    [Space(5)]
+    [OdinSerialize, ListDrawerSettings(Expanded = true)]
+    private readonly string[] Weekdays = { "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday" };
 
     [System.NonSerialized]
     private Data _Data = new Data();
 
     public class Data
     {
-        public decimal ElapsedTime = 0.0M;
+        public decimal ElapsedTime;
     }
 
     public Data OnUpload() => _Data;
@@ -44,16 +50,6 @@ public class GameTime : SerializedScriptableSingleton<GameTime>, IStreamer, IStr
         _Data = state as Data;
     }
     public void OnBeforeSaving() { }
-
-    public void UpLoad()
-    {
-        GameManager.Stream.Load(_Guid, OnUpload());
-    }
-    public void Load()
-    {
-        OnLoad(GameManager.Stream.Get(_Guid));
-    }
-    public void BeforeSaving() { }
 
     private float _MinuteClock = 0.0f;
     private float _HourClock = 0.0f;
@@ -64,12 +60,12 @@ public class GameTime : SerializedScriptableSingleton<GameTime>, IStreamer, IStr
     public float InGameHour => _InGameHour;
 
     /// <summary>
-    /// game time in common format 0.0-24.0
+    /// current time in day in common format 0.0-24.0
     /// </summary>
-    public float CurrentTime => HourClock + (_MinuteClock / 60.0f);
+    public float CurrentTime => HourClock +  (MinuteClock / 60.0f);
 
-    public float MinuteClock => _MinuteClock;
     public float HourClock => _HourClock;
+    public float MinuteClock => _MinuteClock;
 
     public decimal ElapsedTime
     {
@@ -85,7 +81,7 @@ public class GameTime : SerializedScriptableSingleton<GameTime>, IStreamer, IStr
     public string DigitalTime => string.Format(
         "<mspace=0.75em>{0:00}</mspace>" +
         "<mspace=0.30em>:</mspace>" +
-        "<mspace=0.75em>{1:00}</mspace>", _HourClock, _MinuteClock);
+        "<mspace=0.75em>{1:00}</mspace>", _HourClock, Mathf.Floor(_MinuteClock / _ClockUpdateFrequency) * _ClockUpdateFrequency);
     public string Date => string.Format("{0:0000}/{1:00}/{2:00}", 
         Year, _MonthCalendar, _DayCalendar);
     public string Weekday => string.Format("{0} {1:00}/{2:00}", 
@@ -137,8 +133,30 @@ public class GameTime : SerializedScriptableSingleton<GameTime>, IStreamer, IStr
             (hours * InGameHour) * (_HoursPerDay / 24.0f) -
             (_CurrentHour * _InGameHour)); // time to accelerate by
 
-        _Data.ElapsedTime = (decimal)acceleratedTime;
+        ElapsedTime = (decimal)acceleratedTime;
 
         UpdateTime();
+    }
+
+    public void UpLoad()
+    {
+        GameManager.Stream.Load(_Guid, OnUpload());
+    }
+    public void Load()
+    {
+        _Data = new Data();
+
+        if (!GameManager.Stream.TryGet(_Guid, out object value))
+            return;
+
+        OnLoad(value);
+    }
+    public void BeforeSaving()
+    {
+        GameManager.Stream.Release(_Guid);
+
+        UpLoad();
+
+        OnBeforeSaving();
     }
 }

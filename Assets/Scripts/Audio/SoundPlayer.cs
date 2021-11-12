@@ -14,6 +14,10 @@ public class SoundPlayer : Singleton<SoundPlayer>
     [SerializeField, Min(1)]
     private int _InitialPoolSize = 5;
     [SerializeField]
+    private AudioMixerGroup _Output;
+
+    [Space(10)]
+    [SerializeField]
     private Sound[] _SoundEffects;
 
     private AudioSource[] _AudioSourcePool;
@@ -165,7 +169,7 @@ public class SoundPlayer : Singleton<SoundPlayer>
             return;
 
         audioSource.clip = sound.AudioClip;
-        audioSource.outputAudioMixerGroup = sound.Output;
+        audioSource.outputAudioMixerGroup = _Output;
 
         audioSource.volume = sound.Volume;
         audioSource.pitch = sound.Pitch;
@@ -217,12 +221,8 @@ public class SoundPlayer : Singleton<SoundPlayer>
     {
         [SerializeField]
         private string _Name;
-
-        [Space(5)]
         [SerializeField, AssetsOnly]
         private AssetReference _Asset;
-        [SerializeField]
-        private AudioMixerGroup _Output;
 
         [Space(5)]
         [SerializeField, Range(0.0f, 1.0f)]
@@ -230,11 +230,11 @@ public class SoundPlayer : Singleton<SoundPlayer>
         [SerializeField, Range(0.1f, 3.0f)]
         private float _Pitch = 1.0f;
         [SerializeField, Range(0.0f, 1.0f)]
-        private float _SpatialBlend;
+        private float _SpatialBlend = 0.0f;
         [SerializeField]
         private float _Cooldown = 0.0f;
         [SerializeField]
-        private int _RepeatCount;
+        private int _RepeatCount = 0;
 
         private AudioClip _AudioClip;
 
@@ -244,7 +244,6 @@ public class SoundPlayer : Singleton<SoundPlayer>
         public string Name => _Name;
 
         public AudioClip AudioClip => _AudioClip;
-        public AudioMixerGroup Output => _Output;
 
         public float Volume => _Volume;
         public float Pitch => _Pitch;

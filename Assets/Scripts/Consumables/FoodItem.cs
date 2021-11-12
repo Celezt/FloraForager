@@ -44,7 +44,7 @@ public class FoodItem : IUse, IStar, IValue
 
     }
 
-    IEnumerable<IUsable> IUse.OnUse(UseContext context)
+    IEnumerator IUse.OnUse(UseContext context)
     {
         if (context.started)
         {

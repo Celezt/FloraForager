@@ -86,7 +86,7 @@ public class ItemTypeSettings : SerializedScriptableSingleton<ItemTypeSettings>
     public event Action<string> OnRemoveLabelCallback = delegate { };
 
     [Button]
-    private void Regenerate()
+    public void Regenerate()
     {
         EnumGenerator.Generate("Items", "Assets/Data/Generated", _itemNameChunk.Values.ToList());
     }
@@ -115,7 +115,6 @@ public class ItemTypeSettings : SerializedScriptableSingleton<ItemTypeSettings>
             _itemNameChunk.Add(id, itemType.Name);
 
         OnAddItemTypeCallback.Invoke(itemType);
-
 
         EnumGenerator.Generate("Items", "Assets/Data/Generated", _itemNameChunk.Values.ToList());
 

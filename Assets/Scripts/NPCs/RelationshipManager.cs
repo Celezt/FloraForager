@@ -19,26 +19,28 @@ public class RelationshipManager
     private float minRelation, maxRelation, curRelation;
     [SerializeField, HideInInspector]
     private Relation relation;
+    [SerializeField, HideInInspector]
+    private string npcName;
 
     public Relation Relation => relation;
 
-    public RelationshipManager(float minRelation, float maxRelation, float curRelation)
+    public RelationshipManager(string npcName, float minRelation, float maxRelation, float curRelation)
     {
+        this.npcName = npcName;
         this.minRelation = minRelation;
         this.maxRelation = maxRelation;
         this.curRelation = curRelation;
 
-        UpdateEnum();
+        UpdateRelation();
     }
 
     public void AddRelation(float value)
     {
         curRelation = Mathf.Clamp(curRelation + value, minRelation, maxRelation);
-
-        UpdateEnum();
+        UpdateRelation();
     }
 
-    private void UpdateEnum()
+    private void UpdateRelation()
     {
         float difference = maxRelation - minRelation;
 
@@ -50,5 +52,23 @@ public class RelationshipManager
         int enumValue = Mathf.RoundToInt(procentage * enumLength);
 
         relation = (Relation)enumValue;
+
+        NPC npc = NPCManager.Instance?.Get(npcName);
+
+        if (npc == null)
+            return;
+
+        for (int i = npc.RelationDialogue.Count - 1; i >= 0; --i)
+        {
+            DialogueRelation dialogueRelation = npc.RelationDialogue[i];
+            if ((int)relation == (int)dialogueRelation.AtRelation)
+            {
+                foreach (DialoguePriority dialogue in dialogueRelation.NewDialogue)
+                {
+                    npc.DialogueQueue.Enqueue((dialogue.Dialogue.AssetGUID, dialogue.Aliases), dialogue.Priority);
+                }
+                npc.RelationDialogue.RemoveAt(i);
+            }
+        }
     }
 }

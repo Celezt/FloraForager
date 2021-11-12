@@ -4,6 +4,7 @@ public struct CommissionData
     public string Title;
     public string Description;
 
+    public bool Repeatable;
     public int TimeLimit;
     public IObjective[] Objectives;
 

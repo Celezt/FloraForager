@@ -15,7 +15,7 @@ public class NPCManager : SerializedScriptableSingleton<NPCManager>, IStreamer
 {
     [SerializeField]
     private System.Guid _Guid;
-    [SerializeField]
+    [SerializeField, ListDrawerSettings(DraggableItems = false, ShowItemCount = false, Expanded = true)]
     private List<NPCInfo> _NPCInfos;
 
     [System.NonSerialized]
@@ -44,9 +44,12 @@ public class NPCManager : SerializedScriptableSingleton<NPCManager>, IStreamer
     }
 #endif
 
-    public NPC Get(string npc)
+    public NPC Get(string id)
     {
-        return _NPCs[npc.ToLower()];
+        if (!_NPCs.TryGetValue(id.ToLower(), out NPC npc))
+            return null;
+
+        return npc;
     }
 
     public NPC Add(string id, NPC npc)
@@ -115,25 +118,30 @@ public class NPCManager : SerializedScriptableSingleton<NPCManager>, IStreamer
     }
     public void Load()
     {
-        _NPCs = new Dictionary<string, NPC>();
+        _NPCs = _NPCInfos.ToDictionary(n => n.Name.ToLower(), n => new NPC(n));
 
-        Dictionary<string, object> streamables = (Dictionary<string, object>)GameManager.Stream.Get(_Guid);
+        if (!GameManager.Stream.TryGet(_Guid, out Dictionary<string, object> streamables))
+            return;
 
-        foreach (var item in streamables)
+        foreach (KeyValuePair<string, object> item in streamables)
         {
             if (!streamables.TryGetValue(item.Key, out object value))
                 continue;
 
             NPC.Data data = value as NPC.Data;
 
-            NPC npc = new NPC(data);
-            npc.OnLoad(data);
-
-            Add(npc.Name, npc);
+            Get(data.Name).OnLoad(data);
         }
     }
     public void BeforeSaving()
     {
+        GameManager.Stream.Release(_Guid);
 
+        UpLoad();
+
+        foreach (KeyValuePair<string, NPC> item in _NPCs)
+        {
+            item.Value.OnBeforeSaving();
+        }
     }
 }

@@ -182,7 +182,10 @@ public class ItemWindow : OdinMenuEditorWindow
 
                         menu.DropDown(rect);
                     }
-                }          
+                }
+
+                if (SirenixEditorGUI.ToolbarButton("Regenerate"))
+                    _settings.Regenerate();
 
                 GUILayout.FlexibleSpace();
 

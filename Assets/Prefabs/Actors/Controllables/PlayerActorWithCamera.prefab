@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_BindingMode: 4
-  m_FollowOffset: {x: 0, y: 8.36, z: -6.6}
+  m_FollowOffset: {x: 0, y: 5, z: -8.7}
   m_XDamping: 0
   m_YDamping: 1
   m_ZDamping: 1
@@ -181,6 +181,22 @@ PrefabInstance:
       propertyPath: m_Name
       value: PlayerActorWithCamera
       objectReference: {fileID: 0}
+    - target: {fileID: 1692419057029604849, guid: eeb42b1b3c38fd149b32b92b5df2b57b, type: 3}
+      propertyPath: _parent
+      value: 
+      objectReference: {fileID: 2898700208018624540}
+    - target: {fileID: 1692419057029604849, guid: eeb42b1b3c38fd149b32b92b5df2b57b, type: 3}
+      propertyPath: _positionOffset.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1692419057029604849, guid: eeb42b1b3c38fd149b32b92b5df2b57b, type: 3}
+      propertyPath: _positionOffset.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2265097815070833664, guid: eeb42b1b3c38fd149b32b92b5df2b57b, type: 3}
+      propertyPath: m_RootOrder
+      value: 4
+      objectReference: {fileID: 0}
     - target: {fileID: 2413093846262211110, guid: eeb42b1b3c38fd149b32b92b5df2b57b, type: 3}
       propertyPath: m_RootOrder
       value: 3
@@ -279,5 +295,10 @@ Transform:
 --- !u!4 &2599129789826885387 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 6771638918411329088, guid: eeb42b1b3c38fd149b32b92b5df2b57b, type: 3}
+  m_PrefabInstance: {fileID: 8784349628420749643}
+  m_PrefabAsset: {fileID: 0}
+--- !u!4 &2898700208018624540 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 5895782597981071703, guid: eeb42b1b3c38fd149b32b92b5df2b57b, type: 3}
   m_PrefabInstance: {fileID: 8784349628420749643}
   m_PrefabAsset: {fileID: 0}

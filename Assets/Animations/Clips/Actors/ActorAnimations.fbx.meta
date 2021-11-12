@@ -18,6 +18,9 @@ ModelImporter:
   - first:
       74: 6717951597034543147
     second: Humanoid|Walk
+  - first:
+      74: -806904893743546587
+    second: Humanoid|Cut
   externalObjects: {}
   materials:
     materialImportMode: 2
@@ -41,6 +44,33 @@ ModelImporter:
       humanoid transforms and has rotation animation that will be discarded.\n\t'DEF-forearm.L'
       has scale animation that will be discarded.\n\t'DEF-forearm.L.001' is inbetween
       humanoid transforms and has rotation animation that will be discarded.\n\t'DEF-hand.L'
+      has scale animation that will be discarded.\n\t'DEF-upper_arm.R' has scale
+      animation that will be discarded.\n\t'DEF-upper_arm.R.001' is inbetween humanoid
+      transforms and has rotation animation that will be discarded.\n\t'DEF-forearm.R'
+      has scale animation that will be discarded.\n\t'DEF-forearm.R.001' is inbetween
+      humanoid transforms and has rotation animation that will be discarded.\n\t'DEF-hand.R'
+      has scale animation that will be discarded.\n\t'DEF-thigh.L' has scale animation
+      that will be discarded.\n\t'DEF-thigh.L.001' is inbetween humanoid transforms
+      and has rotation animation that will be discarded.\n\t'DEF-shin.L' has scale
+      animation that will be discarded.\n\t'DEF-shin.L.001' is inbetween humanoid
+      transforms and has rotation animation that will be discarded.\n\t'DEF-foot.L'
+      has scale animation that will be discarded.\n\t'DEF-thigh.R' has scale animation
+      that will be discarded.\n\t'DEF-thigh.R.001' is inbetween humanoid transforms
+      and has rotation animation that will be discarded.\n\t'DEF-shin.R' has scale
+      animation that will be discarded.\n\t'DEF-shin.R.001' is inbetween humanoid
+      transforms and has rotation animation that will be discarded.\n\t'DEF-foot.R'
+      has scale animation that will be discarded.\n\nClip 'Humanoid|Cut' has import
+      animation warnings that might lower retargeting quality:\nNote: Activate translation
+      DOF on avatar to improve retargeting quality.\n\t'DEF-spine.001' has scale
+      animation that will be discarded.\n\t'DEF-spine.002' has scale animation that
+      will be discarded.\n\t'DEF-spine.003' has scale animation that will be discarded.\n\t'DEF-spine.005'
+      is inbetween humanoid transforms and has rotation animation that will be discarded.\n\t'DEF-eye.L.001'
+      has translation animation that will be discarded.\n\t'DEF-eye.R.001' has translation
+      animation that will be discarded.\n\t'DEF-upper_arm.L' has scale animation
+      that will be discarded.\n\t'DEF-upper_arm.L.001' is inbetween humanoid transforms
+      and has rotation animation that will be discarded.\n\t'DEF-forearm.L' has scale
+      animation that will be discarded.\n\t'DEF-forearm.L.001' is inbetween humanoid
+      transforms and has rotation animation that will be discarded.\n\t'DEF-hand.L'
       has scale animation that will be discarded.\n\t'DEF-upper_arm.R' has scale
       animation that will be discarded.\n\t'DEF-upper_arm.R.001' is inbetween humanoid
       transforms and has rotation animation that will be discarded.\n\t'DEF-forearm.R'
@@ -105,9 +135,10 @@ ModelImporter:
       transforms and has rotation animation that will be discarded.\n\t'DEF-foot.R'
       has scale animation that will be discarded.\n\nClip 'Humanoid|Run' has import
       animation warnings that might lower retargeting quality:\nNote: Activate translation
-      DOF on avatar to improve retargeting quality.\n\t'DEF-upper_arm.L' has scale
-      animation that will be discarded.\n\t'DEF-upper_arm.L.001' is inbetween humanoid
-      transforms and has rotation animation that will be discarded.\n\t'DEF-forearm.L'
+      DOF on avatar to improve retargeting quality.\n\t'DEF-spine.005' is inbetween
+      humanoid transforms and has rotation animation that will be discarded.\n\t'DEF-upper_arm.L'
+      has scale animation that will be discarded.\n\t'DEF-upper_arm.L.001' is inbetween
+      humanoid transforms and has rotation animation that will be discarded.\n\t'DEF-forearm.L'
       has scale animation that will be discarded.\n\t'DEF-forearm.L.001' is inbetween
       humanoid transforms and has rotation animation that will be discarded.\n\t'DEF-hand.L'
       has scale animation that will be discarded.\n\t'DEF-upper_arm.R' has scale
@@ -220,6 +251,8 @@ ModelImporter:
         weight: 1
       - path: Humanoid/DEF-root/DEF-spine/DEF-spine.001/DEF-spine.002/DEF-spine.003/DEF-shoulder.L/DEF-upper_arm.L/DEF-upper_arm.L.001/DEF-forearm.L/DEF-forearm.L.001/DEF-hand.L
         weight: 1
+      - path: Humanoid/DEF-root/DEF-spine/DEF-spine.001/DEF-spine.002/DEF-spine.003/DEF-shoulder.L/DEF-upper_arm.L/DEF-upper_arm.L.001/DEF-forearm.L/DEF-forearm.L.001/DEF-hand.L/DEF-hold.L
+        weight: 1
       - path: Humanoid/DEF-root/DEF-spine/DEF-spine.001/DEF-spine.002/DEF-spine.003/DEF-shoulder.R
         weight: 1
       - path: Humanoid/DEF-root/DEF-spine/DEF-spine.001/DEF-spine.002/DEF-spine.003/DEF-shoulder.R/DEF-upper_arm.R
@@ -232,6 +265,8 @@ ModelImporter:
         weight: 1
       - path: Humanoid/DEF-root/DEF-spine/DEF-spine.001/DEF-spine.002/DEF-spine.003/DEF-shoulder.R/DEF-upper_arm.R/DEF-upper_arm.R.001/DEF-forearm.R/DEF-forearm.R.001/DEF-hand.R
         weight: 1
+      - path: Humanoid/DEF-root/DEF-spine/DEF-spine.001/DEF-spine.002/DEF-spine.003/DEF-shoulder.R/DEF-upper_arm.R/DEF-upper_arm.R.001/DEF-forearm.R/DEF-forearm.R.001/DEF-hand.R/DEF-hold.R
+        weight: 1
       - path: Humanoid/DEF-root/DEF-spine/DEF-spine.001/DEF-spine.002/DEF-spine.003/DEF-spine.004
         weight: 1
       - path: Humanoid/DEF-root/DEF-spine/DEF-spine.001/DEF-spine.002/DEF-spine.003/DEF-spine.004/DEF-spine.005
@@ -240,19 +275,19 @@ ModelImporter:
         weight: 1
       - path: Humanoid/DEF-root/DEF-spine/DEF-spine.001/DEF-spine.002/DEF-spine.003/DEF-spine.004/DEF-spine.005/DEF-spine.006/DEF-brow.B.L
         weight: 1
-      - path: Humanoid/DEF-root/DEF-spine/DEF-spine.001/DEF-spine.002/DEF-spine.003/DEF-spine.004/DEF-spine.005/DEF-spine.006/DEF-brow.B.L/DEF-brow.B.L.001
+      - path: Humanoid/DEF-root/DEF-spine/DEF-spine.001/DEF-spine.002/DEF-spine.003/DEF-spine.004/DEF-spine.005/DEF-spine.006/DEF-brow.B.L.001
         weight: 1
-      - path: Humanoid/DEF-root/DEF-spine/DEF-spine.001/DEF-spine.002/DEF-spine.003/DEF-spine.004/DEF-spine.005/DEF-spine.006/DEF-brow.B.L/DEF-brow.B.L.001/DEF-brow.B.L.002
+      - path: Humanoid/DEF-root/DEF-spine/DEF-spine.001/DEF-spine.002/DEF-spine.003/DEF-spine.004/DEF-spine.005/DEF-spine.006/DEF-brow.B.L.002
         weight: 1
-      - path: Humanoid/DEF-root/DEF-spine/DEF-spine.001/DEF-spine.002/DEF-spine.003/DEF-spine.004/DEF-spine.005/DEF-spine.006/DEF-brow.B.L/DEF-brow.B.L.001/DEF-brow.B.L.002/DEF-brow.B.L.003
+      - path: Humanoid/DEF-root/DEF-spine/DEF-spine.001/DEF-spine.002/DEF-spine.003/DEF-spine.004/DEF-spine.005/DEF-spine.006/DEF-brow.B.L.003
         weight: 1
       - path: Humanoid/DEF-root/DEF-spine/DEF-spine.001/DEF-spine.002/DEF-spine.003/DEF-spine.004/DEF-spine.005/DEF-spine.006/DEF-brow.B.R
         weight: 1
-      - path: Humanoid/DEF-root/DEF-spine/DEF-spine.001/DEF-spine.002/DEF-spine.003/DEF-spine.004/DEF-spine.005/DEF-spine.006/DEF-brow.B.R/DEF-brow.B.R.001
+      - path: Humanoid/DEF-root/DEF-spine/DEF-spine.001/DEF-spine.002/DEF-spine.003/DEF-spine.004/DEF-spine.005/DEF-spine.006/DEF-brow.B.R.001
         weight: 1
-      - path: Humanoid/DEF-root/DEF-spine/DEF-spine.001/DEF-spine.002/DEF-spine.003/DEF-spine.004/DEF-spine.005/DEF-spine.006/DEF-brow.B.R/DEF-brow.B.R.001/DEF-brow.B.R.002
+      - path: Humanoid/DEF-root/DEF-spine/DEF-spine.001/DEF-spine.002/DEF-spine.003/DEF-spine.004/DEF-spine.005/DEF-spine.006/DEF-brow.B.R.002
         weight: 1
-      - path: Humanoid/DEF-root/DEF-spine/DEF-spine.001/DEF-spine.002/DEF-spine.003/DEF-spine.004/DEF-spine.005/DEF-spine.006/DEF-brow.B.R/DEF-brow.B.R.001/DEF-brow.B.R.002/DEF-brow.B.R.003
+      - path: Humanoid/DEF-root/DEF-spine/DEF-spine.001/DEF-spine.002/DEF-spine.003/DEF-spine.004/DEF-spine.005/DEF-spine.006/DEF-brow.B.R.003
         weight: 1
       - path: Humanoid/DEF-root/DEF-spine/DEF-spine.001/DEF-spine.002/DEF-spine.003/DEF-spine.004/DEF-spine.005/DEF-spine.006/DEF-brow.T.L
         weight: 1
@@ -330,35 +365,35 @@ ModelImporter:
         weight: 1
       - path: Humanoid/DEF-root/DEF-spine/DEF-spine.001/DEF-spine.002/DEF-spine.003/DEF-spine.004/DEF-spine.005/DEF-spine.006/DEF-lid.B.L
         weight: 1
-      - path: Humanoid/DEF-root/DEF-spine/DEF-spine.001/DEF-spine.002/DEF-spine.003/DEF-spine.004/DEF-spine.005/DEF-spine.006/DEF-lid.B.L/DEF-lid.B.L.001
+      - path: Humanoid/DEF-root/DEF-spine/DEF-spine.001/DEF-spine.002/DEF-spine.003/DEF-spine.004/DEF-spine.005/DEF-spine.006/DEF-lid.B.L.001
         weight: 1
-      - path: Humanoid/DEF-root/DEF-spine/DEF-spine.001/DEF-spine.002/DEF-spine.003/DEF-spine.004/DEF-spine.005/DEF-spine.006/DEF-lid.B.L/DEF-lid.B.L.001/DEF-lid.B.L.002
+      - path: Humanoid/DEF-root/DEF-spine/DEF-spine.001/DEF-spine.002/DEF-spine.003/DEF-spine.004/DEF-spine.005/DEF-spine.006/DEF-lid.B.L.002
         weight: 1
-      - path: Humanoid/DEF-root/DEF-spine/DEF-spine.001/DEF-spine.002/DEF-spine.003/DEF-spine.004/DEF-spine.005/DEF-spine.006/DEF-lid.B.L/DEF-lid.B.L.001/DEF-lid.B.L.002/DEF-lid.B.L.003
+      - path: Humanoid/DEF-root/DEF-spine/DEF-spine.001/DEF-spine.002/DEF-spine.003/DEF-spine.004/DEF-spine.005/DEF-spine.006/DEF-lid.B.L.003
         weight: 1
       - path: Humanoid/DEF-root/DEF-spine/DEF-spine.001/DEF-spine.002/DEF-spine.003/DEF-spine.004/DEF-spine.005/DEF-spine.006/DEF-lid.B.R
         weight: 1
-      - path: Humanoid/DEF-root/DEF-spine/DEF-spine.001/DEF-spine.002/DEF-spine.003/DEF-spine.004/DEF-spine.005/DEF-spine.006/DEF-lid.B.R/DEF-lid.B.R.001
+      - path: Humanoid/DEF-root/DEF-spine/DEF-spine.001/DEF-spine.002/DEF-spine.003/DEF-spine.004/DEF-spine.005/DEF-spine.006/DEF-lid.B.R.001
         weight: 1
-      - path: Humanoid/DEF-root/DEF-spine/DEF-spine.001/DEF-spine.002/DEF-spine.003/DEF-spine.004/DEF-spine.005/DEF-spine.006/DEF-lid.B.R/DEF-lid.B.R.001/DEF-lid.B.R.002
+      - path: Humanoid/DEF-root/DEF-spine/DEF-spine.001/DEF-spine.002/DEF-spine.003/DEF-spine.004/DEF-spine.005/DEF-spine.006/DEF-lid.B.R.002
         weight: 1
-      - path: Humanoid/DEF-root/DEF-spine/DEF-spine.001/DEF-spine.002/DEF-spine.003/DEF-spine.004/DEF-spine.005/DEF-spine.006/DEF-lid.B.R/DEF-lid.B.R.001/DEF-lid.B.R.002/DEF-lid.B.R.003
+      - path: Humanoid/DEF-root/DEF-spine/DEF-spine.001/DEF-spine.002/DEF-spine.003/DEF-spine.004/DEF-spine.005/DEF-spine.006/DEF-lid.B.R.003
         weight: 1
       - path: Humanoid/DEF-root/DEF-spine/DEF-spine.001/DEF-spine.002/DEF-spine.003/DEF-spine.004/DEF-spine.005/DEF-spine.006/DEF-lid.T.L
         weight: 1
-      - path: Humanoid/DEF-root/DEF-spine/DEF-spine.001/DEF-spine.002/DEF-spine.003/DEF-spine.004/DEF-spine.005/DEF-spine.006/DEF-lid.T.L/DEF-lid.T.L.001
+      - path: Humanoid/DEF-root/DEF-spine/DEF-spine.001/DEF-spine.002/DEF-spine.003/DEF-spine.004/DEF-spine.005/DEF-spine.006/DEF-lid.T.L.001
         weight: 1
-      - path: Humanoid/DEF-root/DEF-spine/DEF-spine.001/DEF-spine.002/DEF-spine.003/DEF-spine.004/DEF-spine.005/DEF-spine.006/DEF-lid.T.L/DEF-lid.T.L.001/DEF-lid.T.L.002
+      - path: Humanoid/DEF-root/DEF-spine/DEF-spine.001/DEF-spine.002/DEF-spine.003/DEF-spine.004/DEF-spine.005/DEF-spine.006/DEF-lid.T.L.002
         weight: 1
-      - path: Humanoid/DEF-root/DEF-spine/DEF-spine.001/DEF-spine.002/DEF-spine.003/DEF-spine.004/DEF-spine.005/DEF-spine.006/DEF-lid.T.L/DEF-lid.T.L.001/DEF-lid.T.L.002/DEF-lid.T.L.003
+      - path: Humanoid/DEF-root/DEF-spine/DEF-spine.001/DEF-spine.002/DEF-spine.003/DEF-spine.004/DEF-spine.005/DEF-spine.006/DEF-lid.T.L.003
         weight: 1
       - path: Humanoid/DEF-root/DEF-spine/DEF-spine.001/DEF-spine.002/DEF-spine.003/DEF-spine.004/DEF-spine.005/DEF-spine.006/DEF-lid.T.R
         weight: 1
-      - path: Humanoid/DEF-root/DEF-spine/DEF-spine.001/DEF-spine.002/DEF-spine.003/DEF-spine.004/DEF-spine.005/DEF-spine.006/DEF-lid.T.R/DEF-lid.T.R.001
+      - path: Humanoid/DEF-root/DEF-spine/DEF-spine.001/DEF-spine.002/DEF-spine.003/DEF-spine.004/DEF-spine.005/DEF-spine.006/DEF-lid.T.R.001
         weight: 1
-      - path: Humanoid/DEF-root/DEF-spine/DEF-spine.001/DEF-spine.002/DEF-spine.003/DEF-spine.004/DEF-spine.005/DEF-spine.006/DEF-lid.T.R/DEF-lid.T.R.001/DEF-lid.T.R.002
+      - path: Humanoid/DEF-root/DEF-spine/DEF-spine.001/DEF-spine.002/DEF-spine.003/DEF-spine.004/DEF-spine.005/DEF-spine.006/DEF-lid.T.R.002
         weight: 1
-      - path: Humanoid/DEF-root/DEF-spine/DEF-spine.001/DEF-spine.002/DEF-spine.003/DEF-spine.004/DEF-spine.005/DEF-spine.006/DEF-lid.T.R/DEF-lid.T.R.001/DEF-lid.T.R.002/DEF-lid.T.R.003
+      - path: Humanoid/DEF-root/DEF-spine/DEF-spine.001/DEF-spine.002/DEF-spine.003/DEF-spine.004/DEF-spine.005/DEF-spine.006/DEF-lid.T.R.003
         weight: 1
       - path: Humanoid/DEF-root/DEF-spine/DEF-spine.001/DEF-spine.002/DEF-spine.003/DEF-spine.004/DEF-spine.005/DEF-spine.006/DEF-lip.B.L
         weight: 1
@@ -505,6 +540,8 @@ ModelImporter:
         weight: 1
       - path: Humanoid/DEF-root/DEF-spine/DEF-spine.001/DEF-spine.002/DEF-spine.003/DEF-shoulder.L/DEF-upper_arm.L/DEF-upper_arm.L.001/DEF-forearm.L/DEF-forearm.L.001/DEF-hand.L
         weight: 1
+      - path: Humanoid/DEF-root/DEF-spine/DEF-spine.001/DEF-spine.002/DEF-spine.003/DEF-shoulder.L/DEF-upper_arm.L/DEF-upper_arm.L.001/DEF-forearm.L/DEF-forearm.L.001/DEF-hand.L/DEF-hold.L
+        weight: 1
       - path: Humanoid/DEF-root/DEF-spine/DEF-spine.001/DEF-spine.002/DEF-spine.003/DEF-shoulder.R
         weight: 1
       - path: Humanoid/DEF-root/DEF-spine/DEF-spine.001/DEF-spine.002/DEF-spine.003/DEF-shoulder.R/DEF-upper_arm.R
@@ -517,6 +554,8 @@ ModelImporter:
         weight: 1
       - path: Humanoid/DEF-root/DEF-spine/DEF-spine.001/DEF-spine.002/DEF-spine.003/DEF-shoulder.R/DEF-upper_arm.R/DEF-upper_arm.R.001/DEF-forearm.R/DEF-forearm.R.001/DEF-hand.R
         weight: 1
+      - path: Humanoid/DEF-root/DEF-spine/DEF-spine.001/DEF-spine.002/DEF-spine.003/DEF-shoulder.R/DEF-upper_arm.R/DEF-upper_arm.R.001/DEF-forearm.R/DEF-forearm.R.001/DEF-hand.R/DEF-hold.R
+        weight: 1
       - path: Humanoid/DEF-root/DEF-spine/DEF-spine.001/DEF-spine.002/DEF-spine.003/DEF-spine.004
         weight: 1
       - path: Humanoid/DEF-root/DEF-spine/DEF-spine.001/DEF-spine.002/DEF-spine.003/DEF-spine.004/DEF-spine.005
@@ -525,19 +564,19 @@ ModelImporter:
         weight: 1
       - path: Humanoid/DEF-root/DEF-spine/DEF-spine.001/DEF-spine.002/DEF-spine.003/DEF-spine.004/DEF-spine.005/DEF-spine.006/DEF-brow.B.L
         weight: 1
-      - path: Humanoid/DEF-root/DEF-spine/DEF-spine.001/DEF-spine.002/DEF-spine.003/DEF-spine.004/DEF-spine.005/DEF-spine.006/DEF-brow.B.L/DEF-brow.B.L.001
+      - path: Humanoid/DEF-root/DEF-spine/DEF-spine.001/DEF-spine.002/DEF-spine.003/DEF-spine.004/DEF-spine.005/DEF-spine.006/DEF-brow.B.L.001
         weight: 1
-      - path: Humanoid/DEF-root/DEF-spine/DEF-spine.001/DEF-spine.002/DEF-spine.003/DEF-spine.004/DEF-spine.005/DEF-spine.006/DEF-brow.B.L/DEF-brow.B.L.001/DEF-brow.B.L.002
+      - path: Humanoid/DEF-root/DEF-spine/DEF-spine.001/DEF-spine.002/DEF-spine.003/DEF-spine.004/DEF-spine.005/DEF-spine.006/DEF-brow.B.L.002
         weight: 1
-      - path: Humanoid/DEF-root/DEF-spine/DEF-spine.001/DEF-spine.002/DEF-spine.003/DEF-spine.004/DEF-spine.005/DEF-spine.006/DEF-brow.B.L/DEF-brow.B.L.001/DEF-brow.B.L.002/DEF-brow.B.L.003
+      - path: Humanoid/DEF-root/DEF-spine/DEF-spine.001/DEF-spine.002/DEF-spine.003/DEF-spine.004/DEF-spine.005/DEF-spine.006/DEF-brow.B.L.003
         weight: 1
       - path: Humanoid/DEF-root/DEF-spine/DEF-spine.001/DEF-spine.002/DEF-spine.003/DEF-spine.004/DEF-spine.005/DEF-spine.006/DEF-brow.B.R
         weight: 1
-      - path: Humanoid/DEF-root/DEF-spine/DEF-spine.001/DEF-spine.002/DEF-spine.003/DEF-spine.004/DEF-spine.005/DEF-spine.006/DEF-brow.B.R/DEF-brow.B.R.001
+      - path: Humanoid/DEF-root/DEF-spine/DEF-spine.001/DEF-spine.002/DEF-spine.003/DEF-spine.004/DEF-spine.005/DEF-spine.006/DEF-brow.B.R.001
         weight: 1
-      - path: Humanoid/DEF-root/DEF-spine/DEF-spine.001/DEF-spine.002/DEF-spine.003/DEF-spine.004/DEF-spine.005/DEF-spine.006/DEF-brow.B.R/DEF-brow.B.R.001/DEF-brow.B.R.002
+      - path: Humanoid/DEF-root/DEF-spine/DEF-spine.001/DEF-spine.002/DEF-spine.003/DEF-spine.004/DEF-spine.005/DEF-spine.006/DEF-brow.B.R.002
         weight: 1
-      - path: Humanoid/DEF-root/DEF-spine/DEF-spine.001/DEF-spine.002/DEF-spine.003/DEF-spine.004/DEF-spine.005/DEF-spine.006/DEF-brow.B.R/DEF-brow.B.R.001/DEF-brow.B.R.002/DEF-brow.B.R.003
+      - path: Humanoid/DEF-root/DEF-spine/DEF-spine.001/DEF-spine.002/DEF-spine.003/DEF-spine.004/DEF-spine.005/DEF-spine.006/DEF-brow.B.R.003
         weight: 1
       - path: Humanoid/DEF-root/DEF-spine/DEF-spine.001/DEF-spine.002/DEF-spine.003/DEF-spine.004/DEF-spine.005/DEF-spine.006/DEF-brow.T.L
         weight: 1
@@ -615,35 +654,35 @@ ModelImporter:
         weight: 1
       - path: Humanoid/DEF-root/DEF-spine/DEF-spine.001/DEF-spine.002/DEF-spine.003/DEF-spine.004/DEF-spine.005/DEF-spine.006/DEF-lid.B.L
         weight: 1
-      - path: Humanoid/DEF-root/DEF-spine/DEF-spine.001/DEF-spine.002/DEF-spine.003/DEF-spine.004/DEF-spine.005/DEF-spine.006/DEF-lid.B.L/DEF-lid.B.L.001
+      - path: Humanoid/DEF-root/DEF-spine/DEF-spine.001/DEF-spine.002/DEF-spine.003/DEF-spine.004/DEF-spine.005/DEF-spine.006/DEF-lid.B.L.001
         weight: 1
-      - path: Humanoid/DEF-root/DEF-spine/DEF-spine.001/DEF-spine.002/DEF-spine.003/DEF-spine.004/DEF-spine.005/DEF-spine.006/DEF-lid.B.L/DEF-lid.B.L.001/DEF-lid.B.L.002
+      - path: Humanoid/DEF-root/DEF-spine/DEF-spine.001/DEF-spine.002/DEF-spine.003/DEF-spine.004/DEF-spine.005/DEF-spine.006/DEF-lid.B.L.002
         weight: 1
-      - path: Humanoid/DEF-root/DEF-spine/DEF-spine.001/DEF-spine.002/DEF-spine.003/DEF-spine.004/DEF-spine.005/DEF-spine.006/DEF-lid.B.L/DEF-lid.B.L.001/DEF-lid.B.L.002/DEF-lid.B.L.003
+      - path: Humanoid/DEF-root/DEF-spine/DEF-spine.001/DEF-spine.002/DEF-spine.003/DEF-spine.004/DEF-spine.005/DEF-spine.006/DEF-lid.B.L.003
         weight: 1
       - path: Humanoid/DEF-root/DEF-spine/DEF-spine.001/DEF-spine.002/DEF-spine.003/DEF-spine.004/DEF-spine.005/DEF-spine.006/DEF-lid.B.R
         weight: 1
-      - path: Humanoid/DEF-root/DEF-spine/DEF-spine.001/DEF-spine.002/DEF-spine.003/DEF-spine.004/DEF-spine.005/DEF-spine.006/DEF-lid.B.R/DEF-lid.B.R.001
+      - path: Humanoid/DEF-root/DEF-spine/DEF-spine.001/DEF-spine.002/DEF-spine.003/DEF-spine.004/DEF-spine.005/DEF-spine.006/DEF-lid.B.R.001
         weight: 1
-      - path: Humanoid/DEF-root/DEF-spine/DEF-spine.001/DEF-spine.002/DEF-spine.003/DEF-spine.004/DEF-spine.005/DEF-spine.006/DEF-lid.B.R/DEF-lid.B.R.001/DEF-lid.B.R.002
+      - path: Humanoid/DEF-root/DEF-spine/DEF-spine.001/DEF-spine.002/DEF-spine.003/DEF-spine.004/DEF-spine.005/DEF-spine.006/DEF-lid.B.R.002
         weight: 1
-      - path: Humanoid/DEF-root/DEF-spine/DEF-spine.001/DEF-spine.002/DEF-spine.003/DEF-spine.004/DEF-spine.005/DEF-spine.006/DEF-lid.B.R/DEF-lid.B.R.001/DEF-lid.B.R.002/DEF-lid.B.R.003
+      - path: Humanoid/DEF-root/DEF-spine/DEF-spine.001/DEF-spine.002/DEF-spine.003/DEF-spine.004/DEF-spine.005/DEF-spine.006/DEF-lid.B.R.003
         weight: 1
       - path: Humanoid/DEF-root/DEF-spine/DEF-spine.001/DEF-spine.002/DEF-spine.003/DEF-spine.004/DEF-spine.005/DEF-spine.006/DEF-lid.T.L
         weight: 1
-      - path: Humanoid/DEF-root/DEF-spine/DEF-spine.001/DEF-spine.002/DEF-spine.003/DEF-spine.004/DEF-spine.005/DEF-spine.006/DEF-lid.T.L/DEF-lid.T.L.001
+      - path: Humanoid/DEF-root/DEF-spine/DEF-spine.001/DEF-spine.002/DEF-spine.003/DEF-spine.004/DEF-spine.005/DEF-spine.006/DEF-lid.T.L.001
         weight: 1
-      - path: Humanoid/DEF-root/DEF-spine/DEF-spine.001/DEF-spine.002/DEF-spine.003/DEF-spine.004/DEF-spine.005/DEF-spine.006/DEF-lid.T.L/DEF-lid.T.L.001/DEF-lid.T.L.002
+      - path: Humanoid/DEF-root/DEF-spine/DEF-spine.001/DEF-spine.002/DEF-spine.003/DEF-spine.004/DEF-spine.005/DEF-spine.006/DEF-lid.T.L.002
         weight: 1
-      - path: Humanoid/DEF-root/DEF-spine/DEF-spine.001/DEF-spine.002/DEF-spine.003/DEF-spine.004/DEF-spine.005/DEF-spine.006/DEF-lid.T.L/DEF-lid.T.L.001/DEF-lid.T.L.002/DEF-lid.T.L.003
+      - path: Humanoid/DEF-root/DEF-spine/DEF-spine.001/DEF-spine.002/DEF-spine.003/DEF-spine.004/DEF-spine.005/DEF-spine.006/DEF-lid.T.L.003
         weight: 1
       - path: Humanoid/DEF-root/DEF-spine/DEF-spine.001/DEF-spine.002/DEF-spine.003/DEF-spine.004/DEF-spine.005/DEF-spine.006/DEF-lid.T.R
         weight: 1
-      - path: Humanoid/DEF-root/DEF-spine/DEF-spine.001/DEF-spine.002/DEF-spine.003/DEF-spine.004/DEF-spine.005/DEF-spine.006/DEF-lid.T.R/DEF-lid.T.R.001
+      - path: Humanoid/DEF-root/DEF-spine/DEF-spine.001/DEF-spine.002/DEF-spine.003/DEF-spine.004/DEF-spine.005/DEF-spine.006/DEF-lid.T.R.001
         weight: 1
-      - path: Humanoid/DEF-root/DEF-spine/DEF-spine.001/DEF-spine.002/DEF-spine.003/DEF-spine.004/DEF-spine.005/DEF-spine.006/DEF-lid.T.R/DEF-lid.T.R.001/DEF-lid.T.R.002
+      - path: Humanoid/DEF-root/DEF-spine/DEF-spine.001/DEF-spine.002/DEF-spine.003/DEF-spine.004/DEF-spine.005/DEF-spine.006/DEF-lid.T.R.002
         weight: 1
-      - path: Humanoid/DEF-root/DEF-spine/DEF-spine.001/DEF-spine.002/DEF-spine.003/DEF-spine.004/DEF-spine.005/DEF-spine.006/DEF-lid.T.R/DEF-lid.T.R.001/DEF-lid.T.R.002/DEF-lid.T.R.003
+      - path: Humanoid/DEF-root/DEF-spine/DEF-spine.001/DEF-spine.002/DEF-spine.003/DEF-spine.004/DEF-spine.005/DEF-spine.006/DEF-lid.T.R.003
         weight: 1
       - path: Humanoid/DEF-root/DEF-spine/DEF-spine.001/DEF-spine.002/DEF-spine.003/DEF-spine.004/DEF-spine.005/DEF-spine.006/DEF-lip.B.L
         weight: 1
@@ -735,7 +774,7 @@ ModelImporter:
       takeName: Humanoid|Pick
       internalID: 0
       firstFrame: 0
-      lastFrame: 34
+      lastFrame: 40
       wrapMode: 0
       orientationOffsetY: 0
       level: 0
@@ -790,6 +829,8 @@ ModelImporter:
         weight: 1
       - path: Humanoid/DEF-root/DEF-spine/DEF-spine.001/DEF-spine.002/DEF-spine.003/DEF-shoulder.L/DEF-upper_arm.L/DEF-upper_arm.L.001/DEF-forearm.L/DEF-forearm.L.001/DEF-hand.L
         weight: 1
+      - path: Humanoid/DEF-root/DEF-spine/DEF-spine.001/DEF-spine.002/DEF-spine.003/DEF-shoulder.L/DEF-upper_arm.L/DEF-upper_arm.L.001/DEF-forearm.L/DEF-forearm.L.001/DEF-hand.L/DEF-hold.L
+        weight: 1
       - path: Humanoid/DEF-root/DEF-spine/DEF-spine.001/DEF-spine.002/DEF-spine.003/DEF-shoulder.R
         weight: 1
       - path: Humanoid/DEF-root/DEF-spine/DEF-spine.001/DEF-spine.002/DEF-spine.003/DEF-shoulder.R/DEF-upper_arm.R
@@ -802,6 +843,8 @@ ModelImporter:
         weight: 1
       - path: Humanoid/DEF-root/DEF-spine/DEF-spine.001/DEF-spine.002/DEF-spine.003/DEF-shoulder.R/DEF-upper_arm.R/DEF-upper_arm.R.001/DEF-forearm.R/DEF-forearm.R.001/DEF-hand.R
         weight: 1
+      - path: Humanoid/DEF-root/DEF-spine/DEF-spine.001/DEF-spine.002/DEF-spine.003/DEF-shoulder.R/DEF-upper_arm.R/DEF-upper_arm.R.001/DEF-forearm.R/DEF-forearm.R.001/DEF-hand.R/DEF-hold.R
+        weight: 1
       - path: Humanoid/DEF-root/DEF-spine/DEF-spine.001/DEF-spine.002/DEF-spine.003/DEF-spine.004
         weight: 1
       - path: Humanoid/DEF-root/DEF-spine/DEF-spine.001/DEF-spine.002/DEF-spine.003/DEF-spine.004/DEF-spine.005
@@ -810,19 +853,19 @@ ModelImporter:
         weight: 1
       - path: Humanoid/DEF-root/DEF-spine/DEF-spine.001/DEF-spine.002/DEF-spine.003/DEF-spine.004/DEF-spine.005/DEF-spine.006/DEF-brow.B.L
         weight: 1
-      - path: Humanoid/DEF-root/DEF-spine/DEF-spine.001/DEF-spine.002/DEF-spine.003/DEF-spine.004/DEF-spine.005/DEF-spine.006/DEF-brow.B.L/DEF-brow.B.L.001
+      - path: Humanoid/DEF-root/DEF-spine/DEF-spine.001/DEF-spine.002/DEF-spine.003/DEF-spine.004/DEF-spine.005/DEF-spine.006/DEF-brow.B.L.001
         weight: 1
-      - path: Humanoid/DEF-root/DEF-spine/DEF-spine.001/DEF-spine.002/DEF-spine.003/DEF-spine.004/DEF-spine.005/DEF-spine.006/DEF-brow.B.L/DEF-brow.B.L.001/DEF-brow.B.L.002
+      - path: Humanoid/DEF-root/DEF-spine/DEF-spine.001/DEF-spine.002/DEF-spine.003/DEF-spine.004/DEF-spine.005/DEF-spine.006/DEF-brow.B.L.002
         weight: 1
-      - path: Humanoid/DEF-root/DEF-spine/DEF-spine.001/DEF-spine.002/DEF-spine.003/DEF-spine.004/DEF-spine.005/DEF-spine.006/DEF-brow.B.L/DEF-brow.B.L.001/DEF-brow.B.L.002/DEF-brow.B.L.003
+      - path: Humanoid/DEF-root/DEF-spine/DEF-spine.001/DEF-spine.002/DEF-spine.003/DEF-spine.004/DEF-spine.005/DEF-spine.006/DEF-brow.B.L.003
         weight: 1
       - path: Humanoid/DEF-root/DEF-spine/DEF-spine.001/DEF-spine.002/DEF-spine.003/DEF-spine.004/DEF-spine.005/DEF-spine.006/DEF-brow.B.R
         weight: 1
-      - path: Humanoid/DEF-root/DEF-spine/DEF-spine.001/DEF-spine.002/DEF-spine.003/DEF-spine.004/DEF-spine.005/DEF-spine.006/DEF-brow.B.R/DEF-brow.B.R.001
+      - path: Humanoid/DEF-root/DEF-spine/DEF-spine.001/DEF-spine.002/DEF-spine.003/DEF-spine.004/DEF-spine.005/DEF-spine.006/DEF-brow.B.R.001
         weight: 1
-      - path: Humanoid/DEF-root/DEF-spine/DEF-spine.001/DEF-spine.002/DEF-spine.003/DEF-spine.004/DEF-spine.005/DEF-spine.006/DEF-brow.B.R/DEF-brow.B.R.001/DEF-brow.B.R.002
+      - path: Humanoid/DEF-root/DEF-spine/DEF-spine.001/DEF-spine.002/DEF-spine.003/DEF-spine.004/DEF-spine.005/DEF-spine.006/DEF-brow.B.R.002
         weight: 1
-      - path: Humanoid/DEF-root/DEF-spine/DEF-spine.001/DEF-spine.002/DEF-spine.003/DEF-spine.004/DEF-spine.005/DEF-spine.006/DEF-brow.B.R/DEF-brow.B.R.001/DEF-brow.B.R.002/DEF-brow.B.R.003
+      - path: Humanoid/DEF-root/DEF-spine/DEF-spine.001/DEF-spine.002/DEF-spine.003/DEF-spine.004/DEF-spine.005/DEF-spine.006/DEF-brow.B.R.003
         weight: 1
       - path: Humanoid/DEF-root/DEF-spine/DEF-spine.001/DEF-spine.002/DEF-spine.003/DEF-spine.004/DEF-spine.005/DEF-spine.006/DEF-brow.T.L
         weight: 1
@@ -900,35 +943,35 @@ ModelImporter:
         weight: 1
       - path: Humanoid/DEF-root/DEF-spine/DEF-spine.001/DEF-spine.002/DEF-spine.003/DEF-spine.004/DEF-spine.005/DEF-spine.006/DEF-lid.B.L
         weight: 1
-      - path: Humanoid/DEF-root/DEF-spine/DEF-spine.001/DEF-spine.002/DEF-spine.003/DEF-spine.004/DEF-spine.005/DEF-spine.006/DEF-lid.B.L/DEF-lid.B.L.001
+      - path: Humanoid/DEF-root/DEF-spine/DEF-spine.001/DEF-spine.002/DEF-spine.003/DEF-spine.004/DEF-spine.005/DEF-spine.006/DEF-lid.B.L.001
         weight: 1
-      - path: Humanoid/DEF-root/DEF-spine/DEF-spine.001/DEF-spine.002/DEF-spine.003/DEF-spine.004/DEF-spine.005/DEF-spine.006/DEF-lid.B.L/DEF-lid.B.L.001/DEF-lid.B.L.002
+      - path: Humanoid/DEF-root/DEF-spine/DEF-spine.001/DEF-spine.002/DEF-spine.003/DEF-spine.004/DEF-spine.005/DEF-spine.006/DEF-lid.B.L.002
         weight: 1
-      - path: Humanoid/DEF-root/DEF-spine/DEF-spine.001/DEF-spine.002/DEF-spine.003/DEF-spine.004/DEF-spine.005/DEF-spine.006/DEF-lid.B.L/DEF-lid.B.L.001/DEF-lid.B.L.002/DEF-lid.B.L.003
+      - path: Humanoid/DEF-root/DEF-spine/DEF-spine.001/DEF-spine.002/DEF-spine.003/DEF-spine.004/DEF-spine.005/DEF-spine.006/DEF-lid.B.L.003
         weight: 1
       - path: Humanoid/DEF-root/DEF-spine/DEF-spine.001/DEF-spine.002/DEF-spine.003/DEF-spine.004/DEF-spine.005/DEF-spine.006/DEF-lid.B.R
         weight: 1
-      - path: Humanoid/DEF-root/DEF-spine/DEF-spine.001/DEF-spine.002/DEF-spine.003/DEF-spine.004/DEF-spine.005/DEF-spine.006/DEF-lid.B.R/DEF-lid.B.R.001
+      - path: Humanoid/DEF-root/DEF-spine/DEF-spine.001/DEF-spine.002/DEF-spine.003/DEF-spine.004/DEF-spine.005/DEF-spine.006/DEF-lid.B.R.001
         weight: 1
-      - path: Humanoid/DEF-root/DEF-spine/DEF-spine.001/DEF-spine.002/DEF-spine.003/DEF-spine.004/DEF-spine.005/DEF-spine.006/DEF-lid.B.R/DEF-lid.B.R.001/DEF-lid.B.R.002
+      - path: Humanoid/DEF-root/DEF-spine/DEF-spine.001/DEF-spine.002/DEF-spine.003/DEF-spine.004/DEF-spine.005/DEF-spine.006/DEF-lid.B.R.002
         weight: 1
-      - path: Humanoid/DEF-root/DEF-spine/DEF-spine.001/DEF-spine.002/DEF-spine.003/DEF-spine.004/DEF-spine.005/DEF-spine.006/DEF-lid.B.R/DEF-lid.B.R.001/DEF-lid.B.R.002/DEF-lid.B.R.003
+      - path: Humanoid/DEF-root/DEF-spine/DEF-spine.001/DEF-spine.002/DEF-spine.003/DEF-spine.004/DEF-spine.005/DEF-spine.006/DEF-lid.B.R.003
         weight: 1
       - path: Humanoid/DEF-root/DEF-spine/DEF-spine.001/DEF-spine.002/DEF-spine.003/DEF-spine.004/DEF-spine.005/DEF-spine.006/DEF-lid.T.L
         weight: 1
-      - path: Humanoid/DEF-root/DEF-spine/DEF-spine.001/DEF-spine.002/DEF-spine.003/DEF-spine.004/DEF-spine.005/DEF-spine.006/DEF-lid.T.L/DEF-lid.T.L.001
+      - path: Humanoid/DEF-root/DEF-spine/DEF-spine.001/DEF-spine.002/DEF-spine.003/DEF-spine.004/DEF-spine.005/DEF-spine.006/DEF-lid.T.L.001
         weight: 1
-      - path: Humanoid/DEF-root/DEF-spine/DEF-spine.001/DEF-spine.002/DEF-spine.003/DEF-spine.004/DEF-spine.005/DEF-spine.006/DEF-lid.T.L/DEF-lid.T.L.001/DEF-lid.T.L.002
+      - path: Humanoid/DEF-root/DEF-spine/DEF-spine.001/DEF-spine.002/DEF-spine.003/DEF-spine.004/DEF-spine.005/DEF-spine.006/DEF-lid.T.L.002
         weight: 1
-      - path: Humanoid/DEF-root/DEF-spine/DEF-spine.001/DEF-spine.002/DEF-spine.003/DEF-spine.004/DEF-spine.005/DEF-spine.006/DEF-lid.T.L/DEF-lid.T.L.001/DEF-lid.T.L.002/DEF-lid.T.L.003
+      - path: Humanoid/DEF-root/DEF-spine/DEF-spine.001/DEF-spine.002/DEF-spine.003/DEF-spine.004/DEF-spine.005/DEF-spine.006/DEF-lid.T.L.003
         weight: 1
       - path: Humanoid/DEF-root/DEF-spine/DEF-spine.001/DEF-spine.002/DEF-spine.003/DEF-spine.004/DEF-spine.005/DEF-spine.006/DEF-lid.T.R
         weight: 1
-      - path: Humanoid/DEF-root/DEF-spine/DEF-spine.001/DEF-spine.002/DEF-spine.003/DEF-spine.004/DEF-spine.005/DEF-spine.006/DEF-lid.T.R/DEF-lid.T.R.001
+      - path: Humanoid/DEF-root/DEF-spine/DEF-spine.001/DEF-spine.002/DEF-spine.003/DEF-spine.004/DEF-spine.005/DEF-spine.006/DEF-lid.T.R.001
         weight: 1
-      - path: Humanoid/DEF-root/DEF-spine/DEF-spine.001/DEF-spine.002/DEF-spine.003/DEF-spine.004/DEF-spine.005/DEF-spine.006/DEF-lid.T.R/DEF-lid.T.R.001/DEF-lid.T.R.002
+      - path: Humanoid/DEF-root/DEF-spine/DEF-spine.001/DEF-spine.002/DEF-spine.003/DEF-spine.004/DEF-spine.005/DEF-spine.006/DEF-lid.T.R.002
         weight: 1
-      - path: Humanoid/DEF-root/DEF-spine/DEF-spine.001/DEF-spine.002/DEF-spine.003/DEF-spine.004/DEF-spine.005/DEF-spine.006/DEF-lid.T.R/DEF-lid.T.R.001/DEF-lid.T.R.002/DEF-lid.T.R.003
+      - path: Humanoid/DEF-root/DEF-spine/DEF-spine.001/DEF-spine.002/DEF-spine.003/DEF-spine.004/DEF-spine.005/DEF-spine.006/DEF-lid.T.R.003
         weight: 1
       - path: Humanoid/DEF-root/DEF-spine/DEF-spine.001/DEF-spine.002/DEF-spine.003/DEF-spine.004/DEF-spine.005/DEF-spine.006/DEF-lip.B.L
         weight: 1
@@ -1075,6 +1118,8 @@ ModelImporter:
         weight: 1
       - path: Humanoid/DEF-root/DEF-spine/DEF-spine.001/DEF-spine.002/DEF-spine.003/DEF-shoulder.L/DEF-upper_arm.L/DEF-upper_arm.L.001/DEF-forearm.L/DEF-forearm.L.001/DEF-hand.L
         weight: 1
+      - path: Humanoid/DEF-root/DEF-spine/DEF-spine.001/DEF-spine.002/DEF-spine.003/DEF-shoulder.L/DEF-upper_arm.L/DEF-upper_arm.L.001/DEF-forearm.L/DEF-forearm.L.001/DEF-hand.L/DEF-hold.L
+        weight: 1
       - path: Humanoid/DEF-root/DEF-spine/DEF-spine.001/DEF-spine.002/DEF-spine.003/DEF-shoulder.R
         weight: 1
       - path: Humanoid/DEF-root/DEF-spine/DEF-spine.001/DEF-spine.002/DEF-spine.003/DEF-shoulder.R/DEF-upper_arm.R
@@ -1087,6 +1132,8 @@ ModelImporter:
         weight: 1
       - path: Humanoid/DEF-root/DEF-spine/DEF-spine.001/DEF-spine.002/DEF-spine.003/DEF-shoulder.R/DEF-upper_arm.R/DEF-upper_arm.R.001/DEF-forearm.R/DEF-forearm.R.001/DEF-hand.R
         weight: 1
+      - path: Humanoid/DEF-root/DEF-spine/DEF-spine.001/DEF-spine.002/DEF-spine.003/DEF-shoulder.R/DEF-upper_arm.R/DEF-upper_arm.R.001/DEF-forearm.R/DEF-forearm.R.001/DEF-hand.R/DEF-hold.R
+        weight: 1
       - path: Humanoid/DEF-root/DEF-spine/DEF-spine.001/DEF-spine.002/DEF-spine.003/DEF-spine.004
         weight: 1
       - path: Humanoid/DEF-root/DEF-spine/DEF-spine.001/DEF-spine.002/DEF-spine.003/DEF-spine.004/DEF-spine.005
@@ -1095,19 +1142,19 @@ ModelImporter:
         weight: 1
       - path: Humanoid/DEF-root/DEF-spine/DEF-spine.001/DEF-spine.002/DEF-spine.003/DEF-spine.004/DEF-spine.005/DEF-spine.006/DEF-brow.B.L
         weight: 1
-      - path: Humanoid/DEF-root/DEF-spine/DEF-spine.001/DEF-spine.002/DEF-spine.003/DEF-spine.004/DEF-spine.005/DEF-spine.006/DEF-brow.B.L/DEF-brow.B.L.001
+      - path: Humanoid/DEF-root/DEF-spine/DEF-spine.001/DEF-spine.002/DEF-spine.003/DEF-spine.004/DEF-spine.005/DEF-spine.006/DEF-brow.B.L.001
         weight: 1
-      - path: Humanoid/DEF-root/DEF-spine/DEF-spine.001/DEF-spine.002/DEF-spine.003/DEF-spine.004/DEF-spine.005/DEF-spine.006/DEF-brow.B.L/DEF-brow.B.L.001/DEF-brow.B.L.002
+      - path: Humanoid/DEF-root/DEF-spine/DEF-spine.001/DEF-spine.002/DEF-spine.003/DEF-spine.004/DEF-spine.005/DEF-spine.006/DEF-brow.B.L.002
         weight: 1
-      - path: Humanoid/DEF-root/DEF-spine/DEF-spine.001/DEF-spine.002/DEF-spine.003/DEF-spine.004/DEF-spine.005/DEF-spine.006/DEF-brow.B.L/DEF-brow.B.L.001/DEF-brow.B.L.002/DEF-brow.B.L.003
+      - path: Humanoid/DEF-root/DEF-spine/DEF-spine.001/DEF-spine.002/DEF-spine.003/DEF-spine.004/DEF-spine.005/DEF-spine.006/DEF-brow.B.L.003
         weight: 1
       - path: Humanoid/DEF-root/DEF-spine/DEF-spine.001/DEF-spine.002/DEF-spine.003/DEF-spine.004/DEF-spine.005/DEF-spine.006/DEF-brow.B.R
         weight: 1
-      - path: Humanoid/DEF-root/DEF-spine/DEF-spine.001/DEF-spine.002/DEF-spine.003/DEF-spine.004/DEF-spine.005/DEF-spine.006/DEF-brow.B.R/DEF-brow.B.R.001
+      - path: Humanoid/DEF-root/DEF-spine/DEF-spine.001/DEF-spine.002/DEF-spine.003/DEF-spine.004/DEF-spine.005/DEF-spine.006/DEF-brow.B.R.001
         weight: 1
-      - path: Humanoid/DEF-root/DEF-spine/DEF-spine.001/DEF-spine.002/DEF-spine.003/DEF-spine.004/DEF-spine.005/DEF-spine.006/DEF-brow.B.R/DEF-brow.B.R.001/DEF-brow.B.R.002
+      - path: Humanoid/DEF-root/DEF-spine/DEF-spine.001/DEF-spine.002/DEF-spine.003/DEF-spine.004/DEF-spine.005/DEF-spine.006/DEF-brow.B.R.002
         weight: 1
-      - path: Humanoid/DEF-root/DEF-spine/DEF-spine.001/DEF-spine.002/DEF-spine.003/DEF-spine.004/DEF-spine.005/DEF-spine.006/DEF-brow.B.R/DEF-brow.B.R.001/DEF-brow.B.R.002/DEF-brow.B.R.003
+      - path: Humanoid/DEF-root/DEF-spine/DEF-spine.001/DEF-spine.002/DEF-spine.003/DEF-spine.004/DEF-spine.005/DEF-spine.006/DEF-brow.B.R.003
         weight: 1
       - path: Humanoid/DEF-root/DEF-spine/DEF-spine.001/DEF-spine.002/DEF-spine.003/DEF-spine.004/DEF-spine.005/DEF-spine.006/DEF-brow.T.L
         weight: 1
@@ -1185,35 +1232,35 @@ ModelImporter:
         weight: 1
       - path: Humanoid/DEF-root/DEF-spine/DEF-spine.001/DEF-spine.002/DEF-spine.003/DEF-spine.004/DEF-spine.005/DEF-spine.006/DEF-lid.B.L
         weight: 1
-      - path: Humanoid/DEF-root/DEF-spine/DEF-spine.001/DEF-spine.002/DEF-spine.003/DEF-spine.004/DEF-spine.005/DEF-spine.006/DEF-lid.B.L/DEF-lid.B.L.001
+      - path: Humanoid/DEF-root/DEF-spine/DEF-spine.001/DEF-spine.002/DEF-spine.003/DEF-spine.004/DEF-spine.005/DEF-spine.006/DEF-lid.B.L.001
         weight: 1
-      - path: Humanoid/DEF-root/DEF-spine/DEF-spine.001/DEF-spine.002/DEF-spine.003/DEF-spine.004/DEF-spine.005/DEF-spine.006/DEF-lid.B.L/DEF-lid.B.L.001/DEF-lid.B.L.002
+      - path: Humanoid/DEF-root/DEF-spine/DEF-spine.001/DEF-spine.002/DEF-spine.003/DEF-spine.004/DEF-spine.005/DEF-spine.006/DEF-lid.B.L.002
         weight: 1
-      - path: Humanoid/DEF-root/DEF-spine/DEF-spine.001/DEF-spine.002/DEF-spine.003/DEF-spine.004/DEF-spine.005/DEF-spine.006/DEF-lid.B.L/DEF-lid.B.L.001/DEF-lid.B.L.002/DEF-lid.B.L.003
+      - path: Humanoid/DEF-root/DEF-spine/DEF-spine.001/DEF-spine.002/DEF-spine.003/DEF-spine.004/DEF-spine.005/DEF-spine.006/DEF-lid.B.L.003
         weight: 1
       - path: Humanoid/DEF-root/DEF-spine/DEF-spine.001/DEF-spine.002/DEF-spine.003/DEF-spine.004/DEF-spine.005/DEF-spine.006/DEF-lid.B.R
         weight: 1
-      - path: Humanoid/DEF-root/DEF-spine/DEF-spine.001/DEF-spine.002/DEF-spine.003/DEF-spine.004/DEF-spine.005/DEF-spine.006/DEF-lid.B.R/DEF-lid.B.R.001
+      - path: Humanoid/DEF-root/DEF-spine/DEF-spine.001/DEF-spine.002/DEF-spine.003/DEF-spine.004/DEF-spine.005/DEF-spine.006/DEF-lid.B.R.001
         weight: 1
-      - path: Humanoid/DEF-root/DEF-spine/DEF-spine.001/DEF-spine.002/DEF-spine.003/DEF-spine.004/DEF-spine.005/DEF-spine.006/DEF-lid.B.R/DEF-lid.B.R.001/DEF-lid.B.R.002
+      - path: Humanoid/DEF-root/DEF-spine/DEF-spine.001/DEF-spine.002/DEF-spine.003/DEF-spine.004/DEF-spine.005/DEF-spine.006/DEF-lid.B.R.002
         weight: 1
-      - path: Humanoid/DEF-root/DEF-spine/DEF-spine.001/DEF-spine.002/DEF-spine.003/DEF-spine.004/DEF-spine.005/DEF-spine.006/DEF-lid.B.R/DEF-lid.B.R.001/DEF-lid.B.R.002/DEF-lid.B.R.003
+      - path: Humanoid/DEF-root/DEF-spine/DEF-spine.001/DEF-spine.002/DEF-spine.003/DEF-spine.004/DEF-spine.005/DEF-spine.006/DEF-lid.B.R.003
         weight: 1
       - path: Humanoid/DEF-root/DEF-spine/DEF-spine.001/DEF-spine.002/DEF-spine.003/DEF-spine.004/DEF-spine.005/DEF-spine.006/DEF-lid.T.L
         weight: 1
-      - path: Humanoid/DEF-root/DEF-spine/DEF-spine.001/DEF-spine.002/DEF-spine.003/DEF-spine.004/DEF-spine.005/DEF-spine.006/DEF-lid.T.L/DEF-lid.T.L.001
+      - path: Humanoid/DEF-root/DEF-spine/DEF-spine.001/DEF-spine.002/DEF-spine.003/DEF-spine.004/DEF-spine.005/DEF-spine.006/DEF-lid.T.L.001
         weight: 1
-      - path: Humanoid/DEF-root/DEF-spine/DEF-spine.001/DEF-spine.002/DEF-spine.003/DEF-spine.004/DEF-spine.005/DEF-spine.006/DEF-lid.T.L/DEF-lid.T.L.001/DEF-lid.T.L.002
+      - path: Humanoid/DEF-root/DEF-spine/DEF-spine.001/DEF-spine.002/DEF-spine.003/DEF-spine.004/DEF-spine.005/DEF-spine.006/DEF-lid.T.L.002
         weight: 1
-      - path: Humanoid/DEF-root/DEF-spine/DEF-spine.001/DEF-spine.002/DEF-spine.003/DEF-spine.004/DEF-spine.005/DEF-spine.006/DEF-lid.T.L/DEF-lid.T.L.001/DEF-lid.T.L.002/DEF-lid.T.L.003
+      - path: Humanoid/DEF-root/DEF-spine/DEF-spine.001/DEF-spine.002/DEF-spine.003/DEF-spine.004/DEF-spine.005/DEF-spine.006/DEF-lid.T.L.003
         weight: 1
       - path: Humanoid/DEF-root/DEF-spine/DEF-spine.001/DEF-spine.002/DEF-spine.003/DEF-spine.004/DEF-spine.005/DEF-spine.006/DEF-lid.T.R
         weight: 1
-      - path: Humanoid/DEF-root/DEF-spine/DEF-spine.001/DEF-spine.002/DEF-spine.003/DEF-spine.004/DEF-spine.005/DEF-spine.006/DEF-lid.T.R/DEF-lid.T.R.001
+      - path: Humanoid/DEF-root/DEF-spine/DEF-spine.001/DEF-spine.002/DEF-spine.003/DEF-spine.004/DEF-spine.005/DEF-spine.006/DEF-lid.T.R.001
         weight: 1
-      - path: Humanoid/DEF-root/DEF-spine/DEF-spine.001/DEF-spine.002/DEF-spine.003/DEF-spine.004/DEF-spine.005/DEF-spine.006/DEF-lid.T.R/DEF-lid.T.R.001/DEF-lid.T.R.002
+      - path: Humanoid/DEF-root/DEF-spine/DEF-spine.001/DEF-spine.002/DEF-spine.003/DEF-spine.004/DEF-spine.005/DEF-spine.006/DEF-lid.T.R.002
         weight: 1
-      - path: Humanoid/DEF-root/DEF-spine/DEF-spine.001/DEF-spine.002/DEF-spine.003/DEF-spine.004/DEF-spine.005/DEF-spine.006/DEF-lid.T.R/DEF-lid.T.R.001/DEF-lid.T.R.002/DEF-lid.T.R.003
+      - path: Humanoid/DEF-root/DEF-spine/DEF-spine.001/DEF-spine.002/DEF-spine.003/DEF-spine.004/DEF-spine.005/DEF-spine.006/DEF-lid.T.R.003
         weight: 1
       - path: Humanoid/DEF-root/DEF-spine/DEF-spine.001/DEF-spine.002/DEF-spine.003/DEF-spine.004/DEF-spine.005/DEF-spine.006/DEF-lip.B.L
         weight: 1
@@ -1360,6 +1407,8 @@ ModelImporter:
         weight: 1
       - path: Humanoid/DEF-root/DEF-spine/DEF-spine.001/DEF-spine.002/DEF-spine.003/DEF-shoulder.L/DEF-upper_arm.L/DEF-upper_arm.L.001/DEF-forearm.L/DEF-forearm.L.001/DEF-hand.L
         weight: 1
+      - path: Humanoid/DEF-root/DEF-spine/DEF-spine.001/DEF-spine.002/DEF-spine.003/DEF-shoulder.L/DEF-upper_arm.L/DEF-upper_arm.L.001/DEF-forearm.L/DEF-forearm.L.001/DEF-hand.L/DEF-hold.L
+        weight: 1
       - path: Humanoid/DEF-root/DEF-spine/DEF-spine.001/DEF-spine.002/DEF-spine.003/DEF-shoulder.R
         weight: 1
       - path: Humanoid/DEF-root/DEF-spine/DEF-spine.001/DEF-spine.002/DEF-spine.003/DEF-shoulder.R/DEF-upper_arm.R
@@ -1372,6 +1421,8 @@ ModelImporter:
         weight: 1
       - path: Humanoid/DEF-root/DEF-spine/DEF-spine.001/DEF-spine.002/DEF-spine.003/DEF-shoulder.R/DEF-upper_arm.R/DEF-upper_arm.R.001/DEF-forearm.R/DEF-forearm.R.001/DEF-hand.R
         weight: 1
+      - path: Humanoid/DEF-root/DEF-spine/DEF-spine.001/DEF-spine.002/DEF-spine.003/DEF-shoulder.R/DEF-upper_arm.R/DEF-upper_arm.R.001/DEF-forearm.R/DEF-forearm.R.001/DEF-hand.R/DEF-hold.R
+        weight: 1
       - path: Humanoid/DEF-root/DEF-spine/DEF-spine.001/DEF-spine.002/DEF-spine.003/DEF-spine.004
         weight: 1
       - path: Humanoid/DEF-root/DEF-spine/DEF-spine.001/DEF-spine.002/DEF-spine.003/DEF-spine.004/DEF-spine.005
@@ -1380,19 +1431,19 @@ ModelImporter:
         weight: 1
       - path: Humanoid/DEF-root/DEF-spine/DEF-spine.001/DEF-spine.002/DEF-spine.003/DEF-spine.004/DEF-spine.005/DEF-spine.006/DEF-brow.B.L
         weight: 1
-      - path: Humanoid/DEF-root/DEF-spine/DEF-spine.001/DEF-spine.002/DEF-spine.003/DEF-spine.004/DEF-spine.005/DEF-spine.006/DEF-brow.B.L/DEF-brow.B.L.001
+      - path: Humanoid/DEF-root/DEF-spine/DEF-spine.001/DEF-spine.002/DEF-spine.003/DEF-spine.004/DEF-spine.005/DEF-spine.006/DEF-brow.B.L.001
         weight: 1
-      - path: Humanoid/DEF-root/DEF-spine/DEF-spine.001/DEF-spine.002/DEF-spine.003/DEF-spine.004/DEF-spine.005/DEF-spine.006/DEF-brow.B.L/DEF-brow.B.L.001/DEF-brow.B.L.002
+      - path: Humanoid/DEF-root/DEF-spine/DEF-spine.001/DEF-spine.002/DEF-spine.003/DEF-spine.004/DEF-spine.005/DEF-spine.006/DEF-brow.B.L.002
         weight: 1
-      - path: Humanoid/DEF-root/DEF-spine/DEF-spine.001/DEF-spine.002/DEF-spine.003/DEF-spine.004/DEF-spine.005/DEF-spine.006/DEF-brow.B.L/DEF-brow.B.L.001/DEF-brow.B.L.002/DEF-brow.B.L.003
+      - path: Humanoid/DEF-root/DEF-spine/DEF-spine.001/DEF-spine.002/DEF-spine.003/DEF-spine.004/DEF-spine.005/DEF-spine.006/DEF-brow.B.L.003
         weight: 1
       - path: Humanoid/DEF-root/DEF-spine/DEF-spine.001/DEF-spine.002/DEF-spine.003/DEF-spine.004/DEF-spine.005/DEF-spine.006/DEF-brow.B.R
         weight: 1
-      - path: Humanoid/DEF-root/DEF-spine/DEF-spine.001/DEF-spine.002/DEF-spine.003/DEF-spine.004/DEF-spine.005/DEF-spine.006/DEF-brow.B.R/DEF-brow.B.R.001
+      - path: Humanoid/DEF-root/DEF-spine/DEF-spine.001/DEF-spine.002/DEF-spine.003/DEF-spine.004/DEF-spine.005/DEF-spine.006/DEF-brow.B.R.001
         weight: 1
-      - path: Humanoid/DEF-root/DEF-spine/DEF-spine.001/DEF-spine.002/DEF-spine.003/DEF-spine.004/DEF-spine.005/DEF-spine.006/DEF-brow.B.R/DEF-brow.B.R.001/DEF-brow.B.R.002
+      - path: Humanoid/DEF-root/DEF-spine/DEF-spine.001/DEF-spine.002/DEF-spine.003/DEF-spine.004/DEF-spine.005/DEF-spine.006/DEF-brow.B.R.002
         weight: 1
-      - path: Humanoid/DEF-root/DEF-spine/DEF-spine.001/DEF-spine.002/DEF-spine.003/DEF-spine.004/DEF-spine.005/DEF-spine.006/DEF-brow.B.R/DEF-brow.B.R.001/DEF-brow.B.R.002/DEF-brow.B.R.003
+      - path: Humanoid/DEF-root/DEF-spine/DEF-spine.001/DEF-spine.002/DEF-spine.003/DEF-spine.004/DEF-spine.005/DEF-spine.006/DEF-brow.B.R.003
         weight: 1
       - path: Humanoid/DEF-root/DEF-spine/DEF-spine.001/DEF-spine.002/DEF-spine.003/DEF-spine.004/DEF-spine.005/DEF-spine.006/DEF-brow.T.L
         weight: 1
@@ -1470,35 +1521,324 @@ ModelImporter:
         weight: 1
       - path: Humanoid/DEF-root/DEF-spine/DEF-spine.001/DEF-spine.002/DEF-spine.003/DEF-spine.004/DEF-spine.005/DEF-spine.006/DEF-lid.B.L
         weight: 1
-      - path: Humanoid/DEF-root/DEF-spine/DEF-spine.001/DEF-spine.002/DEF-spine.003/DEF-spine.004/DEF-spine.005/DEF-spine.006/DEF-lid.B.L/DEF-lid.B.L.001
+      - path: Humanoid/DEF-root/DEF-spine/DEF-spine.001/DEF-spine.002/DEF-spine.003/DEF-spine.004/DEF-spine.005/DEF-spine.006/DEF-lid.B.L.001
         weight: 1
-      - path: Humanoid/DEF-root/DEF-spine/DEF-spine.001/DEF-spine.002/DEF-spine.003/DEF-spine.004/DEF-spine.005/DEF-spine.006/DEF-lid.B.L/DEF-lid.B.L.001/DEF-lid.B.L.002
+      - path: Humanoid/DEF-root/DEF-spine/DEF-spine.001/DEF-spine.002/DEF-spine.003/DEF-spine.004/DEF-spine.005/DEF-spine.006/DEF-lid.B.L.002
         weight: 1
-      - path: Humanoid/DEF-root/DEF-spine/DEF-spine.001/DEF-spine.002/DEF-spine.003/DEF-spine.004/DEF-spine.005/DEF-spine.006/DEF-lid.B.L/DEF-lid.B.L.001/DEF-lid.B.L.002/DEF-lid.B.L.003
+      - path: Humanoid/DEF-root/DEF-spine/DEF-spine.001/DEF-spine.002/DEF-spine.003/DEF-spine.004/DEF-spine.005/DEF-spine.006/DEF-lid.B.L.003
         weight: 1
       - path: Humanoid/DEF-root/DEF-spine/DEF-spine.001/DEF-spine.002/DEF-spine.003/DEF-spine.004/DEF-spine.005/DEF-spine.006/DEF-lid.B.R
         weight: 1
-      - path: Humanoid/DEF-root/DEF-spine/DEF-spine.001/DEF-spine.002/DEF-spine.003/DEF-spine.004/DEF-spine.005/DEF-spine.006/DEF-lid.B.R/DEF-lid.B.R.001
+      - path: Humanoid/DEF-root/DEF-spine/DEF-spine.001/DEF-spine.002/DEF-spine.003/DEF-spine.004/DEF-spine.005/DEF-spine.006/DEF-lid.B.R.001
         weight: 1
-      - path: Humanoid/DEF-root/DEF-spine/DEF-spine.001/DEF-spine.002/DEF-spine.003/DEF-spine.004/DEF-spine.005/DEF-spine.006/DEF-lid.B.R/DEF-lid.B.R.001/DEF-lid.B.R.002
+      - path: Humanoid/DEF-root/DEF-spine/DEF-spine.001/DEF-spine.002/DEF-spine.003/DEF-spine.004/DEF-spine.005/DEF-spine.006/DEF-lid.B.R.002
         weight: 1
-      - path: Humanoid/DEF-root/DEF-spine/DEF-spine.001/DEF-spine.002/DEF-spine.003/DEF-spine.004/DEF-spine.005/DEF-spine.006/DEF-lid.B.R/DEF-lid.B.R.001/DEF-lid.B.R.002/DEF-lid.B.R.003
+      - path: Humanoid/DEF-root/DEF-spine/DEF-spine.001/DEF-spine.002/DEF-spine.003/DEF-spine.004/DEF-spine.005/DEF-spine.006/DEF-lid.B.R.003
         weight: 1
       - path: Humanoid/DEF-root/DEF-spine/DEF-spine.001/DEF-spine.002/DEF-spine.003/DEF-spine.004/DEF-spine.005/DEF-spine.006/DEF-lid.T.L
         weight: 1
-      - path: Humanoid/DEF-root/DEF-spine/DEF-spine.001/DEF-spine.002/DEF-spine.003/DEF-spine.004/DEF-spine.005/DEF-spine.006/DEF-lid.T.L/DEF-lid.T.L.001
+      - path: Humanoid/DEF-root/DEF-spine/DEF-spine.001/DEF-spine.002/DEF-spine.003/DEF-spine.004/DEF-spine.005/DEF-spine.006/DEF-lid.T.L.001
         weight: 1
-      - path: Humanoid/DEF-root/DEF-spine/DEF-spine.001/DEF-spine.002/DEF-spine.003/DEF-spine.004/DEF-spine.005/DEF-spine.006/DEF-lid.T.L/DEF-lid.T.L.001/DEF-lid.T.L.002
+      - path: Humanoid/DEF-root/DEF-spine/DEF-spine.001/DEF-spine.002/DEF-spine.003/DEF-spine.004/DEF-spine.005/DEF-spine.006/DEF-lid.T.L.002
         weight: 1
-      - path: Humanoid/DEF-root/DEF-spine/DEF-spine.001/DEF-spine.002/DEF-spine.003/DEF-spine.004/DEF-spine.005/DEF-spine.006/DEF-lid.T.L/DEF-lid.T.L.001/DEF-lid.T.L.002/DEF-lid.T.L.003
+      - path: Humanoid/DEF-root/DEF-spine/DEF-spine.001/DEF-spine.002/DEF-spine.003/DEF-spine.004/DEF-spine.005/DEF-spine.006/DEF-lid.T.L.003
         weight: 1
       - path: Humanoid/DEF-root/DEF-spine/DEF-spine.001/DEF-spine.002/DEF-spine.003/DEF-spine.004/DEF-spine.005/DEF-spine.006/DEF-lid.T.R
         weight: 1
-      - path: Humanoid/DEF-root/DEF-spine/DEF-spine.001/DEF-spine.002/DEF-spine.003/DEF-spine.004/DEF-spine.005/DEF-spine.006/DEF-lid.T.R/DEF-lid.T.R.001
+      - path: Humanoid/DEF-root/DEF-spine/DEF-spine.001/DEF-spine.002/DEF-spine.003/DEF-spine.004/DEF-spine.005/DEF-spine.006/DEF-lid.T.R.001
         weight: 1
-      - path: Humanoid/DEF-root/DEF-spine/DEF-spine.001/DEF-spine.002/DEF-spine.003/DEF-spine.004/DEF-spine.005/DEF-spine.006/DEF-lid.T.R/DEF-lid.T.R.001/DEF-lid.T.R.002
+      - path: Humanoid/DEF-root/DEF-spine/DEF-spine.001/DEF-spine.002/DEF-spine.003/DEF-spine.004/DEF-spine.005/DEF-spine.006/DEF-lid.T.R.002
         weight: 1
-      - path: Humanoid/DEF-root/DEF-spine/DEF-spine.001/DEF-spine.002/DEF-spine.003/DEF-spine.004/DEF-spine.005/DEF-spine.006/DEF-lid.T.R/DEF-lid.T.R.001/DEF-lid.T.R.002/DEF-lid.T.R.003
+      - path: Humanoid/DEF-root/DEF-spine/DEF-spine.001/DEF-spine.002/DEF-spine.003/DEF-spine.004/DEF-spine.005/DEF-spine.006/DEF-lid.T.R.003
+        weight: 1
+      - path: Humanoid/DEF-root/DEF-spine/DEF-spine.001/DEF-spine.002/DEF-spine.003/DEF-spine.004/DEF-spine.005/DEF-spine.006/DEF-lip.B.L
+        weight: 1
+      - path: Humanoid/DEF-root/DEF-spine/DEF-spine.001/DEF-spine.002/DEF-spine.003/DEF-spine.004/DEF-spine.005/DEF-spine.006/DEF-lip.B.L/DEF-lip.B.L.001
+        weight: 1
+      - path: Humanoid/DEF-root/DEF-spine/DEF-spine.001/DEF-spine.002/DEF-spine.003/DEF-spine.004/DEF-spine.005/DEF-spine.006/DEF-lip.B.R
+        weight: 1
+      - path: Humanoid/DEF-root/DEF-spine/DEF-spine.001/DEF-spine.002/DEF-spine.003/DEF-spine.004/DEF-spine.005/DEF-spine.006/DEF-lip.B.R/DEF-lip.B.R.001
+        weight: 1
+      - path: Humanoid/DEF-root/DEF-spine/DEF-spine.001/DEF-spine.002/DEF-spine.003/DEF-spine.004/DEF-spine.005/DEF-spine.006/DEF-lip.T.L
+        weight: 1
+      - path: Humanoid/DEF-root/DEF-spine/DEF-spine.001/DEF-spine.002/DEF-spine.003/DEF-spine.004/DEF-spine.005/DEF-spine.006/DEF-lip.T.L/DEF-lip.T.L.001
+        weight: 1
+      - path: Humanoid/DEF-root/DEF-spine/DEF-spine.001/DEF-spine.002/DEF-spine.003/DEF-spine.004/DEF-spine.005/DEF-spine.006/DEF-lip.T.R
+        weight: 1
+      - path: Humanoid/DEF-root/DEF-spine/DEF-spine.001/DEF-spine.002/DEF-spine.003/DEF-spine.004/DEF-spine.005/DEF-spine.006/DEF-lip.T.R/DEF-lip.T.R.001
+        weight: 1
+      - path: Humanoid/DEF-root/DEF-spine/DEF-spine.001/DEF-spine.002/DEF-spine.003/DEF-spine.004/DEF-spine.005/DEF-spine.006/DEF-nose
+        weight: 1
+      - path: Humanoid/DEF-root/DEF-spine/DEF-spine.001/DEF-spine.002/DEF-spine.003/DEF-spine.004/DEF-spine.005/DEF-spine.006/DEF-nose/DEF-nose.001
+        weight: 1
+      - path: Humanoid/DEF-root/DEF-spine/DEF-spine.001/DEF-spine.002/DEF-spine.003/DEF-spine.004/DEF-spine.005/DEF-spine.006/DEF-nose/DEF-nose.001/DEF-nose.002
+        weight: 1
+      - path: Humanoid/DEF-root/DEF-spine/DEF-spine.001/DEF-spine.002/DEF-spine.003/DEF-spine.004/DEF-spine.005/DEF-spine.006/DEF-nose/DEF-nose.001/DEF-nose.002/DEF-nose.003
+        weight: 1
+      - path: Humanoid/DEF-root/DEF-spine/DEF-spine.001/DEF-spine.002/DEF-spine.003/DEF-spine.004/DEF-spine.005/DEF-spine.006/DEF-nose/DEF-nose.001/DEF-nose.002/DEF-nose.003/DEF-nose.004
+        weight: 1
+      - path: Humanoid/DEF-root/DEF-spine/DEF-spine.001/DEF-spine.002/DEF-spine.003/DEF-spine.004/DEF-spine.005/DEF-spine.006/DEF-nose.L
+        weight: 1
+      - path: Humanoid/DEF-root/DEF-spine/DEF-spine.001/DEF-spine.002/DEF-spine.003/DEF-spine.004/DEF-spine.005/DEF-spine.006/DEF-nose.L/DEF-nose.L.001
+        weight: 1
+      - path: Humanoid/DEF-root/DEF-spine/DEF-spine.001/DEF-spine.002/DEF-spine.003/DEF-spine.004/DEF-spine.005/DEF-spine.006/DEF-nose.R
+        weight: 1
+      - path: Humanoid/DEF-root/DEF-spine/DEF-spine.001/DEF-spine.002/DEF-spine.003/DEF-spine.004/DEF-spine.005/DEF-spine.006/DEF-nose.R/DEF-nose.R.001
+        weight: 1
+      - path: Humanoid/DEF-root/DEF-spine/DEF-spine.001/DEF-spine.002/DEF-spine.003/DEF-spine.004/DEF-spine.005/DEF-spine.006/DEF-teeth.T
+        weight: 1
+      - path: Humanoid/DEF-root/DEF-spine/DEF-spine.001/DEF-spine.002/DEF-spine.003/DEF-spine.004/DEF-spine.005/DEF-spine.006/DEF-temple.L
+        weight: 1
+      - path: Humanoid/DEF-root/DEF-spine/DEF-spine.001/DEF-spine.002/DEF-spine.003/DEF-spine.004/DEF-spine.005/DEF-spine.006/DEF-temple.L/DEF-jaw.L
+        weight: 1
+      - path: Humanoid/DEF-root/DEF-spine/DEF-spine.001/DEF-spine.002/DEF-spine.003/DEF-spine.004/DEF-spine.005/DEF-spine.006/DEF-temple.L/DEF-jaw.L/DEF-jaw.L.001
+        weight: 1
+      - path: Humanoid/DEF-root/DEF-spine/DEF-spine.001/DEF-spine.002/DEF-spine.003/DEF-spine.004/DEF-spine.005/DEF-spine.006/DEF-temple.L/DEF-jaw.L/DEF-jaw.L.001/DEF-chin.L
+        weight: 1
+      - path: Humanoid/DEF-root/DEF-spine/DEF-spine.001/DEF-spine.002/DEF-spine.003/DEF-spine.004/DEF-spine.005/DEF-spine.006/DEF-temple.R
+        weight: 1
+      - path: Humanoid/DEF-root/DEF-spine/DEF-spine.001/DEF-spine.002/DEF-spine.003/DEF-spine.004/DEF-spine.005/DEF-spine.006/DEF-temple.R/DEF-jaw.R
+        weight: 1
+      - path: Humanoid/DEF-root/DEF-spine/DEF-spine.001/DEF-spine.002/DEF-spine.003/DEF-spine.004/DEF-spine.005/DEF-spine.006/DEF-temple.R/DEF-jaw.R/DEF-jaw.R.001
+        weight: 1
+      - path: Humanoid/DEF-root/DEF-spine/DEF-spine.001/DEF-spine.002/DEF-spine.003/DEF-spine.004/DEF-spine.005/DEF-spine.006/DEF-temple.R/DEF-jaw.R/DEF-jaw.R.001/DEF-chin.R
+        weight: 1
+      - path: Humanoid/DEF-root/DEF-spine/DEF-spine.001/DEF-spine.002/DEF-spine.003/DEF-spine.004/DEF-spine.005/DEF-spine.006/DEF-tongue
+        weight: 1
+      - path: Humanoid/DEF-root/DEF-spine/DEF-spine.001/DEF-spine.002/DEF-spine.003/DEF-spine.004/DEF-spine.005/DEF-spine.006/DEF-tongue/DEF-tongue.001
+        weight: 1
+      - path: Humanoid/DEF-root/DEF-spine/DEF-spine.001/DEF-spine.002/DEF-spine.003/DEF-spine.004/DEF-spine.005/DEF-spine.006/DEF-tongue/DEF-tongue.001/DEF-tongue.002
+        weight: 1
+      - path: Humanoid/DEF-root/DEF-spine/DEF-thigh.L
+        weight: 1
+      - path: Humanoid/DEF-root/DEF-spine/DEF-thigh.L/DEF-thigh.L.001
+        weight: 1
+      - path: Humanoid/DEF-root/DEF-spine/DEF-thigh.L/DEF-thigh.L.001/DEF-shin.L
+        weight: 1
+      - path: Humanoid/DEF-root/DEF-spine/DEF-thigh.L/DEF-thigh.L.001/DEF-shin.L/DEF-shin.L.001
+        weight: 1
+      - path: Humanoid/DEF-root/DEF-spine/DEF-thigh.L/DEF-thigh.L.001/DEF-shin.L/DEF-shin.L.001/DEF-foot.L
+        weight: 1
+      - path: Humanoid/DEF-root/DEF-spine/DEF-thigh.L/DEF-thigh.L.001/DEF-shin.L/DEF-shin.L.001/DEF-foot.L/DEF-toe.L
+        weight: 1
+      - path: Humanoid/DEF-root/DEF-spine/DEF-thigh.R
+        weight: 1
+      - path: Humanoid/DEF-root/DEF-spine/DEF-thigh.R/DEF-thigh.R.001
+        weight: 1
+      - path: Humanoid/DEF-root/DEF-spine/DEF-thigh.R/DEF-thigh.R.001/DEF-shin.R
+        weight: 1
+      - path: Humanoid/DEF-root/DEF-spine/DEF-thigh.R/DEF-thigh.R.001/DEF-shin.R/DEF-shin.R.001
+        weight: 1
+      - path: Humanoid/DEF-root/DEF-spine/DEF-thigh.R/DEF-thigh.R.001/DEF-shin.R/DEF-shin.R.001/DEF-foot.R
+        weight: 1
+      - path: Humanoid/DEF-root/DEF-spine/DEF-thigh.R/DEF-thigh.R.001/DEF-shin.R/DEF-shin.R.001/DEF-foot.R/DEF-toe.R
+        weight: 1
+      maskType: 0
+      maskSource: {instanceID: 0}
+      additiveReferencePoseFrame: 0
+    - serializedVersion: 16
+      name: Humanoid|Cut
+      takeName: Humanoid|Cut
+      internalID: 0
+      firstFrame: 0
+      lastFrame: 40
+      wrapMode: 0
+      orientationOffsetY: 0
+      level: 0
+      cycleOffset: 0
+      loop: 0
+      hasAdditiveReferencePose: 0
+      loopTime: 0
+      loopBlend: 0
+      loopBlendOrientation: 1
+      loopBlendPositionY: 1
+      loopBlendPositionXZ: 1
+      keepOriginalOrientation: 0
+      keepOriginalPositionY: 1
+      keepOriginalPositionXZ: 0
+      heightFromFeet: 0
+      mirror: 0
+      bodyMask: 01000000010000000100000001000000010000000100000001000000010000000100000001000000010000000100000001000000
+      curves: []
+      events: []
+      transformMask:
+      - path: 
+        weight: 1
+      - path: Humanoid
+        weight: 1
+      - path: Humanoid/DEF-root
+        weight: 1
+      - path: Humanoid/DEF-root/DEF-spine
+        weight: 1
+      - path: Humanoid/DEF-root/DEF-spine/DEF-pelvis.L
+        weight: 1
+      - path: Humanoid/DEF-root/DEF-spine/DEF-pelvis.R
+        weight: 1
+      - path: Humanoid/DEF-root/DEF-spine/DEF-spine.001
+        weight: 1
+      - path: Humanoid/DEF-root/DEF-spine/DEF-spine.001/DEF-spine.002
+        weight: 1
+      - path: Humanoid/DEF-root/DEF-spine/DEF-spine.001/DEF-spine.002/DEF-spine.003
+        weight: 1
+      - path: Humanoid/DEF-root/DEF-spine/DEF-spine.001/DEF-spine.002/DEF-spine.003/DEF-breast.L
+        weight: 1
+      - path: Humanoid/DEF-root/DEF-spine/DEF-spine.001/DEF-spine.002/DEF-spine.003/DEF-breast.R
+        weight: 1
+      - path: Humanoid/DEF-root/DEF-spine/DEF-spine.001/DEF-spine.002/DEF-spine.003/DEF-shoulder.L
+        weight: 1
+      - path: Humanoid/DEF-root/DEF-spine/DEF-spine.001/DEF-spine.002/DEF-spine.003/DEF-shoulder.L/DEF-upper_arm.L
+        weight: 1
+      - path: Humanoid/DEF-root/DEF-spine/DEF-spine.001/DEF-spine.002/DEF-spine.003/DEF-shoulder.L/DEF-upper_arm.L/DEF-upper_arm.L.001
+        weight: 1
+      - path: Humanoid/DEF-root/DEF-spine/DEF-spine.001/DEF-spine.002/DEF-spine.003/DEF-shoulder.L/DEF-upper_arm.L/DEF-upper_arm.L.001/DEF-forearm.L
+        weight: 1
+      - path: Humanoid/DEF-root/DEF-spine/DEF-spine.001/DEF-spine.002/DEF-spine.003/DEF-shoulder.L/DEF-upper_arm.L/DEF-upper_arm.L.001/DEF-forearm.L/DEF-forearm.L.001
+        weight: 1
+      - path: Humanoid/DEF-root/DEF-spine/DEF-spine.001/DEF-spine.002/DEF-spine.003/DEF-shoulder.L/DEF-upper_arm.L/DEF-upper_arm.L.001/DEF-forearm.L/DEF-forearm.L.001/DEF-hand.L
+        weight: 1
+      - path: Humanoid/DEF-root/DEF-spine/DEF-spine.001/DEF-spine.002/DEF-spine.003/DEF-shoulder.L/DEF-upper_arm.L/DEF-upper_arm.L.001/DEF-forearm.L/DEF-forearm.L.001/DEF-hand.L/DEF-hold.L
+        weight: 1
+      - path: Humanoid/DEF-root/DEF-spine/DEF-spine.001/DEF-spine.002/DEF-spine.003/DEF-shoulder.R
+        weight: 1
+      - path: Humanoid/DEF-root/DEF-spine/DEF-spine.001/DEF-spine.002/DEF-spine.003/DEF-shoulder.R/DEF-upper_arm.R
+        weight: 1
+      - path: Humanoid/DEF-root/DEF-spine/DEF-spine.001/DEF-spine.002/DEF-spine.003/DEF-shoulder.R/DEF-upper_arm.R/DEF-upper_arm.R.001
+        weight: 1
+      - path: Humanoid/DEF-root/DEF-spine/DEF-spine.001/DEF-spine.002/DEF-spine.003/DEF-shoulder.R/DEF-upper_arm.R/DEF-upper_arm.R.001/DEF-forearm.R
+        weight: 1
+      - path: Humanoid/DEF-root/DEF-spine/DEF-spine.001/DEF-spine.002/DEF-spine.003/DEF-shoulder.R/DEF-upper_arm.R/DEF-upper_arm.R.001/DEF-forearm.R/DEF-forearm.R.001
+        weight: 1
+      - path: Humanoid/DEF-root/DEF-spine/DEF-spine.001/DEF-spine.002/DEF-spine.003/DEF-shoulder.R/DEF-upper_arm.R/DEF-upper_arm.R.001/DEF-forearm.R/DEF-forearm.R.001/DEF-hand.R
+        weight: 1
+      - path: Humanoid/DEF-root/DEF-spine/DEF-spine.001/DEF-spine.002/DEF-spine.003/DEF-shoulder.R/DEF-upper_arm.R/DEF-upper_arm.R.001/DEF-forearm.R/DEF-forearm.R.001/DEF-hand.R/DEF-hold.R
+        weight: 1
+      - path: Humanoid/DEF-root/DEF-spine/DEF-spine.001/DEF-spine.002/DEF-spine.003/DEF-spine.004
+        weight: 1
+      - path: Humanoid/DEF-root/DEF-spine/DEF-spine.001/DEF-spine.002/DEF-spine.003/DEF-spine.004/DEF-spine.005
+        weight: 1
+      - path: Humanoid/DEF-root/DEF-spine/DEF-spine.001/DEF-spine.002/DEF-spine.003/DEF-spine.004/DEF-spine.005/DEF-spine.006
+        weight: 1
+      - path: Humanoid/DEF-root/DEF-spine/DEF-spine.001/DEF-spine.002/DEF-spine.003/DEF-spine.004/DEF-spine.005/DEF-spine.006/DEF-brow.B.L
+        weight: 1
+      - path: Humanoid/DEF-root/DEF-spine/DEF-spine.001/DEF-spine.002/DEF-spine.003/DEF-spine.004/DEF-spine.005/DEF-spine.006/DEF-brow.B.L.001
+        weight: 1
+      - path: Humanoid/DEF-root/DEF-spine/DEF-spine.001/DEF-spine.002/DEF-spine.003/DEF-spine.004/DEF-spine.005/DEF-spine.006/DEF-brow.B.L.002
+        weight: 1
+      - path: Humanoid/DEF-root/DEF-spine/DEF-spine.001/DEF-spine.002/DEF-spine.003/DEF-spine.004/DEF-spine.005/DEF-spine.006/DEF-brow.B.L.003
+        weight: 1
+      - path: Humanoid/DEF-root/DEF-spine/DEF-spine.001/DEF-spine.002/DEF-spine.003/DEF-spine.004/DEF-spine.005/DEF-spine.006/DEF-brow.B.R
+        weight: 1
+      - path: Humanoid/DEF-root/DEF-spine/DEF-spine.001/DEF-spine.002/DEF-spine.003/DEF-spine.004/DEF-spine.005/DEF-spine.006/DEF-brow.B.R.001
+        weight: 1
+      - path: Humanoid/DEF-root/DEF-spine/DEF-spine.001/DEF-spine.002/DEF-spine.003/DEF-spine.004/DEF-spine.005/DEF-spine.006/DEF-brow.B.R.002
+        weight: 1
+      - path: Humanoid/DEF-root/DEF-spine/DEF-spine.001/DEF-spine.002/DEF-spine.003/DEF-spine.004/DEF-spine.005/DEF-spine.006/DEF-brow.B.R.003
+        weight: 1
+      - path: Humanoid/DEF-root/DEF-spine/DEF-spine.001/DEF-spine.002/DEF-spine.003/DEF-spine.004/DEF-spine.005/DEF-spine.006/DEF-brow.T.L
+        weight: 1
+      - path: Humanoid/DEF-root/DEF-spine/DEF-spine.001/DEF-spine.002/DEF-spine.003/DEF-spine.004/DEF-spine.005/DEF-spine.006/DEF-brow.T.L/DEF-brow.T.L.001
+        weight: 1
+      - path: Humanoid/DEF-root/DEF-spine/DEF-spine.001/DEF-spine.002/DEF-spine.003/DEF-spine.004/DEF-spine.005/DEF-spine.006/DEF-brow.T.L/DEF-brow.T.L.001/DEF-brow.T.L.002
+        weight: 1
+      - path: Humanoid/DEF-root/DEF-spine/DEF-spine.001/DEF-spine.002/DEF-spine.003/DEF-spine.004/DEF-spine.005/DEF-spine.006/DEF-brow.T.L/DEF-brow.T.L.001/DEF-brow.T.L.002/DEF-brow.T.L.003
+        weight: 1
+      - path: Humanoid/DEF-root/DEF-spine/DEF-spine.001/DEF-spine.002/DEF-spine.003/DEF-spine.004/DEF-spine.005/DEF-spine.006/DEF-brow.T.R
+        weight: 1
+      - path: Humanoid/DEF-root/DEF-spine/DEF-spine.001/DEF-spine.002/DEF-spine.003/DEF-spine.004/DEF-spine.005/DEF-spine.006/DEF-brow.T.R/DEF-brow.T.R.001
+        weight: 1
+      - path: Humanoid/DEF-root/DEF-spine/DEF-spine.001/DEF-spine.002/DEF-spine.003/DEF-spine.004/DEF-spine.005/DEF-spine.006/DEF-brow.T.R/DEF-brow.T.R.001/DEF-brow.T.R.002
+        weight: 1
+      - path: Humanoid/DEF-root/DEF-spine/DEF-spine.001/DEF-spine.002/DEF-spine.003/DEF-spine.004/DEF-spine.005/DEF-spine.006/DEF-brow.T.R/DEF-brow.T.R.001/DEF-brow.T.R.002/DEF-brow.T.R.003
+        weight: 1
+      - path: Humanoid/DEF-root/DEF-spine/DEF-spine.001/DEF-spine.002/DEF-spine.003/DEF-spine.004/DEF-spine.005/DEF-spine.006/DEF-cheek.B.L
+        weight: 1
+      - path: Humanoid/DEF-root/DEF-spine/DEF-spine.001/DEF-spine.002/DEF-spine.003/DEF-spine.004/DEF-spine.005/DEF-spine.006/DEF-cheek.B.L/DEF-cheek.B.L.001
+        weight: 1
+      - path: Humanoid/DEF-root/DEF-spine/DEF-spine.001/DEF-spine.002/DEF-spine.003/DEF-spine.004/DEF-spine.005/DEF-spine.006/DEF-cheek.B.R
+        weight: 1
+      - path: Humanoid/DEF-root/DEF-spine/DEF-spine.001/DEF-spine.002/DEF-spine.003/DEF-spine.004/DEF-spine.005/DEF-spine.006/DEF-cheek.B.R/DEF-cheek.B.R.001
+        weight: 1
+      - path: Humanoid/DEF-root/DEF-spine/DEF-spine.001/DEF-spine.002/DEF-spine.003/DEF-spine.004/DEF-spine.005/DEF-spine.006/DEF-cheek.T.L
+        weight: 1
+      - path: Humanoid/DEF-root/DEF-spine/DEF-spine.001/DEF-spine.002/DEF-spine.003/DEF-spine.004/DEF-spine.005/DEF-spine.006/DEF-cheek.T.L/DEF-cheek.T.L.001
+        weight: 1
+      - path: Humanoid/DEF-root/DEF-spine/DEF-spine.001/DEF-spine.002/DEF-spine.003/DEF-spine.004/DEF-spine.005/DEF-spine.006/DEF-cheek.T.R
+        weight: 1
+      - path: Humanoid/DEF-root/DEF-spine/DEF-spine.001/DEF-spine.002/DEF-spine.003/DEF-spine.004/DEF-spine.005/DEF-spine.006/DEF-cheek.T.R/DEF-cheek.T.R.001
+        weight: 1
+      - path: Humanoid/DEF-root/DEF-spine/DEF-spine.001/DEF-spine.002/DEF-spine.003/DEF-spine.004/DEF-spine.005/DEF-spine.006/DEF-ear.L.004
+        weight: 1
+      - path: Humanoid/DEF-root/DEF-spine/DEF-spine.001/DEF-spine.002/DEF-spine.003/DEF-spine.004/DEF-spine.005/DEF-spine.006/DEF-ear.L.004/DEF-ear.L
+        weight: 1
+      - path: Humanoid/DEF-root/DEF-spine/DEF-spine.001/DEF-spine.002/DEF-spine.003/DEF-spine.004/DEF-spine.005/DEF-spine.006/DEF-ear.L.004/DEF-ear.L/DEF-ear.L.001
+        weight: 1
+      - path: Humanoid/DEF-root/DEF-spine/DEF-spine.001/DEF-spine.002/DEF-spine.003/DEF-spine.004/DEF-spine.005/DEF-spine.006/DEF-ear.L.004/DEF-ear.L/DEF-ear.L.001/DEF-ear.L.002
+        weight: 1
+      - path: Humanoid/DEF-root/DEF-spine/DEF-spine.001/DEF-spine.002/DEF-spine.003/DEF-spine.004/DEF-spine.005/DEF-spine.006/DEF-ear.L.004/DEF-ear.L/DEF-ear.L.001/DEF-ear.L.002/DEF-ear.L.003
+        weight: 1
+      - path: Humanoid/DEF-root/DEF-spine/DEF-spine.001/DEF-spine.002/DEF-spine.003/DEF-spine.004/DEF-spine.005/DEF-spine.006/DEF-ear.R.004
+        weight: 1
+      - path: Humanoid/DEF-root/DEF-spine/DEF-spine.001/DEF-spine.002/DEF-spine.003/DEF-spine.004/DEF-spine.005/DEF-spine.006/DEF-ear.R.004/DEF-ear.R
+        weight: 1
+      - path: Humanoid/DEF-root/DEF-spine/DEF-spine.001/DEF-spine.002/DEF-spine.003/DEF-spine.004/DEF-spine.005/DEF-spine.006/DEF-ear.R.004/DEF-ear.R/DEF-ear.R.001
+        weight: 1
+      - path: Humanoid/DEF-root/DEF-spine/DEF-spine.001/DEF-spine.002/DEF-spine.003/DEF-spine.004/DEF-spine.005/DEF-spine.006/DEF-ear.R.004/DEF-ear.R/DEF-ear.R.001/DEF-ear.R.002
+        weight: 1
+      - path: Humanoid/DEF-root/DEF-spine/DEF-spine.001/DEF-spine.002/DEF-spine.003/DEF-spine.004/DEF-spine.005/DEF-spine.006/DEF-ear.R.004/DEF-ear.R/DEF-ear.R.001/DEF-ear.R.002/DEF-ear.R.003
+        weight: 1
+      - path: Humanoid/DEF-root/DEF-spine/DEF-spine.001/DEF-spine.002/DEF-spine.003/DEF-spine.004/DEF-spine.005/DEF-spine.006/DEF-eye.L.001
+        weight: 1
+      - path: Humanoid/DEF-root/DEF-spine/DEF-spine.001/DEF-spine.002/DEF-spine.003/DEF-spine.004/DEF-spine.005/DEF-spine.006/DEF-eye.R.001
+        weight: 1
+      - path: Humanoid/DEF-root/DEF-spine/DEF-spine.001/DEF-spine.002/DEF-spine.003/DEF-spine.004/DEF-spine.005/DEF-spine.006/DEF-forehead.L
+        weight: 1
+      - path: Humanoid/DEF-root/DEF-spine/DEF-spine.001/DEF-spine.002/DEF-spine.003/DEF-spine.004/DEF-spine.005/DEF-spine.006/DEF-forehead.L.001
+        weight: 1
+      - path: Humanoid/DEF-root/DEF-spine/DEF-spine.001/DEF-spine.002/DEF-spine.003/DEF-spine.004/DEF-spine.005/DEF-spine.006/DEF-forehead.L.002
+        weight: 1
+      - path: Humanoid/DEF-root/DEF-spine/DEF-spine.001/DEF-spine.002/DEF-spine.003/DEF-spine.004/DEF-spine.005/DEF-spine.006/DEF-forehead.R
+        weight: 1
+      - path: Humanoid/DEF-root/DEF-spine/DEF-spine.001/DEF-spine.002/DEF-spine.003/DEF-spine.004/DEF-spine.005/DEF-spine.006/DEF-forehead.R.001
+        weight: 1
+      - path: Humanoid/DEF-root/DEF-spine/DEF-spine.001/DEF-spine.002/DEF-spine.003/DEF-spine.004/DEF-spine.005/DEF-spine.006/DEF-forehead.R.002
+        weight: 1
+      - path: Humanoid/DEF-root/DEF-spine/DEF-spine.001/DEF-spine.002/DEF-spine.003/DEF-spine.004/DEF-spine.005/DEF-spine.006/DEF-jaw
+        weight: 1
+      - path: Humanoid/DEF-root/DEF-spine/DEF-spine.001/DEF-spine.002/DEF-spine.003/DEF-spine.004/DEF-spine.005/DEF-spine.006/DEF-jaw/DEF-chin
+        weight: 1
+      - path: Humanoid/DEF-root/DEF-spine/DEF-spine.001/DEF-spine.002/DEF-spine.003/DEF-spine.004/DEF-spine.005/DEF-spine.006/DEF-jaw/DEF-chin/DEF-chin.001
+        weight: 1
+      - path: Humanoid/DEF-root/DEF-spine/DEF-spine.001/DEF-spine.002/DEF-spine.003/DEF-spine.004/DEF-spine.005/DEF-spine.006/DEF-lid.B.L
+        weight: 1
+      - path: Humanoid/DEF-root/DEF-spine/DEF-spine.001/DEF-spine.002/DEF-spine.003/DEF-spine.004/DEF-spine.005/DEF-spine.006/DEF-lid.B.L.001
+        weight: 1
+      - path: Humanoid/DEF-root/DEF-spine/DEF-spine.001/DEF-spine.002/DEF-spine.003/DEF-spine.004/DEF-spine.005/DEF-spine.006/DEF-lid.B.L.002
+        weight: 1
+      - path: Humanoid/DEF-root/DEF-spine/DEF-spine.001/DEF-spine.002/DEF-spine.003/DEF-spine.004/DEF-spine.005/DEF-spine.006/DEF-lid.B.L.003
+        weight: 1
+      - path: Humanoid/DEF-root/DEF-spine/DEF-spine.001/DEF-spine.002/DEF-spine.003/DEF-spine.004/DEF-spine.005/DEF-spine.006/DEF-lid.B.R
+        weight: 1
+      - path: Humanoid/DEF-root/DEF-spine/DEF-spine.001/DEF-spine.002/DEF-spine.003/DEF-spine.004/DEF-spine.005/DEF-spine.006/DEF-lid.B.R.001
+        weight: 1
+      - path: Humanoid/DEF-root/DEF-spine/DEF-spine.001/DEF-spine.002/DEF-spine.003/DEF-spine.004/DEF-spine.005/DEF-spine.006/DEF-lid.B.R.002
+        weight: 1
+      - path: Humanoid/DEF-root/DEF-spine/DEF-spine.001/DEF-spine.002/DEF-spine.003/DEF-spine.004/DEF-spine.005/DEF-spine.006/DEF-lid.B.R.003
+        weight: 1
+      - path: Humanoid/DEF-root/DEF-spine/DEF-spine.001/DEF-spine.002/DEF-spine.003/DEF-spine.004/DEF-spine.005/DEF-spine.006/DEF-lid.T.L
+        weight: 1
+      - path: Humanoid/DEF-root/DEF-spine/DEF-spine.001/DEF-spine.002/DEF-spine.003/DEF-spine.004/DEF-spine.005/DEF-spine.006/DEF-lid.T.L.001
+        weight: 1
+      - path: Humanoid/DEF-root/DEF-spine/DEF-spine.001/DEF-spine.002/DEF-spine.003/DEF-spine.004/DEF-spine.005/DEF-spine.006/DEF-lid.T.L.002
+        weight: 1
+      - path: Humanoid/DEF-root/DEF-spine/DEF-spine.001/DEF-spine.002/DEF-spine.003/DEF-spine.004/DEF-spine.005/DEF-spine.006/DEF-lid.T.L.003
+        weight: 1
+      - path: Humanoid/DEF-root/DEF-spine/DEF-spine.001/DEF-spine.002/DEF-spine.003/DEF-spine.004/DEF-spine.005/DEF-spine.006/DEF-lid.T.R
+        weight: 1
+      - path: Humanoid/DEF-root/DEF-spine/DEF-spine.001/DEF-spine.002/DEF-spine.003/DEF-spine.004/DEF-spine.005/DEF-spine.006/DEF-lid.T.R.001
+        weight: 1
+      - path: Humanoid/DEF-root/DEF-spine/DEF-spine.001/DEF-spine.002/DEF-spine.003/DEF-spine.004/DEF-spine.005/DEF-spine.006/DEF-lid.T.R.002
+        weight: 1
+      - path: Humanoid/DEF-root/DEF-spine/DEF-spine.001/DEF-spine.002/DEF-spine.003/DEF-spine.004/DEF-spine.005/DEF-spine.006/DEF-lid.T.R.003
         weight: 1
       - path: Humanoid/DEF-root/DEF-spine/DEF-spine.001/DEF-spine.002/DEF-spine.003/DEF-spine.004/DEF-spine.005/DEF-spine.006/DEF-lip.B.L
         weight: 1

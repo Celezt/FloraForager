@@ -6,7 +6,7 @@ public class CraftableItem
 {
     private CraftableItemInfo _Info;
 
-    public string ItemID => _Info.ItemID;
+    public ItemAsset Item => _Info.Item;
     public ItemAsset[] Requirements => _Info.Requirements;
 
     public UICraftableItemObject Object { get; set; }

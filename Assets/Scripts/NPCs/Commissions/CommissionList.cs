@@ -43,7 +43,7 @@ public class CommissionList : SerializedScriptableSingleton<CommissionList>, ISt
 
     public bool Remove(Commission commission)
     {
-        if (commission == null || _Commissions.Contains(commission))
+        if (commission == null || !_Commissions.Contains(commission))
             return false;
 
         _Commissions.Remove(commission);
@@ -53,37 +53,42 @@ public class CommissionList : SerializedScriptableSingleton<CommissionList>, ISt
 
     public void Notify()
     {
-        _Commissions.ForEach(c => c.DayPassed());
+        for (int i = _Commissions.Count - 1; i >= 0; --i)
+        {
+            _Commissions[i].DayPassed();
+        }
     }
 
     public bool HasCommission(Commission commission)
     {
-        return _Commissions.Exists(c => c.CommissionData.Title == commission.CommissionData.Title);
+        return _Commissions.Exists(c => 
+            c.CommissionData.Title == commission.CommissionData.Title && 
+            c.CommissionData.Giver == commission.CommissionData.Giver);
     }
 
     public void UpLoad()
     {
         Dictionary<string, object> streamables = new Dictionary<string, object>();
 
-        _Commissions.ForEach(x =>
-            streamables.Add(x.Title, ((IStreamable<object>)x).OnUpload()));
+        _Commissions.ForEach(x => streamables.Add(x.Title + ", " + x.Giver, x.OnUpload()));
 
         GameManager.Stream.Load(_Guid, streamables);
     }
     public void Load()
     {
-        _Commissions = new List<Commission>();
+        _Commissions.Clear();
 
-        Dictionary<string, object> streamables = (Dictionary<string, object>)GameManager.Stream.Get(_Guid);
+        if (!GameManager.Stream.TryGet(_Guid, out Dictionary<string, object> streamables))
+            return;
 
-        foreach (var item in streamables)
+        foreach (KeyValuePair<string, object> item in streamables)
         {
             if (!streamables.TryGetValue(item.Key, out object value))
                 continue;
 
             Commission.Data data = value as Commission.Data;
 
-            Commission commission = new Commission(data.Commission);
+            Commission commission = new Commission();
             commission.OnLoad(data);
 
             _Commissions.Add(commission);
@@ -95,6 +100,6 @@ public class CommissionList : SerializedScriptableSingleton<CommissionList>, ISt
 
         UpLoad(); // reupload to update to latest changes
 
-        _Commissions.ForEach(x => ((IStreamable<object>)x).OnBeforeSaving());
+        _Commissions.ForEach(x => x.OnBeforeSaving());
     }
 }

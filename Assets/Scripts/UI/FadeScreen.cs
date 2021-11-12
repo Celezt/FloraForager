@@ -33,7 +33,7 @@ public class FadeScreen : Singleton<FadeScreen>
     {
         if (_FadeCoroutine != null)
             StopCoroutine(_FadeCoroutine);
-        
+
         _FadeCoroutine = StartCoroutine(FadeOut(fadeTime));
     }
 

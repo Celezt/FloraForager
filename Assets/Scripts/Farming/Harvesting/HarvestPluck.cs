@@ -12,7 +12,7 @@ public class HarvestPluck : IHarvest
     public bool PluckFromAll = false;
     public int PluckAmount = 1;
 
-    [ListDrawerSettings(Expanded = true)]
+    [ListDrawerSettings(ShowItemCount = false, DraggableItems = false, Expanded = true)]
     public ItemAsset[] Rewards;
 
     private int[] _Pluck;

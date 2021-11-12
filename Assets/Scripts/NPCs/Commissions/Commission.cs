@@ -28,6 +28,7 @@ public class Commission : IStreamable<Commission.Data>
     public CommissionData CommissionData => _Data.Commission;
 
     public string Title => _Data.Commission.Title;
+    public bool Repeatable => _Data.Commission.Repeatable;
     public IObjective[] Objectives => _Data.Commission.Objectives;
     public string Giver => _Data.Commission.Giver;
     public int DaysLeft => _Data.DaysLeft;
@@ -45,6 +46,10 @@ public class Commission : IStreamable<Commission.Data>
         }
     }
 
+    public Commission()
+    {
+
+    }
     public Commission(CommissionData data)
     {
         _Data = new Data();
@@ -56,7 +61,7 @@ public class Commission : IStreamable<Commission.Data>
             IObjective objectiveData = _Data.Commission.Objectives[i];
 
             _Data.Commission.Objectives[i] = (IObjective)System.Activator.CreateInstance(objectiveData.GetType()); // create new instance
-            _Data.Commission.Objectives[i].Initialize(objectiveData); // fill it with data
+            _Data.Commission.Objectives[i].Initialize(objectiveData);
         }
 
         _Data.DaysLeft = _Data.Commission.TimeLimit;

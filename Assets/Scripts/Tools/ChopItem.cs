@@ -23,8 +23,12 @@ public class ChopItem : IUse, IDestructor, IStar, IValue
     [Title("Tool Behaviour")]
     [SerializeField]
     private AnimationClip _clip;
+    [SerializeField, AssetsOnly]
+    private GameObject _model;
     [SerializeField]
     private float _stunDuration = 0.6f;
+    [SerializeField]
+    private float _onUse = 0.4f;
     [SerializeField]
     private Vector3 _halfExtents = new Vector3(0.5f, 1.0f, 0.5f);
     [SerializeField]
@@ -56,14 +60,33 @@ public class ChopItem : IUse, IDestructor, IStar, IValue
 
     }
 
-    IEnumerable<IUsable> IUse.OnUse(UseContext context)
+    IEnumerator IUse.OnUse(UseContext context)
     {
         if (!context.started)
             yield break;
 
-        context.transform.GetComponentInChildren<PlayerMovement>().ActivaInput.Add(_stunDuration);
-        context.transform.GetComponentInChildren<HumanoidAnimationBehaviour>().CustomMotionRaise(_clip);
+        GameObject model = null;
 
+        context.transform.GetComponentInChildren<PlayerMovement>().ActivaInput.Add(_stunDuration);
+        context.transform.GetComponentInChildren<HumanoidAnimationBehaviour>().CustomMotionRaise(_clip,
+            enterCallback: info =>
+            {
+                if (_model == null)
+                    return;
+                
+                model = Object.Instantiate(_model, info.animationBehaviour.HoldTransform);
+            },
+            exitCallback: info =>
+            {
+                if (_model == null)
+                    return;
+
+                Object.Destroy(model);
+            }
+        );
+
+        yield return new WaitForSeconds(_onUse);
+       
         Collider[] colliders = Physics.OverlapBox(context.transform.position + context.transform.rotation * _centerOffset, _halfExtents, context.transform.rotation, LayerMask.NameToLayer("default"));
         List<Collider> usableColliders = new List<Collider>(colliders.Length);
 
@@ -71,9 +94,7 @@ public class ChopItem : IUse, IDestructor, IStar, IValue
         
         Collider collider = new KdTree<Collider>(usableColliders).FindClosest(context.transform.position);
 
-        if (collider == null)
-            yield break;
-
-        yield return collider.GetComponent<IUsable>();
+        if (collider != null)
+            context.CallUsable(collider.GetComponent<IUsable>());
     }
 }

@@ -12,7 +12,17 @@ public class GameTimeUI : MonoBehaviour
     [SerializeField] 
     private TMP_Text _Time;
 
-    public void LateUpdate()
+    private void Start()
+    {
+        SetText();
+    }
+
+    private void LateUpdate()
+    {
+        SetText();
+    }
+
+    private void SetText()
     {
         _Date.text = GameTime.Instance.Weekday;
         _Time.text = GameTime.Instance.DigitalTime;

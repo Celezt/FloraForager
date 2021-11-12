@@ -16,8 +16,6 @@ public class UIStateVisibility : Singleton<UIStateVisibility>
     private void Start()
     {
         _StatesDictionary = _States.ToDictionary(s => s.Key, s => s.GameObject);
-
-        _States.Clear();
         _States = null;
 
         DialogueManager.GetByIndex(0).Started += (DialogueManager manager) => 
@@ -97,6 +95,14 @@ public class UIStateVisibility : Singleton<UIStateVisibility>
                 states.Add(item.Key);
         }
         return states.ToArray();
+    }
+
+    public GameObject Get(string key)
+    {
+        if (!_StatesDictionary.ContainsKey(key))
+            return null;
+
+        return _StatesDictionary[key];
     }
 
     [System.Serializable]

@@ -13,8 +13,6 @@ public class NPCObject : MonoBehaviour, IInteractable
     private string _NameID;
     [SerializeField]
     private float _ExitRadius = 5.0f;
-    [SerializeField] 
-    private LayerMask _LayerMasks;
 
     private GameObject _Player;
 
@@ -25,6 +23,14 @@ public class NPCObject : MonoBehaviour, IInteractable
     private void Awake()
     {
         NPC = NPCManager.Instance.Get(_NameID.ToLower());
+    }
+
+    private void Start()
+    {
+        foreach (Commission commission in CommissionList.Instance.Commissions)
+        {
+            NPC.SetCommission(commission);
+        }
     }
 
     private void Update()

@@ -13,6 +13,8 @@ public class AmbientPlayer : Singleton<AmbientPlayer>
     [SerializeField]
     private AudioSource _AudioSource;
     [SerializeField]
+    private AudioMixerGroup _Output;
+    [SerializeField]
     private bool _Loop;
     [SerializeField]
     private bool _Shuffle;
@@ -59,7 +61,7 @@ public class AmbientPlayer : Singleton<AmbientPlayer>
             Ambient ambient = _Soundtrack[_CurrentTrack];
 
             _AudioSource.clip = ambient.AudioClip;
-            _AudioSource.outputAudioMixerGroup = ambient.Output;
+            _AudioSource.outputAudioMixerGroup = _Output;
             _AudioSource.volume = ambient.Volume;
             _AudioSource.pitch = ambient.Pitch;
             _AudioSource.Play();
@@ -110,12 +112,8 @@ public class AmbientPlayer : Singleton<AmbientPlayer>
     {
         [SerializeField]
         private string _Name;
-
-        [Space(5)]
         [SerializeField]
         private AssetReference _Asset;
-        [SerializeField]
-        private AudioMixerGroup _Output;
 
         [Space(5)]
         [SerializeField, Range(0.0f, 1.0f)]
@@ -128,7 +126,6 @@ public class AmbientPlayer : Singleton<AmbientPlayer>
         public string Name => _Name;
 
         public AudioClip AudioClip => _AudioClip;
-        public AudioMixerGroup Output => _Output;
 
         public float Volume => _Volume;
         public float Pitch => _Pitch;

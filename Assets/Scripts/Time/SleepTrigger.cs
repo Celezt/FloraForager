@@ -30,7 +30,8 @@ public class SleepTrigger : MonoBehaviour
         UIStateVisibility.Instance.Hide("inventory", "player_hud");
         UIStateVisibility.Instance.Show("confirm_menu");
 
-        ConfirmMenu.Instance.SetMenu("Time to sleep?", 
+        ConfirmMenuFactory.Instance.CreateMenu(UIStateVisibility.Instance.transform, true, 
+            "Sleep? Stamina is fully replenished and all unsaved progress is saved", 
             new UnityAction(() => 
             {
                 SleepSchedule.Instance.StartSleeping(false);
