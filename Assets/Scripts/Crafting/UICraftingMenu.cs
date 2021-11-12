@@ -49,7 +49,7 @@ public class UICraftingMenu : Singleton<UICraftingMenu>
             return;
 
         transform.position = CanvasUtility.WorldToCanvasPosition(_Canvas, _CanvasRect, Camera.main,
-            _Workbench.transform.position + Vector3.up * 3.0f) + Vector2.left * 30.0f;
+            _Workbench.transform.position + Vector3.up * 1.5f) + Vector2.left * 30.0f;
     }
 
     public void CraftItem()

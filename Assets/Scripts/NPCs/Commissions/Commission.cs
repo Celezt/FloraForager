@@ -28,6 +28,7 @@ public class Commission : IStreamable<Commission.Data>
     public CommissionData CommissionData => _Data.Commission;
 
     public string Title => _Data.Commission.Title;
+    public bool Repeatable => _Data.Commission.Repeatable;
     public IObjective[] Objectives => _Data.Commission.Objectives;
     public string Giver => _Data.Commission.Giver;
     public int DaysLeft => _Data.DaysLeft;

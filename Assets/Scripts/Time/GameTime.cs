@@ -3,14 +3,19 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEditor;
 using MyBox;
+using Sirenix.OdinInspector;
 using Sirenix.Serialization;
 
 [CreateAssetMenu(fileName = "GameTime", menuName = "Game Logic/GameTime")]
 [System.Serializable]
 public class GameTime : SerializedScriptableSingleton<GameTime>, IStreamer, IStreamable<GameTime.Data>
 {
-    [Space(5), Header("Game")]
-    [OdinSerialize, Min(0)] private float _InGameHour = 60.0f; // how long an in-game hour lasts in seconds
+    [OdinSerialize]
+    private System.Guid _Guid;
+
+    [Space(5)]
+    [OdinSerialize, Min(0), LabelText("Seconds Per In-Game Hour")] 
+    private float _InGameHour = 60.0f; // how long an in-game hour lasts in seconds
 
     [Space(5)]
     [OdinSerialize, Min(0)] private int _CurrentYear;
@@ -18,21 +23,18 @@ public class GameTime : SerializedScriptableSingleton<GameTime>, IStreamer, IStr
     [OdinSerialize, Min(0)] private int _CurrentDay;
     [OdinSerialize, Min(0)] private int _CurrentHour = 6;
 
-    [Space(5), Header("Calendar")]
+    [Space(5)]
     [OdinSerialize, Min(0)] private int _HoursPerDay = 24;
     [OdinSerialize, Min(0)] private int _DaysPerMonth = 30;
     [OdinSerialize, Min(0)] private int _MonthsPerYear = 12;
 
     [Space(5)]
     [OdinSerialize]
-    private float _DigitalTimeUpdateFrequency = 5.0f;
+    private float _ClockUpdateFrequency = 5.0f;
 
-    [OdinSerialize]
+    [Space(5)]
+    [OdinSerialize, ListDrawerSettings(Expanded = true)]
     private readonly string[] Weekdays = { "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday" };
-
-    [Space(5), Header("Misc")]
-    [OdinSerialize]
-    private System.Guid _Guid;
 
     [System.NonSerialized]
     private Data _Data = new Data();
@@ -79,7 +81,7 @@ public class GameTime : SerializedScriptableSingleton<GameTime>, IStreamer, IStr
     public string DigitalTime => string.Format(
         "<mspace=0.75em>{0:00}</mspace>" +
         "<mspace=0.30em>:</mspace>" +
-        "<mspace=0.75em>{1:00}</mspace>", _HourClock, Mathf.Floor(_MinuteClock / _DigitalTimeUpdateFrequency) * _DigitalTimeUpdateFrequency);
+        "<mspace=0.75em>{1:00}</mspace>", _HourClock, Mathf.Floor(_MinuteClock / _ClockUpdateFrequency) * _ClockUpdateFrequency);
     public string Date => string.Format("{0:0000}/{1:00}/{2:00}", 
         Year, _MonthCalendar, _DayCalendar);
     public string Weekday => string.Format("{0} {1:00}/{2:00}", 

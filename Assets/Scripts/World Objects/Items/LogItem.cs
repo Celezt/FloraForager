@@ -16,8 +16,10 @@ public class LogItem : IUse
 
     [SerializeField, AssetList(Path = "Data/Dialogues"), AssetsOnly]
     private TextAsset _LogText;
-    [SerializeField, Tooltip("[optional] add more aliases when reading the log")]
-    private string[] _AdditionalAliases = new string[1];
+    [SerializeField]
+    private bool _UseCustomAliases = false;
+    [SerializeField, ShowIf("_UseCustomAliases")]
+    private string[] _Aliases = new string[1];
 
     void IItem.OnInitialize(ItemTypeContext context)
     {
@@ -49,8 +51,8 @@ public class LogItem : IUse
         playerInput.DeactivateInput();
 
         string[] aliases = { context.name };
-        if (_AdditionalAliases != null)
-            aliases = aliases.Concat(_AdditionalAliases).ToArray();
+        if (_UseCustomAliases && _Aliases != null)
+            aliases = _Aliases;
 
         DialogueManager.GetByIndex(context.playerIndex).StartDialogue(_LogText.name, aliases).Completed += CompleteAction;
 

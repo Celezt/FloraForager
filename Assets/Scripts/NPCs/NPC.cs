@@ -20,8 +20,9 @@ public class NPC : IStreamable<NPC.Data>
         public string Name;
         public RelationshipManager Relation;
         public CommissionData[] CommissionsData;
-        public PriorityQueue<(string, string[])> DialogueQueue;
         public (string, string[]) RepeatingDialogue;
+        public PriorityQueue<(string, string[])> DialogueQueue;
+        public List<DialogueRelation> RelationDialogue;
     }
     public Data OnUpload() => _Data;
     public void OnLoad(object state)
@@ -45,8 +46,9 @@ public class NPC : IStreamable<NPC.Data>
     public string Name => _Data.Name;
     public RelationshipManager Relation => _Data.Relation;
     public Commission[] Commissions => _Commissions;
-    public PriorityQueue<(string, string[])> DialogueQueue => _Data.DialogueQueue;
     public (string, string[]) RepeatingDialogue => _Data.RepeatingDialogue;
+    public PriorityQueue<(string, string[])> DialogueQueue => _Data.DialogueQueue;
+    public List<DialogueRelation> RelationDialogue => _Data.RelationDialogue;
     public bool HasCommissions => _HasCommissions;
 
     public NPC(NPCInfo data)
@@ -57,9 +59,10 @@ public class NPC : IStreamable<NPC.Data>
         _Data = new Data();
 
         _Data.Name = data.Name;
-        _Data.Relation = new RelationshipManager(data.RelationRange.Min, data.RelationRange.Max, data.StartRelation);
 
         // add dialogue
+
+        _Data.RepeatingDialogue = (data.RepeatingDialogue.Dialogue.AssetGUID, data.RepeatingDialogue.Aliases);
 
         _Data.DialogueQueue = new PriorityQueue<(string, string[])>(Heap.MaxHeap);
         for (int i = 0; i < data.InitialDialogue.Length; ++i)
@@ -69,7 +72,9 @@ public class NPC : IStreamable<NPC.Data>
                 data.InitialDialogue[i].Aliases), 
                 data.InitialDialogue[i].Priority);
         }
-        _Data.RepeatingDialogue = (data.RepeatingDialogue.Dialogue.AssetGUID, data.RepeatingDialogue.Aliases);
+
+        _Data.RelationDialogue = data.RelationDialogue?.ToList();
+        _Data.Relation = new RelationshipManager(Name, data.RelationRange.Min, data.RelationRange.Max, data.StartRelation);
 
         // add commissions
 
@@ -84,6 +89,7 @@ public class NPC : IStreamable<NPC.Data>
             {
                 Title = info.Title,
                 Description = info.Description,
+                Repeatable = info.Repeatable,
                 TimeLimit = info.TimeLimit,
                 Objectives = info.Objectives,
                 MinRelation = info.MinRelation,
@@ -102,7 +108,8 @@ public class NPC : IStreamable<NPC.Data>
     {
         for (int i = _Commissions.Length - 1; i >= 0; --i)
         {
-            if (_Commissions[i].Title == commission.Title && _Commissions[i].Giver == commission.Giver)
+            Commission npcCommission = _Commissions[i];
+            if (npcCommission.Title == commission.Title && npcCommission.Giver == commission.Giver)
             {
                 _Commissions[i] = commission;
             }

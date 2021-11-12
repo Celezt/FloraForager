@@ -14,10 +14,11 @@ using Sirenix.Serialization;
 [System.Serializable]
 public class FloraMaster : SerializedScriptableSingleton<FloraMaster>, IStreamer
 {
-    [SerializeField]
-    private GameObject _FloraPrefab;
-    [SerializeField]
+    [OdinSerialize]
     private System.Guid _Guid;
+    [Space(5)]
+    [OdinSerialize]
+    private GameObject _FloraPrefab;
     [OdinSerialize]
     private Dictionary<string, FloraInfo> _FloraDictionary = new Dictionary<string, FloraInfo>();
 

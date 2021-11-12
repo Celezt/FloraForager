@@ -102,7 +102,6 @@ public class RodItem : IUse, IStar, IValue
         void PlayAction()
         {
             UIStateVisibility.Instance.Hide("inventory");
-
             PlayerInput.GetPlayerByIndex(context.playerIndex).DeactivateInput();
 
             fishingManager.OnCatchCallback -= CatchAction;

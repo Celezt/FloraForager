@@ -7,6 +7,7 @@ using Sirenix.OdinInspector;
 [System.Serializable]
 public class GatherObjective : IObjective
 {
+    [HideLabel, InlineProperty]
     public ItemAsset ItemToGather;
     [HideInInspector]
     public int CurrentAmount;
