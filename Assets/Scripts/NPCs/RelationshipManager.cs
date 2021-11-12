@@ -53,7 +53,7 @@ public class RelationshipManager
 
         relation = (Relation)enumValue;
 
-        NPC npc = NPCManager.Instance.Get(npcName);
+        NPC npc = NPCManager.Instance?.Get(npcName);
 
         if (npc == null)
             return;
