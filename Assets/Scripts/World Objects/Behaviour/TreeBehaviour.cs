@@ -22,10 +22,11 @@ public class TreeBehaviour : MonoBehaviour, IStreamable<TreeBehaviour.Data>, IUs
         public float Durability = 10;
     }
 
-    public Data OnUpload() => _data = new Data();
+    public Data OnUpload() => _data;
     public void OnLoad(object state)
     {
         Data data = state as Data;
+
         _data = data;
     }
 
