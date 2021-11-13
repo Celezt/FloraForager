@@ -1,3 +1,4 @@
+using IngameDebugConsole;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -82,18 +83,21 @@ public class PlayerInventory : MonoBehaviour
         canvasGroup.blocksRaycasts = true;
     }
 
+    public void Give(string id, int amount) => _inventory.InsertUntilFull(id, amount);
+    public void Remove(string id, int amount) => _inventory.Remove(id, amount);
+
     private void Awake()
     {
         _playerAction = new PlayerAction();
+
+        DebugLogConsole.AddCommandInstance("player.give", "Adds item to existing player inventory", nameof(Give), this);
+        DebugLogConsole.AddCommandInstance("player.remove", "Removes item from existing player inventory", nameof(Remove), this);
     }
 
     private void Start()
     {
         Show(_hotbarHandler.GetComponent<CanvasGroup>());
         Hide(_inventoryHandler.GetComponent<CanvasGroup>());
-
-        //if (!GameManager.Instance.Stream.Get<Inventory>(_id).TryGetTarget(out _inventory))
-        //    Debug.LogError("Player inventory was not found");
 
         PlayerInput playerInput = PlayerInput.GetPlayerByIndex(0);
 
@@ -136,17 +140,41 @@ public class PlayerInventory : MonoBehaviour
             _inventory.SetSelectedItem(0);
 
             for (int i = 0; i < _hotbarHandler.Slots.Count; i++)
+            {
                 _hotbarFrameTransforms.Add(_hotbarHandler.Slots[i].FrameTransform);
+
+                if (i >= 0 && i < _inventory.Items.Count)
+                    HideBackground(i, _inventory.Get(i));
+            }
         };
 
         _inventory.OnItemMoveCallback += (beforeIndex, afterIndex, beforeItem, afterItem) =>
         {
             int count = _hotbarHandler.Slots.Count;
+
+            // from hotbar to inventory
             if (beforeIndex < count && afterIndex >= count)
             {
-                _inventory.SelectFirst();
+                if (beforeIndex == _selectedIndex)
+                {
+                    if (string.IsNullOrEmpty(afterItem.ID))
+                        _inventory.SelectFirst();
+                    else
+                        _inventory.SetSelectedItem(_selectedIndex);
+                }
             }
 
+            // from inventory to hotbar
+            if (beforeIndex >= count && afterIndex < count)
+            {
+                if (string.IsNullOrEmpty(_inventory.Get(_selectedIndex).ID) || _selectedIndex >= count)
+                {
+                    _inventory.SetSelectedItem(afterIndex);
+                    _selectedIndex = afterIndex;
+                }
+            }
+
+            // from hotbar to hotbar
             if (beforeIndex < count && afterIndex < count)
             {
                 if (beforeIndex == _selectedIndex) // Change selected's color.
@@ -160,6 +188,11 @@ public class PlayerInventory : MonoBehaviour
 
         _inventory.OnSelectItemCallback += (index, item) =>
         {
+            if (index < 0 || index >= _hotbarHandler.Slots.Count)
+                return;
+
+            if (string.IsNullOrEmpty(_inventory.Get(index).ID))
+                return;
 
             if (_selectedIndex != index)    // Change selected's color.
                 SetColorWithoutTransparency(Color.white);

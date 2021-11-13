@@ -60,7 +60,7 @@ public class RodItem : IUse, IStar, IValue
 
     }
 
-    IEnumerable<IUsable> IUse.OnUse(UseContext context)
+    IEnumerator IUse.OnUse(UseContext context)
     {
         if (!context.started)
             yield break;
@@ -102,7 +102,6 @@ public class RodItem : IUse, IStar, IValue
         void PlayAction()
         {
             UIStateVisibility.Instance.Hide("inventory");
-
             PlayerInput.GetPlayerByIndex(context.playerIndex).DeactivateInput();
 
             fishingManager.OnCatchCallback -= CatchAction;

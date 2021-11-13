@@ -16,7 +16,7 @@ public class FloraInfoUI : MonoBehaviour
     [SerializeField] private TMP_Text _Status;
     [SerializeField] private TMP_Text _Stage;
     [SerializeField] private Image _WateredImage;
-    [SerializeField] private float _HeightOffset = 0.5f;
+    [SerializeField] private float _HeightOffset = 0.75f;
 
     private CanvasGroup _CanvasGroup;
 
@@ -31,7 +31,7 @@ public class FloraInfoUI : MonoBehaviour
         _CanvasGroup = GetComponent<CanvasGroup>();
         _CanvasGroup.alpha = 0.0f;
 
-        _Canvas = transform.root.GetComponent<Canvas>();
+        _Canvas = GetComponentInParent<Canvas>().rootCanvas;
         _CanvasRect = _Canvas.GetComponent<RectTransform>();
     }
 
@@ -85,7 +85,7 @@ public class FloraInfoUI : MonoBehaviour
     private void UpdatePosition()
     {
         transform.position = CanvasUtility.WorldToCanvasPosition(_Canvas, _CanvasRect, Camera.main,
-            _FloraObject.transform.position + Vector3.up * _FloraBounds.size.y * _HeightOffset);
+            _FloraObject.transform.position + Vector3.up * (_FloraBounds.size.y + _HeightOffset));
     }
 
     private void UpdateWindow()

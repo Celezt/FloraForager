@@ -21,7 +21,6 @@ public class CommissionLog : Singleton<CommissionLog>
     private Commission _Selected; // selected commission in the log
 
     private CanvasGroup _CanvasGroup;
-
     private PlayerAction _PlayerAction;
 
     private void Awake()
@@ -30,20 +29,22 @@ public class CommissionLog : Singleton<CommissionLog>
         _CanvasGroup.alpha = 0.0f;
 
         _PlayerAction = new PlayerAction();
-
-        SceneManager.sceneLoaded += OnSceneLoaded;
     }
 
     private void OnEnable()
     {
         _PlayerAction.Enable();
         _PlayerAction.Ground.CommissionLog.started += OnOpenExit;
+
+        SceneManager.sceneLoaded += OnSceneLoaded;
     }
 
     private void OnDisable()
     {
         _PlayerAction.Disable();
         _PlayerAction.Ground.CommissionLog.started -= OnOpenExit;
+
+        SceneManager.sceneLoaded -= OnSceneLoaded;
     }
 
     private void Update()
@@ -155,15 +156,20 @@ public class CommissionLog : Singleton<CommissionLog>
 
         string giver = "<u><b>Giver</b></u>\n<size=22>" + commission.Giver + "</size>";
 
+        string repeatable = "<u><b>Repeatable</b></u>\n<size=22>" + (commission.Repeatable ? "Yes" : "No") + "</size>";
+
         string completed = commission.IsCompleted ? "<color=green>(Complete)</color>" : string.Empty;
 
-        _Description.text = string.Format("<u><b>Description</b></u>\n<size=22>{0}</size>\n\n{1}\n{2}\n{3}\n\n{4}\n\n{5}",
+        _Description.text = string.Format("<u><b>Description</b></u>\n<size=22>{0}</size>\n\n{1}\n{2}\n{3}\n\n{4}\n\n{5}\n\n{6}",
             commission.CommissionData.Description,
-            objectives, rewards, daysLeft, giver, completed);
+            objectives, rewards, daysLeft, giver, repeatable, completed);
     }
 
     public void OnOpenExit(InputAction.CallbackContext context)
     {
+        if (DebugManager.IsFocused)
+            return;
+
         if (_CanvasGroup.alpha == 1.0f)
         {
             Exit();
@@ -199,6 +205,8 @@ public class CommissionLog : Singleton<CommissionLog>
             obj.GetComponent<TMP_Text>().text = commission.CommissionData.Title;
 
             _CommissionObjects.Add(cs);
+
+            commission.Objectives.ForEach(o => o.Accepted());
         }
 
         CheckCompletion();

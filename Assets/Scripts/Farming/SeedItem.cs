@@ -41,7 +41,7 @@ public class SeedItem : IUse
 
     }
 
-    public IEnumerable<IUsable> OnUse(UseContext context)
+    public IEnumerator OnUse(UseContext context)
     {
         if (!context.performed)
             yield break;

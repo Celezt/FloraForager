@@ -6,8 +6,7 @@ using Sirenix.OdinInspector;
 using UnityEngine.AddressableAssets;
 using Newtonsoft.Json;
 
-[CreateAssetMenu(fileName = "New Inventory", menuName = "Inventory System/Inventory")]
-public class Inventory : ScriptableObject
+public class Inventory
 {
     public IReadOnlyList<ItemAsset> Items => _items;
     public ItemAsset SelectedItem => _selectedItem;
@@ -90,7 +89,11 @@ public class Inventory : ScriptableObject
     public bool InsertUntilFull(ItemAsset item)
     {
         int amountToAdd = item.Amount;
-        int stack = (int)ItemTypeSettings.Instance.ItemTypeChunk[item.ID].Behaviour.ItemStack;
+
+        if (!ItemTypeSettings.Instance.ItemTypeChunk.TryGetValue(item.ID, out ItemType itemType))    // If it exit.
+            return false;
+
+        int stack = (int)itemType.Behaviour.ItemStack;
 
         {
             List<(int, int)> foundItems = FindAll(item.ID);
@@ -146,7 +149,7 @@ public class Inventory : ScriptableObject
                 _items[index] = itemAsset.Amount > 0 ? itemAsset : new ItemAsset { };
                 OnItemChangeCallback.Invoke(index, itemAsset);
 
-                if (itemAsset.Amount <= 0)
+                if (index == _selectedIndex && itemAsset.Amount <= 0)
                     TrySelectItem(index + 1);
 
                 return true;
@@ -308,31 +311,13 @@ public class Inventory : ScriptableObject
         return found;
     }
 
-    private void Serialize()
+    public void Initialize(List<ItemAsset> items)
     {
-
-    }
-
-    private void Deserialize()
-    {
-        Addressables.LoadAssetAsync<TextAsset>("inventory").Completed += (handle) =>
+        for (int i = 0; i < items.Count; ++i)
         {
-            InventoryAsset tmp = JsonConvert.DeserializeObject<InventoryAsset>(handle.Result.text);
-
-            for (int i = 0; i < tmp.Items.Length; i++)
-            {
-                _items.Add(tmp.Items[i]);
-            }
-
-            Addressables.Release(handle);
-
-            OnInventoryInitalizeCallback.Invoke(_items);
-        };
-    }
-
-    private void Awake()
-    {
-        Deserialize();
+            _items.Add(items[i]);
+        }
+        OnInventoryInitalizeCallback.Invoke(_items);
     }
 
     private void OnDestroy()

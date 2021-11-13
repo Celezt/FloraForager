@@ -5,7 +5,7 @@ using Sirenix.OdinInspector;
 
 public class HarvestScythe : IHarvest
 {
-    [ListDrawerSettings(Expanded = true)]
+    [ListDrawerSettings(ShowItemCount = false, DraggableItems = false, Expanded = true)]
     public DropType[] Rewards = new DropType[1] { new DropType { } };
 
     public void Initialize(FloraInfo data, IHarvest harvestData)

@@ -4,7 +4,6 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Events;
 using UnityEngine.InputSystem;
-using UnityEngine.SceneManagement;
 
 public class PauseMenu : MonoBehaviour
 {
@@ -14,6 +13,8 @@ public class PauseMenu : MonoBehaviour
 
     private float _CurrentTimeScale;
     private string[] _ShownStates;
+
+    private GameObject _ConfirmMenu;
 
     private void Awake()
     {
@@ -44,9 +45,13 @@ public class PauseMenu : MonoBehaviour
         _CanvasGroup.alpha = 1.0f - _CanvasGroup.alpha;
         _CanvasGroup.blocksRaycasts = !_CanvasGroup.blocksRaycasts;
 
-        UIStateVisibility.Instance.Hide("confirm_menu");
+        if (_ConfirmMenu != null)
+        {
+            Destroy(_ConfirmMenu);
+            _ConfirmMenu = null;
+        }
 
-        if (_CanvasGroup.alpha == 1.0f)
+        if (_CanvasGroup.alpha > float.Epsilon)
         {
             _CurrentTimeScale = Time.timeScale;
             _ShownStates = UIStateVisibility.Instance.GetShownStates();
@@ -73,16 +78,14 @@ public class PauseMenu : MonoBehaviour
 
     public void OnQuit()
     {
-        UIStateVisibility.Instance.Show("confirm_menu");
+        if (_ConfirmMenu != null)
+            return;
 
-        ConfirmMenu.Instance.SetMenu("Return to Main Menu?", 
+        _ConfirmMenu = ConfirmMenuFactory.Instance.CreateMenu("Return to Main Menu? All unsaved progress will be lost", 
             new UnityAction(() => 
             {
-                SceneManager.LoadScene("MainMenu");
+                LoadScene.Instance.LoadSceneByName("MainMenu");
             }), 
-            new UnityAction(() => 
-            {
-                UIStateVisibility.Instance.Hide("confirm_menu");
-            }));
+            new UnityAction(() => { }));
     }
 }

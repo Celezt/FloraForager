@@ -118,15 +118,17 @@ public class CommissionGiverWindow : Singleton<CommissionGiverWindow>
         }
         rewards += "</size>";
 
-        string daysLeft = "<u><b>Time limit</b></u>\n<size=22>" + commission.DaysLeft.ToString() + " Days</size>";
+        string daysLeft = "<u><b>Time limit</b></u>\n<size=22>" + commission.CommissionData.TimeLimit.ToString() + " Days</size>";
 
         string minRelation = "<u><b>Minimum Relations</b></u>\n<size=22>" + commission.CommissionData.MinRelation + "</size>";
 
+        string repeatable = "<u><b>Repeatable</b></u>\n<size=22>" + (commission.Repeatable ? "Yes" : "No") + "</size>";
+
         string completed = commission.IsCompleted ? "<color=green>(Complete)</color>" : string.Empty;
 
-        _Description.text = string.Format("<u><b>Description</b></u>\n<size=22>{0}</size>\n\n{1}\n{2}\n{3}\n\n{4}\n\n{5}",
+        _Description.text = string.Format("<u><b>Description</b></u>\n<size=22>{0}</size>\n\n{1}\n{2}\n{3}\n\n{4}\n\n{5}\n\n{6}",
             commission.CommissionData.Description,
-            objectives, rewards, daysLeft, minRelation, completed);
+            objectives, rewards, daysLeft, minRelation, repeatable, completed);
     }
 
     public void Open()
@@ -174,16 +176,32 @@ public class CommissionGiverWindow : Singleton<CommissionGiverWindow>
         if (!_SelectedCommission.IsCompleted)
             return;
 
-        for (int i = 0; i < _CommissionGiver.Commissions.Length; ++i)
-        {
-            if (_SelectedCommission == _CommissionGiver.Commissions[i])
-            {
-                _CommissionGiver.RemoveCommission(i);
-            }
-        }
-
         _SelectedCommission.Complete();
         CommissionLog.Instance.Remove(_SelectedCommission);
+
+        if (!_SelectedCommission.Repeatable)
+        {
+            for (int i = _CommissionGiver.Commissions.Length - 1; i >= 0; --i)
+            {
+                if (_SelectedCommission == _CommissionGiver.Commissions[i])
+                {
+                    _CommissionGiver.RemoveCommission(i);
+                    break;
+                }
+            }
+        }
+        else
+        {
+            // reinitialize commission
+            for (int i = _CommissionGiver.Commissions.Length - 1; i >= 0; --i)
+            {
+                if (_SelectedCommission == _CommissionGiver.Commissions[i])
+                {
+                    _CommissionGiver.Commissions[i] = new Commission(_SelectedCommission.CommissionData);
+                    break;
+                }
+            }
+        }
 
         Back();
     }

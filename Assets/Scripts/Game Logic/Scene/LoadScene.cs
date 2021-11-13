@@ -4,8 +4,6 @@ using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.InputSystem;
 using UnityEngine.SceneManagement;
-using UnityEngine.AddressableAssets;
-using UnityEngine.ResourceManagement.AsyncOperations;
 using MyBox;
 
 public class LoadScene : Singleton<LoadScene>
@@ -18,16 +16,12 @@ public class LoadScene : Singleton<LoadScene>
 
     private CanvasGroup _CanvasGroup;
 
-    private bool _SceneIsLoading = false;
+    public static bool SceneIsLoading { get; private set; }
 
     private void Awake()
     {
         _CanvasGroup = GetComponent<CanvasGroup>();
-    }
-
-    private void Start()
-    {
-        FadeScreen.Instance.StartFadeOut(1f);
+        SceneIsLoading = false;
     }
 
     private void OnEnable()
@@ -42,33 +36,54 @@ public class LoadScene : Singleton<LoadScene>
 
     public bool LoadSceneByName(string sceneName)
     {
-        if (_SceneIsLoading)
+        if (SceneIsLoading)
             return false;
 
         _CanvasGroup.alpha = 1.0f;
-        _SceneIsLoading = true;
+        SceneIsLoading = true;
 
         StartCoroutine(LoadSceneAsync(sceneName));
+
+        return true;
+    }
+    public bool LoadSceneByIndex(int sceneIndex)
+    {
+        if (SceneIsLoading)
+            return false;
+
+        _CanvasGroup.alpha = 1.0f;
+        SceneIsLoading = true;
+
+        StartCoroutine(LoadSceneAsync(sceneIndex));
 
         return true;
     }
 
     private IEnumerator LoadSceneAsync(string sceneName)
     {
-        _ProgressSlider.value = 0.0f;
-        yield return new WaitForSeconds(0.25f);
-
         OnSceneBeingLoaded.Invoke();
 
         AsyncOperation asyncLoad = SceneManager.LoadSceneAsync(sceneName, LoadSceneMode.Single);
 
+        _ProgressSlider.value = 0.0f;
         while (!asyncLoad.isDone)
         {
             _ProgressSlider.value = asyncLoad.progress / 0.9f;
             yield return null;
         }
+    }
+    private IEnumerator LoadSceneAsync(int sceneIndex)
+    {
+        OnSceneBeingLoaded.Invoke();
 
-        _SceneIsLoading = false;
+        AsyncOperation asyncLoad = SceneManager.LoadSceneAsync(sceneIndex, LoadSceneMode.Single);
+
+        _ProgressSlider.value = 0.0f;
+        while (!asyncLoad.isDone)
+        {
+            _ProgressSlider.value = asyncLoad.progress / 0.9f;
+            yield return null;
+        }
     }
 
     private void SceneLoaded(Scene scene, LoadSceneMode mode)
@@ -85,7 +100,7 @@ public class LoadScene : Singleton<LoadScene>
                 if (trigger.ObjectID == ObjectToLoadPlayer)
                 {
                     player.transform.position = trigger.PlayerPosition + Vector3.up * playerBounds.extents.y;
-                    playerMovement.SetDirection((trigger.PlayerRotation * Vector3.forward).xz()); // TODO: does not work, fix somehow
+                    playerMovement.SetDirection((trigger.PlayerRotation * Vector3.forward).xz());
 
                     break;
                 }

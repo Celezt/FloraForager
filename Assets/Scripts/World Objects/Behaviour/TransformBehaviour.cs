@@ -15,7 +15,12 @@ public class TransformBehaviour : MonoBehaviour, IStreamable<TransformBehaviour.
         public Vector3 Scale;
     }
 
-    Data IStreamable<Data>.OnUpload() => _data = new Data();
+    Data IStreamable<Data>.OnUpload() => _data = new Data 
+    { 
+        Position = transform.localPosition, 
+        Rotation = transform.localRotation, 
+        Scale = transform.localScale 
+    };
 
     void IStreamable.OnLoad(object state)
     {

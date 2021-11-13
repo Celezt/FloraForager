@@ -1,31 +1,59 @@
-using System.Collections;
+﻿using System;
 using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
 using UnityEngine;
-using Newtonsoft.Json;
-using UnityEngine.AddressableAssets;
 using UnityEngine.InputSystem;
+using UnityEngine.SceneManagement;
 
-[CreateAssetMenu(fileName = "PlayerData", menuName = "Scriptable Objects/Player Data")]
-[System.Serializable]
-public class PlayerData : ScriptableObject
+public class PlayerData : IStreamable<PlayerData.Data>
 {
-    public PlayerAsset Data;
+    private Data _Data;
 
-    public void Load()
+    public Data SaveData => _Data;
+
+    public class Data
     {
-        Addressables.LoadAssetAsync<TextAsset>("player").Completed += (handle) =>
-        {
-            Data = JsonConvert.DeserializeObject<PlayerAsset>(handle.Result.text);
+        public int PlayerIndex;
 
-            Addressables.Release(handle);
-        };
+        public Vector3 Position;
+        public Quaternion Rotation;
+
+        public float Stamina;
+        public List<ItemAsset> Items;
+        public int SceneIndex;
+    }
+    public Data OnUpload() => _Data;
+    public void OnLoad(object state)
+    {
+        _Data = state as Data;
+    }
+    public void OnBeforeSaving()
+    {
+        PlayerInput player = PlayerInput.GetPlayerByIndex(_Data.PlayerIndex);
+
+        if (player == null)
+            return;
+
+        PlayerInfo playerInfo = player.GetComponent<PlayerInfo>();
+
+        PlayerStamina playerStamina = playerInfo.PlayerStamina;
+        Inventory playerInventory = playerInfo.Inventory;
+
+        _Data.Position = player.transform.position;
+        _Data.Rotation = player.transform.rotation;
+
+        _Data.Stamina = playerStamina.Stamina;
+        _Data.Items = playerInventory.Items.ToList();
+        _Data.SceneIndex = SceneManager.GetActiveScene().buildIndex;
     }
 
-    [RuntimeInitializeOnLoadMethod]
-    static void Initialize()
+    public PlayerData(int playerIndex)
     {
-        PlayerData[] data = GameObject.FindObjectsOfType<PlayerData>();
-        for (int i = 0; i < data.Length; i++)
-            data[i].Load();
+        _Data = new Data();
+
+        _Data.PlayerIndex = playerIndex;
+        _Data.Items = new List<ItemAsset>();
     }
 }

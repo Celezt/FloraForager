@@ -7,8 +7,9 @@ using IngameDebugConsole;
 
 public class GameTimeBehaviour : MonoBehaviour
 {
-    private void Start()
+    private void Awake()
     {
+        GameTime.Instance.UpdateTime();
         DebugLogConsole.AddCommandInstance("time.skip", "Accelerates time from point in current day by given amount in hours", nameof(GameTime.Instance.AccelerateTime), GameTime.Instance);
     }
 

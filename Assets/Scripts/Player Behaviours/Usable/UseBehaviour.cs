@@ -45,62 +45,40 @@ public class UseBehaviour : MonoBehaviour
         if (_itemType == null || _use == null)
             return;
 
-        if (!_cooldowns.ContainsKey(_slotIndex))
-            _cooldowns.Add(_slotIndex, Duration.Empty);
-
-        if (!_cooldowns[_slotIndex].IsActive)
-        {
-            if (context.started)
-                _cooldowns[_slotIndex] = new Duration(_use.Cooldown);
-
-            void UseTowardsCursor()
-            {
-                UseContext useContext = new UseContext(
-                    _itemType,
-                    transform,
-                    this,
-                    _playerInfo,
-                    _playerInput.playerIndex,
-                    _slotIndex,
-                    _amount,
-                    context.canceled,
-                    context.started,
-                    context.performed
-                );
-
-                foreach (IUsable usable in _use.OnUse(useContext))
-                {
-                    foreach (string label in useContext.labels)
-                    {
-                        if (Enum.TryParse(label, true, out ItemLabels itemLabel) && usable.Filter().HasFlag(itemLabel))
-                        {
-                            UsedContext usedContext = new UsedContext(
-                                _use,
-                                _itemType.Labels,
-                                transform,
-                                this,
-                                _itemType.Name,
-                                _itemType.ID,
-                                _playerInput.playerIndex,
-                                context.canceled,
-                                context.started,
-                                context.performed
-                            );
-
-                            usable.OnUse(usedContext);
-                            break;
-                        }
-                    }
-                }
-            }
-
-            UseTowardsCursor();
-        }
+        StartCoroutine(OnUseCoroutine(context));
     }
 
     public void ControlsChangedEvent(PlayerInput playerInput)
     {
         _scheme = playerInput.user.controlScheme.Value;
+    }
+
+    /// <summary>
+    /// Call object with usable.
+    /// </summary>
+    public void CallUsable(UseContext useContext, IUsable usable)
+    {
+        foreach (string label in useContext.labels)
+        {
+            if (Enum.TryParse(label, true, out ItemLabels itemLabel) && usable.Filter().HasFlag(itemLabel))
+            {
+                UsedContext usedContext = new UsedContext(
+                    _use,
+                    _itemType.Labels,
+                    transform,
+                    this,
+                    _itemType.Name,
+                    _itemType.ID,
+                    _playerInput.playerIndex,
+                    useContext.canceled,
+                    useContext.started,
+                    useContext.performed
+                );
+
+                usable.OnUse(usedContext);
+                break;
+            }
+        }
     }
 
     private void Start()
@@ -123,7 +101,7 @@ public class UseBehaviour : MonoBehaviour
             foreach (KeyValuePair<string, ItemType> itemType in itemTypeChunk)
                 itemType.Value?.Behaviour?.OnInitialize(itemTypeContext);
         };
-        
+
         _playerInfo.Inventory.OnItemMoveCallback += (beforeIndex, afterIndex, beforeItem, afterItem) =>
         {
             if (beforeIndex == _slotIndex)
@@ -199,5 +177,39 @@ public class UseBehaviour : MonoBehaviour
     {
         if (DebugManager.DebugMode && OnDrawGizmosAction != null)     // Only invoke on debug mode.
             OnDrawGizmosAction.Invoke();
+    }
+
+    private IEnumerator OnUseCoroutine(InputAction.CallbackContext context)
+    {
+        if (!_cooldowns.ContainsKey(_slotIndex))
+            _cooldowns.Add(_slotIndex, Duration.Empty);
+
+        if (!_cooldowns[_slotIndex].IsActive)
+        {
+            if (context.started)
+                _cooldowns[_slotIndex] = new Duration(_use.Cooldown);
+
+            IEnumerator UseTowardsCursor()
+            {
+                UseContext useContext = new UseContext(
+                    _itemType,
+                    transform,
+                    this,
+                    _playerInfo,
+                    _playerInput.playerIndex,
+                    _slotIndex,
+                    _amount,
+                    context.canceled,
+                    context.started,
+                    context.performed
+                );
+
+                IEnumerator enumerator = _use.OnUse(useContext);
+                while (enumerator.MoveNext())
+                    yield return enumerator.Current;
+            }
+
+            yield return UseTowardsCursor();
+        }
     }
 }

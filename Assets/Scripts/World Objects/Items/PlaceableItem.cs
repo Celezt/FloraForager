@@ -45,7 +45,7 @@ public class PlaceableItem : IUse
 
     }
 
-    IEnumerable<IUsable> IUse.OnUse(UseContext context)
+    IEnumerator IUse.OnUse(UseContext context)
     {
         if (!context.started)
             yield break;
@@ -57,7 +57,7 @@ public class PlaceableItem : IUse
             Mathf.Pow(hitInfo.point.x - context.transform.position.x, 2) + 
             Mathf.Pow(hitInfo.point.z - context.transform.position.z, 2));
 
-        if (distance >= _placeRange)
+        if (distance > _placeRange)
             yield break;
 
         Cell cell = Grid.Instance.HoveredCell;
