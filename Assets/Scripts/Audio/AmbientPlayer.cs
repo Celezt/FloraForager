@@ -6,6 +6,7 @@ using UnityEngine.InputSystem;
 using UnityEngine.Audio;
 using UnityEngine.AddressableAssets;
 using UnityEngine.ResourceManagement.AsyncOperations;
+using Sirenix.OdinInspector;
 using MyBox;
 
 public class AmbientPlayer : Singleton<AmbientPlayer>
@@ -19,7 +20,7 @@ public class AmbientPlayer : Singleton<AmbientPlayer>
     [SerializeField]
     private bool _Shuffle;
 
-    [SerializeField]
+    [SerializeField, ListDrawerSettings(DraggableItems = false, ShowItemCount = false, Expanded = true)]
     private Ambient[] _Soundtrack;
 
     private bool _IsActive;
@@ -40,14 +41,16 @@ public class AmbientPlayer : Singleton<AmbientPlayer>
             else
             {
                 if (_CoroutinePlay != null)
+                {
                     StopCoroutine(_CoroutinePlay);
+                    _CoroutinePlay = null;
+                }
             }
         }
     }
 
     private void Start()
     {
-        _Soundtrack.ForEach(a => a.Load());
         _CoroutinePlay = StartCoroutine(PlayAmbient());
     }
 
@@ -82,38 +85,11 @@ public class AmbientPlayer : Singleton<AmbientPlayer>
         }
     }
 
-    public void SetTrack(int track, bool shuffle = false, bool loop = false)
-    {
-        _CurrentTrack = track;
-        _Shuffle = shuffle;
-        _Loop = loop;
-
-        _AudioSource.Stop();
-        _CoroutinePlay = null;
-
-        IsActive = true;
-    }
-    public void SetTrack(string trackName, bool shuffle = false, bool loop = false)
-    {
-        // don't need dictionary since the array will usually be small
-        //
-        for (int i = 0; i < _Soundtrack.Length; ++i)
-        {
-            if (_Soundtrack[i].Name == trackName)
-            {
-                SetTrack(i, shuffle, loop);
-                break;
-            }
-        }
-    }
-
     [System.Serializable]
     private class Ambient
     {
         [SerializeField]
-        private string _Name;
-        [SerializeField]
-        private AssetReference _Asset;
+        private AudioClip _Clip;
 
         [Space(5)]
         [SerializeField, Range(0.0f, 1.0f)]
@@ -121,22 +97,9 @@ public class AmbientPlayer : Singleton<AmbientPlayer>
         [SerializeField, Range(0.1f, 3.0f)]
         private float _Pitch = 1.0f;
 
-        private AudioClip _AudioClip;
-
-        public string Name => _Name;
-
-        public AudioClip AudioClip => _AudioClip;
+        public AudioClip AudioClip => _Clip;
 
         public float Volume => _Volume;
         public float Pitch => _Pitch;
-
-        public void Load()
-        {
-            Addressables.LoadAssetAsync<AudioClip>(_Asset).Completed += (AsyncOperationHandle<AudioClip> handle) =>
-            {
-                _AudioClip = handle.Result;
-                Addressables.Release(handle);
-            };
-        }
     }
 }

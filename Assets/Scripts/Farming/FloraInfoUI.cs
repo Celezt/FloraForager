@@ -85,7 +85,7 @@ public class FloraInfoUI : MonoBehaviour
     private void UpdatePosition()
     {
         transform.position = CanvasUtility.WorldToCanvasPosition(_Canvas, _CanvasRect, Camera.main,
-            _FloraObject.transform.position + Vector3.up * (_FloraBounds.size.y + _HeightOffset));
+            _FloraObject.transform.position + Vector3.up * (_FloraBounds.extents.y + _HeightOffset));
     }
 
     private void UpdateWindow()

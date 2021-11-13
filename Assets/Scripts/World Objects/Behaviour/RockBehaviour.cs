@@ -2,19 +2,21 @@ using MyBox;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using Sirenix.OdinInspector;
 
 public class RockBehaviour : MonoBehaviour, IStreamable<RockBehaviour.Data>, IUsable
 {
     [SerializeField] private ItemLabels _filter = ItemLabels.Pickaxe;
     [SerializeField] private Stars _star = Stars.One;
-    [SerializeField] private float _durability = 20;
     [SerializeField] private List<DropType> _drops = new List<DropType>();
 
+    [SerializeField, PropertyOrder(-1), HideLabel, InlineProperty]
     private Data _data;
 
+    [System.Serializable]
     public class Data
     {
-
+        public float Durability = 10;
     }
 
     public Data OnUpload() => _data = new Data();
@@ -36,12 +38,22 @@ public class RockBehaviour : MonoBehaviour, IStreamable<RockBehaviour.Data>, IUs
         if (!(context.used is IDestructor))
             return;
 
-        context.Damage(ref _durability, new MinMaxFloat(1, 2), _star);
+        float previousDurability = _data.Durability;
+        context.Damage(ref _data.Durability, new MinMaxFloat(1, 2), _star);
 
-        if (_durability <= 0)
+        if (_data.Durability <= 0)
         {
+            SoundPlayer.Instance.Play("break_rock");
+
             context.Drop(transform.position, _drops);
             Destroy(gameObject);
+        }
+        else
+        {
+            if (_data.Durability < previousDurability)
+                SoundPlayer.Instance.Play("hit_rock");
+            else
+                SoundPlayer.Instance.Play("hit_poor");
         }
     }
 }

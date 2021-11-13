@@ -47,14 +47,6 @@ public class CommissionLog : Singleton<CommissionLog>
         SceneManager.sceneLoaded -= OnSceneLoaded;
     }
 
-    private void Update()
-    {
-        if (Mouse.current.leftButton.wasPressedThisFrame)
-        {
-            FloraMaster.Instance.Add("Variant");
-        }
-    }
-
     public void Accept(Commission commission)
     {
         GameObject obj = Instantiate(_CommissionPrefab, _CommissionArea); // create object to be added to the log list
