@@ -23,7 +23,7 @@
         half    _ClearCoatThickness;
         half4   _ClearCoatSpecular;
 
-        half4   _BaseColor;
+        half4   _BaseColor;    // URP 10.1: half4 instead of half3
         half4   _SecondaryColor;
         half    _Smoothness;
         half    _Metallic;
@@ -44,7 +44,12 @@
         half    _RimFrequency;
         half    _RimPerPositionFrequency;
 
-        float4 _SecondaryMask_ST;
+        //#if defined(_MASKMAPSECONDARY)
+                float4 _SecondaryMask_ST;
+        //#endif
+
+        float   _Surface;       // URP 10.1
+        float   _Cutoff;        // URP 10.1
             
     CBUFFER_END
 

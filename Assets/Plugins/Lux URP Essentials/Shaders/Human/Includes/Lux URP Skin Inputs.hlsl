@@ -43,11 +43,17 @@
         half _Distortion;
         half _AmbientReflectionStrength;
 
-        half4 _RimColor;
-        half _RimPower;
-        half _RimMinPower;
-        half _RimFrequency;
-        half _RimPerPositionFrequency;
+        //#if defined(_RIMLIGHTING)
+            half4 _RimColor;
+            half _RimPower;
+            half _RimMinPower;
+            half _RimFrequency;
+            half _RimPerPositionFrequency;
+        //#endif
+
+    //  Needed by URP 10.1. and depthnormal
+        half _Cutoff;
+        half _Surface;
 
         half _Backscatter;
         half _VertexNormal;

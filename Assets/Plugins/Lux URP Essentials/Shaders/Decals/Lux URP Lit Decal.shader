@@ -5,16 +5,18 @@
         [HeaderHelpLuxURP_URL(skzrp97i0tvt)]
         
         [Header(Surface Options)]
-        [Space(5)]
+        [Space(8)]
         [ToggleOff(_RECEIVE_SHADOWS_OFF)]
         _ReceiveShadows                                 ("Receive Shadows", Float) = 1.0
         [Toggle(ORTHO_SUPPORT)]
         _OrthoSpport                                    ("Enable Orthographic Support", Float) = 0
         [Toggle(HQ_SAMPLING)]
         _HQSampling                                     ("Enable HQ Sampling", Float) = 0
+        [Toggle(NORMALS_SAMPLING)]
+        _NormalBuffer                                   ("Enable Normal Buffer (SSAO)", Float) = 0
 
         [Header(Surface Inputs)]
-        [Space(5)]
+        [Space(8)]
         [HDR]_Color                                     ("Color", Color) = (1,1,1,1)
         [NoScaleOffset] _BaseMap                        ("Albedo (RGB) Alpha (A)", 2D) = "white" {}
         _Smoothness                                     ("Smoothness", Range (0, 1)) = 0.1
@@ -30,19 +32,19 @@
         _BumpScale                                      ("     Normal Scale", Float) = 1.0
 
         [Header(Mask Map)]
-        [Space(5)]
+        [Space(8)]
         [Toggle(_COMBINEDTEXTURE)] _CombinedTexture     ("Enable Mask Map", Float) = 0.0
         [NoScaleOffset] _MaskMap                        ("     Metallness (R) Occlusion (G) Emission (B) Smoothness (A) ", 2D) = "bump" {}
         [HDR]_EmissionColor                             ("     Emission Color", Color) = (0,0,0,0)
         _Occlusion                                      ("     Occlusion", Range(0.0, 1.0)) = 1.0
 
         [Header(Distance Fading)]
-        [Space(5)]
+        [Space(8)]
         [LuxURPDistanceFadeDrawer]
         _DistanceFade                                   ("Distance Fade Params", Vector) = (2500, 0.001, 0, 0)
 
         [Header(Stencil)]
-        [Space(5)]
+        [Space(8)]
         [IntRange] _StencilRef                          ("Stencil Reference", Range (0, 255)) = 0
         [IntRange] _ReadMask                            ("     Read Mask", Range (0, 255)) = 255
         [IntRange] _WriteMask                           ("     Write Mask", Range (0, 255)) = 255
@@ -50,7 +52,7 @@
         _StencilCompare                                 ("Stencil Comparison", Int) = 8 // always
 
         [Header(Advanced)]
-        [Space(5)]
+        [Space(8)]
         [ToggleOff]
         _SpecularHighlights                             ("Enable Specular Highlights", Float) = 1.0
         [ToggleOff]
@@ -68,7 +70,7 @@
         }
         Pass
         {
-            Name "StandardUnlit"
+            Name "ForwardLit"
             Tags{"LightMode" = "UniversalForward"}
 
             Stencil {
@@ -101,24 +103,27 @@
             #pragma shader_feature_local _COMBINEDTEXTURE
             #pragma shader_feature_local _DECALNORMAL
 
-            #pragma shader_feature _SPECULARHIGHLIGHTS_OFF
-            #pragma shader_feature _ENVIRONMENTREFLECTIONS_OFF
-            #pragma shader_feature _RECEIVE_SHADOWS_OFF
+            #pragma shader_feature_local_fragment _SPECULARHIGHLIGHTS_OFF
+            #pragma shader_feature_local_fragment _ENVIRONMENTREFLECTIONS_OFF
+            #pragma shader_feature_local _RECEIVE_SHADOWS_OFF
 
             #pragma shader_feature_local ORTHO_SUPPORT
-            #pragma shader_feature_local HQ_SAMPLING
+            #pragma shader_feature_local_fragment HQ_SAMPLING
+
+#pragma multi_compile_fragment _ NORMALS_SAMPLING
+#pragma multi_compile_fragment _ _SCREEN_SPACE_OCCLUSION
+
 
             #define _SPECULAR_SETUP 1
 
             // -------------------------------------
-            // Lightweight Pipeline keywords
+            // Universal Pipeline keywords
             #pragma multi_compile _ _MAIN_LIGHT_SHADOWS
             #pragma multi_compile _ _MAIN_LIGHT_SHADOWS_CASCADE
             // #pragma multi_compile _ _ADDITIONAL_LIGHTS_VERTEX _ADDITIONAL_LIGHTS
             #pragma multi_compile _ _ADDITIONAL_LIGHTS
-            #pragma multi_compile _ _ADDITIONAL_LIGHT_SHADOWS
-            #pragma multi_compile _ _SHADOWS_SOFT
-            #pragma multi_compile _ _MIXED_LIGHTING_SUBTRACTIVE
+            #pragma multi_compile_fragment _ _ADDITIONAL_LIGHT_SHADOWS
+            #pragma multi_compile_fragment _ _SHADOWS_SOFT
 
             // -------------------------------------
             // Unity defined keywords
@@ -127,6 +132,7 @@
             //--------------------------------------
             // GPU Instancing
             #pragma multi_compile_instancing
+            // #pragma multi_compile _ DOTS_INSTANCING_ON // needs shader target 4.5
             
             #pragma vertex vert
             #pragma fragment frag
@@ -138,27 +144,24 @@
             #include "Packages/com.unity.render-pipelines.universal/Shaders/UnlitInput.hlsl"
 
             CBUFFER_START(UnityPerMaterial)
+        //	Latest notes from Uty: do not if else here.
                 half4   _Color;
                 half    _Smoothness;
-                half3   _SpecColor;
-
+                half4   _SpecColor;
                 float2  _DistanceFade;
-
-                #if defined(_NORMALMAP)
+                //#if defined(_NORMALMAP)
                     half    _BumpScale;
-                #endif
-
-                #if defined(_COMBINEDTEXTURE)
+                //#endif
+                //#if defined(_COMBINEDTEXTURE)
                     half4 _EmissionColor;
                     half _Occlusion;
-                #endif
-
-                #if defined(_DECALNORMAL)
+                //#endif
+                //#if defined(_DECALNORMAL)
                     half _DecalNormalStrength;
-                #endif
-
+                //#endif
+                float4 _BaseMap_TexelSize;
             CBUFFER_END
-
+            
             #if defined(SHADER_API_GLES)
                 TEXTURE2D(_CameraDepthTexture); SAMPLER(sampler_CameraDepthTexture);
             #else
@@ -168,7 +171,9 @@
             #if defined(_COMBINEDTEXTURE)
                 TEXTURE2D(_MaskMap); SAMPLER(sampler_MaskMap);
             #endif
-            float4 _BaseMap_TexelSize;
+			#if defined(NORMALS_SAMPLING)
+				TEXTURE2D_X_FLOAT(_CameraNormalsTexture);
+			#endif
 
             struct VertexInput
             {
@@ -324,21 +329,21 @@
                         #endif
                         
                     //  Get ortho Depth
-                    //  Old code, no idea why this ever worked...
-                        // depthOrtho = lerp(_ProjectionParams.y, _ProjectionParams.z, depthOrtho);
-                        // float2 rayOrtho = -float2( unity_OrthoParams.xy * ( input.screenUV.xy - 0.5) * 2 /* to clip space */);
-                        // float4 vposOrtho = float4(rayOrtho, -depthOrtho, 1);
-                        // float3 wposOrtho = mul(unity_CameraToWorld, vposOrtho).xyz;
-                        // wposOrtho -= _WorldSpaceCameraPos * 2; // TODO: Why * 2 ????
-                        // wposOrtho *= -1;
-                        // float3 positionOrthoOS = mul( GetWorldToObjectMatrix(), float4(wposOrtho, 1)).xyz;
-                        
+                    //  Old code, works with HDRP10.1 again... crazy
                         depthOrtho = lerp(_ProjectionParams.y, _ProjectionParams.z, depthOrtho);
-                        float2 rayOrtho = float2( unity_OrthoParams.xy * ( input.screenUV.xy - 0.5) * 2 /* to clip space */);
+                        float2 rayOrtho = -float2( unity_OrthoParams.xy * ( input.screenUV.xy - 0.5) * 2 /* to clip space */);
                         float4 vposOrtho = float4(rayOrtho, -depthOrtho, 1);
                         float3 wposOrtho = mul(unity_CameraToWorld, vposOrtho).xyz;
-                        
+                        wposOrtho -= _WorldSpaceCameraPos * 2; // TODO: Why * 2 ????
+                        wposOrtho *= -1;
                         float3 positionOrthoOS = mul( GetWorldToObjectMatrix(), float4(wposOrtho, 1)).xyz;
+                        
+                        // depthOrtho = lerp(_ProjectionParams.y, _ProjectionParams.z, depthOrtho);
+                        // float2 rayOrtho = float2( unity_OrthoParams.xy * ( input.screenUV.xy - 0.5) * 2 /* to clip space */);
+                        // float4 vposOrtho = float4(rayOrtho, -depthOrtho, 1);
+                        // float3 wposOrtho = mul(unity_CameraToWorld, vposOrtho).xyz;
+                        // float3 positionOrthoOS = mul( GetWorldToObjectMatrix(), float4(wposOrtho, 1)).xyz;
+                        
                         positionOS = positionOrthoOS;
                         positionWS = wposOrtho;
                     }
@@ -380,45 +385,62 @@
                     half alpha = col.a * input.fade;
                 #endif
 
-
                 #if defined(_COMBINEDTEXTURE)
                     #if defined(HQ_SAMPLING) && !defined(ORTHO_SUPPORT)
                         half4 combinedTextureSample = SAMPLE_TEXTURE2D_LOD(_MaskMap, sampler_MaskMap, texUV, Mip);
                     #else
                         half4 combinedTextureSample = SAMPLE_TEXTURE2D(_MaskMap, sampler_MaskMap, texUV);
                     #endif
-                    half3 specular = lerp(_SpecColor, col.rgb, combinedTextureSample.rrr);
+                    half3 specular = lerp(_SpecColor.rgb, col.rgb, combinedTextureSample.rrr);
                 //  Remap albedo
                     col.rgb *= oneMinusDielectricSpecConst - combinedTextureSample.rrr * oneMinusDielectricSpecConst;
                     half smoothness = combinedTextureSample.a;
                     half occlusion = lerp(1.0h, combinedTextureSample.g, _Occlusion);
                     half3 emission = _EmissionColor.rgb * combinedTextureSample.b;
                 #else
-                    half3 specular = _SpecColor;
+                    half3 specular = _SpecColor.rgb;
                     half smoothness = _Smoothness;
                     half occlusion = 1.0h;
                     half3 emission = 0;
                 #endif
 
             //  Prepare inputs for the lighting function and get normals
-                InputData inputData;
+
+            //	I hat this ZERO initialize - but it is just the quicket way here
+                InputData inputData = (InputData)0;
                 inputData.positionWS = positionWS;
-                
-            //  As ddx and ddy may return super small values we have to normalize on platforms where half actually means something 
-                #if defined (SHADER_API_MOBILE) || defined (SHADER_API_SWITCH)
-                    inputData.normalWS = normalize( cross( ddy(positionWS), ddx(positionWS) ) );
-                #else
-                    #if defined(_DECALNORMAL)
-                //  In case we blend we have to normalize first as well.
-                        inputData.normalWS = normalize( cross( ddy(positionWS), ddx(positionWS) ) );
-                    #else
-                        inputData.normalWS = cross( ddy(positionWS), ddx(positionWS) );
-                    #endif
+
+            //	SSAO
+                #if defined(_SCREEN_SPACE_OCCLUSION)
+					inputData.normalizedScreenSpaceUV = GetNormalizedScreenSpaceUV(input.positionCS);
                 #endif
 
-                #if defined(_DECALNORMAL)
-                    inputData.normalWS = (lerp(inputData.normalWS, input.normalWS.xyz, _DecalNormalStrength));
-                #endif
+            //	Normals
+				#if defined(NORMALS_SAMPLING) && defined(_SCREEN_SPACE_OCCLUSION) 
+				//	view space normal!
+					float2 nSample = LOAD_TEXTURE2D_X(_CameraNormalsTexture, _CameraDepthTexture_TexelSize.zw * uv).rg;
+					inputData.normalWS = UnpackNormalOctRectEncode(nSample.rg);
+					inputData.normalWS = mul((float3x3)UNITY_MATRIX_I_V, inputData.normalWS );
+				
+				#else
+                
+	            //  As ddx and ddy may return super small values we have to normalize on platforms where half actually means something 
+	                #if defined (SHADER_API_MOBILE) || defined (SHADER_API_SWITCH)
+	                    inputData.normalWS = normalize( cross( ddy(positionWS), ddx(positionWS) ) );
+	                #else
+	                    #if defined(_DECALNORMAL)
+	                //  In case we blend we have to normalize first as well.
+	                        inputData.normalWS = normalize( cross( ddy(positionWS), ddx(positionWS) ) );
+	                    #else
+	                        inputData.normalWS = cross( ddy(positionWS), ddx(positionWS) );
+	                    #endif
+	                #endif
+
+	                #if defined(_DECALNORMAL)
+	                    inputData.normalWS = (lerp(inputData.normalWS, input.normalWS.xyz, _DecalNormalStrength));
+	                #endif
+
+				#endif
 
                 #if defined(_NORMALMAP)
                     #if defined(HQ_SAMPLING) && !defined(ORTHO_SUPPORT)

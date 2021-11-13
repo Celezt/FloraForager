@@ -38,9 +38,10 @@
 
         half    _ShadowStrength;
 
-    //  Dummy shader
-        half    _Shininess;
-        
+        #if defined (DUMMYSHADER)
+            half    _Shininess;
+        #endif
+
     CBUFFER_END
 
 //  These can't be per material...

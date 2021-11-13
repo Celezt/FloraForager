@@ -162,7 +162,7 @@ Shader "Lux URP/Cloth STL"
             // Material Keywords
             #define _SPECULAR_SETUP 1
 
-            #pragma shader_feature _ALPHATEST_ON
+            #pragma shader_feature_local _ALPHATEST_ON
 
             #pragma shader_feature_local _COTTONWOOL
             #pragma shader_feature_local _MASKMAP
@@ -182,6 +182,7 @@ Shader "Lux URP/Cloth STL"
             #pragma multi_compile _ _ADDITIONAL_LIGHTS_VERTEX _ADDITIONAL_LIGHTS
             #pragma multi_compile _ _ADDITIONAL_LIGHT_SHADOWS
             #pragma multi_compile _ _SHADOWS_SOFT
+            #pragma multi_compile_fragment _ _SCREEN_SPACE_OCCLUSION
             #pragma multi_compile _ _MIXED_LIGHTING_SUBTRACTIVE
 
             // -------------------------------------
@@ -215,7 +216,7 @@ Shader "Lux URP/Cloth STL"
                 vertexInput = GetVertexPositionInputs(input.positionOS.xyz);
                 VertexNormalInputs normalInput = GetVertexNormalInputs(input.normalOS, input.tangentOS);
 
-                float3 viewDirWS = GetCameraPositionWS() - vertexInput.positionWS;
+                //float3 viewDirWS = GetCameraPositionWS() - vertexInput.positionWS;
                 half3 vertexLight = VertexLighting(vertexInput.positionWS, normalInput.normalWS);
                 half fogFactor = ComputeFogFactor(vertexInput.positionCS.z);
 
@@ -226,7 +227,7 @@ Shader "Lux URP/Cloth STL"
 
                 // already normalized from normal transform to WS.
                 output.normalWS = normalInput.normalWS;
-                output.viewDirWS = viewDirWS;
+                //output.viewDirWS = viewDirWS;
                 #if defined(_NORMALMAP) || !defined(_COTTONWOOL)
                     float sign = input.tangentOS.w * GetOddNegativeScale();
                     output.tangentWS = float4(normalInput.tangentWS.xyz, sign);
@@ -299,7 +300,8 @@ Shader "Lux URP/Cloth STL"
                     inputData.positionWS = input.positionWS;
                 #endif
                 
-                half3 viewDirWS = SafeNormalize(input.viewDirWS);
+                //half3 viewDirWS = SafeNormalize(input.viewDirWS);
+                half3 viewDirWS = GetWorldSpaceNormalizeViewDir(input.positionWS);
                 #if defined(_NORMALMAP) || !defined(_COTTONWOOL)
                     normalTS.z *= facing;
                     float sgn = input.tangentWS.w;      // should be either +1 or -1
@@ -323,6 +325,9 @@ Shader "Lux URP/Cloth STL"
                 inputData.fogCoord = input.fogFactorAndVertexLight.x;
                 inputData.vertexLighting = input.fogFactorAndVertexLight.yzw;
                 inputData.bakedGI = SAMPLE_GI(input.lightmapUV, input.vertexSH, inputData.normalWS);
+
+                inputData.normalizedScreenSpaceUV = GetNormalizedScreenSpaceUV(input.positionCS);
+                inputData.shadowMask = SAMPLE_SHADOWMASK(input.lightmapUV);
             }
 
             half4 LitPassFragment(VertexOutput input, half facing : VFACE) : SV_Target
@@ -400,7 +405,7 @@ Shader "Lux URP/Cloth STL"
 
             // -------------------------------------
             // Material Keywords
-            #pragma shader_feature _ALPHATEST_ON
+            #pragma shader_feature_local _ALPHATEST_ON
 
 
             //--------------------------------------
@@ -475,7 +480,7 @@ Shader "Lux URP/Cloth STL"
 
             // -------------------------------------
             // Material Keywords
-            #pragma shader_feature _ALPHATEST_ON
+            #pragma shader_feature_local _ALPHATEST_ON
 
             //--------------------------------------
             // GPU Instancing
@@ -515,6 +520,73 @@ Shader "Lux URP/Cloth STL"
             ENDHLSL
         }
 
+
+        //  Depth Normal ---------------------------------------------
+        // This pass is used when drawing to a _CameraNormalsTexture texture
+        Pass
+        {
+            Name "DepthNormals"
+            Tags{"LightMode" = "DepthNormals"}
+
+            ZWrite On
+            Cull[_Cull]
+
+            HLSLPROGRAM
+            #pragma exclude_renderers d3d11_9x
+            #pragma target 2.0
+
+            #pragma vertex DepthNormalVertex
+            #pragma fragment DepthNormalFragment
+
+            // -------------------------------------
+            // Material Keywords
+            #pragma shader_feature_local _ALPHATEST_ON      // not per fragment!
+
+            //--------------------------------------
+            // GPU Instancing
+            #pragma multi_compile_instancing
+            // #pragma multi_compile _ DOTS_INSTANCING_ON // needs shader target 4.5
+            
+            #define DEPTHNORMALPASS
+            #include "Includes/Lux URP Cloth Inputs.hlsl"
+
+            VertexOutput DepthNormalVertex(VertexInput input)
+            {
+                VertexOutput output = (VertexOutput)0;
+                UNITY_SETUP_INSTANCE_ID(input);
+                UNITY_TRANSFER_INSTANCE_ID(input, output);
+                UNITY_INITIALIZE_VERTEX_OUTPUT_STEREO(output);
+
+                #if defined(_ALPHATEST_ON)
+                    output.uv.xy = TRANSFORM_TEX(input.texcoord, _BaseMap);
+                #endif
+
+                output.positionCS = TransformObjectToHClip(input.positionOS.xyz);
+
+                VertexNormalInputs normalInput = GetVertexNormalInputs(input.normalOS, float4(1,1,1,1)); //input.tangentOS);
+                output.normalWS = NormalizeNormalPerVertex(normalInput.normalWS);
+
+                return output;
+            }
+
+            half4 DepthNormalFragment(VertexOutput input) : SV_TARGET
+            {
+                UNITY_SETUP_INSTANCE_ID(input);
+                UNITY_SETUP_STEREO_EYE_INDEX_POST_VERTEX(input);
+
+                #if defined(_ALPHATEST_ON)
+                    half mask = SAMPLE_TEXTURE2D(_BaseMap, sampler_BaseMap, input.uv.xy).a;
+                    clip (mask - _Cutoff);
+                #endif
+
+                float3 normal = input.normalWS;
+                return float4(PackNormalOctRectEncode(TransformWorldToViewDir(normal, true)), 0.0, 0.0);
+
+            }
+            ENDHLSL
+        }
+
+
     //  Meta -----------------------------------------------------
         
         Pass
@@ -549,6 +621,9 @@ Shader "Lux URP/Cloth STL"
                 outSurfaceData.normalTS = half3(0,0,1);
                 outSurfaceData.occlusion = 1;
                 outSurfaceData.emission = 0;
+
+                outSurfaceData.clearCoatMask = 0;
+                outSurfaceData.clearCoatSmoothness = 0;
             }
 
         //  Finally include the meta pass related stuff  
