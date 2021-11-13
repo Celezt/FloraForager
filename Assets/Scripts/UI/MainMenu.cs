@@ -9,14 +9,9 @@ using MyBox;
 
 public class MainMenu : MonoBehaviour
 {
-    [SerializeField]
+    [Space(5)]
+    [SerializeField] 
     private Button _ContinueButton;
-    [SerializeField]
-    private Button _StartNewButton;
-    [SerializeField]
-    private Button _SettingsButton;
-    [SerializeField]
-    private Button _QuitButton;
 
     [Space(10)]
     [SerializeField]
@@ -78,11 +73,6 @@ public class MainMenu : MonoBehaviour
             GameManager.CreateSave(SAVE_NAME);
             OnContinue();
         }
-    }
-
-    public void OnSettings()
-    {
-
     }
 
     public void OnQuit()

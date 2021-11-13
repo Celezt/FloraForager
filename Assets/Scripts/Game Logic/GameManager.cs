@@ -182,7 +182,7 @@ public static class GameManager
         {
             bool result = _streamedData.TryGetValue(guid, out object obj);
 
-            if ((value = obj as T) == null)
+            if ((value = (T)obj) == null)
                 return false;
 
             return result;

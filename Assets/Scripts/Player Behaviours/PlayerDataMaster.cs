@@ -57,7 +57,7 @@ public class PlayerDataMaster : SerializedScriptableSingleton<PlayerDataMaster>,
     }
     public void Load()
     {
-        _Players = new Dictionary<int, PlayerData>();
+        _Players.Clear();
 
         if (!GameManager.Stream.TryGet(_Guid, out Dictionary<string, object> streamables))
             return;

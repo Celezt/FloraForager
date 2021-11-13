@@ -13,8 +13,6 @@ public class NPCObject : MonoBehaviour, IInteractable
     private string _NameID;
     [SerializeField]
     private float _ExitRadius = 5.0f;
-    [SerializeField] 
-    private LayerMask _LayerMasks;
 
     private GameObject _Player;
 

@@ -12,16 +12,16 @@ using Sirenix.OdinInspector;
 [DisallowMultipleComponent, RequireComponent(typeof(GuidComponent))]
 public class StreamableBehaviour : MonoBehaviour, IStreamer, IStreamable<StreamableBehaviour.Data>
 {
-    [Button]
-    public void SaveButton() => GameManager.SaveGame();
+    [SerializeField] 
+    private bool _saveIfDestroyed = true;
 
-    [Button]
-    public void LoadButton() => GameManager.LoadGame();
-
-    [SerializeField] private bool _saveIfDestroyed = true;
+    [Title("Respawn Behaviour")]
+    [SerializeField, ShowIf("_saveIfDestroyed")]
+    private bool _respawnableObject = false;
+    [SerializeField, Min(1), ShowIf("@this._respawnableObject && this._saveIfDestroyed")]
+    private int _respawnTimeInDays = 1;
 
     private Data _data;
-
     private Guid _guid;
 
     public class Data
@@ -46,10 +46,13 @@ public class StreamableBehaviour : MonoBehaviour, IStreamer, IStreamable<Streama
         _data.SceneIndex = SceneManager.GetActiveScene().buildIndex;
     }
 
-    public void Start()
+    private void Awake()
     {
         _guid = GetComponent<GuidComponent>().Guid;
+    }
 
+    private void Start()
+    {
         if (GameManager.Stream.StreamedData.ContainsKey(_guid))
             Load();
 
@@ -85,8 +88,16 @@ public class StreamableBehaviour : MonoBehaviour, IStreamer, IStreamable<Streama
 
     private void OnDestroy()
     {
-        if (_saveIfDestroyed)
-            _data.IsAlive = false;
+        if (!LoadScene.SceneIsLoading)
+        {
+            if (_saveIfDestroyed)
+            {
+                _data.IsAlive = false;
+
+                if (_respawnableObject)
+                    ObjectRespawn.Instance.Add(_guid, _respawnTimeInDays);
+            }
+        }
 
         GameManager.RemoveStreamer(this);
     }

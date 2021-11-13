@@ -14,9 +14,11 @@ public class CommissionInfo : SerializedScriptableObject
     private string _Description;
 
     [Title("Challenge")]
-    [OdinSerialize] 
+    [OdinSerialize]
+    private bool _Repeatable = false;
+    [OdinSerialize, LabelText("Time Limit In Days")] 
     private int _TimeLimit;
-    [OdinSerialize, ListDrawerSettings(Expanded = true), Required]
+    [OdinSerialize, ListDrawerSettings(DraggableItems = false, ShowItemCount = false, Expanded = true), Required]
     private IObjective[] _Objectives;
 
     [Title("Relations")]
@@ -28,12 +30,13 @@ public class CommissionInfo : SerializedScriptableObject
     private float _PenaltyRelations;
 
     [Title("Rewards")]
-    [OdinSerialize, ListDrawerSettings(Expanded = true), Required] 
+    [OdinSerialize, ListDrawerSettings(DraggableItems = false, ShowItemCount = false, Expanded = true), Required] 
     private ItemAsset[] _Rewards;
 
     public string Title => _Title;
     public string Description => _Description;
 
+    public bool Repeatable => _Repeatable;
     public int TimeLimit => _TimeLimit;
     public IObjective[] Objectives => _Objectives;
 

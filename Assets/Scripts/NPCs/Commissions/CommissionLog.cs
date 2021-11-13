@@ -21,7 +21,6 @@ public class CommissionLog : Singleton<CommissionLog>
     private Commission _Selected; // selected commission in the log
 
     private CanvasGroup _CanvasGroup;
-
     private PlayerAction _PlayerAction;
 
     private void Awake()
@@ -157,11 +156,13 @@ public class CommissionLog : Singleton<CommissionLog>
 
         string giver = "<u><b>Giver</b></u>\n<size=22>" + commission.Giver + "</size>";
 
+        string repeatable = "<u><b>Repeatable</b></u>\n<size=22>" + (commission.Repeatable ? "Yes" : "No") + "</size>";
+
         string completed = commission.IsCompleted ? "<color=green>(Complete)</color>" : string.Empty;
 
-        _Description.text = string.Format("<u><b>Description</b></u>\n<size=22>{0}</size>\n\n{1}\n{2}\n{3}\n\n{4}\n\n{5}",
+        _Description.text = string.Format("<u><b>Description</b></u>\n<size=22>{0}</size>\n\n{1}\n{2}\n{3}\n\n{4}\n\n{5}\n\n{6}",
             commission.CommissionData.Description,
-            objectives, rewards, daysLeft, giver, completed);
+            objectives, rewards, daysLeft, giver, repeatable, completed);
     }
 
     public void OnOpenExit(InputAction.CallbackContext context)

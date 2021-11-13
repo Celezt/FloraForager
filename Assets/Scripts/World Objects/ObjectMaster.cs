@@ -97,29 +97,16 @@ public class ObjectMaster : SerializedScriptableSingleton<ObjectMaster>, IStream
 
     public void UpLoad()
     {
-        Dictionary<string, object> streamables = new Dictionary<string, object>();
-
-        foreach (KeyValuePair<string, ObjectData> item in _Objects)
-        {
-            streamables.Add(item.Key, item.Value);
-        }
-
-        GameManager.Stream.Load(_Guid, streamables);
+        GameManager.Stream.Load(_Guid, _Objects);
     }
     public void Load()
     {
-        _Objects = new Dictionary<string, ObjectData>();
+        _Objects.Clear();
 
-        if (!GameManager.Stream.TryGet(_Guid, out Dictionary<string, object> streamables))
+        if (!GameManager.Stream.TryGet(_Guid, out Dictionary<string, ObjectData> objects))
             return;
 
-        foreach (KeyValuePair<string, object> item in streamables)
-        {
-            if (!streamables.TryGetValue(item.Key, out object value))
-                continue;
-
-            _Objects[item.Key] = value as ObjectData;
-        }
+        _Objects = objects;
     }
     public void BeforeSaving()
     {

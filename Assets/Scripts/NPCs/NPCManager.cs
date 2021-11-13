@@ -15,7 +15,7 @@ public class NPCManager : SerializedScriptableSingleton<NPCManager>, IStreamer
 {
     [SerializeField]
     private System.Guid _Guid;
-    [SerializeField]
+    [SerializeField, ListDrawerSettings(DraggableItems = false, ShowItemCount = false, Expanded = true)]
     private List<NPCInfo> _NPCInfos;
 
     [System.NonSerialized]
@@ -44,9 +44,12 @@ public class NPCManager : SerializedScriptableSingleton<NPCManager>, IStreamer
     }
 #endif
 
-    public NPC Get(string npc)
+    public NPC Get(string id)
     {
-        return _NPCs[npc.ToLower()];
+        if (!_NPCs.TryGetValue(id.ToLower(), out NPC npc))
+            return null;
+
+        return npc;
     }
 
     public NPC Add(string id, NPC npc)

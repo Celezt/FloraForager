@@ -14,10 +14,11 @@ using Sirenix.Serialization;
 [System.Serializable]
 public class FloraMaster : SerializedScriptableSingleton<FloraMaster>, IStreamer
 {
-    [SerializeField]
-    private GameObject _FloraPrefab;
-    [SerializeField]
+    [OdinSerialize]
     private System.Guid _Guid;
+    [Space(5)]
+    [OdinSerialize]
+    private GameObject _FloraPrefab;
     [OdinSerialize]
     private Dictionary<string, FloraInfo> _FloraDictionary = new Dictionary<string, FloraInfo>();
 
@@ -145,7 +146,7 @@ public class FloraMaster : SerializedScriptableSingleton<FloraMaster>, IStreamer
     }
     public void Load()
     {
-        _Florae = new List<Flora>();
+        _Florae.Clear();
 
         if (!GameManager.Stream.TryGet(_Guid, out Dictionary<string, object> streamables))
             return;
@@ -169,6 +170,6 @@ public class FloraMaster : SerializedScriptableSingleton<FloraMaster>, IStreamer
 
         UpLoad();
 
-        _Florae.ForEach(x => ((IStreamable<object>)x).OnBeforeSaving());
+        _Florae.ForEach(x => x.OnBeforeSaving());
     }
 }
