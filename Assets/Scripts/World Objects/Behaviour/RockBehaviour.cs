@@ -19,7 +19,7 @@ public class RockBehaviour : MonoBehaviour, IStreamable<RockBehaviour.Data>, IUs
         public float Durability = 10;
     }
 
-    public Data OnUpload() => _data = new Data();
+    public Data OnUpload() => _data;
     public void OnLoad(object state)
     {
         Data data = state as Data;
