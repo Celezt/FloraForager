@@ -11,6 +11,9 @@
 //  defines e.g. "DECLARE_LIGHTMAP_OR_SH"
     #include "Packages/com.unity.render-pipelines.universal/ShaderLibrary/Lighting.hlsl"
  
+
+
+
     #include "../Includes/Lux URP Toon Lighting.hlsl"
 
     #include "Packages/com.unity.render-pipelines.core/ShaderLibrary/Color.hlsl"
@@ -68,7 +71,6 @@
     //  Outline
         half4   _OutlineColor;
         half    _Border;
-
         float4  _BaseMap_TexelSize;
 
     CBUFFER_END

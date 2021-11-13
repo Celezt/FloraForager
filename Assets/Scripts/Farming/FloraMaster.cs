@@ -129,7 +129,10 @@ public class FloraMaster : SerializedScriptableSingleton<FloraMaster>, IStreamer
 
     public void Notify()
     {
-        _Florae.ForEach(f => f.Grow());
+        for (int i = _Florae.Count - 1; i >= 0; --i)
+        {
+            _Florae[i].Grow();
+        }
     }
 
     public void UpLoad()

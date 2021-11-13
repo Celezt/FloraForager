@@ -1,3 +1,4 @@
+using System.Threading.Tasks;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -8,6 +9,7 @@ using UnityEngine.AddressableAssets;
 using UnityEngine.ResourceManagement.AsyncOperations;
 using Sirenix.OdinInspector;
 using MyBox;
+using IngameDebugConsole;
 
 public class SoundPlayer : Singleton<SoundPlayer>
 {
@@ -17,7 +19,7 @@ public class SoundPlayer : Singleton<SoundPlayer>
     private AudioMixerGroup _Output;
 
     [Space(10)]
-    [SerializeField]
+    [SerializeField, ListDrawerSettings(ShowItemCount = false, Expanded = true)]
     private Sound[] _SoundEffects;
 
     private AudioSource[] _AudioSourcePool;
@@ -44,7 +46,7 @@ public class SoundPlayer : Singleton<SoundPlayer>
         }
     }
 
-    private void Start()
+    private IEnumerator Start()
     {
         _AudioSourcePool = new AudioSource[_InitialPoolSize];
         for (int i = 0; i < _AudioSourcePool.Length; ++i)
@@ -53,12 +55,17 @@ public class SoundPlayer : Singleton<SoundPlayer>
         _CurrentPoolSize = _InitialPoolSize;
         PoolIndex = 0;
 
-        _SoundEffects.ForEach(s => s.Load());
+        _Cooldowns = new Dictionary<string, float>();
+        _Sounds = new Dictionary<string, Sound>();
 
-        _Sounds = _SoundEffects.ToDictionary(key => key.Name, value => value);
+        foreach (Sound sound in _SoundEffects)
+        {
+            yield return new WaitUntil(() => sound.Load().Status == AsyncOperationStatus.Succeeded);
+            _Sounds[sound.Name] = sound;
+        }
         _SoundEffects = null;
 
-        _Cooldowns = new Dictionary<string, float>();
+        DebugLogConsole.AddCommandInstance("play.sound", "Plays sound", nameof(Play), this);
     }
 
     private void Update()
@@ -83,9 +90,10 @@ public class SoundPlayer : Singleton<SoundPlayer>
 
     private IEnumerator PlaySound(string name)
     {
-        AudioSource source = _AudioSourcePool[PoolIndex++];
-        Sound sound = GetSound(name);
+        if (!TryGetSound(name, out Sound sound))
+            yield break;
 
+        AudioSource source = _AudioSourcePool[PoolIndex++];
         sound.AudioSource = source;
 
         for (int i = 0; i < ((sound.RepeatCount > 0) ? sound.RepeatCount : 1); ++i)
@@ -113,10 +121,13 @@ public class SoundPlayer : Singleton<SoundPlayer>
     /// </summary>
     public AudioSource AddAudioSource(GameObject gameObject, string name, float spatialBlend = 1.0f)
     {
+        if (!TryGetSound(name, out Sound sound))
+            return null;
+
         // add Audio Source to gameobject to use 3D audio
         AudioSource audioSource = gameObject.AddComponent<AudioSource>();
 
-        SetAudioSource(audioSource, GetSound(name));
+        SetAudioSource(audioSource, sound);
         audioSource.spatialBlend = spatialBlend;
 
         return audioSource;
@@ -127,7 +138,8 @@ public class SoundPlayer : Singleton<SoundPlayer>
     /// </summary>
     public void PlayAtPoint(string name, Vector3 position, float spatialBlend = 1.0f)
     {
-        Sound sound = GetSound(name);
+        if (!TryGetSound(name, out Sound sound))
+            return;
 
         // Create new empty object at position
         GameObject soundObject = new GameObject();
@@ -147,20 +159,15 @@ public class SoundPlayer : Singleton<SoundPlayer>
 
     public void SetSound(string name, float volume, float pitch = 1.0f, float spatialBlend = 0, float cooldown = 0, int repeatCount = 0)
     {
-        Sound sound = GetSound(name);
+        if (!TryGetSound(name, out Sound sound))
+            return;
 
-        if (sound.Name != "error")
+        if (sound != null)
             sound.Set(volume, pitch, spatialBlend, cooldown, repeatCount);
     }
-    public Sound GetSound(string name)
+    public bool TryGetSound(string name, out Sound sound)
     {
-        if (!_Sounds.ContainsKey(name))
-        {
-            Debug.LogWarning($"'{name}' does not exist");
-            return _Sounds["error"];
-        }
-
-        return _Sounds[name];
+        return _Sounds.TryGetValue(name, out sound);
     }
 
     private void SetAudioSource(AudioSource audioSource, Sound sound)
@@ -219,17 +226,17 @@ public class SoundPlayer : Singleton<SoundPlayer>
     [System.Serializable]
     public class Sound
     {
-        [SerializeField]
+        [SerializeField, HideInInspector]
         private string _Name;
         [SerializeField, AssetsOnly]
         private AssetReference _Asset;
 
-        [Space(5)]
+        [Space(2)]
         [SerializeField, Range(0.0f, 1.0f)]
         private float _Volume = 1.0f;
         [SerializeField, Range(0.1f, 3.0f)]
         private float _Pitch = 1.0f;
-        [SerializeField, Range(0.0f, 1.0f)]
+        [SerializeField, HideInInspector, Range(0.0f, 1.0f)]
         private float _SpatialBlend = 0.0f;
         [SerializeField]
         private float _Cooldown = 0.0f;
@@ -243,6 +250,7 @@ public class SoundPlayer : Singleton<SoundPlayer>
 
         public string Name => _Name;
 
+        public AssetReference Asset => _Asset;
         public AudioClip AudioClip => _AudioClip;
 
         public float Volume => _Volume;
@@ -260,13 +268,17 @@ public class SoundPlayer : Singleton<SoundPlayer>
             _RepeatCount = repeatCount;
         }
 
-        public void Load()
+        public AsyncOperationHandle<AudioClip> Load()
         {
-            Addressables.LoadAssetAsync<AudioClip>(_Asset).Completed += (AsyncOperationHandle<AudioClip> handle) => 
+            AsyncOperationHandle<AudioClip> handle = Addressables.LoadAssetAsync<AudioClip>(_Asset);
+
+            handle.Completed += (AsyncOperationHandle<AudioClip> handle) => 
             {
                 _AudioClip = handle.Result;
-                Addressables.Release(handle);
+                _Name = handle.Result.name;
             };
+
+            return handle;
         }
     }
 }

@@ -63,7 +63,10 @@ public class EventBehaviour : MonoBehaviour, IStreamable<EventBehaviour.Data>
 
     private void OnDestroy()
     {
-        if (_SaveIfInvoked)
+        if (LoadScene.SceneIsLoading)
+            return;
+
+        if (_SaveIfInvoked && _Data != null)
             _Data.IsInvoked = true;
     }
 }

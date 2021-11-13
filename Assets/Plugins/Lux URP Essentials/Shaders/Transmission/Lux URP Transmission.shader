@@ -8,7 +8,7 @@ Shader "Lux URP/Transmission"
         [HeaderHelpLuxURP_URL(6rnfwcochmqs)]
 
         [Header(Surface Options)]
-        [Space(5)]
+        [Space(8)]
         [Enum(UnityEngine.Rendering.CullMode)]
         _Cull                       ("Culling", Float) = 2
         [Toggle(_ALPHATEST_ON)]
@@ -20,7 +20,7 @@ Shader "Lux URP/Transmission"
 
 
         [Header(Surface Inputs)]
-        [Space(5)]
+        [Space(8)]
         [MainColor]
         _BaseColor                  ("Color", Color) = (1,1,1,1)
         [MainTexture]
@@ -44,9 +44,8 @@ Shader "Lux URP/Transmission"
         _Occlusion                  ("     Occlusion", Range(0.0, 1.0)) = 1
 
 
-
         [Header(Transmission)]
-        [Space(5)]
+        [Space(8)]
         _TranslucencyPower          ("Power", Range(0.0, 32.0)) = 7.0
         _TranslucencyStrength       ("Strength", Range(0.0, 1.0)) = 1.0
         _ShadowStrength             ("Shadow Strength", Range(0.0, 1.0)) = 0.7
@@ -58,7 +57,7 @@ Shader "Lux URP/Transmission"
 
 
         [Header(Rim Lighting)]
-        [Space(5)]
+        [Space(8)]
         [Toggle(_RIMLIGHTING)]
         _Rim                        ("Enable Rim Lighting", Float) = 0
         [HDR] _RimColor             ("Rim Color", Color) = (0.5,0.5,0.5,1)
@@ -69,7 +68,7 @@ Shader "Lux URP/Transmission"
 
 
         [Header(Stencil)]
-        [Space(5)]
+        [Space(8)]
         [IntRange] _Stencil         ("Stencil Reference", Range (0, 255)) = 0
         [IntRange] _ReadMask        ("     Read Mask", Range (0, 255)) = 255
         [IntRange] _WriteMask       ("     Write Mask", Range (0, 255)) = 255
@@ -84,7 +83,7 @@ Shader "Lux URP/Transmission"
 
 
         [Header(Advanced)]
-        [Space(5)]
+        [Space(8)]
         [ToggleOff]
         _SpecularHighlights         ("Enable Specular Highlights", Float) = 1.0
         [ToggleOff]
@@ -93,12 +92,26 @@ Shader "Lux URP/Transmission"
 
 
         [Header(Render Queue)]
-        [Space(5)]
+        [Space(8)]
         [IntRange] _QueueOffset     ("Queue Offset", Range(-50, 50)) = 0
         
     //  Lightmapper and outline selection shader need _MainTex, _Color and _Cutoff
         [HideInInspector] _MainTex  ("Albedo", 2D) = "white" {}
         [HideInInspector] _Color    ("Color", Color) = (1,1,1,1)
+
+
+    //  As URP 10.1 complains about it?!: 
+        // [HideInInspector] _ClearCoatMask ("Dummy", Float) = 2
+        // [HideInInspector] _ClearCoatSmoothness ("Dummy", Float) = 1
+        // [HideInInspector] _DetailAlbedoMapScale ("Dummy", Float) = 1
+        // [HideInInspector] _DetailNormalMapScale ("Dummy", Float) = 1
+        // [HideInInspector] _Metallic ("Dummy", Float) = 1
+        // [HideInInspector] _OcclusionStrength ("Dummy", Float) = 1
+        // [HideInInspector] _Parallax ("Dummy", Float) = 1
+        // [HideInInspector] _Surface ("Dummy", Float) = 1
+        // [HideInInspector] _DetailAlbedoMap_ST ("Dummy", Vector) = (1, 1, 0, 0)
+        // [HideInInspector] _EmissionColor ("Color", Color) = (1,1,1,1)
+
     }
 
     SubShader
@@ -130,39 +143,39 @@ Shader "Lux URP/Transmission"
             Cull [_Cull]
 
             HLSLPROGRAM
-            // Required to compile gles 2.0 with standard SRP library
+            // Required to compile gles 2.0 with standard srp library
             #pragma prefer_hlslcc gles
             #pragma exclude_renderers d3d11_9x
-
-        //  Shader target needs to be 3.0 due to tex2Dlod in the vertex shader and VFACE
-            #pragma target 2.0
+            #pragma target 2.0 
 
             // -------------------------------------
             // Material Keywords
             #define _SPECULAR_SETUP 1
 
-            #pragma shader_feature _ALPHATEST_ON
+            #pragma shader_feature_local _NORMALMAP
+            #pragma shader_feature_local_fragment _ALPHATEST_ON
 
-            #pragma shader_feature_local _MASKMAP
+            #pragma shader_feature_local _MASKMAP                   // Not per fragment!
             #define _CUSTOMWRAP
             #define _STANDARDLIGHTING
 
-            #pragma shader_feature _NORMALMAP
-            #pragma shader_feature_local _RIMLIGHTING
+            #pragma shader_feature_local_fragment _RIMLIGHTING
 
-            #pragma shader_feature _SPECULARHIGHLIGHTS_OFF
-            #pragma shader_feature _ENVIRONMENTREFLECTIONS_OFF
-            #pragma shader_feature _RECEIVE_SHADOWS_OFF
+            #pragma shader_feature_local_fragment _SPECULARHIGHLIGHTS_OFF
+            #pragma shader_feature_local_fragment _ENVIRONMENTREFLECTIONS_OFF
+            #pragma shader_feature_local _RECEIVE_SHADOWS_OFF
 
 
             // -------------------------------------
-            // Lightweight Pipeline keywords
+            // Universal Pipeline keywords
             #pragma multi_compile _ _MAIN_LIGHT_SHADOWS
             #pragma multi_compile _ _MAIN_LIGHT_SHADOWS_CASCADE
             #pragma multi_compile _ _ADDITIONAL_LIGHTS_VERTEX _ADDITIONAL_LIGHTS
-            #pragma multi_compile _ _ADDITIONAL_LIGHT_SHADOWS
-            #pragma multi_compile _ _SHADOWS_SOFT
-            #pragma multi_compile _ _MIXED_LIGHTING_SUBTRACTIVE
+            #pragma multi_compile_fragment _ _ADDITIONAL_LIGHT_SHADOWS
+            #pragma multi_compile_fragment _ _SHADOWS_SOFT
+            #pragma multi_compile_fragment _ _SCREEN_SPACE_OCCLUSION
+            #pragma multi_compile _ LIGHTMAP_SHADOW_MIXING
+            #pragma multi_compile _ SHADOWS_SHADOWMASK
 
             // -------------------------------------
             // Unity defined keywords
@@ -173,6 +186,7 @@ Shader "Lux URP/Transmission"
             //--------------------------------------
             // GPU Instancing
             #pragma multi_compile_instancing
+            // #pragma multi_compile _ DOTS_INSTANCING_ON // needs shader target 4.5
 
         //  Include base inputs and all other needed "base" includes
             #include "Includes/Lux URP Transmission Inputs.hlsl"
@@ -304,6 +318,9 @@ Shader "Lux URP/Transmission"
                 inputData.fogCoord = input.fogFactorAndVertexLight.x;
                 inputData.vertexLighting = input.fogFactorAndVertexLight.yzw;
                 inputData.bakedGI = SAMPLE_GI(input.lightmapUV, input.vertexSH, inputData.normalWS);
+
+                inputData.normalizedScreenSpaceUV = GetNormalizedScreenSpaceUV(input.positionCS);
+                inputData.shadowMask = SAMPLE_SHADOWMASK(input.lightmapUV);
             }
 
             half4 LitPassFragment(VertexOutput input, half facing : VFACE) : SV_Target
@@ -369,7 +386,8 @@ Shader "Lux URP/Transmission"
 
             ZWrite On
             ZTest LEqual
-            Cull Off
+            ColorMask 0
+            Cull[_Cull]
 
             HLSLPROGRAM
             // Required to compile gles 2.0 with standard srp library
@@ -379,11 +397,12 @@ Shader "Lux URP/Transmission"
 
             // -------------------------------------
             // Material Keywords
-            #pragma shader_feature _ALPHATEST_ON
+            #pragma shader_feature_local_fragment _ALPHATEST_ON
 
             //--------------------------------------
             // GPU Instancing
             #pragma multi_compile_instancing
+            // #pragma multi_compile _ DOTS_INSTANCING_ON // needs shader target 4.5
 
             #pragma vertex ShadowPassVertex
             #pragma fragment ShadowPassFragment
@@ -440,7 +459,7 @@ Shader "Lux URP/Transmission"
 
             ZWrite On
             ColorMask 0
-            Cull Off
+            Cull[_Cull]
 
             HLSLPROGRAM
             // Required to compile gles 2.0 with standard srp library
@@ -453,11 +472,12 @@ Shader "Lux URP/Transmission"
 
             // -------------------------------------
             // Material Keywords
-            #pragma shader_feature _ALPHATEST_ON
+            #pragma shader_feature_local_fragment _ALPHATEST_ON
 
             //--------------------------------------
             // GPU Instancing
             #pragma multi_compile_instancing
+            // #pragma multi_compile _ DOTS_INSTANCING_ON // needs shader target 4.5
             
             #define DEPTHONLYPASS
             #include "Includes/Lux URP Transmission Inputs.hlsl"
@@ -493,6 +513,41 @@ Shader "Lux URP/Transmission"
             ENDHLSL
         }
 
+    //  Depth Normal ---------------------------------------------
+        // This pass is used when drawing to a _CameraNormalsTexture texture
+        Pass
+        {
+            Name "DepthNormals"
+            Tags{"LightMode" = "DepthNormals"}
+
+            ZWrite On
+            Cull[_Cull]
+
+            HLSLPROGRAM
+            // Required to compile gles 2.0 with standard srp library
+            #pragma prefer_hlslcc gles
+            #pragma exclude_renderers d3d11_9x
+            #pragma target 2.0
+
+            #pragma vertex DepthNormalsVertex
+            #pragma fragment DepthNormalsFragment
+
+            // -------------------------------------
+            // Material Keywords
+            #pragma shader_feature_local _NORMALMAP
+            #pragma shader_feature_local _ALPHATEST_ON
+            #pragma shader_feature_local_fragment _SMOOTHNESS_TEXTURE_ALBEDO_CHANNEL_A
+
+            //--------------------------------------
+            // GPU Instancing
+            #pragma multi_compile_instancing
+            // #pragma multi_compile _ DOTS_INSTANCING_ON // needs shader target 4.5
+            // #include "Packages/com.unity.render-pipelines.universal/Shaders/LitInput.hlsl"
+            #include "Includes/Lux URP Transmission Inputs.hlsl"
+            #include "Packages/com.unity.render-pipelines.universal/Shaders/DepthNormalsPass.hlsl"
+            ENDHLSL
+        }
+
     //  Meta -----------------------------------------------------
         
         Pass
@@ -509,6 +564,7 @@ Shader "Lux URP/Transmission"
             #pragma fragment UniversalFragmentMeta
 
             #define _SPECULAR_SETUP 1
+            #pragma shader_feature_local_fragment _ALPHATEST_ON
 
         //  First include all our custom stuff
             #include "Includes/Lux URP Transmission Inputs.hlsl"
@@ -527,6 +583,9 @@ Shader "Lux URP/Transmission"
                 outSurfaceData.normalTS = half3(0,0,1);
                 outSurfaceData.occlusion = 1;
                 outSurfaceData.emission = 0;
+
+                outSurfaceData.clearCoatMask = 0;
+                outSurfaceData.clearCoatSmoothness = 0;
             }
 
         //  Finally include the meta pass related stuff  

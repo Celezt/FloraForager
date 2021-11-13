@@ -43,9 +43,11 @@
             #pragma multi_compile _ _MAIN_LIGHT_SHADOWS
             #pragma multi_compile _ _MAIN_LIGHT_SHADOWS_CASCADE
             #pragma multi_compile _ _ADDITIONAL_LIGHTS_VERTEX _ADDITIONAL_LIGHTS
-            #pragma multi_compile _ _ADDITIONAL_LIGHT_SHADOWS
-            #pragma multi_compile _ _SHADOWS_SOFT
-            #pragma multi_compile _ _MIXED_LIGHTING_SUBTRACTIVE
+            #pragma multi_compile_fragment _ _ADDITIONAL_LIGHT_SHADOWS
+            #pragma multi_compile_fragment _ _SHADOWS_SOFT
+            #pragma multi_compile _ LIGHTMAP_SHADOW_MIXING
+            #pragma multi_compile _ SHADOWS_SHADOWMASK
+            #pragma multi_compile_fragment _ _SCREEN_SPACE_OCCLUSION
 
             // -------------------------------------
             // Unity defined keywords
@@ -63,8 +65,8 @@
             #pragma shader_feature_local _TERRAIN_INSTANCED_PERPIXEL_NORMAL
             #define TERRAIN_SPLAT_BASEPASS 1
 
-#include "Includes/TerrainLitInput.hlsl"
-#include "Includes/TerrainLitPasses.hlsl"
+            #include "Includes/TerrainLitInput.hlsl"
+            #include "Includes/TerrainLitPasses.hlsl"
             ENDHLSL
         }
 
@@ -74,6 +76,7 @@
             Tags{"LightMode" = "ShadowCaster"}
 
             ZWrite On
+            ColorMask 0
 
             HLSLPROGRAM
             // Required to compile gles 2.0 with standard srp library
@@ -87,8 +90,8 @@
             #pragma vertex ShadowPassVertex
             #pragma fragment ShadowPassFragment
 
-#include "Includes/TerrainLitInput.hlsl"
-#include "Includes/TerrainLitPasses.hlsl"
+            #include "Includes/TerrainLitInput.hlsl"
+            #include "Includes/TerrainLitPasses.hlsl"
             ENDHLSL
         }
 
@@ -112,8 +115,30 @@
             #pragma multi_compile_instancing
             #pragma instancing_options assumeuniformscaling nomatrices nolightprobe nolightmap
 
-#include "Includes/TerrainLitInput.hlsl"
-#include "Includes/TerrainLitPasses.hlsl"
+            #include "Includes/TerrainLitInput.hlsl"
+            #include "Includes/TerrainLitPasses.hlsl"
+            ENDHLSL
+        }
+
+        Pass
+        {
+            Name "DepthNormals"
+            Tags{"LightMode" = "DepthNormals"}
+
+            ZWrite On
+
+            HLSLPROGRAM
+            #pragma target 2.0
+
+            #pragma vertex DepthNormalOnlyVertex
+            #pragma fragment DepthNormalOnlyFragment
+
+            #pragma multi_compile_instancing
+            #pragma instancing_options assumeuniformscaling nomatrices nolightprobe nolightmap
+            #pragma shader_feature_local _NORMALMAP
+
+            #include "Includes/TerrainLitInput.hlsl"
+            #include "Includes/TerrainLitPasses.hlsl"
             ENDHLSL
         }
 
@@ -143,7 +168,7 @@
         }
 
         UsePass "Hidden/Nature/Terrain/Utilities/PICKING"
-        UsePass "Hidden/Nature/Terrain/Utilities/SELECTION"
+        UsePass "Universal Render Pipeline/Terrain/Lit/SceneSelectionPass"
     }
     FallBack "Hidden/InternalErrorShader"
     //CustomEditor "LitShaderGUI"

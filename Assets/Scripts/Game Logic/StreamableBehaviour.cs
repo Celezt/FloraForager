@@ -19,7 +19,7 @@ public class StreamableBehaviour : MonoBehaviour, IStreamer, IStreamable<Streama
     [SerializeField, ShowIf("_saveIfDestroyed")]
     private bool _respawnableObject = false;
     [SerializeField, Min(1), ShowIf("@this._respawnableObject && this._saveIfDestroyed")]
-    private int _respawnTimeInDays = 1;
+    private int _respawnTimeInDays = 2;
 
     private Data _data;
     private Guid _guid;
