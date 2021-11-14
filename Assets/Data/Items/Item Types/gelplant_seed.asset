@@ -10,13 +10,13 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 00a108d415261c34b9fe06714b46e722, type: 3}
-  m_Name: debug_log
+  m_Name: gelplant_seed
   m_EditorClassIdentifier: 
   serializationData:
     SerializedFormat: 2
     SerializedBytes: 
     ReferencedUnityObjects:
-    - {fileID: 4900000, guid: 9239af2d7f92bde4c8b05f5abc8f20b7, type: 3}
+    - {fileID: 11400000, guid: b2d0432cb42eb9f4387fa1eb4d30edfa, type: 2}
     SerializedBytesString: 
     Prefab: {fileID: 0}
     PrefabModificationsReferencedUnityObjects: []
@@ -24,28 +24,28 @@ MonoBehaviour:
     SerializationNodes:
     - Name: Behaviour
       Entry: 7
-      Data: 0|LogItem, Assembly-CSharp
-    - Name: ItemStack
+      Data: 0|SeedItem, Assembly-CSharp
+    - Name: IItem.ItemStack
       Entry: 3
-      Data: 1
-    - Name: Cooldown
+      Data: 32
+    - Name: IUse.Cooldown
       Entry: 4
-      Data: 0.5
-    - Name: _LogText
+      Data: 0.05
+    - Name: _Flora
       Entry: 10
       Data: 0
-    - Name: _UseCustomAliases
-      Entry: 5
-      Data: false
-    - Name: _Aliases
-      Entry: 6
-      Data: 
+    - Name: _Radius
+      Entry: 4
+      Data: 2.75
+    - Name: _Arc
+      Entry: 4
+      Data: 360
     - Name: 
       Entry: 8
       Data: 
   Icon: {fileID: 0}
-  Name: Log
-  ID: debug_log
-  Description: used for testing
+  Name: Gelplant Seed
+  ID: gelplant_seed
+  Description: 
   Labels:
-  - Log
+  - Seed

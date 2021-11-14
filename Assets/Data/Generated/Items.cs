@@ -15,8 +15,12 @@ public enum Items
 	Birow = 1 << 8,
 	WoodenChest = 1 << 9,
 	Rock = 1 << 10,
-	Log = 1 << 11,
-	FishBait = 1 << 12,
-	WateringCan = 1 << 13,
-	All =  Scythe | Porock | Floatish | SimpleRod | Spookish | Axe | Pickaxe | Birow | WoodenChest | Rock | Log | FishBait | WateringCan 
+	WateringCan = 1 << 11,
+	GelplantSeed = 1 << 12,
+	Gelplant = 1 << 13,
+	GelplantBait = 1 << 14,
+	PorockSeed = 1 << 15,
+	BirowResource = 1 << 16,
+	RockResource = 1 << 17,
+	All =  Scythe | Porock | Floatish | SimpleRod | Spookish | Axe | Pickaxe | Birow | WoodenChest | Rock | WateringCan | GelplantSeed | Gelplant | GelplantBait | PorockSeed | BirowResource | RockResource 
 }

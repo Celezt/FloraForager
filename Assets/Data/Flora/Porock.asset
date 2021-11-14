@@ -10,26 +10,28 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: e13bdbfc4f9cfa641af6b820a6e35066, type: 3}
-  m_Name: flora_01
+  m_Name: Porock
   m_EditorClassIdentifier: 
   serializationData:
     SerializedFormat: 2
     SerializedBytes: 
-    ReferencedUnityObjects: []
+    ReferencedUnityObjects:
+    - {fileID: 4799064409479062077, guid: cc8541a068e3bf14bb1c99c0a5ac77cb, type: 3}
+    - {fileID: 7216889357112173167, guid: 5bbdaa00335016e4ab38d9fbb501593f, type: 3}
     SerializedBytesString: 
     Prefab: {fileID: 0}
     PrefabModificationsReferencedUnityObjects: []
     PrefabModifications: []
     SerializationNodes:
     - Name: _Name
-      Entry: 6
-      Data: 
+      Entry: 1
+      Data: Porock
     - Name: _Description
       Entry: 6
       Data: 
     - Name: _ItemLabels
       Entry: 3
-      Data: 0
+      Data: 16384
     - Name: _HarvestMethod
       Entry: 7
       Data: 0|HarvestScythe, Assembly-CSharp
@@ -44,16 +46,16 @@ MonoBehaviour:
       Data: DropType, Assembly-CSharp
     - Name: Item
       Entry: 3
-      Data: 0
+      Data: 65540
     - Name: DropRate
       Entry: 7
       Data: MyBox.MinMaxInt, MyBox
     - Name: Min
       Entry: 3
-      Data: 0
+      Data: 1
     - Name: Max
       Entry: 3
-      Data: 0
+      Data: 2
     - Name: 
       Entry: 8
       Data: 
@@ -71,13 +73,19 @@ MonoBehaviour:
       Data: 
     - Name: _GrowTime
       Entry: 3
-      Data: 0
+      Data: 1
     - Name: _Stages
       Entry: 7
       Data: 2|UnityEngine.GameObject[], UnityEngine.CoreModule
     - Name: 
       Entry: 12
+      Data: 2
+    - Name: 
+      Entry: 10
       Data: 0
+    - Name: 
+      Entry: 10
+      Data: 1
     - Name: 
       Entry: 13
       Data: 
