@@ -15,6 +15,7 @@ GameObject:
   - component: {fileID: 7601324173234069211}
   - component: {fileID: 6792902814104324864}
   - component: {fileID: 1313883262387028256}
+  - component: {fileID: 7584917055048398189}
   m_Layer: 0
   m_Name: Birow
   m_TagString: Untagged
@@ -120,6 +121,26 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: da25408ba2df7e846ae77b9f8f14da4a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!205 &7584917055048398189
+LODGroup:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2032678476091294719}
+  serializedVersion: 2
+  m_LocalReferencePoint: {x: -0.4909129, y: 2.4848835, z: 0.15898895}
+  m_Size: 4.9725986
+  m_FadeMode: 0
+  m_AnimateCrossFading: 0
+  m_LastLODIsBillboard: 0
+  m_LODs:
+  - screenRelativeHeight: 0.045275014
+    fadeTransitionWidth: 1
+    renderers:
+    - renderer: {fileID: 8227220376530607375}
+    - renderer: {fileID: 7066445049980075832}
+  m_Enabled: 1
 --- !u!1001 &8489456772120290236
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -196,5 +217,15 @@ PrefabInstance:
 --- !u!4 &8239936444211053655 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: -8679921383154817045, guid: 0e6f2af97eda7c44cb85fa9ab4133152, type: 3}
+  m_PrefabInstance: {fileID: 8489456772120290236}
+  m_PrefabAsset: {fileID: 0}
+--- !u!23 &7066445049980075832 stripped
+MeshRenderer:
+  m_CorrespondingSourceObject: {fileID: -7511558181221131132, guid: 0e6f2af97eda7c44cb85fa9ab4133152, type: 3}
+  m_PrefabInstance: {fileID: 8489456772120290236}
+  m_PrefabAsset: {fileID: 0}
+--- !u!23 &8227220376530607375 stripped
+MeshRenderer:
+  m_CorrespondingSourceObject: {fileID: -8647915537131241805, guid: 0e6f2af97eda7c44cb85fa9ab4133152, type: 3}
   m_PrefabInstance: {fileID: 8489456772120290236}
   m_PrefabAsset: {fileID: 0}
