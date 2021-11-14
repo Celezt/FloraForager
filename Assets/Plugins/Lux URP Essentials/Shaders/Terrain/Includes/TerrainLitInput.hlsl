@@ -5,29 +5,25 @@
 #include "Packages/com.unity.render-pipelines.core/ShaderLibrary/CommonMaterial.hlsl"
 #include "Packages/com.unity.render-pipelines.universal/ShaderLibrary/SurfaceInput.hlsl"
 
-            #include "Packages/com.unity.render-pipelines.core/ShaderLibrary/UnityInstancing.hlsl"
+#include "Packages/com.unity.render-pipelines.core/ShaderLibrary/UnityInstancing.hlsl"
 
 CBUFFER_START(_Terrain)
-half _NormalScale0, _NormalScale1, _NormalScale2, _NormalScale3;
-half _Metallic0, _Metallic1, _Metallic2, _Metallic3;
-half _Smoothness0, _Smoothness1, _Smoothness2, _Smoothness3;
-half4 _DiffuseRemapScale0, _DiffuseRemapScale1, _DiffuseRemapScale2, _DiffuseRemapScale3;
-half4 _MaskMapRemapOffset0, _MaskMapRemapOffset1, _MaskMapRemapOffset2, _MaskMapRemapOffset3;
-half4 _MaskMapRemapScale0, _MaskMapRemapScale1, _MaskMapRemapScale2, _MaskMapRemapScale3;
-
-float4 _Control_ST;
-float4 _Control_TexelSize;
-half _DiffuseHasAlpha0, _DiffuseHasAlpha1, _DiffuseHasAlpha2, _DiffuseHasAlpha3;
-half _LayerHasMask0, _LayerHasMask1, _LayerHasMask2, _LayerHasMask3;
-half4 _Splat0_ST, _Splat1_ST, _Splat2_ST, _Splat3_ST;
-half _HeightTransition;
-
-half _Parallax;
-
-half _ProceduralBlend;
-half _ProceduralScale;
-float _ProceduralTiling;
-
+    half _NormalScale0, _NormalScale1, _NormalScale2, _NormalScale3;
+    half _Metallic0, _Metallic1, _Metallic2, _Metallic3;
+    half _Smoothness0, _Smoothness1, _Smoothness2, _Smoothness3;
+    half4 _DiffuseRemapScale0, _DiffuseRemapScale1, _DiffuseRemapScale2, _DiffuseRemapScale3;
+    half4 _MaskMapRemapOffset0, _MaskMapRemapOffset1, _MaskMapRemapOffset2, _MaskMapRemapOffset3;
+    half4 _MaskMapRemapScale0, _MaskMapRemapScale1, _MaskMapRemapScale2, _MaskMapRemapScale3;
+    float4 _Control_ST;
+    float4 _Control_TexelSize;
+    half _DiffuseHasAlpha0, _DiffuseHasAlpha1, _DiffuseHasAlpha2, _DiffuseHasAlpha3;
+    half _LayerHasMask0, _LayerHasMask1, _LayerHasMask2, _LayerHasMask3;
+    half4 _Splat0_ST, _Splat1_ST, _Splat2_ST, _Splat3_ST;
+    half _HeightTransition;
+    half _Parallax;
+    half _ProceduralBlend;
+    half _ProceduralScale;
+    float _ProceduralTiling;
 CBUFFER_END
 
 TEXTURE2D(_Control);    SAMPLER(sampler_Control);
@@ -90,6 +86,9 @@ inline void InitializeStandardLitSurfaceData(float2 uv, out SurfaceData outSurfa
     outSurfaceData.normalTS = SampleNormal(uv, TEXTURE2D_ARGS(_BumpMap, sampler_BumpMap));
     outSurfaceData.occlusion = 1;
     outSurfaceData.emission = 0;
+
+    outSurfaceData.clearCoatMask = 0;
+    outSurfaceData.clearCoatSmoothness = 0;
 }
 
 #endif

@@ -58,6 +58,7 @@ public class UseBehaviour : MonoBehaviour
     /// </summary>
     public void CallUsable(UseContext useContext, IUsable usable)
     {
+        bool poorHit = true;
         foreach (string label in useContext.labels)
         {
             if (Enum.TryParse(label, true, out ItemLabels itemLabel) && usable.Filter().HasFlag(itemLabel))
@@ -75,10 +76,15 @@ public class UseBehaviour : MonoBehaviour
                     useContext.performed
                 );
 
+                poorHit = false;
+
                 usable.OnUse(usedContext);
                 break;
             }
         }
+
+        if (poorHit)
+            SoundPlayer.Instance.Play("hit_poor");
     }
 
     private void Start()

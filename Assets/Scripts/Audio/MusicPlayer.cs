@@ -5,6 +5,7 @@ using UnityEngine.InputSystem;
 using UnityEngine.Audio;
 using UnityEngine.AddressableAssets;
 using UnityEngine.ResourceManagement.AsyncOperations;
+using Sirenix.OdinInspector;
 using MyBox;
 
 public class MusicPlayer : Singleton<MusicPlayer>
@@ -19,8 +20,10 @@ public class MusicPlayer : Singleton<MusicPlayer>
     private bool _Shuffle;
 
     [Space(5)]
-    [SerializeField]
+    [SerializeField, ListDrawerSettings(DraggableItems = false, ShowItemCount = false, Expanded = true)]
     private Music[] _Soundtrack;
+
+    public event System.Action Completed = delegate { };
 
     private bool _IsActive;
     private int _CurrentTrack;
@@ -41,7 +44,10 @@ public class MusicPlayer : Singleton<MusicPlayer>
             else
             {
                 if (_CoroutinePlay != null)
+                {
                     StopCoroutine(_CoroutinePlay);
+                    _CoroutinePlay = null;
+                }
             }
         }
     }
@@ -90,8 +96,8 @@ public class MusicPlayer : Singleton<MusicPlayer>
 
             yield return new WaitUntil(() => !_AudioSource.isPlaying && !_IsPaused); // wait until music has stopped playing
 
-            _AudioSource.clip = null; // set to null and release asset to free up memory
             Addressables.Release(asyncLoad);
+            _AudioSource.clip = null; // set to null and release asset to free up memory
 
             if (!_Loop && !_Shuffle && _CurrentTrack == _Soundtrack.Length - 1)
             {
@@ -102,21 +108,19 @@ public class MusicPlayer : Singleton<MusicPlayer>
             }
 
             _CurrentTrack = _Shuffle ? Random.Range(0, _Soundtrack.Length) : (_CurrentTrack + 1) % _Soundtrack.Length;
+
+            Completed.Invoke();
         }
     }
 
-    public void SetTrack(int track, bool shuffle = false, bool loop = false)
+    public void SetTrack(int track, float fadeTime = 0.0f, bool shuffle = false, bool loop = true)
     {
-        _CurrentTrack = track;
-        _Shuffle = shuffle;
-        _Loop = loop;
+        if (_CurrentTrack == track)
+            return;
 
-        _AudioSource.Stop();
-        _CoroutinePlay = null;
-
-        IsActive = true;
+        StartCoroutine(FadeOutMusic(track, fadeTime, shuffle, loop));
     }
-    public void SetTrack(string trackName, bool shuffle = false, bool loop = false)
+    public void SetTrack(string trackName, float fadeTime = 0.0f, bool shuffle = false, bool loop = true)
     {
         // don't need dictionary since the array will usually be small
         //
@@ -124,10 +128,32 @@ public class MusicPlayer : Singleton<MusicPlayer>
         {
             if (_Soundtrack[i].Name == trackName)
             {
-                SetTrack(i, shuffle, loop);
+                SetTrack(i, fadeTime, shuffle, loop);
                 break;
             }
         }
+    }
+
+    private IEnumerator FadeOutMusic(int track, float fadeTime, bool shuffle, bool loop)
+    {
+        float currentVolume = _AudioSource.volume;
+        for (float i = fadeTime; i >= 0; i -= Time.deltaTime)
+        {
+            _AudioSource.volume = currentVolume * (i / fadeTime);
+            yield return null;
+        }
+
+        void CompleteAction()
+        {
+            _CurrentTrack = track;
+            _Shuffle = shuffle;
+            _Loop = loop;
+
+            Completed -= CompleteAction;
+        };
+
+        Completed += CompleteAction;
+        _AudioSource.Stop();
     }
 
     [System.Serializable]

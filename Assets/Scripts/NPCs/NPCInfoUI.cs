@@ -75,7 +75,7 @@ public class NPCInfoUI : MonoBehaviour
     private void UpdatePosition()
     {
         transform.position = CanvasUtility.WorldToCanvasPosition(_Canvas, _CanvasRect, Camera.main,
-            _NPCObject.transform.position + Vector3.up * (_NPCBounds.size.y + _HeightOffset));
+            _NPCObject.transform.position + Vector3.up * (_NPCBounds.extents.y + _HeightOffset));
     }
 
     private void UpdateWindow()

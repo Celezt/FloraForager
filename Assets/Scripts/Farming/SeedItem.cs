@@ -51,8 +51,11 @@ public class SeedItem : IUse
 
         if (MathUtility.PointInArc(hitInfo.point, context.transform.position, context.transform.localEulerAngles.y, _Arc, _Radius))
         {
-            FloraMaster.Instance.Add(_Flora);
-            context.Consume();
+            if (FloraMaster.Instance.Add(_Flora))
+            {
+                SoundPlayer.Instance.Play("place");
+                context.Consume();
+            }
         }
 
         yield break;

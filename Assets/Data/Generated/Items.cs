@@ -18,6 +18,5 @@ public enum Items
 	Log = 1 << 11,
 	FishBait = 1 << 12,
 	WateringCan = 1 << 13,
-	Hoe = 1 << 14,
-	All =  Scythe | Porock | Floatish | SimpleRod | Spookish | Axe | Pickaxe | Birow | WoodenChest | Rock | Log | FishBait | WateringCan | Hoe 
+	All =  Scythe | Porock | Floatish | SimpleRod | Spookish | Axe | Pickaxe | Birow | WoodenChest | Rock | Log | FishBait | WateringCan 
 }

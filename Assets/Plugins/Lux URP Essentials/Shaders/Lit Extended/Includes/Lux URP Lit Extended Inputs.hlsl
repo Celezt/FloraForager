@@ -9,6 +9,7 @@
 // Extended CBUFFER
 
 CBUFFER_START(UnityPerMaterial)
+    
     float4 _BaseMap_ST;
     half4 _BaseColor;
     half4 _SpecColor;
@@ -25,18 +26,19 @@ CBUFFER_START(UnityPerMaterial)
     half _RimFrequency;
     half _RimPerPositionFrequency;
 
-//  UBER
-    half _Parallax;
-    half _ScreenSpaceVariance;
-    half _SAAThreshold;
-    half _GItoAO;
-    half _GItoAOBias;
-    half _HorizonOcclusion;
-    float _CameraFadeDist;
-    float _CameraShadowFadeDist;
-    float4 _DetailAlbedoMap_ST;
-    half _DetailAlbedoMapScale;
-    half _DetailNormalMapScale;
+    #if defined(_UBER)
+        half _Parallax;
+        half _ScreenSpaceVariance;
+        half _SAAThreshold;
+        half _GItoAO;
+        half _GItoAOBias;
+        half _HorizonOcclusion;
+        float _CameraFadeDist;
+        float _CameraShadowFadeDist;
+        float4 _DetailAlbedoMap_ST;
+        half _DetailAlbedoMapScale;
+        half _DetailNormalMapScale;
+    #endif
 
     float _Surface;
 
@@ -80,10 +82,10 @@ TEXTURE2D(_BentNormalMap);      SAMPLER(sampler_BentNormalMap);
     {
         float4 positionCS                   : SV_POSITION;
         float2 uv                           : TEXCOORD0;
-
+        float3 normalWS                 : TEXCOORD1;
         #if defined(_ALPHATEST_ON)
         //  We have to use the same inputs...
-            float3 normalWS                 : TEXCOORD1;
+            
             float4 tangentWS                : TEXCOORD2;
             float screenPos                 : TEXCOORD3; // was float4
 
@@ -199,6 +201,9 @@ inline void InitializeStandardLitSurfaceData(float2 uv, out SurfaceData outSurfa
     outSurfaceData.normalTS = SampleNormal(uv, TEXTURE2D_ARGS(_BumpMap, sampler_BumpMap), _BumpScale);
     outSurfaceData.occlusion = SampleOcclusion(uv);
     outSurfaceData.emission = SampleEmission(uv, _EmissionColor.rgb, TEXTURE2D_ARGS(_EmissionMap, sampler_EmissionMap));
+
+    outSurfaceData.clearCoatMask = 0;
+    outSurfaceData.clearCoatSmoothness = 0;
 }
 
 #if defined(_UBER)
@@ -266,6 +271,9 @@ inline void InitializeStandardLitSurfaceData(float2 uv, out SurfaceData outSurfa
             detailNormalTS = normalize(detailNormalTS);
             outSurfaceData.normalTS = lerp(outSurfaceData.normalTS, BlendNormalRNM(outSurfaceData.normalTS, detailNormalTS), detailMask);
         #endif
+
+        outSurfaceData.clearCoatMask = 0;
+        outSurfaceData.clearCoatSmoothness = 0;
     }
 #endif
 

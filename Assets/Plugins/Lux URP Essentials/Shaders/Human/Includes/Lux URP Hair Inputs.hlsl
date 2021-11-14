@@ -37,14 +37,19 @@
         half _SecondarySpecularExponent;
         half _RimTransmissionIntensity;
         half _AmbientReflection;
-        half _OcclusionStrength;
-        float2 _DistanceFade;
+        //half _OcclusionStrength;
+        //float2 _DistanceFade;
 
-        half4 _RimColor;
-        half _RimPower;
-        half _RimMinPower;
-        half _RimFrequency;
-        half _RimPerPositionFrequency;
+        #if defined(_RIMLIGHTING)
+            half4 _RimColor;
+            half _RimPower;
+            half _RimMinPower;
+            half _RimFrequency;
+            half _RimPerPositionFrequency;
+        #endif
+
+    //  Needed by URP 10.1. depthnormal
+        half _Surface;
 
     CBUFFER_END
 
