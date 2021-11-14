@@ -22,7 +22,7 @@ Material:
   m_PrefabAsset: {fileID: 0}
   m_Name: mtl_BFForestTerrain
   m_Shader: {fileID: 4800000, guid: 374b0d9785a06b24bbbe612b37995204, type: 3}
-  m_ShaderKeywords: USE_BP _RTEFFECT_ON
+  m_ShaderKeywords: USE_BP USE_SC _RTEFFECT_ON
   m_LightmapFlags: 4
   m_EnableInstancingVariants: 0
   m_DoubleSidedGI: 0
@@ -183,7 +183,7 @@ Material:
     m_Floats:
     - _AlphaClip: 0
     - _BiPlanarSize: 1
-    - _BiPlanarStrength: 0.5
+    - _BiPlanarStrength: 0.7
     - _Blend: 0
     - _BumpScale: 1
     - _ClearCoatMask: 0
@@ -194,8 +194,8 @@ Material:
     - _DetailNormalMapScale: 1
     - _DstBlend: 0
     - _EnvironmentReflections: 1
-    - _FadeDistanceEnd: 200
-    - _FadeDistanceStart: 100
+    - _FadeDistanceEnd: 60
+    - _FadeDistanceStart: 30
     - _GlossMapScale: 0
     - _Glossiness: 0
     - _GlossyReflections: 0
@@ -237,7 +237,7 @@ Material:
     - _UseBetterModelPrecision: 0
     - _UseBiplanar: 1
     - _UseRT: 0
-    - _UseShadowCast: 0
+    - _UseShadowCast: 1
     - _UseVR: 0
     - _WindForce: 0.2
     - _WindMovement: 0.2
