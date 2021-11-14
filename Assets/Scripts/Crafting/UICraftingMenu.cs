@@ -65,6 +65,8 @@ public class UICraftingMenu : Singleton<UICraftingMenu>
         }
 
         inventory.Insert(_SelectedItem.Item);
+
+        SoundPlayer.Instance.Play("craft");
     }
 
     public void ShowCraftableItems(Workbench workbench)

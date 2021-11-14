@@ -9,7 +9,7 @@ Material:
   m_PrefabAsset: {fileID: 0}
   m_Name: URPBFGrassTerrain01
   m_Shader: {fileID: 4800000, guid: 374b0d9785a06b24bbbe612b37995204, type: 3}
-  m_ShaderKeywords: USE_RT USE_SC _RTEFFECT_ON
+  m_ShaderKeywords: USE_BP _RTEFFECT_ON
   m_LightmapFlags: 4
   m_EnableInstancingVariants: 0
   m_DoubleSidedGI: 0
@@ -28,7 +28,7 @@ Material:
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _Control0:
-        m_Texture: {fileID: -3823662097116110742, guid: e35e982e73e6a824f93353bfc3d9d977, type: 2}
+        m_Texture: {fileID: 2978519277605145448, guid: e35e982e73e6a824f93353bfc3d9d977, type: 2}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _Control1:
@@ -104,7 +104,7 @@ Material:
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _Normal5:
-        m_Texture: {fileID: 0}
+        m_Texture: {fileID: 2800000, guid: 4e1d764fa7e47f34eae88e37253c2542, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _Normal6:
@@ -112,7 +112,7 @@ Material:
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _Normal7:
-        m_Texture: {fileID: 0}
+        m_Texture: {fileID: 2800000, guid: 1482d54afad59364a80befba3b1ab680, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _OcclusionMap:
@@ -148,15 +148,15 @@ Material:
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _Splat5:
-        m_Texture: {fileID: 0}
+        m_Texture: {fileID: 2800000, guid: 35832e4bcb865be44867dbdb64c65aca, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _Splat6:
-        m_Texture: {fileID: 0}
+        m_Texture: {fileID: 2800000, guid: 3bdb253988c80934a896d3e88de65024, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _Splat7:
-        m_Texture: {fileID: 0}
+        m_Texture: {fileID: 2800000, guid: 5ddef0977dde72343992a79d27da33fe, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _SplatMap:
@@ -198,6 +198,7 @@ Material:
     - _GrassShading: 0.044
     - _GrassThinness: 0.85
     - _GrassThinnessIntersection: 0.3
+    - _LightIntensity: 1
     - _Metallic: 0
     - _Metallic0: 0
     - _Metallic1: 0
@@ -205,12 +206,12 @@ Material:
     - _Metallic3: 0
     - _Metallic4: 0
     - _Metallic5: 0
-    - _Metallic6: 0
+    - _Metallic6: 1
     - _Metallic7: 0
     - _MinimumNumberStacks: 2
     - _Mode: 0
     - _NoisePower: 4
-    - _NumberOfStacks: 17
+    - _NumberOfStacks: 15
     - _OcclusionStrength: 1
     - _OffsetValue: 8
     - _Parallax: 0.02
@@ -235,9 +236,9 @@ Material:
     - _UVSec: 0
     - _UseAmbientLight: 0
     - _UseBetterModelPrecision: 0
-    - _UseBiplanar: 0
-    - _UseRT: 1
-    - _UseShadowCast: 1
+    - _UseBiplanar: 1
+    - _UseRT: 0
+    - _UseShadowCast: 0
     - _UseVR: 0
     - _WindForce: 0.3
     - _WindMovement: 0.2
@@ -256,12 +257,12 @@ Material:
     - _Specular1: {r: 1, g: 1, b: 1, a: 1}
     - _Specular2: {r: 1, g: 1, b: 1, a: 1}
     - _Specular3: {r: 1, g: 1, b: 1, a: 1}
-    - _Specular4: {r: 0.8536898, g: 0.9622642, b: 0.8306337, a: 1}
-    - _Specular5: {r: 1, g: 1, b: 1, a: 1}
-    - _Specular6: {r: 1, g: 1, b: 1, a: 1}
-    - _Specular7: {r: 1, g: 1, b: 1, a: 1}
-    - _Splat4_STn: {r: 1, g: 1, b: 3, a: 4.98}
-    - _Splat5_STn: {r: 1, g: 1, b: 0, a: 1}
-    - _Splat6_STn: {r: 1, g: 1, b: 0, a: 1}
-    - _Splat7_STn: {r: 1, g: 1, b: 0, a: 1}
+    - _Specular4: {r: 0.9150943, g: 0.8906189, b: 0.58272517, a: 1}
+    - _Specular5: {r: 0.879, g: 0.879, b: 0.879, a: 1}
+    - _Specular6: {r: 1, g: 1, b: 1, a: 0}
+    - _Specular7: {r: 0.8301887, g: 0.8301887, b: 0.8301887, a: 1}
+    - _Splat4_STn: {r: 1, g: 1, b: 0.63, a: 1.09}
+    - _Splat5_STn: {r: 1, g: 1, b: 3.81, a: 1.06}
+    - _Splat6_STn: {r: 0, g: 0, b: 2, a: 2}
+    - _Splat7_STn: {r: 1, g: 1, b: 1.5, a: 1}
   m_BuildTextureStacks: []

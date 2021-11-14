@@ -22,6 +22,10 @@ public class ChopItem : IUse, IDestructor, IStar, IValue
 
     [Title("Tool Behaviour")]
     [SerializeField]
+    private string _hitSound;
+    [SerializeField]
+    private string _poorSound = "hit_poor";
+    [SerializeField]
     private AnimationClip _clip;
     [SerializeField, AssetsOnly]
     private GameObject _model;
@@ -95,6 +99,11 @@ public class ChopItem : IUse, IDestructor, IStar, IValue
         Collider collider = new KdTree<Collider>(usableColliders).FindClosest(context.transform.position);
 
         if (collider != null)
-            context.CallUsable(collider.GetComponent<IUsable>());
+        {
+            if (context.CallUsable(collider.GetComponent<IUsable>()))
+                SoundPlayer.Instance.Play(_hitSound);
+            else
+                SoundPlayer.Instance.Play(_poorSound);
+        }
     }
 }

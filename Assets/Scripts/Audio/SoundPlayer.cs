@@ -90,6 +90,9 @@ public class SoundPlayer : Singleton<SoundPlayer>
 
     private IEnumerator PlaySound(string name)
     {
+        if (string.IsNullOrWhiteSpace(name))
+            yield break;
+
         if (!TryGetSound(name, out Sound sound))
             yield break;
 

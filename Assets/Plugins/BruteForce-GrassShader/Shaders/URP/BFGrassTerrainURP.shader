@@ -115,6 +115,7 @@ Shader "BruteForceURP/InteractiveGrassTerrainURP"
 			
 		[Header(Lighting Parameters)]
 		[Space]
+		_LightIntensity("Additional Lights Intensity", Range(0.00, 2)) = 1
 		[Toggle(USE_AL)] _UseAmbientLight("Use Ambient Light", Float) = 0
 
 	}
@@ -242,6 +243,7 @@ Shader "BruteForceURP/InteractiveGrassTerrainURP"
 			Texture2D _Normal5;
 			Texture2D _Normal6;
 			Texture2D _Normal7;
+			half _LightIntensity;
 
 			v2g vert(appdata v)
 			{
@@ -447,6 +449,7 @@ Shader "BruteForceURP/InteractiveGrassTerrainURP"
 
 				Light mainLight = GetMainLight(shadowCoord);
 				half3 lm = 1;
+				int additionalLightsCount = GetAdditionalLightsCount();
 
 				if (NoGrass.r == 0)
 				{
@@ -465,6 +468,14 @@ Shader "BruteForceURP/InteractiveGrassTerrainURP"
 					}
 #endif			
 					colGround.xyz = MixFog(colGround.xyz, i.fogCoord);
+
+
+					// Additional light pass in URP, thank you Unity for this //
+					for (int ii = 0; ii < additionalLightsCount; ++ii)
+					{
+						Light light = GetAdditionalLight(ii, i.worldPos);
+						colGround.xyz += colGround.xyz * (light.color * light.distanceAttenuation * _LightIntensity * 7);
+					}
 
 					return half4(colGround, 1);
 				}
@@ -550,11 +561,10 @@ Shader "BruteForceURP/InteractiveGrassTerrainURP"
 #endif	
 
 				// Additional light pass in URP, thank you Unity for this //
-				int additionalLightsCount = GetAdditionalLightsCount();
 				for (int ii = 0; ii < additionalLightsCount; ++ii)
 				{
 					Light light = GetAdditionalLight(ii, i.worldPos);
-					col.xyz += light.color * light.distanceAttenuation* light.distanceAttenuation;
+					col.xyz += col.xyz * (light.color * light.distanceAttenuation * _LightIntensity * 7);
 				}
 #ifdef USE_AL
 				col.rgb = saturate(col.rgb + (SampleSH(i.normal) - 0.33) * 0.33);

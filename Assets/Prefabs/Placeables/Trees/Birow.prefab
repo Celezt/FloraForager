@@ -71,15 +71,16 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0cfc55175b8d81b4db5de5ab11e96c68, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _breakSound: break_wood
   _filter: 32768
   _star: 1
   _drops:
   - Item: 4
     DropRate:
-      Min: 1
-      Max: 2
+      Min: 2
+      Max: 4
   _data:
-    Durability: 10
+    Durability: 20
 --- !u!114 &7601324173234069211
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -177,7 +178,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 919132149155446097, guid: 0e6f2af97eda7c44cb85fa9ab4133152, type: 3}
       propertyPath: m_Name
-      value: Birow
+      value: Trunk
+      objectReference: {fileID: 0}
+    - target: {fileID: 8277184881620097050, guid: 0e6f2af97eda7c44cb85fa9ab4133152, type: 3}
+      propertyPath: m_Name
+      value: Leaves
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 0e6f2af97eda7c44cb85fa9ab4133152, type: 3}
