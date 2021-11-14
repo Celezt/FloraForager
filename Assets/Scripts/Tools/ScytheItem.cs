@@ -22,6 +22,10 @@ public class ScytheItem : IUse, IDestructor, IStar, IValue
 
     [Title("Tool Behaviour")]
     [SerializeField]
+    private string _hitSound;
+    [SerializeField]
+    private string _poorSound = "hit_poor";
+    [SerializeField]
     private AnimationClip _clip;
     [SerializeField, AssetsOnly]
     private GameObject _model;
@@ -89,6 +93,11 @@ public class ScytheItem : IUse, IDestructor, IStar, IValue
 
         for (int i = 0; i < colliders.Length; i++)
             if (colliders[i].TryGetComponent(out IUsable usable))
-                context.CallUsable(usable);
+            {
+                if (context.CallUsable(usable))
+                    SoundPlayer.Instance.Play(_hitSound);
+                else
+                    SoundPlayer.Instance.Play(_poorSound);
+            }
     }
 }

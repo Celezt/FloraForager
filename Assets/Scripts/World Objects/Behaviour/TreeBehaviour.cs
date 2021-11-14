@@ -8,6 +8,7 @@ using MyBox;
 
 public class TreeBehaviour : MonoBehaviour, IStreamable<TreeBehaviour.Data>, IUsable
 {
+    [SerializeField] private string _breakSound = "break_wood";
     [SerializeField] private ItemLabels _filter = ItemLabels.Axe;
     [SerializeField] private Stars _star = Stars.One;
     [SerializeField] private List<DropType> _drops = new List<DropType>();
@@ -21,10 +22,11 @@ public class TreeBehaviour : MonoBehaviour, IStreamable<TreeBehaviour.Data>, IUs
         public float Durability = 10;
     }
 
-    public Data OnUpload() => _data = new Data();
+    public Data OnUpload() => _data;
     public void OnLoad(object state)
     {
         Data data = state as Data;
+
         _data = data;
     }
 
@@ -46,16 +48,14 @@ public class TreeBehaviour : MonoBehaviour, IStreamable<TreeBehaviour.Data>, IUs
 
         if (_data.Durability <= 0)
         {
-            SoundPlayer.Instance.Play("break_wood");
+            SoundPlayer.Instance.Play(_breakSound);
 
             context.Drop(transform.position, _drops);
             Destroy(gameObject);
         }
         else
         {
-            if (_data.Durability < previousDurability)
-                SoundPlayer.Instance.Play("hit_wood");
-            else
+            if (_data.Durability >= previousDurability)
                 SoundPlayer.Instance.Play("hit_poor");
         }
 

@@ -123,8 +123,8 @@ public readonly struct UseContext
     /// <summary>
     /// Call object with usable.
     /// </summary>
-    public void CallUsable(IUsable usable)
+    public bool CallUsable(IUsable usable)
     {
-        behaviour.CallUsable(this, usable);
+        return behaviour.CallUsable(this, usable);
     }
 }
