@@ -30,6 +30,8 @@ public class DialogueManager : MonoBehaviour
     /// </summary>
     public event Action<DialogueManager> Started = delegate { };
 
+    public string[] CurrentAliases => _currentAliases;
+
     [SerializeField] private TextMeshProUGUI _content;
     [SerializeField] private TextMeshProUGUI _namecard;
     [SerializeField] private GameObject _dialogueUI;
@@ -45,6 +47,7 @@ public class DialogueManager : MonoBehaviour
     private List<GameObject> _actions;
     private Dictionary<string, string> _aliases = new Dictionary<string, string>();
     private Dictionary<string, Action<Taggable, string>> _tags = new Dictionary<string, Action<Taggable, string>>();
+    private string[] _currentAliases;
 
     private Coroutine _autoTypeCoroutine;
 
@@ -70,6 +73,8 @@ public class DialogueManager : MonoBehaviour
 
     public DialogueManager StartDialogue(string address, params string[] aliases)
     {
+        _currentAliases = aliases;
+
         Addressables.LoadAssetAsync<TextAsset>(address).Completed += (handle) =>
         {
             StartDialogue(handle, aliases);
