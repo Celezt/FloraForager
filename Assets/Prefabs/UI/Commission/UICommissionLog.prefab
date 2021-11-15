@@ -346,7 +346,7 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 4013648789702186360}
   m_HandleRect: {fileID: 4013648789702186359}
   m_Direction: 2
-  m_Value: 1
+  m_Value: 0
   m_Size: 1
   m_NumberOfSteps: 0
   m_OnValueChanged:
@@ -463,7 +463,7 @@ RectTransform:
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
   m_AnchoredPosition: {x: 0, y: 237.5}
-  m_SizeDelta: {x: 315, y: 0}
+  m_SizeDelta: {x: 325, y: 0}
   m_Pivot: {x: 0.5, y: 1}
 --- !u!222 &4013648789490971786
 CanvasRenderer:
@@ -500,12 +500,12 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Padding:
-    m_Left: 5
-    m_Right: 5
-    m_Top: 5
-    m_Bottom: 5
+    m_Left: 0
+    m_Right: 0
+    m_Top: 0
+    m_Bottom: 0
   m_ChildAlignment: 0
-  m_Spacing: 10
+  m_Spacing: 0
   m_ChildForceExpandWidth: 1
   m_ChildForceExpandHeight: 1
   m_ChildControlWidth: 1
@@ -660,6 +660,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 245df2eb15e875644a3dc36e500d3047, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _EnterSound: enter_button
+  _PressSound: press_button
 --- !u!1 &4013648789667719778
 GameObject:
   m_ObjectHideFlags: 0
@@ -865,6 +867,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 245df2eb15e875644a3dc36e500d3047, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _EnterSound: enter_button
+  _PressSound: press_button
 --- !u!1 &4013648789702186358
 GameObject:
   m_ObjectHideFlags: 0
@@ -1944,6 +1948,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 245df2eb15e875644a3dc36e500d3047, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _EnterSound: enter_button
+  _PressSound: press_button
 --- !u!1 &4013648791238593916
 GameObject:
   m_ObjectHideFlags: 0

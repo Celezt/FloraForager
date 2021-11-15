@@ -55,18 +55,18 @@ public class NPCObject : MonoBehaviour, IInteractable
 
         playerInput.DeactivateInput();
 
-        void CompleteAction(DialogueManager manager)
-        {
-            playerInput.ActivateInput();
-            manager.Completed -= CompleteAction;
-        };
-
         if (NPC.DialogueQueue.Count > 0)
         {
             (string, string[]) dialogue = NPC.DialogueQueue.Dequeue();
 
             if (!string.IsNullOrWhiteSpace(dialogue.Item1))
             {
+                void CompleteAction(DialogueManager manager)
+                {
+                    playerInput.ActivateInput();
+                    manager.Completed -= CompleteAction;
+                };
+
                 DialogueManager.GetByIndex(context.playerIndex).StartDialogue(dialogue.Item1, dialogue.Item2).Completed += CompleteAction;
             }
             else
@@ -78,6 +78,16 @@ public class NPCObject : MonoBehaviour, IInteractable
 
             if (!string.IsNullOrWhiteSpace(dialogue.Item1))
             {
+                void CompleteAction(DialogueManager manager)
+                {
+                    playerInput.ActivateInput();
+
+                    if (!CommissionGiverWindow.Instance.Opened)
+                        NPC.OpenCommissions();
+
+                    manager.Completed -= CompleteAction;
+                };
+
                 DialogueManager.GetByIndex(context.playerIndex).StartDialogue(dialogue.Item1, dialogue.Item2).Completed += CompleteAction;
             }
             else

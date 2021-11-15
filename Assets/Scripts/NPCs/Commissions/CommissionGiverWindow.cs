@@ -50,33 +50,35 @@ public class CommissionGiverWindow : Singleton<CommissionGiverWindow>
         _ScrollRect.content = _CommissionArea.GetComponent<RectTransform>();
         _ScrollRect.viewport = null;
 
+        int i = 0;
         foreach (Commission commission in commissionGiver.Commissions)
         {
             if (commission == null)
                 continue;
 
-            GameObject obj = Instantiate(_CommissionPrefab, _CommissionArea);
+            CGCommissionObject commObject = Instantiate(_CommissionPrefab, _CommissionArea).GetComponent<CGCommissionObject>();
 
-            TMP_Text commText = obj.GetComponent<TMP_Text>();
+            if (i % 2 != 0)
+                commObject.Background.color = Color.clear;
 
-            commText.text = commission.CommissionData.Title;
-            obj.GetComponent<CGCommissionObject>().Commission = commission;
+            commObject.Text.text = commission.CommissionData.Title;
+            commObject.Commission = commission;
 
-            _CommissionObjects.Add(obj);
+            _CommissionObjects.Add(commObject.gameObject);
 
             bool hasComm = CommissionList.Instance.HasCommission(commission);
             bool enoughRelation = (int)_CommissionGiver.Relation.Relation >= (int)commission.CommissionData.MinRelation;
 
             if (hasComm && commission.IsCompleted)
             {
-                commText.color = Color.green;
+                commObject.IsCompleted();
             }
             else if (hasComm || !enoughRelation) // fade out commissions that are already assigned
             {
-                Color c = commText.color;
-                c.a = 0.5f;
-                commText.color = c;
+                commObject.IsUnavailable();
             }
+
+            ++i;
         }
     }
 
@@ -222,12 +224,12 @@ public class CommissionGiverWindow : Singleton<CommissionGiverWindow>
         PlayerInput playerInput = PlayerInput.GetPlayerByIndex(0);
         playerInput.DeactivateInput();
 
-        DialogueManager.GetByIndex(0).StartDialogue(dialogue.Item1, dialogue.Item2).Completed += CompleteAction;
-
         void CompleteAction(DialogueManager manager)
         {
             playerInput.ActivateInput();
             manager.Completed -= CompleteAction;
         };
+
+        DialogueManager.GetByIndex(0).StartDialogue(dialogue.Item1, dialogue.Item2).Completed += CompleteAction;
     }
 }
