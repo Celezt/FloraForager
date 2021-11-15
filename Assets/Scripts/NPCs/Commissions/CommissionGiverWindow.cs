@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using UnityEngine.InputSystem;
 using TMPro;
 using MyBox;
 
@@ -152,6 +153,8 @@ public class CommissionGiverWindow : Singleton<CommissionGiverWindow>
     /// </summary>
     public void Accept()
     {
+        StartDialogue(_SelectedCommission.Giver, _SelectedCommission.CommissionData.AcceptDialogue);
+
         CommissionLog.Instance.Accept(_SelectedCommission);
         Back();
     }
@@ -175,6 +178,8 @@ public class CommissionGiverWindow : Singleton<CommissionGiverWindow>
     {
         if (!_SelectedCommission.IsCompleted)
             return;
+
+        StartDialogue(_SelectedCommission.Giver, _SelectedCommission.CommissionData.CompleteDialogue);
 
         _SelectedCommission.Complete();
         CommissionLog.Instance.Remove(_SelectedCommission);
@@ -204,5 +209,25 @@ public class CommissionGiverWindow : Singleton<CommissionGiverWindow>
         }
 
         Back();
+    }
+
+    private void StartDialogue(string giver, Dictionary<string, (string, string[])> dialogueAction)
+    {
+        if (!dialogueAction.TryGetValue(giver.ToLower(), out (string, string[]) dialogue))
+            return;
+
+        if (string.IsNullOrWhiteSpace(dialogue.Item1) || dialogue.Item2 == null)
+            return;
+
+        PlayerInput playerInput = PlayerInput.GetPlayerByIndex(0);
+        playerInput.DeactivateInput();
+
+        DialogueManager.GetByIndex(0).StartDialogue(dialogue.Item1, dialogue.Item2).Completed += CompleteAction;
+
+        void CompleteAction(DialogueManager manager)
+        {
+            playerInput.ActivateInput();
+            manager.Completed -= CompleteAction;
+        };
     }
 }

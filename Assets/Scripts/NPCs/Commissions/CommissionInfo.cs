@@ -33,6 +33,12 @@ public class CommissionInfo : SerializedScriptableObject
     [OdinSerialize, ListDrawerSettings(DraggableItems = false, ShowItemCount = false, Expanded = true), Required] 
     private ItemAsset[] _Rewards;
 
+    [Title("Dialogue")]
+    [SerializeField, ListDrawerSettings(AlwaysAddDefaultValue = true, ShowItemCount = false, Expanded = true)]
+    private DialogueAction[] _AcceptDialogue;
+    [SerializeField, ListDrawerSettings(AlwaysAddDefaultValue = true, ShowItemCount = false, Expanded = true)]
+    private DialogueAction[] _CompleteDialogue;
+
     public string Title => _Title;
     public string Description => _Description;
 
@@ -45,4 +51,7 @@ public class CommissionInfo : SerializedScriptableObject
     public float PenaltyRelations => _PenaltyRelations;
 
     public ItemAsset[] Rewards => _Rewards;
+
+    public DialogueAction[] AcceptDialogue => _AcceptDialogue;
+    public DialogueAction[] CompleteDialogue => _CompleteDialogue;
 }
