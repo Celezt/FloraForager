@@ -298,7 +298,8 @@ public class PlayerMovement : MonoBehaviour
             if (_animationBehaviour == null)
                 return;
 
-            _speed01 = Mathf.Lerp(_speed01, _isRunning ? cmath.Map(inputValue.magnitude, new MinMaxFloat(0, 1), new MinMaxFloat(0.3f, 1)) 
+            _speed01 = Mathf.Lerp(_speed01, _isRunning ? 
+                  cmath.Map(inputValue.magnitude, new MinMaxFloat(0, 1), new MinMaxFloat(0.0f, 1)) 
                 : cmath.Map(inputValue.magnitude, new MinMaxFloat(0, 1), new MinMaxFloat(0, 0.3f)), _drag * fixedDeltaTime);
             _animationBehaviour.WalkSpeed = _speed01;
         }
