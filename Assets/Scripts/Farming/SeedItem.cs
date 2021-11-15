@@ -7,8 +7,6 @@ using Sirenix.OdinInspector;
 
 public class SeedItem : IUse
 {
-    [OdinSerialize, PropertyOrder(int.MinValue)]
-    int IItem.ItemStack { get; set; } = 32;
     [OdinSerialize, PropertyOrder(int.MinValue + 1)]
     float IUse.Cooldown { get; set; } = 0.05f;
 

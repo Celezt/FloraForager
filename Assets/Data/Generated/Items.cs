@@ -12,7 +12,6 @@ public enum Items
 	Axe,
 	Pickaxe,
 	WoodenChest,
-	Rock,
 	WateringCan,
 	GelplantSeed,
 	Gelplant,

@@ -6,8 +6,6 @@ using Sirenix.OdinInspector;
 
 public class FishBaitItem : IItem, IBait, IStar
 {
-    [OdinSerialize, PropertyOrder(int.MinValue)]
-    int IItem.ItemStack { get; set; } = 64;
     [OdinSerialize, PropertyOrder(int.MinValue + 1)]
     Stars IStar.Star { get; set; } = Stars.One;
 

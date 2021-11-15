@@ -27,6 +27,10 @@ public class ItemType : SerializedScriptableObject
     public string ID;
     [VerticalGroup("Group 1/Right"), TextArea(5, 30)]
     public string Description;
+#if UNITY_EDITOR
+    [OnValueChanged(nameof(OnStackChange))]
+#endif
+    public int ItemStack = 1;
     [OdinSerialize, HideLabel, InlineProperty]
     public IItem Behaviour;
 
@@ -98,6 +102,7 @@ public class ItemType : SerializedScriptableObject
         if (!string.IsNullOrEmpty(Name)) 
             ItemTypeSettings.Instance.ChangeName(ID, Name);
     }
+    private void OnStackChange() => ItemTypeSettings.Instance.ChangeItemStack(ID, ItemStack);
 
     public class DescriptorDeleteDetector : UnityEditor.AssetModificationProcessor
     {
