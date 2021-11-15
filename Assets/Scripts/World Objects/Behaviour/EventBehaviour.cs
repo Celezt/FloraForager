@@ -54,9 +54,9 @@ public class EventBehaviour : MonoBehaviour, IStreamable<EventBehaviour.Data>
         //
         foreach (DialogueEvent dialogueEvent in _Dialogue)
         {
-            foreach (DialoguePriority dialouge in dialogueEvent.NewDialogue)
+            foreach (DialoguePriority dialouge in dialogueEvent.AddedDialogue)
             {
-                NPCManager.Instance.EnqueueDialogue(dialogueEvent.NPC, dialouge.Dialogue, dialouge.Priority, dialouge.Aliases);
+                NPCManager.Instance.EnqueueDialogue(dialogueEvent.NPC, dialouge.Asset, dialouge.Priority, dialouge.Aliases);
             }
         }
     }

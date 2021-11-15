@@ -1,4 +1,6 @@
-﻿[System.Serializable]
+﻿using System.Collections.Generic;
+
+[System.Serializable]
 public struct CommissionData
 {
     public string Title;
@@ -16,4 +18,7 @@ public struct CommissionData
     public string Giver;
 
     public bool Completed;
+
+    public Dictionary<string, (string, string[])> AcceptDialogue;
+    public Dictionary<string, (string, string[])> CompleteDialogue;
 }

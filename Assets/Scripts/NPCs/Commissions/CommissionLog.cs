@@ -49,16 +49,18 @@ public class CommissionLog : Singleton<CommissionLog>
 
     public void Accept(Commission commission)
     {
-        GameObject obj = Instantiate(_CommissionPrefab, _CommissionArea); // create object to be added to the log list
+        CommissionObject commObj = Instantiate(_CommissionPrefab, _CommissionArea).GetComponent<CommissionObject>();
 
-        CommissionObject cs = obj.GetComponent<CommissionObject>();
-        commission.Object = cs;
-        cs.Commission = commission;
+        commission.Object = commObj;
+        commObj.Commission = commission;
 
-        obj.GetComponent<TMP_Text>().text = commission.CommissionData.Title;
+        if (_CommissionObjects.Count % 2 != 0)
+            commObj.Background.color = Color.clear;
+
+        commObj.Text.text = commission.CommissionData.Title;
 
         CommissionList.Instance.Add(commission);
-        _CommissionObjects.Add(cs);
+        _CommissionObjects.Add(commObj);
 
         commission.Objectives.ForEach(o => o.Accepted());
 
@@ -188,15 +190,17 @@ public class CommissionLog : Singleton<CommissionLog>
     {
         foreach (Commission commission in CommissionList.Instance.Commissions)
         {
-            GameObject obj = Instantiate(_CommissionPrefab, _CommissionArea);
+            CommissionObject commObj = Instantiate(_CommissionPrefab, _CommissionArea).GetComponent<CommissionObject>();
 
-            CommissionObject cs = obj.GetComponent<CommissionObject>();
-            commission.Object = cs;
-            cs.Commission = commission;
+            commission.Object = commObj;
+            commObj.Commission = commission;
 
-            obj.GetComponent<TMP_Text>().text = commission.CommissionData.Title;
+            if (_CommissionObjects.Count % 2 != 0)
+                commObj.Background.color = Color.clear;
 
-            _CommissionObjects.Add(cs);
+            commObj.Text.text = commission.CommissionData.Title;
+
+            _CommissionObjects.Add(commObj);
 
             commission.Objectives.ForEach(o => o.Accepted());
         }

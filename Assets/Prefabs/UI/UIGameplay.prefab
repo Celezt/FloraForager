@@ -147,6 +147,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 245df2eb15e875644a3dc36e500d3047, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _EnterSound: enter_button
+  _PressSound: press_button
 --- !u!1 &1685156187
 GameObject:
   m_ObjectHideFlags: 0
@@ -428,6 +430,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 245df2eb15e875644a3dc36e500d3047, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _EnterSound: enter_button
+  _PressSound: press_button
 --- !u!1 &1892512175
 GameObject:
   m_ObjectHideFlags: 0
@@ -4123,7 +4127,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4013648789490971784, guid: b505728982b9e62459e1d3beaaa11f62, type: 3}
       propertyPath: m_AnchoredPosition.y
-      value: 237.49991
+      value: 237.49997
       objectReference: {fileID: 0}
     - target: {fileID: 4013648789702186359, guid: b505728982b9e62459e1d3beaaa11f62, type: 3}
       propertyPath: m_AnchorMax.x
@@ -4219,7 +4223,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4013648790988391704, guid: b505728982b9e62459e1d3beaaa11f62, type: 3}
       propertyPath: m_AnchoredPosition.y
-      value: 227.50006
+      value: 227.49994
       objectReference: {fileID: 0}
     - target: {fileID: 4013648791350348119, guid: b505728982b9e62459e1d3beaaa11f62, type: 3}
       propertyPath: m_Size
@@ -4227,7 +4231,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4013648791350348119, guid: b505728982b9e62459e1d3beaaa11f62, type: 3}
       propertyPath: m_Value
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: b505728982b9e62459e1d3beaaa11f62, type: 3}
@@ -4673,7 +4677,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2447313776987891858, guid: a25d6ef1787723a47a68bbabeed25df8, type: 3}
       propertyPath: m_AnchoredPosition.y
-      value: 0.000061035156
+      value: -0.000061035156
       objectReference: {fileID: 0}
     - target: {fileID: 2447313777013044876, guid: a25d6ef1787723a47a68bbabeed25df8, type: 3}
       propertyPath: m_AnchoredPosition.y
@@ -4685,7 +4689,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2447313777013044883, guid: a25d6ef1787723a47a68bbabeed25df8, type: 3}
       propertyPath: m_Value
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 2447313777170472925, guid: a25d6ef1787723a47a68bbabeed25df8, type: 3}
       propertyPath: m_AnchorMax.y

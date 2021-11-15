@@ -26,6 +26,6 @@ public class InterestBehaviour : MonoBehaviour, IInteractable
             manager.Completed -= CompleteAction;
         };
 
-        DialogueManager.GetByIndex(context.playerIndex).StartDialogue(dialogue.Dialogue, dialogue.Aliases).Completed += CompleteAction;
+        DialogueManager.GetByIndex(context.playerIndex).StartDialogue(dialogue.Asset, dialogue.Aliases).Completed += CompleteAction;
     }
 }
