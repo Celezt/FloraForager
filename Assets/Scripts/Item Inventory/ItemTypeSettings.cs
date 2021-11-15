@@ -116,8 +116,6 @@ public class ItemTypeSettings : SerializedScriptableSingleton<ItemTypeSettings>
 
         OnAddItemTypeCallback.Invoke(itemType);
 
-        EnumGenerator.Generate("Items", "Assets/Data/Generated", _itemNameChunk.Values.ToList());
-
         return true;
     }
 
@@ -146,8 +144,6 @@ public class ItemTypeSettings : SerializedScriptableSingleton<ItemTypeSettings>
         _itemTypeChunk.Remove(id);
         _itemIconChunk.Remove(id);
         _itemNameChunk.Remove(id);
-
-        EnumGenerator.Generate("Items", "Assets/Data/Generated", _itemNameChunk.Values.ToList());
 
         return true;
     }
