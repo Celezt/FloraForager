@@ -124,7 +124,7 @@ public class ItemLabelWindow : EditorWindow
     private void OnDestroy()
     {
         if (_labelsChanged)
-            EnumGenerator.Generate("ItemLabels", "Assets/Data/Generated", _settings.Labels);
+            EnumGenerator.GenerateFlag("ItemLabels", "Assets/Data/Generated", _settings.Labels);
     }
 
     private class LabelNamePopup : PopupWindowContent

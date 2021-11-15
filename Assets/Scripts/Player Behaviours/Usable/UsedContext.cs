@@ -73,7 +73,7 @@ public readonly struct UsedContext
 
             for (int j = 0; j < rate; j++)
                 UnityEngine.Object.Instantiate(ItemTypeSettings.Instance.ItemObject, position, Quaternion.identity)
-                    .Spawn(new ItemAsset { ID = drops[i].Item.Extract().GetRandom().ToString().ToSnakeCase(), Amount = dropStack });
+                    .Spawn(new ItemAsset { ID = drops[i].Item.ToString().ToSnakeCase(), Amount = dropStack });
         }
     }
 }
