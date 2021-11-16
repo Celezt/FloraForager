@@ -98,7 +98,7 @@ public class StreamableBehaviour : MonoBehaviour, IStreamer, IStreamable<Streama
 
                 if (_respawnableObject)
                     ObjectRespawn.Instance.Add(_guid, 
-                        _respawnTimeInDays + _randomRespawnTime.RandomInRange());
+                        _respawnTimeInDays + _randomRespawnTime.RandomInRangeInclusive());
             }
         }
 
