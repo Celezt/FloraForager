@@ -18,5 +18,5 @@ public enum Items
 	GelplantBait,
 	PorockSeed,
 	BirowLog,
-	RockResource,
+	Obsidian,
 }

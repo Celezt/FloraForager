@@ -91,7 +91,7 @@ public class ItemTypeSettings : SerializedScriptableSingleton<ItemTypeSettings>
     [Button]
     public void Regenerate()
     {
-        EnumGenerator.Generate("Items", "Assets/Data/Generated", _itemNameChunk.Values.ToList());
+        EnumGenerator.Generate("Items", "Assets/Data/Generated", _itemTypeChunk.Keys.ToList());
 
         foreach (KeyValuePair<string, ItemType> item in _itemTypeChunk)
             UpdateItemType(item.Value);
