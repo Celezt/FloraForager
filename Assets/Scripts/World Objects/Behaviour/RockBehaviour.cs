@@ -48,7 +48,7 @@ public class RockBehaviour : MonoBehaviour, IStreamable<RockBehaviour.Data>, IUs
             SoundPlayer.Instance.Play(_breakSound);
 
             context.Drop(transform.position, _drops);
-            Destroy(gameObject);
+            gameObject.SetActive(false);
         }
         else
         {

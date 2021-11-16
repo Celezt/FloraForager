@@ -13,7 +13,7 @@ public class InterestBehaviour : MonoBehaviour, IInteractable
 
     public void OnInteract(InteractContext context)
     {
-        if (!context.performed)
+        if (!context.performed || dialogue.Asset == null)
             return;
 
         PlayerInput playerInput = PlayerInput.GetPlayerByIndex(context.playerIndex);

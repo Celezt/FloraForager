@@ -30,21 +30,9 @@ public class ChestBehaviour : MonoBehaviour, IPlaceable, IInteractable
         cell.Occupy(gameObject);
 
         int sceneIndex = SceneManager.GetActiveScene().buildIndex;
-
-        string id =
-            cell.Local.x.ToString() + "," +
-            cell.Local.y.ToString() + " " +
-            sceneIndex.ToString();
+        string id = $"{cell.Local} {sceneIndex}";
 
         _Data = ObjectMaster.Instance.Get<ChestData>(id, gameObject, _Address, sceneIndex, cell, _InitialItems);
-    }
-
-    private void Update()
-    {
-        if (Keyboard.current.jKey.wasPressedThisFrame)
-        {
-            _Data.Destroy();
-        }
     }
 
     public void OnInteract(InteractContext context)
