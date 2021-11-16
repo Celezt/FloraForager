@@ -12,7 +12,7 @@ using Sirenix.OdinInspector;
 [DisallowMultipleComponent, RequireComponent(typeof(GuidComponent))]
 public class StreamableBehaviour : MonoBehaviour, IStreamer, IStreamable<StreamableBehaviour.Data>
 {
-    [SerializeField] 
+    [SerializeField]
     private bool _saveIfDestroyed = true;
 
     [Title("Respawn Behaviour")]
@@ -20,6 +20,8 @@ public class StreamableBehaviour : MonoBehaviour, IStreamer, IStreamable<Streama
     private bool _respawnableObject = false;
     [SerializeField, Min(1), ShowIf("@this._respawnableObject && this._saveIfDestroyed")]
     private int _respawnTimeInDays = 2;
+    [SerializeField, MinMaxRange(0.0f, 5.0f)]
+    private MinMaxInt _randomRespawnTime = new MinMaxInt(1, 3);
 
     private Data _data;
     private Guid _guid;
@@ -95,7 +97,8 @@ public class StreamableBehaviour : MonoBehaviour, IStreamer, IStreamable<Streama
                 _data.IsAlive = false;
 
                 if (_respawnableObject)
-                    ObjectRespawn.Instance.Add(_guid, _respawnTimeInDays);
+                    ObjectRespawn.Instance.Add(_guid, 
+                        _respawnTimeInDays + _randomRespawnTime.RandomInRange());
             }
         }
 
