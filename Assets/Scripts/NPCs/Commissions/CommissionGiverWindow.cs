@@ -50,7 +50,6 @@ public class CommissionGiverWindow : Singleton<CommissionGiverWindow>
         _ScrollRect.content = _CommissionArea.GetComponent<RectTransform>();
         _ScrollRect.viewport = null;
 
-        int i = 0;
         foreach (Commission commission in commissionGiver.Commissions)
         {
             if (commission == null)
@@ -58,7 +57,7 @@ public class CommissionGiverWindow : Singleton<CommissionGiverWindow>
 
             CGCommissionObject commObject = Instantiate(_CommissionPrefab, _CommissionArea).GetComponent<CGCommissionObject>();
 
-            if (i % 2 != 0)
+            if (_CommissionObjects.Count % 2 != 0)
                 commObject.Background.color = Color.clear;
 
             commObject.Text.text = commission.CommissionData.Title;
@@ -77,8 +76,6 @@ public class CommissionGiverWindow : Singleton<CommissionGiverWindow>
             {
                 commObject.IsUnavailable();
             }
-
-            ++i;
         }
     }
 
