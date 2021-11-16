@@ -8,7 +8,7 @@ using MyBox;
 
 public class UIStateVisibility : Singleton<UIStateVisibility>
 {
-    [SerializeField, ListDrawerSettings(Expanded = true)]
+    [SerializeField, ListDrawerSettings(DraggableItems = false, ShowItemCount = false, Expanded = true)]
     private List<UIState> _States = new List<UIState>();
 
     private Dictionary<string, GameObject> _StatesDictionary = new Dictionary<string, GameObject>();

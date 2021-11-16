@@ -7,9 +7,6 @@ using Sirenix.OdinInspector;
 
 public class PlaceableItem : IUse
 {
-    [OdinSerialize, PropertyOrder(int.MinValue)]
-    int IItem.ItemStack { get; set; } = 64;
-
     [SerializeField]
     private float _placeRange = 3.0f;
     [SerializeField]
@@ -18,7 +15,7 @@ public class PlaceableItem : IUse
     private LayerMask _placeMask = LayerMask.GetMask("Ground");
     [SerializeField, ListDrawerSettings(Expanded = true)]
     private CellType[] _AllowedTypes = new CellType[1];
-    [SerializeField, AssetList(Path = "Prefabs/Placeables"), AssetsOnly]
+    [SerializeField, AssetsOnly]
     private GameObject _placeableObject;
 
     float IUse.Cooldown { get; set; } = 0;

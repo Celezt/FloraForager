@@ -18,6 +18,7 @@ public class ItemTypeSettings : SerializedScriptableSingleton<ItemTypeSettings>
     public IReadOnlyDictionary<string, ItemType> ItemTypeChunk => _itemTypeChunk;
     public IReadOnlyDictionary<string, Sprite> ItemIconChunk => _itemIconChunk;
     public IReadOnlyDictionary<string, string> ItemNameChunk => _itemNameChunk;
+    public IReadOnlyDictionary<string, int> ItemStackChunk => _itemStackChunk;
     public IReadOnlyDictionary<string, List<string>> ItemLabelChunk => _itemLabelChunk;
 
     public LabelSettings LabelSettings => _labelSettings;
@@ -31,13 +32,15 @@ public class ItemTypeSettings : SerializedScriptableSingleton<ItemTypeSettings>
     [SerializeField]
     private ItemBehaviour _itemObject;
     [OdinSerialize]
-    private Dictionary<string, List<string>> _itemLabelChunk = new Dictionary<string, List<string>>();
-    [OdinSerialize]
     private Dictionary<string, ItemType> _itemTypeChunk = new Dictionary<string, ItemType>();
     [OdinSerialize]
     private Dictionary<string, Sprite> _itemIconChunk = new Dictionary<string, Sprite>();
     [OdinSerialize]
     private Dictionary<string, string> _itemNameChunk = new Dictionary<string, string>();
+    [OdinSerialize]
+    private Dictionary<string, int> _itemStackChunk = new Dictionary<string, int>();
+    [OdinSerialize]
+    private Dictionary<string, List<string>> _itemLabelChunk = new Dictionary<string, List<string>>();
 
     public int GetIndexOfLabel(string label) => _labelSettings.Labels.IndexOf(label);
 
@@ -89,6 +92,26 @@ public class ItemTypeSettings : SerializedScriptableSingleton<ItemTypeSettings>
     public void Regenerate()
     {
         EnumGenerator.Generate("Items", "Assets/Data/Generated", _itemNameChunk.Values.ToList());
+
+        foreach (KeyValuePair<string, ItemType> item in _itemTypeChunk)
+            UpdateItemType(item.Value);
+    }
+
+    public void UpdateItemType(ItemType itemType)
+    {
+        string id = itemType.ID;
+
+        if (!_itemTypeChunk.ContainsKey(id))
+            return;
+
+        if (!_itemLabelChunk.ContainsKey(id))
+            _itemLabelChunk.Add(id, itemType.Labels.Select(item => (string)item.Clone()).ToList());
+        if (!_itemIconChunk.ContainsKey(id))
+            _itemIconChunk.Add(id, itemType.Icon == null ? _defaultIcon : itemType.Icon);
+        if (!_itemStackChunk.ContainsKey(id))
+            _itemStackChunk.Add(id, itemType.ItemStack);
+        if (!_itemNameChunk.ContainsKey(id))
+            _itemNameChunk.Add(id, itemType.Name);
     }
 
     /// <summary>
@@ -107,12 +130,7 @@ public class ItemTypeSettings : SerializedScriptableSingleton<ItemTypeSettings>
 
         _itemTypeChunk.Add(id, itemType);
 
-        if (!_itemLabelChunk.ContainsKey(id))
-            _itemLabelChunk.Add(id, itemType.Labels.Select(item => (string)item.Clone()).ToList());
-        if (!_itemIconChunk.ContainsKey(id))
-            _itemIconChunk.Add(id, itemType.Icon  == null ? _defaultIcon : itemType.Icon);
-        if (!_itemNameChunk.ContainsKey(id))
-            _itemNameChunk.Add(id, itemType.Name);
+        UpdateItemType(itemType);
 
         OnAddItemTypeCallback.Invoke(itemType);
 
@@ -144,6 +162,7 @@ public class ItemTypeSettings : SerializedScriptableSingleton<ItemTypeSettings>
         _itemTypeChunk.Remove(id);
         _itemIconChunk.Remove(id);
         _itemNameChunk.Remove(id);
+        _itemStackChunk.Remove(id);
 
         return true;
     }
@@ -415,8 +434,8 @@ public class ItemTypeSettings : SerializedScriptableSingleton<ItemTypeSettings>
 
         if (!_itemIconChunk.ContainsKey(id))
             _itemIconChunk.Add(id, newIcon == null ? _defaultIcon : newIcon);
-
-        _itemIconChunk[id] = newIcon == null ? _defaultIcon : newIcon;
+        else
+            _itemIconChunk[id] = newIcon == null ? _defaultIcon : newIcon;
     }
 
     public void ChangeName(string id, string newName)
@@ -424,11 +443,25 @@ public class ItemTypeSettings : SerializedScriptableSingleton<ItemTypeSettings>
         if (string.IsNullOrEmpty(id))
             return;
 
+        EditorUtility.SetDirty(this);
+
         if (!_itemNameChunk.ContainsKey(id))
             _itemNameChunk.Add(id, newName);
+        else
+            _itemNameChunk[id] = newName;
+    }
 
-        string oldName = _itemNameChunk[id];
-        _itemNameChunk[id] = newName;
+    public void ChangeItemStack(string id, int newStack)
+    {
+        if (string.IsNullOrEmpty(id))
+            return;
+
+        EditorUtility.SetDirty(this);
+
+        if (!_itemStackChunk.ContainsKey(id))
+            _itemStackChunk.Add(id, newStack);
+        else
+            _itemStackChunk[id] = newStack;
     }
 #endif
 }

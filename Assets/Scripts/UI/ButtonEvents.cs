@@ -6,13 +6,18 @@ using UnityEngine.EventSystems;
 
 public class ButtonEvents : MonoBehaviour, IPointerEnterHandler, IPointerDownHandler
 {
+    [SerializeField]
+    private string _EnterSound = "enter_button";
+    //[SerializeField]
+    //private string _PressSound = "press_button";
+
     public void OnPointerEnter(PointerEventData eventData)
     {
-        SoundPlayer.Instance.Play("hover_button");
+        SoundPlayer.Instance.Play(_EnterSound);
     }
 
     public void OnPointerDown(PointerEventData eventData)
     {
-        SoundPlayer.Instance.Play("hover_button");
+        SoundPlayer.Instance.Play(_EnterSound);
     }
 }

@@ -93,7 +93,7 @@ public class Inventory
         if (!ItemTypeSettings.Instance.ItemTypeChunk.TryGetValue(item.ID, out ItemType itemType))    // If it exit.
             return false;
 
-        int stack = (int)itemType.Behaviour.ItemStack;
+        int stack = (int)itemType.ItemStack;
 
         {
             List<(int, int)> foundItems = FindAll(item.ID);
@@ -257,7 +257,7 @@ public class Inventory
     /// </summary>
     public int FindEmptySpace(string id)
     {
-        int stack = ItemTypeSettings.Instance.ItemTypeChunk[id].Behaviour.ItemStack;
+        int stack = ItemTypeSettings.Instance.ItemStackChunk[id];
         int amountLeft = 0;
         for (int i = 0; i < _items.Count; i++)
         {
@@ -348,7 +348,7 @@ public class Inventory
         if (string.IsNullOrEmpty(fromItem.ID))
             return false;
 
-        int stack = (int)ItemTypeSettings.Instance.ItemTypeChunk[fromItem.ID].Behaviour.ItemStack;
+        int stack = ItemTypeSettings.Instance.ItemStackChunk[fromItem.ID];
 
         if (fromItem.Amount == stack || toItem.Amount == stack)     // If at least one of them are full.
             return false;

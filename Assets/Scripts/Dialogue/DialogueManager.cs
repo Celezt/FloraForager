@@ -30,6 +30,8 @@ public class DialogueManager : MonoBehaviour
     /// </summary>
     public event Action<DialogueManager> Started = delegate { };
 
+    public IReadOnlyDictionary<string, string> Aliases => _aliases;
+
     [SerializeField] private TextMeshProUGUI _content;
     [SerializeField] private TextMeshProUGUI _namecard;
     [SerializeField] private GameObject _dialogueUI;

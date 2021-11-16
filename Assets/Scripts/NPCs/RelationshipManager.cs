@@ -53,22 +53,39 @@ public class RelationshipManager
 
         relation = (Relation)enumValue;
 
+        AddDialogue();
+    }
+
+    private void AddDialogue()
+    {
         NPC npc = NPCManager.Instance?.Get(npcName);
 
-        if (npc == null || npc.RelationDialogue == null)
+        if (npc == null || npc.DialogueRelations == null)
             return;
 
-        for (int i = npc.RelationDialogue.Count - 1; i >= 0; --i)
+        for (int i = npc.DialogueRelations.Length - 1; i >= 0; --i)
         {
-            DialogueRelation dialogueRelation = npc.RelationDialogue[i];
-            if ((int)relation == (int)dialogueRelation.AtRelation)
+            DialogueRelationSave dialogueRelation = npc.DialogueRelations[i];
+
+            if ((int)relation != (int)dialogueRelation.AtRelation)
+                continue;
+
+            if (!string.IsNullOrWhiteSpace(dialogueRelation.RepeatingDialogue.Item1))
+                npc.SetRepeatingDialouge(dialogueRelation.RepeatingDialogue.Item1, dialogueRelation.RepeatingDialogue.Item2);
+
+            if (dialogueRelation.AddedDialogue != null || dialogueRelation.AddedDialogue.Length <= 0)
             {
-                foreach (DialoguePriority dialogue in dialogueRelation.NewDialogue)
+                foreach ((float, string, string[]) dialogue in dialogueRelation.AddedDialogue)
                 {
-                    npc.DialogueQueue.Enqueue((dialogue.Dialogue.AssetGUID, dialogue.Aliases), dialogue.Priority);
+                    if (string.IsNullOrWhiteSpace(dialogue.Item2))
+                        continue;
+
+                    npc.DialogueQueue.Enqueue((dialogue.Item2, dialogue.Item3), dialogue.Item1);
                 }
-                npc.RelationDialogue.RemoveAt(i);
+                dialogueRelation.AddedDialogue = null;
             }
+
+            npc.DialogueRelations[i] = dialogueRelation;
         }
     }
 }

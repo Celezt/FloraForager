@@ -34,7 +34,7 @@ public class CommissionTracker : Singleton<CommissionTracker>
             return;
 
         _Title.text = _Commission.CommissionData.Title;
-        _Title.color = _Commission.IsCompleted ? _TitleColor + new Color(-0.2f, 0.5f, -0.2f, 1.0f) : _TitleColor;
+        _Title.color = _Commission.IsCompleted ? _TitleColor + new Color(-0.3f, 0.5f, -0.3f, 1.0f) : _TitleColor;
 
         string quota = string.Empty;
         foreach (IObjective objective in _Commission.Objectives)
