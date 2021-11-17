@@ -89,18 +89,20 @@ public class RodItem : IUse, IStar, IValue
         if (string.IsNullOrWhiteSpace(fishID) || inventory.FindEmptySpace(fishID) <= 0) // if no fish available or no space for fish, return
             yield break;
 
+        PlayerInput playerInput = PlayerInput.GetPlayerByIndex(context.playerIndex);
+
         FishingManager fishingManager = FishingManager.GetByIndex(context.playerIndex);
 
         fishingManager.OnPlayCallback += PlayAction;
         fishingManager.StartFishing(fishID, context.id);
 
-        PlayerMovement playerMovement = PlayerInput.GetPlayerByIndex(context.playerIndex).GetComponent<PlayerMovement>();
+        PlayerMovement playerMovement = playerInput.GetComponent<PlayerMovement>();
         playerMovement.SetDirection((hitInfo.point - context.transform.position).normalized.xz());
 
         void PlayAction()
         {
             UIStateVisibility.Instance.Hide("inventory");
-            PlayerInput.GetPlayerByIndex(context.playerIndex).DeactivateInput();
+            playerInput.DeactivateInput();
 
             fishingManager.OnCatchCallback -= CatchAction;
             fishingManager.OnFleeCallback -= FleeAction;
@@ -112,7 +114,7 @@ public class RodItem : IUse, IStar, IValue
         void CatchAction()
         {
             UIStateVisibility.Instance.Show("inventory");
-            PlayerInput.GetPlayerByIndex(context.playerIndex).ActivateInput();
+            playerInput.ActivateInput();
 
             inventory.RemoveAt(fishBaitIndex, 1);
             inventory.Insert(new ItemAsset { ID = fishID, Amount = 1 });
@@ -122,7 +124,7 @@ public class RodItem : IUse, IStar, IValue
         void FleeAction()
         {
             UIStateVisibility.Instance.Show("inventory");
-            PlayerInput.GetPlayerByIndex(context.playerIndex).ActivateInput();
+            playerInput.ActivateInput();
 
             inventory.RemoveAt(fishBaitIndex, 1);
 
