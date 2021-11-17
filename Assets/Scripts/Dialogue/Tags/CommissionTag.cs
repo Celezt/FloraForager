@@ -17,31 +17,31 @@ public class CommissionTag : ITag
 
         DialogueManager manager = taggable.Unwrap<DialogueManager>();
 
-        if (manager.Aliases.TryGetValue(actor, out string npcName))
+        if (!manager.Aliases.TryGetValue(actor, out string npcName))
         {
-            NPC npc = NPCManager.Instance.Get(npcName);
+            npcName = actor;
+        }
 
-            if (npc != null)
+        NPC npc = NPCManager.Instance.Get(npcName);
+
+        if (npc != null)
+        {
+            if (!string.IsNullOrWhiteSpace(action))
             {
-                if (string.IsNullOrWhiteSpace(action))
+                if (action.ToLower() == "open")
                 {
-                    if (action.ToLower() == "open")
-                    {
-                        npc.OpenCommissions();
-                    }
-                    else if (action.ToLower() == "close")
-                    {
-                        npc.CloseCommissions();
-                    }
+                    npc.OpenCommissions();
                 }
-                else
-                    Debug.LogError($"{action} is not a valid action");
+                else if (action.ToLower() == "close")
+                {
+                    npc.CloseCommissions();
+                }
             }
             else
-                Debug.LogError($"{npcName} does not exist among NPCs");
+                Debug.LogError($"{action} is not a valid action");
         }
         else
-            Debug.LogError($"{actor} does not exist in aliases");
+            Debug.LogError($"{npcName} does not exist among NPCs");
     }
 
     public void Initalize(Taggable taggable)
