@@ -22,7 +22,7 @@ Material:
   m_PrefabAsset: {fileID: 0}
   m_Name: mtl_BFForestTerrain300x300
   m_Shader: {fileID: 4800000, guid: 374b0d9785a06b24bbbe612b37995204, type: 3}
-  m_ShaderKeywords: USE_BP _RTEFFECT_ON
+  m_ShaderKeywords: USE_AL USE_BP _RTEFFECT_ON
   m_LightmapFlags: 4
   m_EnableInstancingVariants: 0
   m_DoubleSidedGI: 0
@@ -216,7 +216,7 @@ Material:
     - _Metallic7: 0
     - _MinimumNumberStacks: 2
     - _NoisePower: 7
-    - _NumberOfStacks: 15
+    - _NumberOfStacks: 12
     - _OcclusionStrength: 1
     - _OffsetValue: 5
     - _Parallax: 0.005
@@ -233,7 +233,7 @@ Material:
     - _TilingN1: 21
     - _TilingN2: 1.5
     - _TilingN3: 0.5
-    - _UseAmbientLight: 0
+    - _UseAmbientLight: 1
     - _UseBetterModelPrecision: 0
     - _UseBiplanar: 1
     - _UseRT: 0
