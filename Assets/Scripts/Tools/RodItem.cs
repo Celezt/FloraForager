@@ -14,8 +14,6 @@ public class RodItem : IUse, IStar, IValue
     public float DragWeight => _weight;
     public float Bounciness => _bounciness;
 
-    [OdinSerialize, PropertyOrder(int.MinValue)]
-    int IItem.ItemStack { get; set; } = 1;
     [OdinSerialize, PropertyOrder(int.MinValue + 1)]
     Stars IStar.Star { get; set; } = Stars.One;
     [OdinSerialize, PropertyOrder(int.MinValue + 2)]

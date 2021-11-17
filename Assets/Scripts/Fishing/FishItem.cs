@@ -14,8 +14,6 @@ public class FishItem : IItem, IStar, IValue
     public AnimationCurve[] IdlePatterns => _idlePatterns;
     public AnimationCurve[] DownPatterns => _downPatterns;
 
-    [OdinSerialize, PropertyOrder(-3)]
-    int IItem.ItemStack { get; set; } = 16;
     [OdinSerialize, PropertyOrder(-2)]
     Stars IStar.Star { get; set; } = Stars.One;
     [OdinSerialize, PropertyOrder(-1)]

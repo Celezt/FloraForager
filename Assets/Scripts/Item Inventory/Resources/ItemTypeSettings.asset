@@ -24,29 +24,29 @@ MonoBehaviour:
     - {fileID: 11400000, guid: 230b62e617942df4bae12d88033e79d9, type: 2}
     - {fileID: 11400000, guid: d2dd2495cb678d94aaec59335607595f, type: 2}
     - {fileID: 11400000, guid: a96470354609a214490c4e6fa86e6345, type: 2}
-    - {fileID: 11400000, guid: 96a410f39dce7ff42a2479cf0afa516f, type: 2}
     - {fileID: 11400000, guid: bda3462b86148f848b21d5058a12e1f5, type: 2}
     - {fileID: 11400000, guid: f5a6e1de99a393943b5fa43deb8a21f7, type: 2}
     - {fileID: 11400000, guid: f0b5e986d143319489b0a14f12a980d5, type: 2}
     - {fileID: 11400000, guid: 5a3968678e61a04458c6a568deeef728, type: 2}
     - {fileID: 11400000, guid: b597943e73bcd1049a5ddfe3f6b2e260, type: 2}
     - {fileID: 11400000, guid: e280dc0d2bc3f6a4f9397974ee0fddc5, type: 2}
-    - {fileID: 11400000, guid: a9f89d8a0903ef84d89b54c17075d460, type: 2}
+    - {fileID: 11400000, guid: d7d7a545544a5924d80e083c80cd54cb, type: 2}
     - {fileID: 21300000, guid: f00f3ffdf7cc25744a5bc2a6befeba7c, type: 3}
     - {fileID: 21300000, guid: 0f1a70bb2a880f040bf0c2617b13f664, type: 3}
     - {fileID: 21300000, guid: 81452c6ea42551d47a117770f8c63510, type: 3}
     - {fileID: 21300000, guid: 9a2292155ac55964197b05d0db855877, type: 3}
     - {fileID: 21300000, guid: 654fed77de33e1944878ee09f03cde8b, type: 3}
     - {fileID: 21300000, guid: fcf1c64456362014e8b7a12b09a73c4f, type: 3}
+    - {fileID: 21300000, guid: e8807f60bdca68648bf988b8cb97925c, type: 3}
     SerializedBytesString: 
     Prefab: {fileID: 0}
     PrefabModificationsReferencedUnityObjects: []
     PrefabModifications: []
     SerializationNodes:
-    - Name: _itemLabelChunk
+    - Name: _itemTypeChunk
       Entry: 7
-      Data: 0|System.Collections.Generic.Dictionary`2[[System.String, mscorlib],[System.Collections.Generic.List`1[[System.String,
-        mscorlib]], mscorlib]], mscorlib
+      Data: 0|System.Collections.Generic.Dictionary`2[[System.String, mscorlib],[ItemType,
+        Assembly-CSharp]], mscorlib
     - Name: comparer
       Entry: 7
       Data: 1|System.Collections.Generic.GenericEqualityComparer`1[[System.String,
@@ -56,440 +56,7 @@ MonoBehaviour:
       Data: 
     - Name: 
       Entry: 12
-      Data: 16
-    - Name: 
-      Entry: 7
-      Data: 
-    - Name: $k
-      Entry: 1
-      Data: scythe
-    - Name: $v
-      Entry: 7
-      Data: 2|System.Collections.Generic.List`1[[System.String, mscorlib]], mscorlib
-    - Name: 
-      Entry: 12
-      Data: 2
-    - Name: 
-      Entry: 1
-      Data: Scythe
-    - Name: 
-      Entry: 1
-      Data: Tool
-    - Name: 
-      Entry: 13
-      Data: 
-    - Name: 
-      Entry: 8
-      Data: 
-    - Name: 
-      Entry: 8
-      Data: 
-    - Name: 
-      Entry: 7
-      Data: 
-    - Name: $k
-      Entry: 1
-      Data: porock
-    - Name: $v
-      Entry: 7
-      Data: 3|System.Collections.Generic.List`1[[System.String, mscorlib]], mscorlib
-    - Name: 
-      Entry: 12
-      Data: 4
-    - Name: 
-      Entry: 1
-      Data: Food
-    - Name: 
-      Entry: 1
-      Data: Vegetable
-    - Name: 
-      Entry: 1
-      Data: Crop
-    - Name: 
-      Entry: 1
-      Data: Vegetable
-    - Name: 
-      Entry: 13
-      Data: 
-    - Name: 
-      Entry: 8
-      Data: 
-    - Name: 
-      Entry: 8
-      Data: 
-    - Name: 
-      Entry: 7
-      Data: 
-    - Name: $k
-      Entry: 1
-      Data: floatish
-    - Name: $v
-      Entry: 7
-      Data: 4|System.Collections.Generic.List`1[[System.String, mscorlib]], mscorlib
-    - Name: 
-      Entry: 12
-      Data: 2
-    - Name: 
-      Entry: 1
-      Data: Food
-    - Name: 
-      Entry: 1
-      Data: Fish
-    - Name: 
-      Entry: 13
-      Data: 
-    - Name: 
-      Entry: 8
-      Data: 
-    - Name: 
-      Entry: 8
-      Data: 
-    - Name: 
-      Entry: 7
-      Data: 
-    - Name: $k
-      Entry: 1
-      Data: simple_rod
-    - Name: $v
-      Entry: 7
-      Data: 5|System.Collections.Generic.List`1[[System.String, mscorlib]], mscorlib
-    - Name: 
-      Entry: 12
-      Data: 1
-    - Name: 
-      Entry: 1
-      Data: Rod
-    - Name: 
-      Entry: 13
-      Data: 
-    - Name: 
-      Entry: 8
-      Data: 
-    - Name: 
-      Entry: 8
-      Data: 
-    - Name: 
-      Entry: 7
-      Data: 
-    - Name: $k
-      Entry: 1
-      Data: spookish
-    - Name: $v
-      Entry: 7
-      Data: 6|System.Collections.Generic.List`1[[System.String, mscorlib]], mscorlib
-    - Name: 
-      Entry: 12
-      Data: 2
-    - Name: 
-      Entry: 1
-      Data: Fish
-    - Name: 
-      Entry: 1
-      Data: Food
-    - Name: 
-      Entry: 13
-      Data: 
-    - Name: 
-      Entry: 8
-      Data: 
-    - Name: 
-      Entry: 8
-      Data: 
-    - Name: 
-      Entry: 7
-      Data: 
-    - Name: $k
-      Entry: 1
-      Data: axe
-    - Name: $v
-      Entry: 7
-      Data: 7|System.Collections.Generic.List`1[[System.String, mscorlib]], mscorlib
-    - Name: 
-      Entry: 12
-      Data: 2
-    - Name: 
-      Entry: 1
-      Data: Axe
-    - Name: 
-      Entry: 1
-      Data: Tool
-    - Name: 
-      Entry: 13
-      Data: 
-    - Name: 
-      Entry: 8
-      Data: 
-    - Name: 
-      Entry: 8
-      Data: 
-    - Name: 
-      Entry: 7
-      Data: 
-    - Name: $k
-      Entry: 1
-      Data: pickaxe
-    - Name: $v
-      Entry: 7
-      Data: 8|System.Collections.Generic.List`1[[System.String, mscorlib]], mscorlib
-    - Name: 
-      Entry: 12
-      Data: 2
-    - Name: 
-      Entry: 1
-      Data: Pickaxe
-    - Name: 
-      Entry: 1
-      Data: Tool
-    - Name: 
-      Entry: 13
-      Data: 
-    - Name: 
-      Entry: 8
-      Data: 
-    - Name: 
-      Entry: 8
-      Data: 
-    - Name: 
-      Entry: 7
-      Data: 
-    - Name: $k
-      Entry: 1
-      Data: wooden_chest
-    - Name: $v
-      Entry: 7
-      Data: 9|System.Collections.Generic.List`1[[System.String, mscorlib]], mscorlib
-    - Name: 
-      Entry: 12
-      Data: 1
-    - Name: 
-      Entry: 1
-      Data: Storage
-    - Name: 
-      Entry: 13
-      Data: 
-    - Name: 
-      Entry: 8
-      Data: 
-    - Name: 
-      Entry: 8
-      Data: 
-    - Name: 
-      Entry: 7
-      Data: 
-    - Name: $k
-      Entry: 1
-      Data: rock
-    - Name: $v
-      Entry: 7
-      Data: 10|System.Collections.Generic.List`1[[System.String, mscorlib]], mscorlib
-    - Name: 
-      Entry: 12
-      Data: 1
-    - Name: 
-      Entry: 1
-      Data: Stone
-    - Name: 
-      Entry: 13
-      Data: 
-    - Name: 
-      Entry: 8
-      Data: 
-    - Name: 
-      Entry: 8
-      Data: 
-    - Name: 
-      Entry: 7
-      Data: 
-    - Name: $k
-      Entry: 1
-      Data: watering_can
-    - Name: $v
-      Entry: 7
-      Data: 11|System.Collections.Generic.List`1[[System.String, mscorlib]], mscorlib
-    - Name: 
-      Entry: 12
-      Data: 2
-    - Name: 
-      Entry: 1
-      Data: WateringCan
-    - Name: 
-      Entry: 1
-      Data: Tool
-    - Name: 
-      Entry: 13
-      Data: 
-    - Name: 
-      Entry: 8
-      Data: 
-    - Name: 
-      Entry: 8
-      Data: 
-    - Name: 
-      Entry: 7
-      Data: 
-    - Name: $k
-      Entry: 1
-      Data: gelplant_seed
-    - Name: $v
-      Entry: 7
-      Data: 12|System.Collections.Generic.List`1[[System.String, mscorlib]], mscorlib
-    - Name: 
-      Entry: 12
-      Data: 1
-    - Name: 
-      Entry: 1
-      Data: Seed
-    - Name: 
-      Entry: 13
-      Data: 
-    - Name: 
-      Entry: 8
-      Data: 
-    - Name: 
-      Entry: 8
-      Data: 
-    - Name: 
-      Entry: 7
-      Data: 
-    - Name: $k
-      Entry: 1
-      Data: gelplant
-    - Name: $v
-      Entry: 7
-      Data: 13|System.Collections.Generic.List`1[[System.String, mscorlib]], mscorlib
-    - Name: 
-      Entry: 12
-      Data: 1
-    - Name: 
-      Entry: 1
-      Data: Food
-    - Name: 
-      Entry: 13
-      Data: 
-    - Name: 
-      Entry: 8
-      Data: 
-    - Name: 
-      Entry: 8
-      Data: 
-    - Name: 
-      Entry: 7
-      Data: 
-    - Name: $k
-      Entry: 1
-      Data: gelplant_bait
-    - Name: $v
-      Entry: 7
-      Data: 14|System.Collections.Generic.List`1[[System.String, mscorlib]], mscorlib
-    - Name: 
-      Entry: 12
-      Data: 1
-    - Name: 
-      Entry: 1
-      Data: FishBait
-    - Name: 
-      Entry: 13
-      Data: 
-    - Name: 
-      Entry: 8
-      Data: 
-    - Name: 
-      Entry: 8
-      Data: 
-    - Name: 
-      Entry: 7
-      Data: 
-    - Name: $k
-      Entry: 1
-      Data: porock_seed
-    - Name: $v
-      Entry: 7
-      Data: 15|System.Collections.Generic.List`1[[System.String, mscorlib]], mscorlib
-    - Name: 
-      Entry: 12
-      Data: 1
-    - Name: 
-      Entry: 1
-      Data: Seed
-    - Name: 
-      Entry: 13
-      Data: 
-    - Name: 
-      Entry: 8
-      Data: 
-    - Name: 
-      Entry: 8
-      Data: 
-    - Name: 
-      Entry: 7
-      Data: 
-    - Name: $k
-      Entry: 1
-      Data: birow_log
-    - Name: $v
-      Entry: 7
-      Data: 16|System.Collections.Generic.List`1[[System.String, mscorlib]], mscorlib
-    - Name: 
-      Entry: 12
-      Data: 2
-    - Name: 
-      Entry: 1
-      Data: Wood
-    - Name: 
-      Entry: 1
-      Data: Resource
-    - Name: 
-      Entry: 13
-      Data: 
-    - Name: 
-      Entry: 8
-      Data: 
-    - Name: 
-      Entry: 8
-      Data: 
-    - Name: 
-      Entry: 7
-      Data: 
-    - Name: $k
-      Entry: 1
-      Data: rock_resource
-    - Name: $v
-      Entry: 7
-      Data: 17|System.Collections.Generic.List`1[[System.String, mscorlib]], mscorlib
-    - Name: 
-      Entry: 12
-      Data: 2
-    - Name: 
-      Entry: 1
-      Data: Resource
-    - Name: 
-      Entry: 1
-      Data: Stone
-    - Name: 
-      Entry: 13
-      Data: 
-    - Name: 
-      Entry: 8
-      Data: 
-    - Name: 
-      Entry: 8
-      Data: 
-    - Name: 
-      Entry: 13
-      Data: 
-    - Name: 
-      Entry: 8
-      Data: 
-    - Name: _itemTypeChunk
-      Entry: 7
-      Data: 18|System.Collections.Generic.Dictionary`2[[System.String, mscorlib],[ItemType,
-        Assembly-CSharp]], mscorlib
-    - Name: comparer
-      Entry: 9
-      Data: 1
-    - Name: 
-      Entry: 12
-      Data: 16
+      Data: 15
     - Name: 
       Entry: 7
       Data: 
@@ -591,7 +158,7 @@ MonoBehaviour:
       Data: 
     - Name: $k
       Entry: 1
-      Data: rock
+      Data: watering_can
     - Name: $v
       Entry: 10
       Data: 8
@@ -603,7 +170,7 @@ MonoBehaviour:
       Data: 
     - Name: $k
       Entry: 1
-      Data: watering_can
+      Data: gelplant_seed
     - Name: $v
       Entry: 10
       Data: 9
@@ -615,7 +182,7 @@ MonoBehaviour:
       Data: 
     - Name: $k
       Entry: 1
-      Data: gelplant_seed
+      Data: gelplant
     - Name: $v
       Entry: 10
       Data: 10
@@ -627,7 +194,7 @@ MonoBehaviour:
       Data: 
     - Name: $k
       Entry: 1
-      Data: gelplant
+      Data: gelplant_bait
     - Name: $v
       Entry: 10
       Data: 11
@@ -639,7 +206,7 @@ MonoBehaviour:
       Data: 
     - Name: $k
       Entry: 1
-      Data: gelplant_bait
+      Data: porock_seed
     - Name: $v
       Entry: 10
       Data: 12
@@ -651,7 +218,7 @@ MonoBehaviour:
       Data: 
     - Name: $k
       Entry: 1
-      Data: porock_seed
+      Data: birow_log
     - Name: $v
       Entry: 10
       Data: 13
@@ -663,22 +230,10 @@ MonoBehaviour:
       Data: 
     - Name: $k
       Entry: 1
-      Data: birow_log
+      Data: obsidian
     - Name: $v
       Entry: 10
       Data: 14
-    - Name: 
-      Entry: 8
-      Data: 
-    - Name: 
-      Entry: 7
-      Data: 
-    - Name: $k
-      Entry: 1
-      Data: rock_resource
-    - Name: $v
-      Entry: 10
-      Data: 15
     - Name: 
       Entry: 8
       Data: 
@@ -690,14 +245,14 @@ MonoBehaviour:
       Data: 
     - Name: _itemIconChunk
       Entry: 7
-      Data: 19|System.Collections.Generic.Dictionary`2[[System.String, mscorlib],[UnityEngine.Sprite,
+      Data: 2|System.Collections.Generic.Dictionary`2[[System.String, mscorlib],[UnityEngine.Sprite,
         UnityEngine.CoreModule]], mscorlib
     - Name: comparer
       Entry: 9
       Data: 1
     - Name: 
       Entry: 12
-      Data: 16
+      Data: 15
     - Name: 
       Entry: 7
       Data: 
@@ -706,7 +261,7 @@ MonoBehaviour:
       Data: scythe
     - Name: $v
       Entry: 10
-      Data: 16
+      Data: 15
     - Name: 
       Entry: 8
       Data: 
@@ -718,7 +273,7 @@ MonoBehaviour:
       Data: porock
     - Name: $v
       Entry: 10
-      Data: 17
+      Data: 16
     - Name: 
       Entry: 8
       Data: 
@@ -730,7 +285,7 @@ MonoBehaviour:
       Data: floatish
     - Name: $v
       Entry: 10
-      Data: 18
+      Data: 17
     - Name: 
       Entry: 8
       Data: 
@@ -742,7 +297,7 @@ MonoBehaviour:
       Data: simple_rod
     - Name: $v
       Entry: 10
-      Data: 18
+      Data: 17
     - Name: 
       Entry: 8
       Data: 
@@ -754,7 +309,7 @@ MonoBehaviour:
       Data: spookish
     - Name: $v
       Entry: 10
-      Data: 18
+      Data: 17
     - Name: 
       Entry: 8
       Data: 
@@ -766,7 +321,7 @@ MonoBehaviour:
       Data: axe
     - Name: $v
       Entry: 10
-      Data: 19
+      Data: 18
     - Name: 
       Entry: 8
       Data: 
@@ -778,7 +333,7 @@ MonoBehaviour:
       Data: pickaxe
     - Name: $v
       Entry: 10
-      Data: 20
+      Data: 19
     - Name: 
       Entry: 8
       Data: 
@@ -790,19 +345,7 @@ MonoBehaviour:
       Data: wooden_chest
     - Name: $v
       Entry: 10
-      Data: 18
-    - Name: 
-      Entry: 8
-      Data: 
-    - Name: 
-      Entry: 7
-      Data: 
-    - Name: $k
-      Entry: 1
-      Data: rock
-    - Name: $v
-      Entry: 10
-      Data: 18
+      Data: 17
     - Name: 
       Entry: 8
       Data: 
@@ -814,7 +357,7 @@ MonoBehaviour:
       Data: watering_can
     - Name: $v
       Entry: 10
-      Data: 18
+      Data: 17
     - Name: 
       Entry: 8
       Data: 
@@ -826,7 +369,7 @@ MonoBehaviour:
       Data: gelplant_seed
     - Name: $v
       Entry: 10
-      Data: 18
+      Data: 17
     - Name: 
       Entry: 8
       Data: 
@@ -838,7 +381,7 @@ MonoBehaviour:
       Data: gelplant
     - Name: $v
       Entry: 10
-      Data: 18
+      Data: 17
     - Name: 
       Entry: 8
       Data: 
@@ -850,7 +393,7 @@ MonoBehaviour:
       Data: gelplant_bait
     - Name: $v
       Entry: 10
-      Data: 18
+      Data: 17
     - Name: 
       Entry: 8
       Data: 
@@ -862,7 +405,7 @@ MonoBehaviour:
       Data: porock_seed
     - Name: $v
       Entry: 10
-      Data: 18
+      Data: 17
     - Name: 
       Entry: 8
       Data: 
@@ -874,7 +417,7 @@ MonoBehaviour:
       Data: birow_log
     - Name: $v
       Entry: 10
-      Data: 21
+      Data: 20
     - Name: 
       Entry: 8
       Data: 
@@ -883,10 +426,10 @@ MonoBehaviour:
       Data: 
     - Name: $k
       Entry: 1
-      Data: rock_resource
+      Data: obsidian
     - Name: $v
       Entry: 10
-      Data: 18
+      Data: 21
     - Name: 
       Entry: 8
       Data: 
@@ -898,14 +441,14 @@ MonoBehaviour:
       Data: 
     - Name: _itemNameChunk
       Entry: 7
-      Data: 20|System.Collections.Generic.Dictionary`2[[System.String, mscorlib],[System.String,
+      Data: 3|System.Collections.Generic.Dictionary`2[[System.String, mscorlib],[System.String,
         mscorlib]], mscorlib
     - Name: comparer
       Entry: 9
       Data: 1
     - Name: 
       Entry: 12
-      Data: 16
+      Data: 15
     - Name: 
       Entry: 7
       Data: 
@@ -1007,18 +550,6 @@ MonoBehaviour:
       Data: 
     - Name: $k
       Entry: 1
-      Data: rock
-    - Name: $v
-      Entry: 1
-      Data: Rock
-    - Name: 
-      Entry: 8
-      Data: 
-    - Name: 
-      Entry: 7
-      Data: 
-    - Name: $k
-      Entry: 1
       Data: watering_can
     - Name: $v
       Entry: 1
@@ -1091,10 +622,619 @@ MonoBehaviour:
       Data: 
     - Name: $k
       Entry: 1
-      Data: rock_resource
+      Data: obsidian
     - Name: $v
       Entry: 1
-      Data: Rock Resource
+      Data: Obsidian Shard
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: 
+      Entry: 13
+      Data: 
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: _itemStackChunk
+      Entry: 7
+      Data: 4|System.Collections.Generic.Dictionary`2[[System.String, mscorlib],[System.Int32,
+        mscorlib]], mscorlib
+    - Name: comparer
+      Entry: 7
+      Data: 5|System.Collections.Generic.GenericEqualityComparer`1[[System.String,
+        mscorlib]], mscorlib
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: 
+      Entry: 12
+      Data: 15
+    - Name: 
+      Entry: 7
+      Data: 
+    - Name: $k
+      Entry: 1
+      Data: birow_log
+    - Name: $v
+      Entry: 3
+      Data: 16
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: 
+      Entry: 7
+      Data: 
+    - Name: $k
+      Entry: 1
+      Data: obsidian
+    - Name: $v
+      Entry: 3
+      Data: 16
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: 
+      Entry: 7
+      Data: 
+    - Name: $k
+      Entry: 1
+      Data: floatish
+    - Name: $v
+      Entry: 3
+      Data: 16
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: 
+      Entry: 7
+      Data: 
+    - Name: $k
+      Entry: 1
+      Data: spookish
+    - Name: $v
+      Entry: 3
+      Data: 16
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: 
+      Entry: 7
+      Data: 
+    - Name: $k
+      Entry: 1
+      Data: gelplant_bait
+    - Name: $v
+      Entry: 3
+      Data: 16
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: 
+      Entry: 7
+      Data: 
+    - Name: $k
+      Entry: 1
+      Data: gelplant_seed
+    - Name: $v
+      Entry: 3
+      Data: 16
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: 
+      Entry: 7
+      Data: 
+    - Name: $k
+      Entry: 1
+      Data: porock
+    - Name: $v
+      Entry: 3
+      Data: 16
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: 
+      Entry: 7
+      Data: 
+    - Name: $k
+      Entry: 1
+      Data: porock_seed
+    - Name: $v
+      Entry: 3
+      Data: 16
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: 
+      Entry: 7
+      Data: 
+    - Name: $k
+      Entry: 1
+      Data: gelplant
+    - Name: $v
+      Entry: 3
+      Data: 16
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: 
+      Entry: 7
+      Data: 
+    - Name: $k
+      Entry: 1
+      Data: scythe
+    - Name: $v
+      Entry: 3
+      Data: 1
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: 
+      Entry: 7
+      Data: 
+    - Name: $k
+      Entry: 1
+      Data: simple_rod
+    - Name: $v
+      Entry: 3
+      Data: 1
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: 
+      Entry: 7
+      Data: 
+    - Name: $k
+      Entry: 1
+      Data: axe
+    - Name: $v
+      Entry: 3
+      Data: 1
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: 
+      Entry: 7
+      Data: 
+    - Name: $k
+      Entry: 1
+      Data: pickaxe
+    - Name: $v
+      Entry: 3
+      Data: 1
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: 
+      Entry: 7
+      Data: 
+    - Name: $k
+      Entry: 1
+      Data: wooden_chest
+    - Name: $v
+      Entry: 3
+      Data: 1
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: 
+      Entry: 7
+      Data: 
+    - Name: $k
+      Entry: 1
+      Data: watering_can
+    - Name: $v
+      Entry: 3
+      Data: 1
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: 
+      Entry: 13
+      Data: 
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: _itemLabelChunk
+      Entry: 7
+      Data: 6|System.Collections.Generic.Dictionary`2[[System.String, mscorlib],[System.Collections.Generic.List`1[[System.String,
+        mscorlib]], mscorlib]], mscorlib
+    - Name: comparer
+      Entry: 9
+      Data: 1
+    - Name: 
+      Entry: 12
+      Data: 15
+    - Name: 
+      Entry: 7
+      Data: 
+    - Name: $k
+      Entry: 1
+      Data: scythe
+    - Name: $v
+      Entry: 7
+      Data: 7|System.Collections.Generic.List`1[[System.String, mscorlib]], mscorlib
+    - Name: 
+      Entry: 12
+      Data: 2
+    - Name: 
+      Entry: 1
+      Data: Scythe
+    - Name: 
+      Entry: 1
+      Data: Tool
+    - Name: 
+      Entry: 13
+      Data: 
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: 
+      Entry: 7
+      Data: 
+    - Name: $k
+      Entry: 1
+      Data: porock
+    - Name: $v
+      Entry: 7
+      Data: 8|System.Collections.Generic.List`1[[System.String, mscorlib]], mscorlib
+    - Name: 
+      Entry: 12
+      Data: 4
+    - Name: 
+      Entry: 1
+      Data: Food
+    - Name: 
+      Entry: 1
+      Data: Vegetable
+    - Name: 
+      Entry: 1
+      Data: Crop
+    - Name: 
+      Entry: 1
+      Data: Vegetable
+    - Name: 
+      Entry: 13
+      Data: 
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: 
+      Entry: 7
+      Data: 
+    - Name: $k
+      Entry: 1
+      Data: floatish
+    - Name: $v
+      Entry: 7
+      Data: 9|System.Collections.Generic.List`1[[System.String, mscorlib]], mscorlib
+    - Name: 
+      Entry: 12
+      Data: 2
+    - Name: 
+      Entry: 1
+      Data: Food
+    - Name: 
+      Entry: 1
+      Data: Fish
+    - Name: 
+      Entry: 13
+      Data: 
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: 
+      Entry: 7
+      Data: 
+    - Name: $k
+      Entry: 1
+      Data: simple_rod
+    - Name: $v
+      Entry: 7
+      Data: 10|System.Collections.Generic.List`1[[System.String, mscorlib]], mscorlib
+    - Name: 
+      Entry: 12
+      Data: 1
+    - Name: 
+      Entry: 1
+      Data: Rod
+    - Name: 
+      Entry: 13
+      Data: 
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: 
+      Entry: 7
+      Data: 
+    - Name: $k
+      Entry: 1
+      Data: spookish
+    - Name: $v
+      Entry: 7
+      Data: 11|System.Collections.Generic.List`1[[System.String, mscorlib]], mscorlib
+    - Name: 
+      Entry: 12
+      Data: 2
+    - Name: 
+      Entry: 1
+      Data: Fish
+    - Name: 
+      Entry: 1
+      Data: Food
+    - Name: 
+      Entry: 13
+      Data: 
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: 
+      Entry: 7
+      Data: 
+    - Name: $k
+      Entry: 1
+      Data: axe
+    - Name: $v
+      Entry: 7
+      Data: 12|System.Collections.Generic.List`1[[System.String, mscorlib]], mscorlib
+    - Name: 
+      Entry: 12
+      Data: 2
+    - Name: 
+      Entry: 1
+      Data: Axe
+    - Name: 
+      Entry: 1
+      Data: Tool
+    - Name: 
+      Entry: 13
+      Data: 
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: 
+      Entry: 7
+      Data: 
+    - Name: $k
+      Entry: 1
+      Data: pickaxe
+    - Name: $v
+      Entry: 7
+      Data: 13|System.Collections.Generic.List`1[[System.String, mscorlib]], mscorlib
+    - Name: 
+      Entry: 12
+      Data: 2
+    - Name: 
+      Entry: 1
+      Data: Pickaxe
+    - Name: 
+      Entry: 1
+      Data: Tool
+    - Name: 
+      Entry: 13
+      Data: 
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: 
+      Entry: 7
+      Data: 
+    - Name: $k
+      Entry: 1
+      Data: wooden_chest
+    - Name: $v
+      Entry: 7
+      Data: 14|System.Collections.Generic.List`1[[System.String, mscorlib]], mscorlib
+    - Name: 
+      Entry: 12
+      Data: 1
+    - Name: 
+      Entry: 1
+      Data: Storage
+    - Name: 
+      Entry: 13
+      Data: 
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: 
+      Entry: 7
+      Data: 
+    - Name: $k
+      Entry: 1
+      Data: watering_can
+    - Name: $v
+      Entry: 7
+      Data: 15|System.Collections.Generic.List`1[[System.String, mscorlib]], mscorlib
+    - Name: 
+      Entry: 12
+      Data: 2
+    - Name: 
+      Entry: 1
+      Data: WateringCan
+    - Name: 
+      Entry: 1
+      Data: Tool
+    - Name: 
+      Entry: 13
+      Data: 
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: 
+      Entry: 7
+      Data: 
+    - Name: $k
+      Entry: 1
+      Data: gelplant_seed
+    - Name: $v
+      Entry: 7
+      Data: 16|System.Collections.Generic.List`1[[System.String, mscorlib]], mscorlib
+    - Name: 
+      Entry: 12
+      Data: 1
+    - Name: 
+      Entry: 1
+      Data: Seed
+    - Name: 
+      Entry: 13
+      Data: 
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: 
+      Entry: 7
+      Data: 
+    - Name: $k
+      Entry: 1
+      Data: gelplant
+    - Name: $v
+      Entry: 7
+      Data: 17|System.Collections.Generic.List`1[[System.String, mscorlib]], mscorlib
+    - Name: 
+      Entry: 12
+      Data: 1
+    - Name: 
+      Entry: 1
+      Data: Food
+    - Name: 
+      Entry: 13
+      Data: 
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: 
+      Entry: 7
+      Data: 
+    - Name: $k
+      Entry: 1
+      Data: gelplant_bait
+    - Name: $v
+      Entry: 7
+      Data: 18|System.Collections.Generic.List`1[[System.String, mscorlib]], mscorlib
+    - Name: 
+      Entry: 12
+      Data: 1
+    - Name: 
+      Entry: 1
+      Data: FishBait
+    - Name: 
+      Entry: 13
+      Data: 
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: 
+      Entry: 7
+      Data: 
+    - Name: $k
+      Entry: 1
+      Data: porock_seed
+    - Name: $v
+      Entry: 7
+      Data: 19|System.Collections.Generic.List`1[[System.String, mscorlib]], mscorlib
+    - Name: 
+      Entry: 12
+      Data: 1
+    - Name: 
+      Entry: 1
+      Data: Seed
+    - Name: 
+      Entry: 13
+      Data: 
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: 
+      Entry: 7
+      Data: 
+    - Name: $k
+      Entry: 1
+      Data: birow_log
+    - Name: $v
+      Entry: 7
+      Data: 20|System.Collections.Generic.List`1[[System.String, mscorlib]], mscorlib
+    - Name: 
+      Entry: 12
+      Data: 2
+    - Name: 
+      Entry: 1
+      Data: Wood
+    - Name: 
+      Entry: 1
+      Data: Resource
+    - Name: 
+      Entry: 13
+      Data: 
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: 
+      Entry: 7
+      Data: 
+    - Name: $k
+      Entry: 1
+      Data: obsidian
+    - Name: $v
+      Entry: 7
+      Data: 21|System.Collections.Generic.List`1[[System.String, mscorlib]], mscorlib
+    - Name: 
+      Entry: 12
+      Data: 2
+    - Name: 
+      Entry: 1
+      Data: Resource
+    - Name: 
+      Entry: 1
+      Data: Stone
+    - Name: 
+      Entry: 13
+      Data: 
+    - Name: 
+      Entry: 8
+      Data: 
     - Name: 
       Entry: 8
       Data: 

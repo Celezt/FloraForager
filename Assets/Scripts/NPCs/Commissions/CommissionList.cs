@@ -43,12 +43,10 @@ public class CommissionList : SerializedScriptableSingleton<CommissionList>, ISt
 
     public bool Remove(Commission commission)
     {
-        if (commission == null || !_Commissions.Contains(commission))
+        if (commission == null)
             return false;
 
-        _Commissions.Remove(commission);
-
-        return true;
+        return _Commissions.Remove(commission);
     }
 
     public void Notify()

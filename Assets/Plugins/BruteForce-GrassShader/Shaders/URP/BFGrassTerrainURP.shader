@@ -121,7 +121,7 @@ Shader "BruteForceURP/InteractiveGrassTerrainURP"
 	}
 		SubShader
 		{
-			Tags{"DisableBatching" = "true" }
+			Tags{"DisableBatching" = "true"}
 			pass 
 			{
 			Tags{"RenderPipeline" = "UniversalPipeline" }

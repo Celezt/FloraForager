@@ -9,8 +9,6 @@ using MyBox;
 
 public class ScytheItem : IUse, IDestructor, IStar, IValue
 {
-    [OdinSerialize, PropertyOrder(float.MinValue)]
-    int IItem.ItemStack { get; set; } = 1;
     [OdinSerialize, PropertyOrder(float.MinValue + 1)]
     Stars IStar.Star { get; set; } = Stars.One;
     [OdinSerialize, PropertyOrder(float.MinValue + 2)]
