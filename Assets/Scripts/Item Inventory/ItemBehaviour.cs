@@ -69,7 +69,7 @@ public class ItemBehaviour : MonoBehaviour
         Vector3 position = transform.position;
 
         float offset = 0.0f;
-        if (_checkTransform.TryGetComponent(out CapsuleCollider collider))
+        if (_checkTransform.TryGetComponent(out Collider collider))
             offset = collider.bounds.size.y;
 
         while (true)
