@@ -20,45 +20,59 @@ public class StreamableBehaviour : MonoBehaviour, IStreamer, IStreamable<Streama
     private bool _respawnableObject = false;
     [SerializeField, Min(1), ShowIf("@this._respawnableObject && this._saveIfDestroyed")]
     private int _respawnTimeInDays = 2;
-    [SerializeField, MinMaxRange(0.0f, 5.0f)]
-    private MinMaxInt _randomRespawnTime = new MinMaxInt(1, 3);
+    [SerializeField, MinMaxRange(0.0f, 5.0f), ShowIf("@this._respawnableObject && this._saveIfDestroyed")]
+    private MinMaxInt _randomRespawnTime = new MinMaxInt(0, 3);
 
     private Data _data;
     private Guid _guid;
 
     public class Data
     {
-        public string Address;
         public bool IsAlive = true;
-        public int SceneIndex;
     }
 
     public Data OnUpload() => _data = new Data();
     public void OnLoad(object state)
     {
         Data data = state as Data;
-
-        if (!data.IsAlive)
-            Destroy(gameObject);
+        
+        gameObject.SetActive(data.IsAlive);
 
         _data = data;
     }
     void IStreamable.OnBeforeSaving() 
     {
-        _data.SceneIndex = SceneManager.GetActiveScene().buildIndex;
+
     }
 
     private void Awake()
     {
         _guid = GetComponent<GuidComponent>().Guid;
+
+        ObjectRespawn.Instance.AddObject(_guid, gameObject);
     }
 
-    private void Start()
+    private void OnEnable()
     {
         if (GameManager.Stream.StreamedData.ContainsKey(_guid))
             Load();
 
         GameManager.AddStreamer(this);
+    }
+    private void OnDisable()
+    {
+        if (!LoadScene.SceneIsLoading)
+        {
+            if (_saveIfDestroyed)
+            {
+                _data.IsAlive = false;
+                
+                if (_respawnableObject)
+                    ObjectRespawn.Instance.Add(_guid, _respawnTimeInDays + _randomRespawnTime.RandomInRangeInclusive(), gameObject);
+            }
+        }
+
+        GameManager.RemoveStreamer(this);
     }
 
     public void UpLoad()
@@ -86,22 +100,5 @@ public class StreamableBehaviour : MonoBehaviour, IStreamer, IStreamable<Streama
     public void BeforeSaving()
     {
         GetComponentsInChildren<IStreamable>().ForEach(x => ((IStreamable<object>)x).OnBeforeSaving());
-    }
-
-    private void OnDestroy()
-    {
-        if (!LoadScene.SceneIsLoading)
-        {
-            if (_saveIfDestroyed)
-            {
-                _data.IsAlive = false;
-
-                if (_respawnableObject)
-                    ObjectRespawn.Instance.Add(_guid, 
-                        _respawnTimeInDays + _randomRespawnTime.RandomInRangeInclusive());
-            }
-        }
-
-        GameManager.RemoveStreamer(this);
     }
 }
