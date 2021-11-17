@@ -11,7 +11,6 @@ public enum Items
 	Spookish,
 	Axe,
 	Pickaxe,
-	Birow,
 	WoodenChest,
 	Rock,
 	WateringCan,
@@ -19,6 +18,6 @@ public enum Items
 	Gelplant,
 	GelplantBait,
 	PorockSeed,
-	BirowResource,
+	BirowLog,
 	RockResource,
 }
