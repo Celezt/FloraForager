@@ -27,20 +27,19 @@ public class FloraMaster : SerializedScriptableSingleton<FloraMaster>, IStreamer
 
     private void Awake()
     {
-        SceneManager.sceneLoaded += OnSceneLoaded;
-
         if (_Guid == System.Guid.Empty)
             _Guid = System.Guid.NewGuid();
 
         GameManager.AddStreamer(this);
+        SceneManager.sceneLoaded += OnSceneLoaded;
     }
 
 #if UNITY_EDITOR
     [UnityEditor.InitializeOnEnterPlayMode]
     private static void Initialize()
     {
-        SceneManager.sceneLoaded += Instance.OnSceneLoaded;
         GameManager.AddStreamer(FloraMaster.Instance);
+        SceneManager.sceneLoaded += Instance.OnSceneLoaded;
     }
 #endif
 
@@ -62,10 +61,7 @@ public class FloraMaster : SerializedScriptableSingleton<FloraMaster>, IStreamer
     {
         Cell cell = Grid.Instance.HoveredCell;
 
-        if (cell == null || cell.Occupied)
-            return false;
-
-        if (cell.Type != CellType.Dirt)
+        if (cell == null || cell.Occupied || cell.Type != CellType.Dirt)
             return false;
 
         string key = floraName.ToLower();
@@ -86,10 +82,7 @@ public class FloraMaster : SerializedScriptableSingleton<FloraMaster>, IStreamer
     {
         Cell cell = Grid.Instance.HoveredCell;
 
-        if (cell == null || cell.Occupied)
-            return false;
-
-        if (cell.Type != CellType.Dirt)
+        if (cell == null || cell.Occupied || cell.Type != CellType.Dirt)
             return false;
 
         Flora flora = new Flora(floraInfo, cell.Local);
@@ -119,12 +112,7 @@ public class FloraMaster : SerializedScriptableSingleton<FloraMaster>, IStreamer
 
     public bool Remove(Flora flora)
     {
-        if (!_Florae.Contains(flora))
-            return false;
-
-        _Florae.Remove(flora);
-
-        return true;
+        return _Florae.Remove(flora);
     }
 
     public void Notify()
@@ -141,9 +129,8 @@ public class FloraMaster : SerializedScriptableSingleton<FloraMaster>, IStreamer
 
         _Florae.ForEach(x =>
             streamables.Add(
-                x.Cell.Local.x.ToString() + "," +
-                x.Cell.Local.y.ToString() + " " +
-                x.FloraData.SceneIndex.ToString(), ((IStreamable<object>)x).OnUpload()));
+                $"{x.Cell.Local} {x.FloraData.SceneIndex}", 
+                ((IStreamable<object>)x).OnUpload()));
 
         GameManager.Stream.Load(_Guid, streamables);
     }

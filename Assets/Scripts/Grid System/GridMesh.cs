@@ -14,6 +14,9 @@ public class GridMesh : MonoBehaviour
     [SerializeField]
     private int _TexTilesPerRow, _TexTilesPerCol;
 
+    [SerializeField]
+    private bool _IsVisible = true;
+
     private MeshFilter _MeshFilter;
     private MeshRenderer _MeshRenderer;
     private MeshCollider _MeshCollider;
@@ -35,6 +38,8 @@ public class GridMesh : MonoBehaviour
             _MeshRenderer = GetComponent<MeshRenderer>();
             _MeshCollider = GetComponent<MeshCollider>();
         }
+
+        _MeshRenderer.enabled = _IsVisible;
     }
 
     private void Awake()
@@ -76,10 +81,12 @@ public class GridMesh : MonoBehaviour
         Vector2[] uvs = new Vector2[cells.Length * 4];
 
         CellsData = new CellData[cells.Length];
-
         for (int i = cells.Length - 1, v = i * 4, t = i * 6; i >= 0; --i, v -= 4, t -= 6)
         {
             CellMesh cell = cells[i];
+
+            if (cell == null)
+                continue;
 
             triangles[t + 0] = v;
             triangles[t + 1] = triangles[t + 4] = v + 1;

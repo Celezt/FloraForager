@@ -16,6 +16,8 @@ public class TreeBehaviour : MonoBehaviour, IStreamable<TreeBehaviour.Data>, IUs
     [SerializeField, PropertyOrder(-1), HideLabel, InlineProperty]
     private Data _data;
 
+    private CapsuleCollider _Collider;
+
     [System.Serializable]
     public class Data
     {
@@ -38,6 +40,11 @@ public class TreeBehaviour : MonoBehaviour, IStreamable<TreeBehaviour.Data>, IUs
     [SerializeField]
     ItemLabels IUsable.Filter() => _filter;
 
+    private void Start()
+    {
+        _Collider = GetComponent<CapsuleCollider>();
+    }
+
     void IUsable.OnUse(UsedContext context)
     {
         if (!(context.used is IDestructor))
@@ -50,8 +57,8 @@ public class TreeBehaviour : MonoBehaviour, IStreamable<TreeBehaviour.Data>, IUs
         {
             SoundPlayer.Instance.Play(_breakSound);
 
-            context.Drop(transform.position, _drops);
-            Destroy(gameObject);
+            context.Drop(transform.TransformPoint(_Collider.center), _drops);
+            gameObject.SetActive(false);
         }
         else
         {

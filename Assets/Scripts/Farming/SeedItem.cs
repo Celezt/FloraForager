@@ -41,7 +41,7 @@ public class SeedItem : IUse
 
     public IEnumerator OnUse(UseContext context)
     {
-        if (!context.performed)
+        if (!context.started)
             yield break;
 
         Ray ray = Camera.main.ScreenPointToRay(Mouse.current.position.ReadValue());
@@ -51,7 +51,7 @@ public class SeedItem : IUse
         {
             if (FloraMaster.Instance.Add(_Flora))
             {
-                SoundPlayer.Instance.Play("place");
+                SoundPlayer.Instance.Play("place_seed");
                 context.Consume();
             }
         }

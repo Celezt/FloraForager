@@ -60,8 +60,14 @@ public class SoundPlayer : Singleton<SoundPlayer>
 
         foreach (Sound sound in _SoundEffects)
         {
-            yield return new WaitUntil(() => sound.Load().Status == AsyncOperationStatus.Succeeded);
-            _Sounds[sound.Name] = sound;
+            AsyncOperationHandle<AudioClip> handle = sound.Load();
+
+            yield return new WaitUntil(() => 
+                handle.Status == AsyncOperationStatus.Succeeded || 
+                handle.Status == AsyncOperationStatus.Failed);
+
+            if (handle.Status == AsyncOperationStatus.Succeeded)
+                _Sounds[sound.Name] = sound;
         }
         _SoundEffects = null;
 
@@ -72,9 +78,8 @@ public class SoundPlayer : Singleton<SoundPlayer>
     {
         if (_Cooldowns.Count > 0)
         {
-            for (int i = _Cooldowns.Count - 1; i >= 0; --i)
+            foreach (string key in _Cooldowns.Keys.ToList())
             {
-                string key = _Cooldowns.ElementAt(i).Key;
                 if ((_Cooldowns[key] -= Time.deltaTime) <= 0.0f)
                 {
                     _Cooldowns.Remove(key);
@@ -83,12 +88,12 @@ public class SoundPlayer : Singleton<SoundPlayer>
         }
     }
 
-    public void Play(string soundName)
+    public void Play(string soundName, int repeatCount = 0, float cooldown = 0.0f)
     {
-        StartCoroutine(PlaySound(soundName));
+        StartCoroutine(PlaySound(soundName, repeatCount, cooldown));
     }
 
-    private IEnumerator PlaySound(string name)
+    private IEnumerator PlaySound(string name, int repeatCount = 0, float cooldown = 0.0f)
     {
         if (string.IsNullOrWhiteSpace(name))
             yield break;
@@ -99,7 +104,7 @@ public class SoundPlayer : Singleton<SoundPlayer>
         AudioSource source = _AudioSourcePool[PoolIndex++];
         sound.AudioSource = source;
 
-        for (int i = 0; i < ((sound.RepeatCount > 0) ? sound.RepeatCount : 1); ++i)
+        for (int i = 0; i < ((repeatCount > 0) ? repeatCount : 1); ++i)
         {
             while (_Cooldowns.ContainsKey(name))
                 yield return null;
@@ -107,8 +112,8 @@ public class SoundPlayer : Singleton<SoundPlayer>
             SetAudioSource(source, sound);
             source.Play();
 
-            if (sound.Cooldown > float.Epsilon)
-                _Cooldowns.Add(sound.Name, sound.Cooldown);
+            if (cooldown > float.Epsilon)
+                _Cooldowns.Add(sound.Name, cooldown);
 
             yield return new WaitUntil(() => !source.isPlaying);
         }
@@ -241,10 +246,6 @@ public class SoundPlayer : Singleton<SoundPlayer>
         private float _Pitch = 1.0f;
         [SerializeField, HideInInspector, Range(0.0f, 1.0f)]
         private float _SpatialBlend = 0.0f;
-        [SerializeField]
-        private float _Cooldown = 0.0f;
-        [SerializeField]
-        private int _RepeatCount = 0;
 
         private AudioClip _AudioClip;
 
@@ -259,26 +260,28 @@ public class SoundPlayer : Singleton<SoundPlayer>
         public float Volume => _Volume;
         public float Pitch => _Pitch;
         public float SpatialBlend => _SpatialBlend;
-        public float Cooldown => _Cooldown;
-        public int RepeatCount => _RepeatCount;
 
         public void Set(float volume, float pitch = 1.0f, float spatialBlend = 0, float cooldown = 0, int repeatCount = 0)
         {
             _Volume = volume;
             _Pitch = pitch;
             _SpatialBlend = spatialBlend;
-            _Cooldown = cooldown;
-            _RepeatCount = repeatCount;
         }
 
         public AsyncOperationHandle<AudioClip> Load()
         {
-            AsyncOperationHandle<AudioClip> handle = Addressables.LoadAssetAsync<AudioClip>(_Asset);
+            AsyncOperationHandle<AudioClip> handle = _Asset.LoadAssetAsync<AudioClip>();
 
-            handle.Completed += (AsyncOperationHandle<AudioClip> handle) => 
+            handle.Completed += (AsyncOperationHandle<AudioClip> hndl) => 
             {
-                _AudioClip = handle.Result;
-                _Name = handle.Result.name;
+                if (hndl.Result == null)
+                {
+                    Debug.LogError("sound was unable to load");
+                    return;
+                }
+
+                _AudioClip = hndl.Result;
+                _Name = hndl.Result.name;
             };
 
             return handle;

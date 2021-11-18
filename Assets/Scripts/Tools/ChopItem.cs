@@ -20,6 +20,8 @@ public class ChopItem : IUse, IDestructor, IStar, IValue
 
     [Title("Tool Behaviour")]
     [SerializeField]
+    private string _swingSound = "swing_tool";
+    [SerializeField]
     private string _hitSound;
     [SerializeField]
     private string _poorSound = "hit_poor";
@@ -30,7 +32,9 @@ public class ChopItem : IUse, IDestructor, IStar, IValue
     [SerializeField]
     private float _stunDuration = 0.6f;
     [SerializeField]
-    private float _onUse = 0.4f;
+    private float _onSwing = 0.1f;
+    [SerializeField, Sirenix.OdinInspector.MinValue("_onSwing")]
+    private float _onUse = 0.2f;
     [SerializeField]
     private Vector3 _halfExtents = new Vector3(0.5f, 1.0f, 0.5f);
     [SerializeField]
@@ -87,7 +91,11 @@ public class ChopItem : IUse, IDestructor, IStar, IValue
             }
         );
 
-        yield return new WaitForSeconds(_onUse);
+        yield return new WaitForSeconds(_onSwing);
+
+        SoundPlayer.Instance.Play(_swingSound);
+
+        yield return new WaitForSeconds(_onUse - _onSwing);
        
         Collider[] colliders = Physics.OverlapBox(context.transform.position + context.transform.rotation * _centerOffset, _halfExtents, context.transform.rotation, LayerMask.NameToLayer("default"));
         List<Collider> usableColliders = new List<Collider>(colliders.Length);
