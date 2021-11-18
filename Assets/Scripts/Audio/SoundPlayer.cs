@@ -88,12 +88,12 @@ public class SoundPlayer : Singleton<SoundPlayer>
         }
     }
 
-    public void Play(string soundName, int repeatCount = 0, float cooldown = 0.0f)
+    public void Play(string soundName, float volumeChange = 0.0f, float pitchChange = 0.0f, int repeatCount = 0, float cooldown = 0.0f)
     {
-        StartCoroutine(PlaySound(soundName, repeatCount, cooldown));
+        StartCoroutine(PlaySound(soundName, volumeChange, pitchChange, repeatCount, cooldown));
     }
 
-    private IEnumerator PlaySound(string name, int repeatCount = 0, float cooldown = 0.0f)
+    private IEnumerator PlaySound(string name, float volumeChange = 0.0f, float pitchChange = 0.0f, int repeatCount = 0, float cooldown = 0.0f)
     {
         if (string.IsNullOrWhiteSpace(name))
             yield break;
@@ -110,6 +110,10 @@ public class SoundPlayer : Singleton<SoundPlayer>
                 yield return null;
 
             SetAudioSource(source, sound);
+
+            source.volume += volumeChange;
+            source.pitch += pitchChange;
+
             source.Play();
 
             if (cooldown > float.Epsilon)
@@ -171,7 +175,7 @@ public class SoundPlayer : Singleton<SoundPlayer>
             return;
 
         if (sound != null)
-            sound.Set(volume, pitch, spatialBlend, cooldown, repeatCount);
+            sound.Set(volume, pitch, spatialBlend);
     }
     public bool TryGetSound(string name, out Sound sound)
     {
@@ -261,7 +265,7 @@ public class SoundPlayer : Singleton<SoundPlayer>
         public float Pitch => _Pitch;
         public float SpatialBlend => _SpatialBlend;
 
-        public void Set(float volume, float pitch = 1.0f, float spatialBlend = 0, float cooldown = 0, int repeatCount = 0)
+        public void Set(float volume, float pitch, float spatialBlend = 0)
         {
             _Volume = volume;
             _Pitch = pitch;

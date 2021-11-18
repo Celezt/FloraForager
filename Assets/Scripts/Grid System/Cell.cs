@@ -52,9 +52,6 @@ public class Cell
 
         gameObject.transform.position = Middle;
 
-        if (gameObject.TryGetComponent(out MeshFilter meshFilter))
-            gameObject.transform.position += Vector3.up * meshFilter.mesh.bounds.extents.y;
-
         return (Occupied = true);
     }
 
