@@ -14,6 +14,9 @@ public class GridMesh : MonoBehaviour
     [SerializeField]
     private int _TexTilesPerRow, _TexTilesPerCol;
 
+    [SerializeField]
+    private bool _IsVisible = true;
+
     private MeshFilter _MeshFilter;
     private MeshRenderer _MeshRenderer;
     private MeshCollider _MeshCollider;
@@ -35,6 +38,8 @@ public class GridMesh : MonoBehaviour
             _MeshRenderer = GetComponent<MeshRenderer>();
             _MeshCollider = GetComponent<MeshCollider>();
         }
+
+        _MeshRenderer.enabled = _IsVisible;
     }
 
     private void Awake()
