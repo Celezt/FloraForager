@@ -8,8 +8,6 @@ using Sirenix.OdinInspector;
 
 public class FoodItem : IUse, IStar, IValue
 {
-    [OdinSerialize, PropertyOrder(float.MinValue)]
-    public int ItemStack { get; set; } = 64;
     [OdinSerialize, PropertyOrder(float.MinValue + 1)]
     Stars IStar.Star { get; set; } = Stars.One;
     [OdinSerialize, PropertyOrder(float.MinValue + 2)]
