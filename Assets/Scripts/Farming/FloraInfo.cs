@@ -15,6 +15,8 @@ public class FloraInfo : SerializedScriptableObject
 
     [Title("Harvesting")]
     [OdinSerialize]
+    private string _HarvestSound = "break_flora";
+    [OdinSerialize]
     private ItemLabels _ItemLabels;
     [OdinSerialize, VerticalGroup]
     private IHarvest _HarvestMethod;
@@ -28,6 +30,7 @@ public class FloraInfo : SerializedScriptableObject
     public string Name => _Name;
     public string Description => _Description;
 
+    public string HarvestSound => _HarvestSound;
     public ItemLabels ItemLabels => _ItemLabels;
     public IHarvest HarvestMethod => _HarvestMethod;
     

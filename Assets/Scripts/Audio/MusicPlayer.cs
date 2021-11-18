@@ -20,7 +20,7 @@ public class MusicPlayer : Singleton<MusicPlayer>
     private bool _Shuffle;
 
     [Space(5)]
-    [SerializeField, ListDrawerSettings(DraggableItems = false, ShowItemCount = false, Expanded = true)]
+    [SerializeField, ListDrawerSettings(ShowItemCount = false, Expanded = true)]
     private Music[] _Soundtrack;
 
     public event System.Action Completed = delegate { };

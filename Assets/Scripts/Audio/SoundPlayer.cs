@@ -99,7 +99,10 @@ public class SoundPlayer : Singleton<SoundPlayer>
             yield break;
 
         if (!TryGetSound(name, out Sound sound))
+        {
+            Debug.LogError($"{name} does not exist");
             yield break;
+        }
 
         AudioSource source = _AudioSourcePool[PoolIndex++];
         sound.AudioSource = source;
