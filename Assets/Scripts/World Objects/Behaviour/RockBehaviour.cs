@@ -14,6 +14,8 @@ public class RockBehaviour : MonoBehaviour, IStreamable<RockBehaviour.Data>, IUs
     [SerializeField, PropertyOrder(-1), HideLabel, InlineProperty]
     private Data _data;
 
+    private BoxCollider _Collider;
+
     [System.Serializable]
     public class Data
     {
@@ -35,6 +37,11 @@ public class RockBehaviour : MonoBehaviour, IStreamable<RockBehaviour.Data>, IUs
     [SerializeField]
     ItemLabels IUsable.Filter() => _filter;
 
+    private void Start()
+    {
+        _Collider = GetComponent<BoxCollider>();
+    }
+
     void IUsable.OnUse(UsedContext context)
     {
         if (!(context.used is IDestructor))
@@ -47,7 +54,7 @@ public class RockBehaviour : MonoBehaviour, IStreamable<RockBehaviour.Data>, IUs
         {
             SoundPlayer.Instance.Play(_breakSound);
 
-            context.Drop(transform.position, _drops);
+            context.Drop(transform.TransformPoint(_Collider.center), _drops);
             gameObject.SetActive(false);
         }
         else

@@ -55,8 +55,8 @@ public class GridWindow : OdinEditorWindow
             return;
         }
 
+        Refresh();
         _Mesh.Compile(_CellsMesh);
-
         Refresh();
     }
 
@@ -70,8 +70,8 @@ public class GridWindow : OdinEditorWindow
             return;
         }
 
-        _CellsMesh = _Mesh.Decompile();
-
+        Refresh();
+        _Mesh.Decompile();
         Refresh();
     }
 

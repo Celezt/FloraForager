@@ -68,14 +68,18 @@ public class ItemBehaviour : MonoBehaviour
     {
         Vector3 position = transform.position;
 
+        float offset = 0.0f;
+        if (_checkTransform.TryGetComponent(out Collider collider))
+            offset = collider.bounds.size.y;
+
         while (true)
         {
             float deltaTime = Time.fixedDeltaTime;
-            Vector3 checkPosition = _checkTransform.position;
+            Vector3 checkPosition = _checkTransform.position + Vector3.up * offset;
 
             position = Vector3.MoveTowards(position, checkPosition, 10 * deltaTime);
 
-            if (Vector3.Distance(position, checkPosition) <= 0)
+            if (Vector3.Distance(position, checkPosition) <= float.Epsilon)
             {
                 Destroy(gameObject, _destroyTimer);
             }
