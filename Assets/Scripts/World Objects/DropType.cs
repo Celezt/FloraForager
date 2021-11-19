@@ -6,6 +6,6 @@ using UnityEngine;
 [System.Serializable]
 public struct DropType
 {
-    public Items Item;
+    public string ID;
     public MinMaxInt DropRate;
 }
