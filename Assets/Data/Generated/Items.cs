@@ -14,7 +14,6 @@ public enum Items
 	WoodenChest,
 	WateringCan,
 	GelplantSeed,
-	Gelplant,
 	GelplantBait,
 	PorockSeed,
 	BirowLog,
