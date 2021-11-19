@@ -6,6 +6,7 @@ using UnityEngine.InputSystem;
 using UnityEngine.SceneManagement;
 using MyBox;
 using Sirenix.Serialization;
+using IngameDebugConsole;
 
 /// <summary>
 /// Manages all of the flora in this region
@@ -40,6 +41,8 @@ public class FloraMaster : SerializedScriptableSingleton<FloraMaster>, IStreamer
     {
         GameManager.AddStreamer(FloraMaster.Instance);
         SceneManager.sceneLoaded += Instance.OnSceneLoaded;
+
+        DebugLogConsole.AddCommandInstance("flora.grow", "Grows flora", nameof(Instance.DebugNotify), Instance);
     }
 #endif
 
@@ -120,6 +123,13 @@ public class FloraMaster : SerializedScriptableSingleton<FloraMaster>, IStreamer
         for (int i = _Florae.Count - 1; i >= 0; --i)
         {
             _Florae[i].Grow();
+        }
+    }
+    public void DebugNotify()
+    {
+        for (int i = _Florae.Count - 1; i >= 0; --i)
+        {
+            _Florae[i].ForceGrowth();
         }
     }
 

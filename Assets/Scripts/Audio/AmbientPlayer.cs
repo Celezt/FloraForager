@@ -20,7 +20,7 @@ public class AmbientPlayer : Singleton<AmbientPlayer>
     [SerializeField]
     private bool _Shuffle;
 
-    [SerializeField, ListDrawerSettings(DraggableItems = false, ShowItemCount = false, Expanded = true)]
+    [SerializeField, ListDrawerSettings(ShowItemCount = false, Expanded = true)]
     private Ambient[] _Soundtrack;
 
     private bool _IsActive;

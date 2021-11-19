@@ -1,3 +1,4 @@
+using System;
 using System.Linq;
 using System.Collections;
 using System.Collections.Generic;
@@ -51,7 +52,6 @@ public class FloraObject : MonoBehaviour, IUsable
         }
 
         transform.position = _Flora.Cell.Middle;
-        transform.position += Vector3.up * _MeshFilter.mesh.bounds.extents.y;
 
         _Collider.center = new Vector3(0, 
             _MeshFilter.mesh.bounds.center.y + 
@@ -63,11 +63,25 @@ public class FloraObject : MonoBehaviour, IUsable
         if (!(context.used is IDestructor))
             return;
 
+        foreach (string label in context.labels)
+        {
+            if (Enum.TryParse(label, true, out ItemLabels itemLabel) && itemLabel == ItemLabels.Pickaxe)
+            {
+                DestroyFlora();
+                return;
+            }
+        }
+
         if (Flora.Harvest(context))
+            DestroyFlora();
+
+        void DestroyFlora()
         {
             Destroy(_Flora.Cell.Free());
             FloraMaster.Instance.Remove(_Flora);
-        }
+
+            SoundPlayer.Instance.Play(_Flora.Info.HarvestSound, 0, 0, 0, 0.025f);
+        };
     }
 
     ItemLabels IUsable.Filter() => _Flora.Info.ItemLabels;
