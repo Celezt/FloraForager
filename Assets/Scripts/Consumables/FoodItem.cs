@@ -16,6 +16,8 @@ public class FoodItem : IUse, IStar, IValue
     public float Cooldown { get; set; } = 2;
 
     [SerializeField]
+    private string _eatSound = "swallow";
+    [SerializeField]
     private float _staminaChange;
     [SerializeField, InlineProperty]
     private List<IEffect> _effects = new List<IEffect>(); 
@@ -51,6 +53,8 @@ public class FoodItem : IUse, IStar, IValue
             foreach (IEffect effect in _effects)
                 if (!effect.Duration.IsActive)
                     effect.OnEffect(context);
+
+            SoundPlayer.Instance.Play(_eatSound);
 
             context.Consume();
         }
