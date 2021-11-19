@@ -102,7 +102,7 @@ public class HumanoidAnimationBehaviour : MonoBehaviour
 
     private void OnAnimatorIK(int layerIndex)
     {
-        Quaternion rotation = Quaternion.LookRotation(_target - _headTransform.position);
-        _animator.SetBoneLocalRotation(HumanBodyBones.Neck, _rotationHeadOffset * Quaternion.Inverse(_headTransform.rotation) * rotation * Quaternion.Euler(_rotationHeadOffset.eulerAngles.x * 0.75f, 0, 0));
+        //Quaternion rotation = Quaternion.LookRotation(_target - _headTransform.position);
+        //_animator.SetBoneLocalRotation(HumanBodyBones.Neck, _rotationHeadOffset * Quaternion.Inverse(_headTransform.rotation) * rotation * Quaternion.Euler(_rotationHeadOffset.eulerAngles.x * 0.75f, 0, 0));
     }
 }

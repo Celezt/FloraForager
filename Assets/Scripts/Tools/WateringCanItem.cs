@@ -16,6 +16,10 @@ public class WateringCanItem : IUse, IStar
     [SerializeField]
     private int _MaxUses = 5;
     [SerializeField]
+    private string _wateringSound;
+    [SerializeField]
+    private string _fillSound;
+    [SerializeField]
     private AnimationClip _wateringClip;
     [SerializeField]
     private AnimationClip _fillClip;
@@ -31,7 +35,7 @@ public class WateringCanItem : IUse, IStar
     private float _onFillUse = 0.8f;
     [Space(10)]
     [SerializeField]
-    private LayerMask _HitMask;
+    private LayerMask _HitMask = LayerMask.NameToLayer("Grid");
     [SerializeField]
     private float _Radius = 2.75f;
     [SerializeField, Range(0.0f, 360.0f)]
@@ -95,6 +99,8 @@ public class WateringCanItem : IUse, IStar
                     }
                 );
 
+                SoundPlayer.Instance.Play(_fillSound);
+
                 yield return new WaitForSeconds(_onFillUse);
 
                 _UsesLeft = _MaxUses;
@@ -103,30 +109,32 @@ public class WateringCanItem : IUse, IStar
             {
                 if (cell.HeldObject.TryGetComponent(out FloraObject floraObject))
                 {
-                    GameObject model = null;
-
-                    context.transform.GetComponentInChildren<PlayerMovement>().ActivaInput.Add(_stunWateringDuration);
-                    context.transform.GetComponentInChildren<HumanoidAnimationBehaviour>().CustomMotionRaise(_wateringClip,
-                        enterCallback: info =>
-                        {
-                            if (_model == null)
-                                return;
-
-                            model = Object.Instantiate(_model, info.animationBehaviour.HoldTransform);
-                        },
-                        exitCallback: info =>
-                        {
-                            if (_model == null)
-                                return;
-
-                            Object.Destroy(model);
-                        }
-                    );
-
-                    yield return new WaitForSeconds(_onWateringUse);
-
                     if (floraObject.Flora.Water())
                     {
+                        GameObject model = null;
+
+                        context.transform.GetComponentInChildren<PlayerMovement>().ActivaInput.Add(_stunWateringDuration);
+                        context.transform.GetComponentInChildren<HumanoidAnimationBehaviour>().CustomMotionRaise(_wateringClip,
+                            enterCallback: info =>
+                            {
+                                if (_model == null)
+                                    return;
+
+                                model = Object.Instantiate(_model, info.animationBehaviour.HoldTransform);
+                            },
+                            exitCallback: info =>
+                            {
+                                if (_model == null)
+                                    return;
+
+                                Object.Destroy(model);
+                            }
+                        );
+
+                        SoundPlayer.Instance.Play(_wateringSound);
+
+                        yield return new WaitForSeconds(_onWateringUse);
+
                         --_UsesLeft;
                     }
                 }
