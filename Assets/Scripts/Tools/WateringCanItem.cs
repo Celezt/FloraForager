@@ -8,15 +8,27 @@ using Sirenix.Serialization;
 public class WateringCanItem : IUse, IStar
 {
     [OdinSerialize, PropertyOrder(float.MinValue)]
-    public float Cooldown { get; set; } = 0.5f;
-    [OdinSerialize, PropertyOrder(float.MinValue + 1)]
-    public int ItemStack { get; set; } = 1;
+    public float Cooldown { get; set; } = 1.4f;
     [OdinSerialize, PropertyOrder(float.MinValue + 2)]
     public Stars Star { get; set; } = Stars.One;
 
     [Title("Tool Behaviour")]
     [SerializeField]
     private int _MaxUses = 5;
+    [SerializeField]
+    private AnimationClip _wateringClip;
+    [SerializeField]
+    private AnimationClip _fillClip;
+    [SerializeField, AssetsOnly]
+    private GameObject _model;
+    [SerializeField]
+    private float _stunWateringDuration = 1.2f;
+    [SerializeField]
+    private float _stunFillDuration = 1.2f;
+    [SerializeField]
+    private float _onWateringUse = 0.5f;
+    [SerializeField]
+    private float _onFillUse = 0.8f;
     [Space(10)]
     [SerializeField]
     private LayerMask _HitMask;
@@ -63,12 +75,56 @@ public class WateringCanItem : IUse, IStar
         {
             if (cell.Type == CellType.Water)
             {
+                GameObject model = null;
+
+                context.transform.GetComponentInChildren<PlayerMovement>().ActivaInput.Add(_stunFillDuration);
+                context.transform.GetComponentInChildren<HumanoidAnimationBehaviour>().CustomMotionRaise(_fillClip,
+                    enterCallback: info =>
+                    {
+                        if (_model == null)
+                            return;
+
+                        model = Object.Instantiate(_model, info.animationBehaviour.HoldTransform);
+                    },
+                    exitCallback: info =>
+                    {
+                        if (_model == null)
+                            return;
+
+                        Object.Destroy(model);
+                    }
+                );
+
+                yield return new WaitForSeconds(_onFillUse);
+
                 _UsesLeft = _MaxUses;
             }
             else if (cell.HeldObject != null && _UsesLeft > 0)
             {
                 if (cell.HeldObject.TryGetComponent(out FloraObject floraObject))
                 {
+                    GameObject model = null;
+
+                    context.transform.GetComponentInChildren<PlayerMovement>().ActivaInput.Add(_stunWateringDuration);
+                    context.transform.GetComponentInChildren<HumanoidAnimationBehaviour>().CustomMotionRaise(_wateringClip,
+                        enterCallback: info =>
+                        {
+                            if (_model == null)
+                                return;
+
+                            model = Object.Instantiate(_model, info.animationBehaviour.HoldTransform);
+                        },
+                        exitCallback: info =>
+                        {
+                            if (_model == null)
+                                return;
+
+                            Object.Destroy(model);
+                        }
+                    );
+
+                    yield return new WaitForSeconds(_onWateringUse);
+
                     if (floraObject.Flora.Water())
                     {
                         --_UsesLeft;

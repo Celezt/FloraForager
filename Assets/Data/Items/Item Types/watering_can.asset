@@ -15,7 +15,10 @@ MonoBehaviour:
   serializationData:
     SerializedFormat: 2
     SerializedBytes: 
-    ReferencedUnityObjects: []
+    ReferencedUnityObjects:
+    - {fileID: -1727022492526597358, guid: 71f23000df5978a4797f072ce373111b, type: 3}
+    - {fileID: 6288048964723825632, guid: 71f23000df5978a4797f072ce373111b, type: 3}
+    - {fileID: 919132149155446097, guid: 8d7d0a62453247447854e35ef86b275d, type: 3}
     SerializedBytesString: 
     Prefab: {fileID: 0}
     PrefabModificationsReferencedUnityObjects: []
@@ -26,16 +29,34 @@ MonoBehaviour:
       Data: 0|WateringCanItem, Assembly-CSharp
     - Name: Cooldown
       Entry: 4
-      Data: 0.5
-    - Name: ItemStack
-      Entry: 3
-      Data: 1
+      Data: 1.4
     - Name: Star
       Entry: 3
       Data: 2
     - Name: _MaxUses
       Entry: 3
       Data: 5
+    - Name: _wateringClip
+      Entry: 10
+      Data: 0
+    - Name: _fillClip
+      Entry: 10
+      Data: 1
+    - Name: _model
+      Entry: 10
+      Data: 2
+    - Name: _stunWateringDuration
+      Entry: 4
+      Data: 1.2
+    - Name: _stunFillDuration
+      Entry: 4
+      Data: 1.2
+    - Name: _onWateringUse
+      Entry: 4
+      Data: 0.5
+    - Name: _onFillUse
+      Entry: 4
+      Data: 0.8
     - Name: _HitMask
       Entry: 7
       Data: UnityEngine.LayerMask, UnityEngine.CoreModule
