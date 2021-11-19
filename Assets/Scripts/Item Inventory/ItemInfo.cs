@@ -1,4 +1,6 @@
-﻿using System.Collections.Generic;
+﻿using System.Linq;
+using System.Text.RegularExpressions;
+using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.EventSystems;
@@ -11,6 +13,8 @@ public class ItemInfo : MonoBehaviour
     private GameObject _Inventory;
     [SerializeField]
     private TMP_Text _ItemName;
+    [SerializeField]
+    private TMP_Text _ItemLabels;
     [SerializeField]
     private float _Offset = 0.1f;
 
@@ -54,11 +58,28 @@ public class ItemInfo : MonoBehaviour
                 break;
         }
 
-        if (itemSlot != null && !string.IsNullOrEmpty(itemSlot.Name))
+        if (itemSlot != null && !string.IsNullOrEmpty(itemSlot.Item.ID) && 
+            ItemTypeSettings.Instance.ItemNameChunk.TryGetValue(itemSlot.Item.ID, out string name))
         {
             _ItemInfoCG.alpha = 1.0f;
 
-            _ItemName.text = itemSlot.Name;
+            if (_ItemName.text != name)
+            {
+                _ItemName.text = name;
+                _ItemLabels.text = string.Empty;
+
+                if (ItemTypeSettings.Instance.ItemLabelChunk.TryGetValue(itemSlot.Item.ID, out List<string> labels))
+                {
+                    foreach (string label in labels)
+                    {
+                        _ItemLabels.text += string.Join(" ", Regex.Split(label, @"(?<!^)(?=[A-Z])"));
+
+                        if (label != labels[labels.Count - 1])
+                            _ItemLabels.text += " | ";
+                    }
+                }
+            }
+
             transform.position = pointerEventData.position + Vector2.up * _Offset;
         }
         else
