@@ -80,7 +80,7 @@ public class FloraObject : MonoBehaviour, IUsable
             Destroy(_Flora.Cell.Free());
             FloraMaster.Instance.Remove(_Flora);
 
-            SoundPlayer.Instance.Play(_Flora.Info.HarvestSound, 0, 0, 0, 0.025f);
+            SoundPlayer.Instance.Play(_Flora.Info.HarvestSound, 0, 0, 0, 0.015f);
         };
     }
 

@@ -34,6 +34,8 @@ public class RodItem : IUse, IStar, IValue
     private float _bounciness = 0.5f;
     [Space(10)]
     [SerializeField]
+    private LayerMask _HitMask = LayerMask.NameToLayer("Grid");
+    [SerializeField]
     private float _Radius = 8.0f;
     [SerializeField, Range(0.0f, 360.0f)]
     private float _Arc = 60.0f;
@@ -68,7 +70,7 @@ public class RodItem : IUse, IStar, IValue
             yield break;
 
         Ray ray = Camera.main.ScreenPointToRay(Mouse.current.position.ReadValue());
-        Physics.Raycast(ray, out RaycastHit hitInfo, Mathf.Infinity, LayerMask.NameToLayer("Grid"));
+        Physics.Raycast(ray, out RaycastHit hitInfo, Mathf.Infinity, _HitMask);
 
         if (!MathUtility.PointInArc(hitInfo.point, context.transform.position, context.transform.localEulerAngles.y, _Arc, _Radius))
             yield break;
