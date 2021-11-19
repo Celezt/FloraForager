@@ -19,6 +19,8 @@ public class WateringCanItem : IUse, IStar
     private int _MaxUses = 5;
     [Space(10)]
     [SerializeField]
+    private LayerMask _HitMask;
+    [SerializeField]
     private float _Radius = 2.75f;
     [SerializeField, Range(0.0f, 360.0f)]
     private float _Arc = 270.0f;
@@ -55,7 +57,7 @@ public class WateringCanItem : IUse, IStar
             yield break;
 
         Ray ray = Camera.main.ScreenPointToRay(Mouse.current.position.ReadValue());
-        Physics.Raycast(ray, out RaycastHit hitInfo, Mathf.Infinity, LayerMask.NameToLayer("Grid"));
+        Physics.Raycast(ray, out RaycastHit hitInfo, Mathf.Infinity, _HitMask);
 
         if (MathUtility.PointInArc(hitInfo.point, context.transform.position, context.transform.localEulerAngles.y, _Arc, _Radius))
         {
