@@ -19,7 +19,7 @@ GameObject:
   - component: {fileID: 6333730084197885922}
   m_Layer: 8
   m_Name: PlayerActor
-  m_TagString: Untagged
+  m_TagString: Player
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -52,7 +52,7 @@ CapsuleCollider:
   m_Material: {fileID: 0}
   m_IsTrigger: 0
   m_Enabled: 1
-  m_Radius: 0.5
+  m_Radius: 0.35
   m_Height: 2
   m_Direction: 1
   m_Center: {x: 0, y: 1, z: 0}
@@ -353,6 +353,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a5242c5c185084c48af25fb662a5a7db, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _InitialItems: []
 --- !u!1 &5178136194200900361
 GameObject:
   m_ObjectHideFlags: 0

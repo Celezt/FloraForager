@@ -24,7 +24,9 @@ public class FloraInfoUI : MonoBehaviour
     private RectTransform _CanvasRect;
 
     private FloraObject _FloraObject;
-    private Bounds _FloraBounds;
+    private float _FloraHeightOffset;
+
+    private Cell _DirtCell;
 
     private void Awake()
     {
@@ -39,15 +41,14 @@ public class FloraInfoUI : MonoBehaviour
     {
         Cell cell = Grid.Instance.HoveredCell;
 
-        if (cell != null && cell.HeldObject != null)
+        if (cell != null && cell.Type == CellType.Dirt)
         {
-            if (_FloraObject == null || _FloraObject != cell.HeldObject)
-            {
-                if (cell.HeldObject.TryGetComponent(out FloraObject flora))
-                {
-                    Show(flora);
-                }
-            }
+            _DirtCell = cell;
+
+            if (_DirtCell.HeldObject == null)
+                Show(null);
+            else if (_DirtCell.HeldObject != _FloraObject && _DirtCell.HeldObject.TryGetComponent(out FloraObject floraObject))
+                Show(floraObject);
         }
         else
             Hide();
@@ -55,7 +56,7 @@ public class FloraInfoUI : MonoBehaviour
 
     private void LateUpdate()
     {
-        if (_FloraObject == null)
+        if (_DirtCell == null)
             return;
 
         UpdatePosition();
@@ -66,8 +67,10 @@ public class FloraInfoUI : MonoBehaviour
     {
         _FloraObject = flora;
 
-        if (flora.TryGetComponent(out MeshFilter meshFilter))
-            _FloraBounds = meshFilter.mesh.bounds;
+        if (_FloraObject != null && _FloraObject.TryGetComponent(out MeshFilter meshFilter))
+            _FloraHeightOffset = meshFilter.mesh.bounds.extents.y;
+        else
+            _FloraHeightOffset = 0.0f;
 
         UpdateWindow();
 
@@ -77,7 +80,9 @@ public class FloraInfoUI : MonoBehaviour
     private void Hide()
     {
         _FloraObject = null;
-        _FloraBounds = new Bounds();
+        _FloraHeightOffset = 0.0f;
+
+        _DirtCell = null;
 
         _CanvasGroup.alpha = 0.0f;
     }
@@ -85,17 +90,27 @@ public class FloraInfoUI : MonoBehaviour
     private void UpdatePosition()
     {
         transform.position = CanvasUtility.WorldToCanvasPosition(_Canvas, _CanvasRect, Camera.main,
-            _FloraObject.transform.position + Vector3.up * (_FloraBounds.extents.y + _HeightOffset));
+            _DirtCell.Middle + Vector3.up * (_FloraHeightOffset + _HeightOffset));
     }
 
     private void UpdateWindow()
     {
-        _Name.text = _FloraObject.Flora.Info.Name;
-        _Status.text = GetStatus();
-        _Stage.text = _FloraObject.Flora.FloraData.Stage.ToString();
+        if (_FloraObject != null)
+        {
+            _Name.text = _FloraObject.Flora.Info.Name;
+            _Status.text = GetStatus();
+            _Stage.text = _FloraObject.Flora.FloraData.Stage.ToString();
 
-        int watered = _FloraObject.Flora.FloraData.Watered ? 1 : 0;
-        _WateredImage.sprite = _WaterDropAtlas.GetSprite($"water-drop_{watered}");
+            int watered = _FloraObject.Flora.FloraData.Watered ? 1 : 0;
+            _WateredImage.sprite = _WaterDropAtlas.GetSprite($"water-drop_{watered}");
+        }
+        else
+        {
+            _Name.text = "Empty";
+            _Status.text = "Idle";
+            _Stage.text = "0";
+            _WateredImage.sprite = _WaterDropAtlas.GetSprite($"water-drop_{0}");
+        }
     }
 
     private string GetStatus()

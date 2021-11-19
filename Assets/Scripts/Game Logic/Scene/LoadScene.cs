@@ -92,14 +92,13 @@ public class LoadScene : Singleton<LoadScene>
         {
             GameObject player = PlayerInput.GetPlayerByIndex(0).gameObject;
             PlayerMovement playerMovement = player.GetComponent<PlayerMovement>();
-            Bounds playerBounds = player.GetComponent<Collider>().bounds;
 
             LoadSceneTrigger[] triggers = FindObjectsOfType<LoadSceneTrigger>();
             foreach (LoadSceneTrigger trigger in triggers)
             {
                 if (trigger.ObjectID == ObjectToLoadPlayer)
                 {
-                    player.transform.position = trigger.PlayerPosition + Vector3.up * playerBounds.extents.y;
+                    player.transform.position = trigger.PlayerPosition;
                     playerMovement.SetDirection((trigger.PlayerRotation * Vector3.forward).xz());
 
                     break;

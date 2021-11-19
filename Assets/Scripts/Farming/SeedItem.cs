@@ -15,6 +15,8 @@ public class SeedItem : IUse
     private FloraInfo _Flora;
     [Space(10)]
     [SerializeField]
+    private LayerMask _PlaceMask = LayerMask.NameToLayer("Grid");
+    [SerializeField]
     private float _Radius = 2.75f;
     [SerializeField, Range(0.0f, 360.0f)]
     private float _Arc = 360.0f;
@@ -45,7 +47,7 @@ public class SeedItem : IUse
             yield break;
 
         Ray ray = Camera.main.ScreenPointToRay(Mouse.current.position.ReadValue());
-        Physics.Raycast(ray, out RaycastHit hitInfo, Mathf.Infinity, LayerMask.NameToLayer("Grid"));
+        Physics.Raycast(ray, out RaycastHit hitInfo, Mathf.Infinity, _PlaceMask);
 
         if (MathUtility.PointInArc(hitInfo.point, context.transform.position, context.transform.localEulerAngles.y, _Arc, _Radius))
         {
