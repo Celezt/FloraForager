@@ -15,8 +15,6 @@ public class ItemInfo : MonoBehaviour
     private TMP_Text _ItemName;
     [SerializeField]
     private TMP_Text _ItemLabels;
-    [SerializeField]
-    private float _Offset = 0.1f;
 
     private GraphicRaycaster _Raycaster;
     private EventSystem _EventSystem;
@@ -80,7 +78,7 @@ public class ItemInfo : MonoBehaviour
                 }
             }
 
-            transform.position = pointerEventData.position + Vector2.up * _Offset;
+            transform.position = pointerEventData.position;
         }
         else
             _ItemInfoCG.alpha = 0.0f;

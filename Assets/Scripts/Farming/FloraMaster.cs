@@ -33,6 +33,8 @@ public class FloraMaster : SerializedScriptableSingleton<FloraMaster>, IStreamer
 
         GameManager.AddStreamer(this);
         SceneManager.sceneLoaded += OnSceneLoaded;
+
+        DebugLogConsole.AddCommandInstance("flora.grow", "Grows flora", nameof(Instance.DebugNotify), Instance);
     }
 
 #if UNITY_EDITOR
