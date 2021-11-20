@@ -38,7 +38,7 @@ public class RodItem : IUse, IStar, IValue
     [SerializeField]
     private string _hookedSound = "hooked_fish";
     [SerializeField]
-    private string _catchSound = "catch_fish";
+    private string _catchSound = "catch_rod";
     [SerializeField]
     private float _stunCastDuration;
     [SerializeField]
