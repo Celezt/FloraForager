@@ -410,6 +410,24 @@ public partial class @PlayerAction : IInputActionCollection2, IDisposable
                     ""processors"": """",
                     ""interactions"": """",
                     ""initialStateCheck"": true
+                },
+                {
+                    ""name"": ""Hook"",
+                    ""type"": ""Button"",
+                    ""id"": ""b23a3109-7845-4894-ad72-a839efbf9a0d"",
+                    ""expectedControlType"": ""Button"",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""Cancel"",
+                    ""type"": ""Button"",
+                    ""id"": ""55a3ed88-f58a-441b-836c-4ab625b00ec0"",
+                    ""expectedControlType"": ""Button"",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
                 }
             ],
             ""bindings"": [
@@ -421,6 +439,28 @@ public partial class @PlayerAction : IInputActionCollection2, IDisposable
                     ""processors"": """",
                     ""groups"": ""KeyboardAndMouse"",
                     ""action"": ""Drag"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""59e141d3-44e8-449d-85d6-d8bfaf0f3f8f"",
+                    ""path"": ""<Mouse>/leftButton"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": ""KeyboardAndMouse"",
+                    ""action"": ""Hook"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""044698c4-fd19-4423-911d-0042a837e11b"",
+                    ""path"": ""<Mouse>/rightButton"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": ""KeyboardAndMouse"",
+                    ""action"": ""Cancel"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
                 }
@@ -888,6 +928,8 @@ public partial class @PlayerAction : IInputActionCollection2, IDisposable
         // Fishing
         m_Fishing = asset.FindActionMap("Fishing", throwIfNotFound: true);
         m_Fishing_Drag = m_Fishing.FindAction("Drag", throwIfNotFound: true);
+        m_Fishing_Hook = m_Fishing.FindAction("Hook", throwIfNotFound: true);
+        m_Fishing_Cancel = m_Fishing.FindAction("Cancel", throwIfNotFound: true);
         // UI
         m_UI = asset.FindActionMap("UI", throwIfNotFound: true);
         m_UI_Navigate = m_UI.FindAction("Navigate", throwIfNotFound: true);
@@ -1057,11 +1099,15 @@ public partial class @PlayerAction : IInputActionCollection2, IDisposable
     private readonly InputActionMap m_Fishing;
     private IFishingActions m_FishingActionsCallbackInterface;
     private readonly InputAction m_Fishing_Drag;
+    private readonly InputAction m_Fishing_Hook;
+    private readonly InputAction m_Fishing_Cancel;
     public struct FishingActions
     {
         private @PlayerAction m_Wrapper;
         public FishingActions(@PlayerAction wrapper) { m_Wrapper = wrapper; }
         public InputAction @Drag => m_Wrapper.m_Fishing_Drag;
+        public InputAction @Hook => m_Wrapper.m_Fishing_Hook;
+        public InputAction @Cancel => m_Wrapper.m_Fishing_Cancel;
         public InputActionMap Get() { return m_Wrapper.m_Fishing; }
         public void Enable() { Get().Enable(); }
         public void Disable() { Get().Disable(); }
@@ -1074,6 +1120,12 @@ public partial class @PlayerAction : IInputActionCollection2, IDisposable
                 @Drag.started -= m_Wrapper.m_FishingActionsCallbackInterface.OnDrag;
                 @Drag.performed -= m_Wrapper.m_FishingActionsCallbackInterface.OnDrag;
                 @Drag.canceled -= m_Wrapper.m_FishingActionsCallbackInterface.OnDrag;
+                @Hook.started -= m_Wrapper.m_FishingActionsCallbackInterface.OnHook;
+                @Hook.performed -= m_Wrapper.m_FishingActionsCallbackInterface.OnHook;
+                @Hook.canceled -= m_Wrapper.m_FishingActionsCallbackInterface.OnHook;
+                @Cancel.started -= m_Wrapper.m_FishingActionsCallbackInterface.OnCancel;
+                @Cancel.performed -= m_Wrapper.m_FishingActionsCallbackInterface.OnCancel;
+                @Cancel.canceled -= m_Wrapper.m_FishingActionsCallbackInterface.OnCancel;
             }
             m_Wrapper.m_FishingActionsCallbackInterface = instance;
             if (instance != null)
@@ -1081,6 +1133,12 @@ public partial class @PlayerAction : IInputActionCollection2, IDisposable
                 @Drag.started += instance.OnDrag;
                 @Drag.performed += instance.OnDrag;
                 @Drag.canceled += instance.OnDrag;
+                @Hook.started += instance.OnHook;
+                @Hook.performed += instance.OnHook;
+                @Hook.canceled += instance.OnHook;
+                @Cancel.started += instance.OnCancel;
+                @Cancel.performed += instance.OnCancel;
+                @Cancel.canceled += instance.OnCancel;
             }
         }
     }
@@ -1223,6 +1281,8 @@ public partial class @PlayerAction : IInputActionCollection2, IDisposable
     public interface IFishingActions
     {
         void OnDrag(InputAction.CallbackContext context);
+        void OnHook(InputAction.CallbackContext context);
+        void OnCancel(InputAction.CallbackContext context);
     }
     public interface IUIActions
     {

@@ -34,11 +34,26 @@ public class RodItem : IUse, IStar, IValue
     private float _bounciness = 0.5f;
     [Space(10)]
     [SerializeField]
-    private LayerMask _HitMask = LayerMask.NameToLayer("Grid");
+    private string _castSound = "cast_rod";
     [SerializeField]
-    private float _Radius = 8.0f;
+    private string _hookedSound = "hooked_fish";
+    [SerializeField]
+    private string _catchSound = "catch_fish";
+    [SerializeField]
+    private float _stunCastDuration;
+    [SerializeField]
+    private float _onCastUse;
+    [SerializeField]
+    private float _stunCatchDuration;
+    [SerializeField]
+    private float _onCatchUse;
+    [Space(10)]
+    [SerializeField]
+    private LayerMask _hitMask = LayerMask.NameToLayer("Grid");
+    [SerializeField]
+    private float _radius = 8.0f;
     [SerializeField, Range(0.0f, 360.0f)]
-    private float _Arc = 60.0f;
+    private float _arc = 60.0f;
 
     void IItem.OnInitialize(ItemTypeContext context)
     {
@@ -70,9 +85,9 @@ public class RodItem : IUse, IStar, IValue
             yield break;
 
         Ray ray = Camera.main.ScreenPointToRay(Mouse.current.position.ReadValue());
-        Physics.Raycast(ray, out RaycastHit hitInfo, Mathf.Infinity, _HitMask);
+        Physics.Raycast(ray, out RaycastHit hitInfo, Mathf.Infinity, _hitMask);
 
-        if (!MathUtility.PointInArc(hitInfo.point, context.transform.position, context.transform.localEulerAngles.y, _Arc, _Radius))
+        if (!MathUtility.PointInArc(hitInfo.point, context.transform.position, context.transform.localEulerAngles.y, _arc, _radius))
             yield break;
 
         Inventory inventory = PlayerInput.GetPlayerByIndex(context.playerIndex).GetComponent<PlayerInfo>().Inventory;
@@ -81,56 +96,109 @@ public class RodItem : IUse, IStar, IValue
         if (items.Count <= 0) // if no baits found, return
             yield break;
 
+        PlayerInput playerInput = PlayerInput.GetPlayerByIndex(context.playerIndex);
+
         int fishBaitIndex = items.First().Item1; // select first found bait to use
 
         FishBaitItem fishBait = ItemTypeSettings.Instance.ItemTypeChunk[inventory.Get(fishBaitIndex).ID].Behaviour as FishBaitItem;
         RodItem rodItem = ItemTypeSettings.Instance.ItemTypeChunk[context.id].Behaviour as RodItem;
 
-        string fishID = FishPool.Instance.GetFish(fishBait);
+        // -- ACTIONS --
 
-        if (string.IsNullOrWhiteSpace(fishID) || inventory.FindEmptySpace(fishID) <= 0) // if no fish available or no space for fish, return
-            yield break;
-
-        PlayerInput playerInput = PlayerInput.GetPlayerByIndex(context.playerIndex);
-
-        FishingManager fishingManager = FishingManager.GetByIndex(context.playerIndex);
-
-        fishingManager.OnPlayCallback += PlayAction;
-        fishingManager.StartFishing(fishID, context.id);
-
-        PlayerMovement playerMovement = playerInput.GetComponent<PlayerMovement>();
-        playerMovement.SetDirection((hitInfo.point - context.transform.position).normalized.xz());
-
-        void PlayAction()
+        void Cast() // calls when rod is casted
         {
             UIStateVisibility.Instance.Hide("inventory");
             playerInput.DeactivateInput();
 
-            fishingManager.OnCatchCallback -= CatchAction;
-            fishingManager.OnFleeCallback -= FleeAction;
-            fishingManager.OnCatchCallback += CatchAction;
-            fishingManager.OnFleeCallback += FleeAction;
+            PlayerMovement playerMovement = playerInput.GetComponent<PlayerMovement>();
+            playerMovement.SetDirection((hitInfo.point - context.transform.position).normalized.xz());
 
-            fishingManager.OnPlayCallback -= PlayAction;
+
+
+            SoundPlayer.Instance.Play(_castSound);
         };
-        void CatchAction()
+        void Hooked()
+        {
+
+
+            SoundPlayer.Instance.Play(_hookedSound);
+        };
+        void Catch()
         {
             UIStateVisibility.Instance.Show("inventory");
             playerInput.ActivateInput();
 
-            inventory.RemoveAt(fishBaitIndex, 1);
-            inventory.Insert(new ItemAsset { ID = fishID, Amount = 1 });
 
-            fishingManager.OnCatchCallback -= CatchAction;
+
+            SoundPlayer.Instance.Play(_catchSound);
         };
-        void FleeAction()
+
+        // -- HOOK --
+
+        Cast(); // cast the rod
+
+        string hookedFish = string.Empty;
+
+        void PlayHookAction()
         {
-            UIStateVisibility.Instance.Show("inventory");
-            playerInput.ActivateInput();
+            FishHook.Instance.OnHook -= HookAction;
+            FishHook.Instance.OnHook += HookAction;
+
+            FishHook.Instance.OnPlay -= PlayHookAction;
+        };
+        void HookAction(string fishID) // player 
+        {
+            hookedFish = fishID;
+            FishHook.Instance.OnHook -= HookAction;
+        };
+
+        FishHook.Instance.OnPlay += PlayHookAction;
+
+        IEnumerator enumerator = FishHook.Instance.PlayHook(this, fishBait); // start hook game
+        while (enumerator.MoveNext())
+            yield return enumerator.Current;
+
+        // if no fish available or no space for fish, break
+        if (string.IsNullOrWhiteSpace(hookedFish) || inventory.FindEmptySpace(hookedFish) <= 0)
+        {
+            Catch();
+            yield break;
+        }
+
+        Hooked(); // this means the player has successfully hooked a fish
+
+        // -- FISHING --
+
+        FishingManager fishingManager = FishingManager.GetByIndex(context.playerIndex);
+
+        fishingManager.OnPlayCallback += PlayFishAction;
+        fishingManager.StartFishing(hookedFish, context.id);
+
+        void PlayFishAction()
+        {
+            fishingManager.OnCatchCallback -= CatchFishAction;
+            fishingManager.OnFleeCallback -= FleeFishAction;
+            fishingManager.OnCatchCallback += CatchFishAction;
+            fishingManager.OnFleeCallback += FleeFishAction;
+
+            fishingManager.OnPlayCallback -= PlayFishAction;
+        };
+        void CatchFishAction()
+        {
+            Catch();
+
+            inventory.RemoveAt(fishBaitIndex, 1);
+            inventory.Insert(new ItemAsset { ID = hookedFish, Amount = 1 });
+
+            fishingManager.OnCatchCallback -= CatchFishAction;
+        };
+        void FleeFishAction()
+        {
+            Catch();
 
             inventory.RemoveAt(fishBaitIndex, 1);
 
-            fishingManager.OnFleeCallback -= FleeAction;
+            fishingManager.OnFleeCallback -= FleeFishAction;
         };
 
         yield break;
