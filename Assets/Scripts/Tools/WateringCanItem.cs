@@ -14,7 +14,8 @@ public class WateringCanItem : IUse, IStar
 
     [Title("Tool Behaviour")]
     [SerializeField]
-    private int _MaxUses = 5;
+    private int _maxUses = 5;
+    [Space(10)]
     [SerializeField]
     private string _wateringSound;
     [SerializeField]
@@ -35,11 +36,11 @@ public class WateringCanItem : IUse, IStar
     private float _onFillUse = 0.8f;
     [Space(10)]
     [SerializeField]
-    private LayerMask _HitMask = LayerMask.NameToLayer("Grid");
+    private LayerMask _hitMask = LayerMask.NameToLayer("Grid");
     [SerializeField]
-    private float _Radius = 2.75f;
+    private float _radius = 2.75f;
     [SerializeField, Range(0.0f, 360.0f)]
-    private float _Arc = 270.0f;
+    private float _arc = 270.0f;
 
     private int _UsesLeft;
 
@@ -73,9 +74,9 @@ public class WateringCanItem : IUse, IStar
             yield break;
 
         Ray ray = Camera.main.ScreenPointToRay(Mouse.current.position.ReadValue());
-        Physics.Raycast(ray, out RaycastHit hitInfo, Mathf.Infinity, _HitMask);
+        Physics.Raycast(ray, out RaycastHit hitInfo, Mathf.Infinity, _hitMask);
 
-        if (MathUtility.PointInArc(hitInfo.point, context.transform.position, context.transform.localEulerAngles.y, _Arc, _Radius))
+        if (MathUtility.PointInArc(hitInfo.point, context.transform.position, context.transform.localEulerAngles.y, _arc, _radius))
         {
             if (cell.Type == CellType.Water)
             {
@@ -103,7 +104,7 @@ public class WateringCanItem : IUse, IStar
 
                 yield return new WaitForSeconds(_onFillUse);
 
-                _UsesLeft = _MaxUses;
+                _UsesLeft = _maxUses;
             }
             else if (cell.HeldObject != null && _UsesLeft > 0)
             {

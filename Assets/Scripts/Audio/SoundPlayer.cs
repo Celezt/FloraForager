@@ -58,17 +58,19 @@ public class SoundPlayer : Singleton<SoundPlayer>
         _Cooldowns = new Dictionary<string, float>();
         _Sounds = new Dictionary<string, Sound>();
 
-        foreach (Sound sound in _SoundEffects)
-        {
-            AsyncOperationHandle<AudioClip> handle = sound.Load();
+        AsyncOperationHandle<AudioClip>[] handles = new AsyncOperationHandle<AudioClip>[_SoundEffects.Length];
 
-            yield return new WaitUntil(() => 
-                handle.Status == AsyncOperationStatus.Succeeded || 
-                handle.Status == AsyncOperationStatus.Failed);
+        for (int i = 0; i < _SoundEffects.Length; ++i)
+            handles[i] = _SoundEffects[i].Load();
 
-            if (handle.Status == AsyncOperationStatus.Succeeded)
-                _Sounds[sound.Name] = sound;
-        }
+        yield return new WaitUntil(() => handles.All(h =>
+            h.Status == AsyncOperationStatus.Succeeded ||
+            h.Status == AsyncOperationStatus.Failed));
+
+        for (int i = 0; i < _SoundEffects.Length; ++i)
+            if (handles[i].Status == AsyncOperationStatus.Succeeded)
+                _Sounds[_SoundEffects[i].Name] = _SoundEffects[i];
+
         _SoundEffects = null;
 
         DebugLogConsole.AddCommandInstance("play.sound", "Plays sound", nameof(Play), this);
