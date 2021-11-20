@@ -17,9 +17,9 @@ public class WateringCanItem : IUse, IStar
     private int _maxUses = 5;
     [Space(10)]
     [SerializeField]
-    private string _wateringSound;
+    private string _wateringSound = "water_plant";
     [SerializeField]
-    private string _fillSound;
+    private string _fillSound = "fill_watering-can";
     [SerializeField]
     private AnimationClip _wateringClip;
     [SerializeField]
@@ -27,20 +27,20 @@ public class WateringCanItem : IUse, IStar
     [SerializeField, AssetsOnly]
     private GameObject _model;
     [SerializeField]
-    private float _stunWateringDuration = 1.2f;
+    private float _stunWateringDuration = 1.3f;
     [SerializeField]
-    private float _stunFillDuration = 1.2f;
+    private float _stunFillDuration = 1.6f;
     [SerializeField]
-    private float _onWateringUse = 0.5f;
+    private float _onWateringUse = 0.4f;
     [SerializeField]
     private float _onFillUse = 0.8f;
     [Space(10)]
     [SerializeField]
     private LayerMask _hitMask = LayerMask.NameToLayer("Grid");
     [SerializeField]
-    private float _radius = 2.75f;
+    private float _radius = 2.0f;
     [SerializeField, Range(0.0f, 360.0f)]
-    private float _arc = 270.0f;
+    private float _arc = 140.0f;
 
     private int _UsesLeft;
 
@@ -100,9 +100,9 @@ public class WateringCanItem : IUse, IStar
                     }
                 );
 
-                SoundPlayer.Instance.Play(_fillSound);
-
                 yield return new WaitForSeconds(_onFillUse);
+
+                SoundPlayer.Instance.Play(_fillSound);
 
                 _UsesLeft = _maxUses;
             }
@@ -132,9 +132,9 @@ public class WateringCanItem : IUse, IStar
                             }
                         );
 
-                        SoundPlayer.Instance.Play(_wateringSound);
-
                         yield return new WaitForSeconds(_onWateringUse);
+
+                        SoundPlayer.Instance.Play(_wateringSound);
 
                         --_UsesLeft;
                     }

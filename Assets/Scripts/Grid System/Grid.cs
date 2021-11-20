@@ -8,6 +8,8 @@ using MyBox;
 public class Grid : Singleton<Grid> // One grid per level
 {
     [SerializeField]
+    private float _MaxHitDistance = 10.0f;
+    [SerializeField]
     private LayerMask _LayerMasks;
 
     private Cell[] _Cells;
@@ -17,6 +19,8 @@ public class Grid : Singleton<Grid> // One grid per level
 
     private Vector3 _Position;
     private int _Width, _Height;
+
+    private GameObject _Player;
 
     public Cell HoveredCell { get; private set; }
 
@@ -47,14 +51,26 @@ public class Grid : Singleton<Grid> // One grid per level
         }
 
         AddNeighbours();
+
+        _Player = PlayerInput.GetPlayerByIndex(0)?.gameObject;
     }
 
     private void Update()
     {
+        if (_Player == null)
+            return;
+
         Ray ray = Camera.main.ScreenPointToRay(Mouse.current.position.ReadValue());
-        if (Physics.Raycast(ray, out RaycastHit hitInfo, Mathf.Infinity, _LayerMasks))
+        bool hit = Physics.Raycast(ray, out RaycastHit hitInfo, Mathf.Infinity, _LayerMasks);
+
+        float distance = Mathf.Sqrt(
+            Mathf.Pow(hitInfo.point.x - _Player.transform.position.x, 2) +
+            Mathf.Pow(hitInfo.point.z - _Player.transform.position.z, 2));
+
+        if (_Player != null && hit && distance <= _MaxHitDistance)
         {
-            HoveredCell = GetCellWorld(hitInfo.point);
+            if (_Player != null && distance <= _MaxHitDistance)
+                HoveredCell = GetCellWorld(hitInfo.point);
         }
         else
             HoveredCell = null;

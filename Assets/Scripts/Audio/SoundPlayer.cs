@@ -68,8 +68,12 @@ public class SoundPlayer : Singleton<SoundPlayer>
             h.Status == AsyncOperationStatus.Failed));
 
         for (int i = 0; i < _SoundEffects.Length; ++i)
+        {
             if (handles[i].Status == AsyncOperationStatus.Succeeded)
                 _Sounds[_SoundEffects[i].Name] = _SoundEffects[i];
+
+            Addressables.Release(handles[i]);
+        }
 
         _SoundEffects = null;
 
@@ -111,8 +115,11 @@ public class SoundPlayer : Singleton<SoundPlayer>
 
         for (int i = 0; i < ((repeatCount > 0) ? repeatCount : 1); ++i)
         {
-            while (_Cooldowns.ContainsKey(name))
+            while (_Cooldowns.ContainsKey(sound.Name))
                 yield return null;
+
+            if (cooldown > float.Epsilon)
+                _Cooldowns.Add(sound.Name, cooldown);
 
             SetAudioSource(source, sound);
 
@@ -121,9 +128,6 @@ public class SoundPlayer : Singleton<SoundPlayer>
             source.loop = loop;
 
             source.Play();
-
-            if (cooldown > float.Epsilon)
-                _Cooldowns.Add(sound.Name, cooldown);
 
             yield return new WaitUntil(() => !source.isPlaying);
         }

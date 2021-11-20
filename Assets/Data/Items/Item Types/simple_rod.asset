@@ -15,7 +15,12 @@ MonoBehaviour:
   serializationData:
     SerializedFormat: 2
     SerializedBytes: 
-    ReferencedUnityObjects: []
+    ReferencedUnityObjects:
+    - {fileID: 919132149155446097, guid: 89b2565c9cba7d2498fe9524069a1e9b, type: 3}
+    - {fileID: -1428997663219345539, guid: 71f23000df5978a4797f072ce373111b, type: 3}
+    - {fileID: 8304159749566991913, guid: 71f23000df5978a4797f072ce373111b, type: 3}
+    - {fileID: -1417215113483125481, guid: 71f23000df5978a4797f072ce373111b, type: 3}
+    - {fileID: 1341815104487659773, guid: 71f23000df5978a4797f072ce373111b, type: 3}
     SerializedBytesString: 
     Prefab: {fileID: 0}
     PrefabModificationsReferencedUnityObjects: []
@@ -54,21 +59,45 @@ MonoBehaviour:
     - Name: _hookedSound
       Entry: 1
       Data: hooked_fish
-    - Name: _catchSound
+    - Name: _catchFishSound
       Entry: 1
-      Data: catch_rod
+      Data: catch_fish
+    - Name: _catchFailSound
+      Entry: 1
+      Data: catch_fail
+    - Name: _model
+      Entry: 10
+      Data: 0
+    - Name: _castClip
+      Entry: 10
+      Data: 1
+    - Name: _idleClip
+      Entry: 10
+      Data: 2
+    - Name: _hookClip
+      Entry: 10
+      Data: 3
+    - Name: _catchClip
+      Entry: 10
+      Data: 4
+    - Name: _onSwing
+      Entry: 4
+      Data: 0.85
+    - Name: _onCatch
+      Entry: 4
+      Data: 0.1
     - Name: _stunCastDuration
       Entry: 4
-      Data: 0
+      Data: 1.2
     - Name: _onCastUse
       Entry: 4
-      Data: 0
+      Data: 1.2
     - Name: _stunCatchDuration
       Entry: 4
-      Data: 0
+      Data: 1.2
     - Name: _onCatchUse
       Entry: 4
-      Data: 0
+      Data: 1.2
     - Name: _hitMask
       Entry: 7
       Data: UnityEngine.LayerMask, UnityEngine.CoreModule
@@ -80,7 +109,7 @@ MonoBehaviour:
       Data: 
     - Name: _radius
       Entry: 4
-      Data: 7
+      Data: 4
     - Name: _arc
       Entry: 4
       Data: 60
