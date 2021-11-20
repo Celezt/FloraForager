@@ -121,7 +121,7 @@ public class RodItem : IUse, IStar, IValue
         {
 
 
-            SoundPlayer.Instance.Play(_hookedSound);
+            SoundPlayer.Instance.Play(_hookedSound, 0, Random.Range(-0.1f,0.5f), 0, Random.Range(3f, 4f), true);
         };
         void Catch()
         {
@@ -131,6 +131,7 @@ public class RodItem : IUse, IStar, IValue
 
 
             SoundPlayer.Instance.Play(_catchSound);
+            SoundPlayer.Instance.Stop(_hookedSound);
         };
 
         // -- HOOK --

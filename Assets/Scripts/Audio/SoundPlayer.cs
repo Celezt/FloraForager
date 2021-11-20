@@ -90,22 +90,22 @@ public class SoundPlayer : Singleton<SoundPlayer>
         }
     }
 
-    public void Play(string soundName, float volumeChange = 0.0f, float pitchChange = 0.0f, int repeatCount = 0, float cooldown = 0.0f)
-    {
-        StartCoroutine(PlaySound(soundName, volumeChange, pitchChange, repeatCount, cooldown));
-    }
-
-    private IEnumerator PlaySound(string name, float volumeChange = 0.0f, float pitchChange = 0.0f, int repeatCount = 0, float cooldown = 0.0f)
+    public void Play(string name, float volumeChange = 0.0f, float pitchChange = 0.0f, int repeatCount = 0, float cooldown = 0.0f, bool loop = false)
     {
         if (string.IsNullOrWhiteSpace(name))
-            yield break;
+            return;
 
         if (!TryGetSound(name, out Sound sound))
         {
             Debug.LogError($"{name} does not exist");
-            yield break;
+            return;
         }
 
+        StartCoroutine(PlaySound(sound, volumeChange, pitchChange, repeatCount, cooldown, loop));
+    }
+
+    private IEnumerator PlaySound(Sound sound, float volumeChange = 0.0f, float pitchChange = 0.0f, int repeatCount = 0, float cooldown = 0.0f, bool loop = false)
+    {
         AudioSource source = _AudioSourcePool[PoolIndex++];
         sound.AudioSource = source;
 
@@ -118,6 +118,7 @@ public class SoundPlayer : Singleton<SoundPlayer>
 
             source.volume += volumeChange;
             source.pitch += pitchChange;
+            source.loop = loop;
 
             source.Play();
 
@@ -131,6 +132,21 @@ public class SoundPlayer : Singleton<SoundPlayer>
         source.clip = null;
 
         --PoolIndex;
+    }
+
+    public void Stop(string name)
+    {
+        if (string.IsNullOrWhiteSpace(name))
+            return;
+
+        if (!TryGetSound(name, out Sound sound))
+        {
+            Debug.LogError($"{name} does not exist");
+            return;
+        }
+
+        if (sound.AudioSource != null)
+            sound.AudioSource.Stop();
     }
 
     /// <summary>
