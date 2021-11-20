@@ -69,8 +69,7 @@ public class Grid : Singleton<Grid> // One grid per level
 
         if (_Player != null && hit && distance <= _MaxHitDistance)
         {
-            if (_Player != null && distance <= _MaxHitDistance)
-                HoveredCell = GetCellWorld(hitInfo.point);
+            HoveredCell = GetCellWorld(hitInfo.point);
         }
         else
             HoveredCell = null;
