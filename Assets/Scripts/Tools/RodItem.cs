@@ -192,29 +192,20 @@ public class RodItem : IUse, IStar, IValue
         SoundPlayer.Instance.Play(_castSound);
 
         yield return new WaitForSeconds(_onCastUse - _onSwing);
-
+        
         // -- IDLE LOOP --
 
         string hookedFish = null;
 
-        void IdleLoop()
-        {
-            animationBehaviour.CustomMotionRaise(_idleClip,
-                enterCallback: info =>
-                {
-                    if (_model == null)
-                        return;
+        animationBehaviour.CustomMotionRaise(_idleClip, loop: true,
+            enterCallback: info =>
+            {
+                if (_model == null)
+                    return;
 
-                    model.transform.SetParent(info.animationBehaviour.HoldTransform);
-                },
-                exitCallback: info =>
-                {
-                    if (hookedFish == null) // while no result from hook minigame
-                        IdleLoop();
-                });
-        };
-
-        IdleLoop();
+                model.transform.SetParent(info.animationBehaviour.HoldTransform);
+            }
+        );
 
         // -- HOOK MINIGAME --
 
@@ -245,24 +236,15 @@ public class RodItem : IUse, IStar, IValue
 
         bool fishingDone = false;
 
-        void HookedLoop()
-        {
-            animationBehaviour.CustomMotionRaise(_hookClip,
-                enterCallback: info =>
-                {
-                    if (_model == null)
-                        return;
+        animationBehaviour.CustomMotionRaise(_hookClip, loop: true,
+            enterCallback: info =>
+            {
+                if (_model == null)
+                    return;
 
-                    model.transform.SetParent(info.animationBehaviour.HoldTransform);
-                },
-                exitCallback: info =>
-                {
-                    if (!fishingDone)
-                        HookedLoop();
-                });
-        };
-
-        HookedLoop();
+                model.transform.SetParent(info.animationBehaviour.HoldTransform);
+            }
+        );
 
         FishingManager fishingManager = FishingManager.GetByIndex(context.playerIndex);
 

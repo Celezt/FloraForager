@@ -8,6 +8,7 @@ public class HumanoidAnimationBehaviour : MonoBehaviour
     private static readonly int CUSTOM_INDEX_HASH = Animator.StringToHash("CustomIndex");
     private static readonly int CUSTOM_MOTION_SPEED_HASH = Animator.StringToHash("CustomMotionSpeed");
     private static readonly int CUSTOM_TRIGGER_HASH = Animator.StringToHash("CustomTrigger");
+    private static readonly int IS_CUSTOM_LOOP_HASH = Animator.StringToHash("IsCustomLoop");
 
     /// <summary>
     /// Transform to hold items.
@@ -21,6 +22,10 @@ public class HumanoidAnimationBehaviour : MonoBehaviour
         get => _walkSpeed;
         set => _walkSpeed = Mathf.Clamp01(value);
     }
+    /// <summary>
+    /// If currently in a loop.
+    /// </summary>
+    public bool IsCustomMotionLooping => _isCustomMotionLooping;
     /// <summary>
     /// If currently running a custom animation.
     /// </summary>
@@ -40,12 +45,19 @@ public class HumanoidAnimationBehaviour : MonoBehaviour
     private float _oldVelocity;
     private int _customIndex;
     private bool _isCustomMotionRunning;
+    private bool _isCustomMotionLooping;
+
+    /// <summary>
+    /// Manually cancel custom motion loop.
+    /// </summary>
+    public void CancelLoop() => _animator.SetBool(IS_CUSTOM_LOOP_HASH, _isCustomMotionLooping = false);
 
     /// <summary>
     /// Raise a new custom animation.
     /// </summary>
     /// <param name="motion">Custom animation.</param>
-    public void CustomMotionRaise(AnimationClip clip, float speedMultiplier = 1, System.Action<CustomMotionInfo> enterCallback = null, System.Action<CustomMotionInfo> exitCallback = null)
+    /// <param name="loop">Loop animation until manually canceled or another custom motion is activated.</param>
+    public void CustomMotionRaise(AnimationClip clip, float speedMultiplier = 1, bool loop = false, System.Action<CustomMotionInfo> enterCallback = null, System.Action<CustomMotionInfo> exitCallback = null)
     {
         if (clip == null)
             return;
@@ -58,6 +70,7 @@ public class HumanoidAnimationBehaviour : MonoBehaviour
             _animatorOverrideController["EmptyCustomMotion0"] = clip;
 
         _animator.SetLayerWeight(1, 0);
+        _animator.SetBool(IS_CUSTOM_LOOP_HASH, _isCustomMotionLooping = loop);
         _animator.SetInteger(CUSTOM_INDEX_HASH, _customIndex);
         _animator.SetFloat(CUSTOM_MOTION_SPEED_HASH, speedMultiplier);
         _animator.SetTrigger(CUSTOM_TRIGGER_HASH);
