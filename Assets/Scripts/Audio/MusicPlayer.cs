@@ -23,7 +23,7 @@ public class MusicPlayer : Singleton<MusicPlayer>
     [SerializeField, ListDrawerSettings(ShowItemCount = false, Expanded = true)]
     private Music[] _Soundtrack;
 
-    public event System.Action Completed = delegate { };
+    public event System.Action OnComplete = delegate { };
 
     private bool _IsActive;
     private int _CurrentTrack;
@@ -109,7 +109,7 @@ public class MusicPlayer : Singleton<MusicPlayer>
 
             _CurrentTrack = _Shuffle ? Random.Range(0, _Soundtrack.Length) : (_CurrentTrack + 1) % _Soundtrack.Length;
 
-            Completed.Invoke();
+            OnComplete.Invoke();
         }
     }
 
@@ -149,10 +149,10 @@ public class MusicPlayer : Singleton<MusicPlayer>
             _Shuffle = shuffle;
             _Loop = loop;
 
-            Completed -= CompleteAction;
+            OnComplete -= CompleteAction;
         };
 
-        Completed += CompleteAction;
+        OnComplete += CompleteAction;
         _AudioSource.Stop();
     }
 
