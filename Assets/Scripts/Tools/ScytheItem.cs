@@ -20,6 +20,8 @@ public class ScytheItem : IUse, IDestructor, IStar, IValue
 
     [Title("Tool Behaviour")]
     [SerializeField]
+    private float _staminaChange = -0.075f;
+    [SerializeField]
     private string _swingSound = "swing_tool";
     [SerializeField]
     private string _hitSound;
@@ -40,6 +42,8 @@ public class ScytheItem : IUse, IDestructor, IStar, IValue
     [SerializeField]
     private float _arc = 0.4f;
 
+    private PlayerStamina _playerStamina;
+
     void IItem.OnInitialize(ItemTypeContext context)
     {
 
@@ -47,11 +51,15 @@ public class ScytheItem : IUse, IDestructor, IStar, IValue
 
     void IItem.OnEquip(ItemContext context)
     {
+        _playerStamina = context.transform.GetComponent<PlayerStamina>();
+
+#if UNITY_EDITOR
         context.behaviour.OnDrawGizmosAction = () =>
         {
             Gizmos.matrix = context.transform.localToWorldMatrix;
             GizmosC.DrawWireArc(Vector3.zero, Vector3.forward, _radius, cmath.Map(_arc, new MinMaxFloat(1, -1), new MinMaxFloat(0, 360)));
         };
+#endif
     }
 
     void IItem.OnUnequip(ItemContext context)
@@ -94,6 +102,8 @@ public class ScytheItem : IUse, IDestructor, IStar, IValue
         SoundPlayer.Instance.Play(_swingSound);
 
         yield return new WaitForSeconds(_onUse - _onSwing);
+
+        _playerStamina.Stamina += _staminaChange;
 
         Collider[] colliders = PhysicsC.OverlapArc(context.transform.position, context.transform.forward, Vector3.up, _radius, _arc, LayerMask.NameToLayer("default"));
 

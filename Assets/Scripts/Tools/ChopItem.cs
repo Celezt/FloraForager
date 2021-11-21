@@ -20,6 +20,8 @@ public class ChopItem : IUse, IDestructor, IStar, IValue
 
     [Title("Tool Behaviour")]
     [SerializeField]
+    private float _staminaChange = -0.1f;
+    [SerializeField]
     private string _swingSound = "swing_tool";
     [SerializeField]
     private string _hitSound;
@@ -40,6 +42,8 @@ public class ChopItem : IUse, IDestructor, IStar, IValue
     [SerializeField]
     private Vector3 _centerOffset = new Vector3(0, 0, 1f);
 
+    PlayerStamina _playerStamina;
+
     void IItem.OnInitialize(ItemTypeContext context)
     {
 
@@ -47,6 +51,8 @@ public class ChopItem : IUse, IDestructor, IStar, IValue
 
     void IItem.OnEquip(ItemContext context)
     {
+        _playerStamina = context.transform.GetComponent<PlayerStamina>();
+
 #if UNITY_EDITOR
         context.behaviour.OnDrawGizmosAction = () =>
         {
@@ -96,6 +102,8 @@ public class ChopItem : IUse, IDestructor, IStar, IValue
         SoundPlayer.Instance.Play(_swingSound);
 
         yield return new WaitForSeconds(_onUse - _onSwing);
+
+        _playerStamina.Stamina += _staminaChange;
        
         Collider[] colliders = Physics.OverlapBox(context.transform.position + context.transform.rotation * _centerOffset, _halfExtents, context.transform.rotation, LayerMask.NameToLayer("default"));
         List<Collider> usableColliders = new List<Collider>(colliders.Length);
