@@ -8,8 +8,6 @@ public class DayNightCycle : MonoBehaviour
     private Light _Sun;
     [SerializeField, Range(0.0f, 360.0f)] 
     private float _Yaw = 30.0f;
-    [SerializeField, Range(0.0f, 1.0f)] 
-    private float _Damping = 0.25f;
     [SerializeField] 
     private Gradient _SunColor;
     [SerializeField] 
@@ -18,6 +16,7 @@ public class DayNightCycle : MonoBehaviour
     private Quaternion _CurrentRotation;
     private Quaternion _NewRotation;
     private float _MorningOffset;
+    private float _Damping;
 
     private void Awake()
     {
@@ -39,8 +38,8 @@ public class DayNightCycle : MonoBehaviour
         float pitch = 360.0f * time - _MorningOffset;
         _CurrentRotation = Quaternion.Euler(pitch, _Yaw, 0.0f);
 
-        float angleDiff = Quaternion.Angle(_NewRotation, _CurrentRotation);
-        _NewRotation = (angleDiff < 2.5f) ? Quaternion.Slerp(_NewRotation, _CurrentRotation, _Damping * Time.deltaTime) : _CurrentRotation;
+        float angleDiff = _Damping = Quaternion.Angle(_NewRotation, _CurrentRotation);
+        _NewRotation = (angleDiff < 2.5f) ? Quaternion.Lerp(_NewRotation, _CurrentRotation, _Damping * Time.deltaTime) : _CurrentRotation;
 
         _Sun.transform.localRotation = _NewRotation;
     }

@@ -32,6 +32,8 @@ public class RodItem : IUse, IStar, IValue
     private float _dragDamp = 10.0f;
     [SerializeField]
     private float _bounciness = 0.5f;
+    [SerializeField]
+    private float _staminaChange = -0.05f;
     [Space(10)]
     [SerializeField]
     private string _castSound = "cast_rod";
@@ -71,6 +73,8 @@ public class RodItem : IUse, IStar, IValue
     [SerializeField, Range(0.0f, 360.0f)]
     private float _arc = 80.0f;
 
+    private PlayerStamina _playerStamina;
+
     void IItem.OnInitialize(ItemTypeContext context)
     {
 
@@ -78,7 +82,7 @@ public class RodItem : IUse, IStar, IValue
 
     void IItem.OnEquip(ItemContext context)
     {
-
+        _playerStamina = context.transform.GetComponent<PlayerStamina>();
     }
 
     void IItem.OnUnequip(ItemContext context)
@@ -113,6 +117,8 @@ public class RodItem : IUse, IStar, IValue
             yield break;
 
         // -- START FISHING --
+
+        _playerStamina.Stamina += _staminaChange;
 
         PlayerInput playerInput = PlayerInput.GetPlayerByIndex(context.playerIndex);
 

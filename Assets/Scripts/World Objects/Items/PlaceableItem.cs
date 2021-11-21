@@ -7,6 +7,10 @@ using Sirenix.OdinInspector;
 
 public class PlaceableItem : IUse
 {
+    [OdinSerialize, PropertyOrder(int.MinValue + 1)]
+    float IUse.Cooldown { get; set; } = 0;
+
+    [Title("Place Behaviour")]
     [SerializeField]
     private float _placeRange = 3.0f;
     [SerializeField]
@@ -17,8 +21,6 @@ public class PlaceableItem : IUse
     private CellType[] _AllowedTypes = new CellType[1];
     [SerializeField, AssetsOnly]
     private GameObject _placeableObject;
-
-    float IUse.Cooldown { get; set; } = 0;
 
     private Quaternion _Rotation = Quaternion.identity;
 

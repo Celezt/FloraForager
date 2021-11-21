@@ -14,26 +14,26 @@ public class GameTime : SerializedScriptableSingleton<GameTime>, IStreamer, IStr
     private System.Guid _Guid;
 
     [Space(5)]
-    [OdinSerialize, Min(0), LabelText("Seconds Per In-Game Hour")] 
+    [SerializeField, Min(0), LabelText("Seconds Per In-Game Hour")] 
     private float _InGameHour = 60.0f; // how long an in-game hour lasts in seconds
 
     [Space(5)]
-    [OdinSerialize, Min(0)] private int _CurrentYear;
-    [OdinSerialize, Min(0)] private int _CurrentMonth;
-    [OdinSerialize, Min(0)] private int _CurrentDay;
-    [OdinSerialize, Min(0)] private int _CurrentHour = 6;
+    [SerializeField, Min(0)] private int _CurrentYear;
+    [SerializeField, Min(0)] private int _CurrentMonth;
+    [SerializeField, Min(0)] private int _CurrentDay;
+    [SerializeField, Min(0)] private int _CurrentHour = 6;
 
     [Space(5)]
-    [OdinSerialize, Min(0)] private int _HoursPerDay = 24;
-    [OdinSerialize, Min(0)] private int _DaysPerMonth = 30;
-    [OdinSerialize, Min(0)] private int _MonthsPerYear = 12;
+    [SerializeField, Min(0)] private int _HoursPerDay = 24;
+    [SerializeField, Min(0)] private int _DaysPerMonth = 30;
+    [SerializeField, Min(0)] private int _MonthsPerYear = 12;
 
     [Space(5)]
-    [OdinSerialize]
+    [SerializeField]
     private float _ClockUpdateFrequency = 5.0f;
 
     [Space(5)]
-    [OdinSerialize, ListDrawerSettings(Expanded = true)]
+    [SerializeField, ListDrawerSettings(Expanded = true)]
     private readonly string[] Weekdays = { "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday" };
 
     [System.NonSerialized]

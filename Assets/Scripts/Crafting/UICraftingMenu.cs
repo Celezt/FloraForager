@@ -57,7 +57,10 @@ public class UICraftingMenu : Singleton<UICraftingMenu>
         if (_SelectedItem == null || !CanCraft(_SelectedItem))
             return;
 
-        Inventory inventory = PlayerInput.GetPlayerByIndex(0).GetComponent<PlayerInfo>().Inventory;
+        PlayerInfo playerInfo = PlayerInput.GetPlayerByIndex(0).GetComponent<PlayerInfo>();
+
+        Inventory inventory = playerInfo.Inventory;
+        PlayerStamina playerStamina = playerInfo.Stamina;
 
         foreach (ItemAsset requirement in _SelectedItem.Requirements)
         {
@@ -65,6 +68,7 @@ public class UICraftingMenu : Singleton<UICraftingMenu>
         }
 
         inventory.Insert(_SelectedItem.Item);
+        playerStamina.Stamina += _SelectedItem.StaminaChange;
 
         SoundPlayer.Instance.Play("craft");
     }

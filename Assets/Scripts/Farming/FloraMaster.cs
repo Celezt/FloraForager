@@ -18,7 +18,7 @@ public class FloraMaster : SerializedScriptableSingleton<FloraMaster>, IStreamer
     [OdinSerialize]
     private System.Guid _Guid;
     [Space(5)]
-    [OdinSerialize]
+    [SerializeField]
     private GameObject _FloraPrefab;
     [OdinSerialize]
     private Dictionary<string, FloraInfo> _FloraDictionary = new Dictionary<string, FloraInfo>();

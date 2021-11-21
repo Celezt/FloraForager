@@ -13,7 +13,7 @@ using UnityEngine.AddressableAssets;
 [System.Serializable]
 public class NPCManager : SerializedScriptableSingleton<NPCManager>, IStreamer
 {
-    [SerializeField]
+    [OdinSerialize]
     private System.Guid _Guid;
     [SerializeField, ListDrawerSettings(DraggableItems = false, ShowItemCount = false, Expanded = true)]
     private List<NPCInfo> _NPCInfos;

@@ -15,6 +15,10 @@ public class WateringCanItem : IUse, IStar
     [Title("Tool Behaviour")]
     [SerializeField]
     private int _maxUses = 5;
+    [SerializeField]
+    private float _fillStaminaChange = -0.05f;
+    [SerializeField]
+    private float _waterStaminaChange = -0.04f;
     [Space(10)]
     [SerializeField]
     private string _wateringSound = "water_plant";
@@ -42,11 +46,12 @@ public class WateringCanItem : IUse, IStar
     [SerializeField, Range(0.0f, 360.0f)]
     private float _arc = 140.0f;
 
-    private int _UsesLeft;
+    private PlayerStamina _playerStamina;
+    private int _usesLeft;
 
     public void OnInitialize(ItemTypeContext context)
     {
-        _UsesLeft = 0;
+        _usesLeft = 0;
     }
 
     public void OnEquip(ItemContext context)
@@ -78,7 +83,7 @@ public class WateringCanItem : IUse, IStar
 
         if (MathUtility.PointInArc(hitInfo.point, context.transform.position, context.transform.localEulerAngles.y, _arc, _radius))
         {
-            if (cell.Type == CellType.Water)
+            if (cell.Type == CellType.Water) // fill watering can
             {
                 GameObject model = null;
 
@@ -104,9 +109,10 @@ public class WateringCanItem : IUse, IStar
 
                 SoundPlayer.Instance.Play(_fillSound);
 
-                _UsesLeft = _maxUses;
+                _usesLeft = _maxUses;
+                _playerStamina.Stamina += _fillStaminaChange;
             }
-            else if (cell.HeldObject != null && _UsesLeft > 0)
+            else if (cell.HeldObject != null && _usesLeft > 0)
             {
                 if (cell.HeldObject.TryGetComponent(out FloraObject floraObject))
                 {
@@ -136,7 +142,8 @@ public class WateringCanItem : IUse, IStar
 
                         SoundPlayer.Instance.Play(_wateringSound);
 
-                        --_UsesLeft;
+                        --_usesLeft;
+                        _playerStamina.Stamina += _waterStaminaChange;
                     }
                 }
             }
