@@ -116,22 +116,23 @@ public class RodItem : IUse, IStar, IValue
 
         PlayerInput playerInput = PlayerInput.GetPlayerByIndex(context.playerIndex);
 
+        UIStateVisibility.Instance.Hide("inventory");
+        playerInput.DeactivateInput();
+
+        GameObject model = null;
+        SkinnedMeshRenderer rodMeshRenderer = null;
+
         HumanoidAnimationBehaviour animationBehaviour = playerInput.GetComponentInChildren<HumanoidAnimationBehaviour>();
         PlayerMovement playerMovement = playerInput.GetComponent<PlayerMovement>();
 
         playerMovement.SetDirection((hitInfo.point - context.transform.position).normalized.xz());
-
-        UIStateVisibility.Instance.Hide("inventory");
-        playerInput.DeactivateInput();
 
         int fishBaitIndex = items.First().Item1; // select first found bait to use
 
         FishBaitItem fishBait = ItemTypeSettings.Instance.ItemTypeChunk[inventory.Get(fishBaitIndex).ID].Behaviour as FishBaitItem;
         RodItem rodItem = ItemTypeSettings.Instance.ItemTypeChunk[context.id].Behaviour as RodItem;
 
-        string fishStatus = _catchFailSound;
-
-        GameObject model = null;
+        string fishStatus = _catchFailSound; // sound to play depending on current fish status (success/failed)
 
         IEnumerator exitEnumerator = Exit();
 
@@ -154,10 +155,11 @@ public class RodItem : IUse, IStar, IValue
                     Object.Destroy(model);
                 });
 
+            SoundPlayer.Instance.Stop(_hookedSound);
+
             yield return new WaitForSeconds(_onCatch);
 
             SoundPlayer.Instance.Play(fishStatus);
-            SoundPlayer.Instance.Stop(_hookedSound);
 
             yield return new WaitForSeconds(_onCatchUse - _onCatch);
 
@@ -175,6 +177,7 @@ public class RodItem : IUse, IStar, IValue
                     return;
 
                 model = Object.Instantiate(_model, info.animationBehaviour.HoldTransform);
+                rodMeshRenderer = model.GetComponent<SkinnedMeshRenderer>();
             }
         );
 
@@ -209,20 +212,13 @@ public class RodItem : IUse, IStar, IValue
 
         // -- HOOK MINIGAME --
 
-        void PlayHookAction()
-        {
-            FishHook.Instance.OnHook -= HookAction;
-            FishHook.Instance.OnHook += HookAction;
-
-            FishHook.Instance.OnPlay -= PlayHookAction;
-        };
         void HookAction(string fishID)
         {
-            hookedFish = fishID;
+            hookedFish = fishID; // resulting fish from hook minigame
             FishHook.Instance.OnHook -= HookAction;
         };
 
-        FishHook.Instance.OnPlay += PlayHookAction;
+        FishHook.Instance.OnHook += HookAction;
 
         IEnumerator hookEnumerator = FishHook.Instance.PlayHook(this, fishBait); // start hook game
         while (hookEnumerator.MoveNext())
@@ -264,16 +260,11 @@ public class RodItem : IUse, IStar, IValue
 
         FishingManager fishingManager = FishingManager.GetByIndex(context.playerIndex);
 
-        fishingManager.OnPlayCallback += PlayFishAction;
+        fishingManager.OnCatchCallback += CatchFishAction;
+        fishingManager.OnFleeCallback += FleeFishAction;
+
         fishingManager.StartFishing(hookedFish, context.id);
 
-        void PlayFishAction()
-        {
-            fishingManager.OnCatchCallback += CatchFishAction;
-            fishingManager.OnFleeCallback += FleeFishAction;
-
-            fishingManager.OnPlayCallback -= PlayFishAction;
-        };
         void CatchFishAction()
         {
             fishingDone = true;
@@ -295,7 +286,12 @@ public class RodItem : IUse, IStar, IValue
         };
 
         while (!fishingDone) // while no fish has been caught
+        {
+            rodMeshRenderer.SetBlendShapeWeight(0, 100.0f * (0.5f + Mathf.PingPong(Time.time, 0.2f)));
             yield return null;
+        }
+
+        rodMeshRenderer.SetBlendShapeWeight(0, 0);
 
         while (exitEnumerator.MoveNext())
             yield return exitEnumerator.Current;
