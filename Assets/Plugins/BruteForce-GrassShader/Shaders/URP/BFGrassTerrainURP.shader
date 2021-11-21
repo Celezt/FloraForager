@@ -988,37 +988,6 @@ Shader "BruteForceURP/InteractiveGrassTerrainURP"
 				float4 P;
 				float4 objSpace;
 				tristream.RestartStrip();
-
-				float dist = distance(_WorldSpaceCameraPos, UnityObjectToWorld((input[0].objPos / 3 + input[1].objPos / 3 + input[2].objPos / 3)));
-				if (dist > 0)
-				{
-					int NumStacks = lerp(_NumberOfStacks + 1, 0, (dist - _FadeDistanceStart) * (1 / max(_FadeDistanceEnd - _FadeDistanceStart, 0.0001)));//Clamp because people will start dividing by 0
-					_NumberOfStacks = min(clamp(NumStacks, clamp(_MinimumNumberStacks, 0, _NumberOfStacks), 17), _NumberOfStacks);
-				}
-
-				for (float i = 1; i <= _NumberOfStacks; i++)
-				{
-					float4 offsetNormal = _OffsetVector * i * 0.01;
-					for (int ii = 0; ii < 3; ii++)
-					{
-#ifdef USE_VR		
-						UNITY_SETUP_INSTANCE_ID(input[ii]);
-						UNITY_TRANSFER_INSTANCE_ID(input[ii], o);
-						UNITY_INITIALIZE_VERTEX_OUTPUT_STEREO(o);
-#endif
-						float4 NewNormal = float4(input[ii].normal, 0);
-						objSpace = float4(input[ii].objPos + NewNormal * _OffsetValue * i + offsetNormal);
-						o.color = (i / (_NumberOfStacks - _GrassCut));
-						o.uv = input[ii].uv;
-						//o.pos = GetVertexPositionInputs(objSpace).positionCS;
-						o.pos = TransformWorldToHClip(ApplyShadowBias(GetVertexPositionInputs(objSpace).positionWS, GetVertexNormalInputs(input[ii].normal).normalWS, _LightDirection));
-						o.worldPos = UnityObjectToWorld(objSpace);
-						o.normal = GetVertexNormalInputs(input[ii].normal).normalWS;
-
-						tristream.Append(o);
-					}
-					tristream.RestartStrip();
-				}
 			}
 
 				float4 frag(g2f i) : SV_Target
