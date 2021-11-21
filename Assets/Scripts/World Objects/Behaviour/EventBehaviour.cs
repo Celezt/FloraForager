@@ -45,10 +45,7 @@ public class EventBehaviour : MonoBehaviour, IStreamable<EventBehaviour.Data>
     private void AddDialogue()
     {
         if (_Dialogue == null)
-        {
-            Debug.LogWarning("dialogue is null, either has already been invoked or was initially empty");
             return;
-        }
 
         // add all dialogue
         //
@@ -68,5 +65,14 @@ public class EventBehaviour : MonoBehaviour, IStreamable<EventBehaviour.Data>
 
         if (_SaveIfInvoked && _Data != null)
             _Data.IsInvoked = true;
+    }
+
+    private void OnTriggerEnter(Collider other)
+    {
+        if (other.CompareTag("Player"))
+        {
+            Invoke();
+            Destroy(this);
+        }
     }
 }

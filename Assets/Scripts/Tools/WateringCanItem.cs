@@ -140,7 +140,9 @@ public class WateringCanItem : IUse, IStar
 
                         yield return new WaitForSeconds(_onWateringUse);
 
-                        SoundPlayer.Instance.Play(_wateringSound);
+                        SoundPlayer.Instance.TryGetSound(_wateringSound, out SoundPlayer.Sound sound);
+
+                        SoundPlayer.Instance.Play(_wateringSound, -sound.Volume / _maxUses * (_maxUses - _usesLeft));
 
                         --_usesLeft;
                         _playerStamina.Stamina += _waterStaminaChange;
