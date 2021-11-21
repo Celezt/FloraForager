@@ -15,56 +15,22 @@ MonoBehaviour:
   serializationData:
     SerializedFormat: 2
     SerializedBytes: 
-    ReferencedUnityObjects:
-    - {fileID: 11400000, guid: cff78c915dad8d648860122dd6ea3d5f, type: 2}
-    - {fileID: 11400000, guid: 85ab3117fc62a394db3d49fdd3998315, type: 2}
+    ReferencedUnityObjects: []
     SerializedBytesString: 
     Prefab: {fileID: 0}
     PrefabModificationsReferencedUnityObjects: []
     PrefabModifications: []
-    SerializationNodes:
-    - Name: _Name
-      Entry: 1
-      Data: Jane
-    - Name: _HasRelation
-      Entry: 5
-      Data: true
-    - Name: _RelationRange
-      Entry: 7
-      Data: MyBox.MinMaxFloat, MyBox
-    - Name: Min
-      Entry: 4
-      Data: -100
-    - Name: Max
-      Entry: 4
-      Data: 100
-    - Name: 
-      Entry: 8
-      Data: 
-    - Name: _StartRelation
-      Entry: 4
-      Data: 0
-    - Name: _HasCommissions
-      Entry: 5
-      Data: true
-    - Name: _CommissionsInfo
-      Entry: 7
-      Data: 0|CommissionInfo[], Assembly-CSharp
-    - Name: 
-      Entry: 12
-      Data: 2
-    - Name: 
-      Entry: 10
-      Data: 0
-    - Name: 
-      Entry: 10
-      Data: 1
-    - Name: 
-      Entry: 13
-      Data: 
-    - Name: 
-      Entry: 8
-      Data: 
+    SerializationNodes: []
+  _Name: Jane
+  _HasRelation: 1
+  _RelationRange:
+    Min: -100
+    Max: 100
+  _StartRelation: 0
+  _HasCommissions: 1
+  _CommissionsInfo:
+  - {fileID: 11400000, guid: cff78c915dad8d648860122dd6ea3d5f, type: 2}
+  - {fileID: 11400000, guid: 85ab3117fc62a394db3d49fdd3998315, type: 2}
   _RepeatingDialogue:
     Asset:
       m_AssetGUID: 9239af2d7f92bde4c8b05f5abc8f20b7
@@ -75,4 +41,20 @@ MonoBehaviour:
     - Fiona
     - Jane
   _InitialDialogue: []
-  _RelationDialogue: []
+  _RelationDialogue:
+  - AtRelation: 3
+    RepeatingDialogue:
+      Asset:
+        m_AssetGUID: 9239af2d7f92bde4c8b05f5abc8f20b7
+        m_SubObjectName: 
+        m_SubObjectType: 
+        m_EditorAssetChanged: 0
+      Aliases: []
+    AddedDialogue:
+    - Priority: 0
+      Asset:
+        m_AssetGUID: 
+        m_SubObjectName: 
+        m_SubObjectType: 
+        m_EditorAssetChanged: 0
+      Aliases: []
