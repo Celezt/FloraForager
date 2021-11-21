@@ -56,7 +56,7 @@ public class WateringCanItem : IUse, IStar
 
     public void OnEquip(ItemContext context)
     {
-
+        _playerStamina = context.transform.GetComponent<PlayerStamina>();
     }
 
     public void OnUnequip(ItemContext context)
