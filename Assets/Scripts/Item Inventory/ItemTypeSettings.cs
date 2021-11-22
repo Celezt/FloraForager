@@ -93,6 +93,11 @@ public class ItemTypeSettings : SerializedScriptableSingleton<ItemTypeSettings>
     {
         EnumGenerator.Generate("Items", "Assets/Data/Generated", _itemTypeChunk.Keys.ToList());
 
+        _itemLabelChunk.Clear();
+        _itemIconChunk.Clear();
+        _itemStackChunk.Clear();
+        _itemNameChunk.Clear();
+
         foreach (KeyValuePair<string, ItemType> item in _itemTypeChunk)
             UpdateItemType(item.Value);
     }

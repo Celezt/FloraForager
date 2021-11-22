@@ -5,9 +5,13 @@ using UnityEngine.InputSystem;
 using Sirenix.Serialization;
 using Sirenix.OdinInspector;
 
-public class SeedItem : IUse
+public class SeedItem : IUse, IStar, IValue
 {
-    [OdinSerialize, PropertyOrder(int.MinValue + 1)]
+    [OdinSerialize, PropertyOrder(float.MinValue + 1)]
+    Stars IStar.Star { get; set; } = Stars.One;
+    [OdinSerialize, PropertyOrder(float.MinValue + 2)]
+    int IValue.BaseValue { get; set; }
+    [OdinSerialize, PropertyOrder(int.MinValue + 3)]
     float IUse.Cooldown { get; set; } = 0.05f;
 
     [Title("Seed Behaviour")]
