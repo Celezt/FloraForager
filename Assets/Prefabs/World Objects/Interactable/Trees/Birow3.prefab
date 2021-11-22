@@ -15,7 +15,6 @@ GameObject:
   - component: {fileID: 7601324173234069211}
   - component: {fileID: 6792902814104324864}
   - component: {fileID: 1313883262387028256}
-  - component: {fileID: 6241436482289763815}
   m_Layer: 0
   m_Name: Birow3
   m_TagString: Untagged
@@ -125,26 +124,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: da25408ba2df7e846ae77b9f8f14da4a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
---- !u!205 &6241436482289763815
-LODGroup:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2032678476091294719}
-  serializedVersion: 2
-  m_LocalReferencePoint: {x: 0.6670506, y: 3.7589006, z: -0.060650587}
-  m_Size: 7.754662
-  m_FadeMode: 0
-  m_AnimateCrossFading: 0
-  m_LastLODIsBillboard: 0
-  m_LODs:
-  - screenRelativeHeight: 0.04695761
-    fadeTransitionWidth: 0
-    renderers:
-    - renderer: {fileID: 6919298336643401832}
-    - renderer: {fileID: 1465216738476894488}
-  m_Enabled: 1
 --- !u!1001 &258090003412661660
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -202,7 +181,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 919132149155446097, guid: cc9dd340d523e9e43bdffcc0d8519bab, type: 3}
       propertyPath: m_Name
-      value: Trunk
+      value: Birow
+      objectReference: {fileID: 0}
+    - target: {fileID: 4742473837712756890, guid: cc9dd340d523e9e43bdffcc0d8519bab, type: 3}
+      propertyPath: m_LODs.Array.data[1].screenRelativeHeight
+      value: 0.04628436
       objectReference: {fileID: 0}
     - target: {fileID: 5664576068907670515, guid: cc9dd340d523e9e43bdffcc0d8519bab, type: 3}
       propertyPath: m_Name
@@ -217,15 +200,5 @@ PrefabInstance:
 --- !u!4 &296764789227573879 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: -8679921383154817045, guid: cc9dd340d523e9e43bdffcc0d8519bab, type: 3}
-  m_PrefabInstance: {fileID: 258090003412661660}
-  m_PrefabAsset: {fileID: 0}
---- !u!23 &1465216738476894488 stripped
-MeshRenderer:
-  m_CorrespondingSourceObject: {fileID: -7511558181221131132, guid: cc9dd340d523e9e43bdffcc0d8519bab, type: 3}
-  m_PrefabInstance: {fileID: 258090003412661660}
-  m_PrefabAsset: {fileID: 0}
---- !u!23 &6919298336643401832 stripped
-MeshRenderer:
-  m_CorrespondingSourceObject: {fileID: 7174975624189672948, guid: cc9dd340d523e9e43bdffcc0d8519bab, type: 3}
   m_PrefabInstance: {fileID: 258090003412661660}
   m_PrefabAsset: {fileID: 0}
