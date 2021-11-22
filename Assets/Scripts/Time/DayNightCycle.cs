@@ -38,9 +38,6 @@ public class DayNightCycle : MonoBehaviour
         float pitch = 360.0f * time - _MorningOffset;
         _CurrentRotation = Quaternion.Euler(pitch, _Yaw, 0.0f);
 
-        float angleDiff = _Damping = Quaternion.Angle(_NewRotation, _CurrentRotation);
-        _NewRotation = (angleDiff < 2.5f) ? Quaternion.Lerp(_NewRotation, _CurrentRotation, _Damping * Time.deltaTime) : _CurrentRotation;
-
-        _Sun.transform.localRotation = _NewRotation;
+        _Sun.transform.localRotation = _CurrentRotation;
     }
 }
