@@ -26,20 +26,14 @@ public class ObjectRespawn : SerializedScriptableSingleton<ObjectRespawn>, IStre
     {
         if (_Guid == System.Guid.Empty)
             _Guid = System.Guid.NewGuid();
-
-        GameManager.AddStreamer(this);
-
-        SceneManager.sceneLoaded += OnSceneLoaded;
     }
 
-#if UNITY_EDITOR
-    [UnityEditor.InitializeOnEnterPlayMode]
+    [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.AfterAssembliesLoaded)]
     private static void Initialize()
     {
         GameManager.AddStreamer(Instance);
         SceneManager.sceneLoaded += Instance.OnSceneLoaded;
     }
-#endif
 
     public void OnSceneLoaded(Scene scene, LoadSceneMode mode)
     {

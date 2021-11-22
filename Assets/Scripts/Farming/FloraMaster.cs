@@ -30,23 +30,16 @@ public class FloraMaster : SerializedScriptableSingleton<FloraMaster>, IStreamer
     {
         if (_Guid == System.Guid.Empty)
             _Guid = System.Guid.NewGuid();
-
-        GameManager.AddStreamer(this);
-        SceneManager.sceneLoaded += OnSceneLoaded;
-
-        DebugLogConsole.AddCommandInstance("flora.grow", "Grows flora", nameof(Instance.DebugNotify), Instance);
     }
 
-#if UNITY_EDITOR
-    [UnityEditor.InitializeOnEnterPlayMode]
+    [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.AfterAssembliesLoaded)]
     private static void Initialize()
     {
-        GameManager.AddStreamer(FloraMaster.Instance);
+        GameManager.AddStreamer(Instance);
         SceneManager.sceneLoaded += Instance.OnSceneLoaded;
 
         DebugLogConsole.AddCommandInstance("flora.grow", "Grows flora", nameof(Instance.DebugNotify), Instance);
     }
-#endif
 
     public void OnSceneLoaded(Scene scene, LoadSceneMode mode)
     {

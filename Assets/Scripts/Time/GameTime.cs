@@ -92,17 +92,13 @@ public class GameTime : SerializedScriptableSingleton<GameTime>, IStreamer, IStr
     {
         if (_Guid == System.Guid.Empty)
             _Guid = System.Guid.NewGuid();
-
-        GameManager.AddStreamer(this);
     }
 
-#if UNITY_EDITOR
-    [UnityEditor.InitializeOnEnterPlayMode]
+    [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.AfterAssembliesLoaded)]
     private static void PlayModeInitialize()
     {
         GameManager.AddStreamer(Instance);
     }
-#endif
 
     public void UpdateTime()
     {

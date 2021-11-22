@@ -54,10 +54,10 @@ public class StreamableBehaviour : MonoBehaviour, IStreamer, IStreamable<Streama
 
     private void OnEnable()
     {
+        GameManager.AddStreamer(this);
+
         if (GameManager.Stream.StreamedData.ContainsKey(_guid))
             Load();
-
-        GameManager.AddStreamer(this);
     }
     private void OnDisable()
     {
