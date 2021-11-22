@@ -153,7 +153,7 @@ public class FloraMaster : SerializedScriptableSingleton<FloraMaster>, IStreamer
 
             Flora.Data data = value as Flora.Data;
 
-            Flora flora = new Flora(_FloraDictionary[data.Name], data.CellPosition);
+            Flora flora = new Flora(_FloraDictionary[data.Name.ToLower()], data.CellPosition);
             flora.OnLoad(data);
 
             _Florae.Add(flora);

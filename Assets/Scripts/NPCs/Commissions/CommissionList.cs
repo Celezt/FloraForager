@@ -27,7 +27,7 @@ public class CommissionList : SerializedScriptableSingleton<CommissionList>, ISt
     }
 
     [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.AfterAssembliesLoaded)]
-    private static void PlayModeInitialize()
+    private static void Initialize()
     {
         GameManager.AddStreamer(Instance);
     }

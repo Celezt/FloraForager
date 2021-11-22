@@ -14,9 +14,7 @@ public class DayNightCycle : MonoBehaviour
     private AnimationCurve _SunIntensity;
 
     private Quaternion _CurrentRotation;
-    private Quaternion _NewRotation;
     private float _MorningOffset;
-    private float _Damping;
 
     private void Awake()
     {
