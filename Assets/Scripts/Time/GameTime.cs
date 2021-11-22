@@ -81,7 +81,7 @@ public class GameTime : SerializedScriptableSingleton<GameTime>, IStreamer, IStr
     public string DigitalTime => string.Format(
         "<mspace=0.75em>{0:00}</mspace>" +
         "<mspace=0.30em>:</mspace>" +
-        "<mspace=0.75em>{1:00}</mspace>", _HourClock, Mathf.Floor(_MinuteClock / _ClockUpdateFrequency) * _ClockUpdateFrequency);
+        "<mspace=0.75em>{1:00}</mspace>", Mathf.Floor(_HourClock), Mathf.Floor(Mathf.Floor(_MinuteClock) / _ClockUpdateFrequency) * _ClockUpdateFrequency);
     public string Date => string.Format("{0:0000}/{1:00}/{2:00}", 
         Year, _MonthCalendar, _DayCalendar);
     public string Weekday => string.Format("{0} {1:00}/{2:00}", 
@@ -92,17 +92,13 @@ public class GameTime : SerializedScriptableSingleton<GameTime>, IStreamer, IStr
     {
         if (_Guid == System.Guid.Empty)
             _Guid = System.Guid.NewGuid();
-
-        GameManager.AddStreamer(this);
     }
 
-#if UNITY_EDITOR
-    [UnityEditor.InitializeOnEnterPlayMode]
-    private static void PlayModeInitialize()
+    [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.AfterAssembliesLoaded)]
+    private static void Initialize()
     {
         GameManager.AddStreamer(Instance);
     }
-#endif
 
     public void UpdateTime()
     {
@@ -114,9 +110,6 @@ public class GameTime : SerializedScriptableSingleton<GameTime>, IStreamer, IStr
 
         _MinuteClock = (float)_Data.ElapsedTime * (60.0f / _InGameHour) % 60.0f; // keep to common standards of 00:00-24:00
         _HourClock = (int)Hour * (24.0f / _HoursPerDay) % 24.0f;
-
-        _MinuteClock = Mathf.Floor(_MinuteClock);
-        _HourClock = Mathf.Floor(_HourClock);
 
         _DayCalendar = 1 + Day % _DaysPerMonth;
         _MonthCalendar = 1 + Month % _MonthsPerYear;

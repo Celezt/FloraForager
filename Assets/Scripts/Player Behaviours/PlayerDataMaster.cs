@@ -17,17 +17,13 @@ public class PlayerDataMaster : SerializedScriptableSingleton<PlayerDataMaster>,
     {
         if (_Guid == System.Guid.Empty)
             _Guid = System.Guid.NewGuid();
-
-        GameManager.AddStreamer(this);
     }
 
-#if UNITY_EDITOR
-    [UnityEditor.InitializeOnEnterPlayMode]
+    [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.AfterAssembliesLoaded)]
     private static void Initialize()
     {
         GameManager.AddStreamer(Instance);
     }
-#endif
 
     public PlayerData Get(int playerIndex)
     {

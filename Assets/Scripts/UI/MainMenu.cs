@@ -29,7 +29,6 @@ public class MainMenu : MonoBehaviour
         _SaveFiles = GameManager.GetSaves();
         _ContinueButton.interactable = GameManager.SaveExists(SAVE_NAME);
 
-        GameManager.SAVE_NAME = SAVE_NAME;
         Time.timeScale = 1.0f;
     }
 

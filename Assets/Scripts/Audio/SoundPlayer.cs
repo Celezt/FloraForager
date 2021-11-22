@@ -100,10 +100,7 @@ public class SoundPlayer : Singleton<SoundPlayer>
             return;
 
         if (!TryGetSound(name, out Sound sound))
-        {
-            Debug.LogError($"{name} does not exist");
             return;
-        }
 
         StartCoroutine(PlaySound(sound, volumeChange, pitchChange, repeatCount, cooldown, loop));
     }

@@ -195,8 +195,6 @@ public class RodItem : IUse, IStar, IValue
         
         // -- IDLE LOOP --
 
-        string hookedFish = null;
-
         animationBehaviour.CustomMotionRaise(_idleClip, loop: true,
             enterCallback: info =>
             {
@@ -208,6 +206,8 @@ public class RodItem : IUse, IStar, IValue
         );
 
         // -- HOOK MINIGAME --
+
+        string hookedFish = null;
 
         void HookAction(string fishID)
         {
@@ -230,11 +230,9 @@ public class RodItem : IUse, IStar, IValue
             yield break;
         }
 
-        SoundPlayer.Instance.Play(_hookedSound, 0, Random.Range(-0.1f, 0.5f), 0, Random.Range(3f, 4f), true);
+        SoundPlayer.Instance.Play(_hookedSound, 0, Random.Range(-0.2f, 0.5f), 0, Random.Range(3f, 4f), true);
 
         // -- FISHING --
-
-        bool fishingDone = false;
 
         animationBehaviour.CustomMotionRaise(_hookClip, loop: true,
             enterCallback: info =>
@@ -245,6 +243,8 @@ public class RodItem : IUse, IStar, IValue
                 model.transform.SetParent(info.animationBehaviour.HoldTransform);
             }
         );
+
+        bool fishingDone = false;
 
         FishingManager fishingManager = FishingManager.GetByIndex(context.playerIndex);
 

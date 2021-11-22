@@ -24,17 +24,13 @@ public class CommissionList : SerializedScriptableSingleton<CommissionList>, ISt
     {
         if (_Guid == System.Guid.Empty)
             _Guid = System.Guid.NewGuid();
-
-        GameManager.AddStreamer(this);
     }
 
-#if UNITY_EDITOR
-    [UnityEditor.InitializeOnEnterPlayMode]
-    private static void PlayModeInitialize()
+    [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.AfterAssembliesLoaded)]
+    private static void Initialize()
     {
         GameManager.AddStreamer(Instance);
     }
-#endif
 
     public void Add(Commission commission)
     {

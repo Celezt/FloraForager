@@ -10,10 +10,9 @@ using UnityEngine.InputSystem;
 
 public static class GameManager
 {
+    public const string SAVE_NAME = "save";
     public const string SAVES_PATH = "/Saves/";
     public const string SAVE_FILE_TYPE = ".sav";
-
-    public static string SAVE_NAME = string.Empty;
 
     public static StreamData Stream => _stream;
 
