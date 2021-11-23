@@ -12,6 +12,7 @@ public class UICraftingMenu : Singleton<UICraftingMenu>
     [SerializeField] private GameObject _CraftableItemPrefab;
     [SerializeField] private Transform _CraftingListArea;
 
+    [SerializeField] private GameObject _Craft;
     [SerializeField] private GameObject _Description;
     [SerializeField] private TMP_Text _ItemNameText;
     [SerializeField] private Image _ItemStarsImage;
@@ -49,7 +50,7 @@ public class UICraftingMenu : Singleton<UICraftingMenu>
             return;
 
         transform.position = CanvasUtility.WorldToCanvasPosition(_Canvas, _CanvasRect, Camera.main,
-            _Workbench.transform.position + Vector3.up * 1.5f) + Vector2.left * 30.0f;
+            _Workbench.transform.position + Vector3.up * 2f) + Vector2.left * 35.0f;
     }
 
     public void CraftItem()
@@ -132,8 +133,23 @@ public class UICraftingMenu : Singleton<UICraftingMenu>
         _ItemImage.sprite = ItemTypeSettings.Instance.ItemIconChunk[craftableItem.Item.ID];
         _RequirementsText.text = requirements;
 
-
         LayoutRebuilder.ForceRebuildLayoutImmediate(_Description.GetComponent<RectTransform>());
+
+        _Craft.SetActive(false);
+
+        StartCoroutine(UpdateCraft());
+    }
+
+    private IEnumerator UpdateCraft()
+    {
+        yield return null;
+
+        _Craft.SetActive(true);
+
+        RectTransform craftRect = _Craft.GetComponent<RectTransform>();
+        RectTransform descriptionRect = _Description.GetComponent<RectTransform>();
+
+        craftRect.sizeDelta = new Vector2(descriptionRect.sizeDelta.x, craftRect.sizeDelta.y);
     }
 
     public void Open()
