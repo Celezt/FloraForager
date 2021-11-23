@@ -70,6 +70,7 @@ GameObject:
   - component: {fileID: 1292460812495848633}
   - component: {fileID: 3196759673885752100}
   - component: {fileID: 1599137960531050931}
+  - component: {fileID: 45882787099023851}
   m_Layer: 5
   m_Name: ButtonNextParagraph
   m_TagString: Untagged
@@ -124,7 +125,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 10905, guid: 0000000000000000f000000000000000, type: 0}
+  m_Sprite: {fileID: 0}
   m_Type: 1
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -156,8 +157,8 @@ MonoBehaviour:
   m_Transition: 1
   m_Colors:
     m_NormalColor: {r: 1, g: 1, b: 1, a: 1}
-    m_HighlightedColor: {r: 0.9607843, g: 0.9607843, b: 0.9607843, a: 1}
-    m_PressedColor: {r: 0.78431374, g: 0.78431374, b: 0.78431374, a: 1}
+    m_HighlightedColor: {r: 0.9970784, g: 0.9970784, b: 0.9970784, a: 1}
+    m_PressedColor: {r: 0.995, g: 0.995, b: 0.995, a: 1}
     m_SelectedColor: {r: 0.9607843, g: 0.9607843, b: 0.9607843, a: 1}
     m_DisabledColor: {r: 0.78431374, g: 0.78431374, b: 0.78431374, a: 0.5019608}
     m_ColorMultiplier: 1
@@ -174,7 +175,7 @@ MonoBehaviour:
     m_SelectedTrigger: Selected
     m_DisabledTrigger: Disabled
   m_Interactable: 1
-  m_TargetGraphic: {fileID: 3196759673885752100}
+  m_TargetGraphic: {fileID: 348458815251252049}
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
@@ -190,6 +191,19 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
+--- !u!114 &45882787099023851
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3085050776186547507}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 245df2eb15e875644a3dc36e500d3047, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _EnterSound: enter_button
 --- !u!225 &1734227570269772237
 CanvasGroup:
   m_ObjectHideFlags: 0
@@ -643,6 +657,17 @@ PrefabInstance:
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 85e2954388475e84ba704669584a48ea, type: 3}
+--- !u!114 &348458815251252049 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 6185521844874720839, guid: 85e2954388475e84ba704669584a48ea, type: 3}
+  m_PrefabInstance: {fileID: 5837397573409355030}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fe87c0e1cc204ed48ad3b37840f39efc, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!114 &256965263086810135 stripped
 MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 5949948495299199233, guid: 85e2954388475e84ba704669584a48ea, type: 3}
