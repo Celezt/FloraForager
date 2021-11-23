@@ -61,7 +61,8 @@ public class LoadSceneTrigger : MonoBehaviour
 
     private void OnTriggerEnter(Collider other)
     {
-        if (FadeScreen.Instance.IsActive || _NoCollision || !other.CompareTag("Player"))
+        if (FadeScreen.Instance.IsActive || _NoCollision || !other.CompareTag("Player") ||
+            string.IsNullOrEmpty(_SceneToLoad))
             return;
 
         FadeScreen.Instance.StartFadeIn(1f);

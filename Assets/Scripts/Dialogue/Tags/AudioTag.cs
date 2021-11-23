@@ -12,6 +12,6 @@ public struct AudioTag : ITag
 
     public void Action(Taggable taggable, string parameter)
     {
-        Debug.Log(parameter);
+        SoundPlayer.Instance.Play(parameter);
     }
 }

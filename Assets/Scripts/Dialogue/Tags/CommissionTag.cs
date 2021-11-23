@@ -6,6 +6,9 @@ using UnityEngine;
 [CustomDialogueTag]
 public class CommissionTag : ITag
 {
+    /// <summary>
+    /// commission(actor, action)
+    /// </summary>
     public void Action(Taggable taggable, string parameter)
     {
         parameter = Regex.Replace(parameter, @"\s", "");
