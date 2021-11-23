@@ -32,6 +32,7 @@ public class GatherObjective : IObjective
     {
         _Inventory = PlayerInput.GetPlayerByIndex(0).GetComponent<PlayerInfo>().Inventory;
 
+        _Inventory.OnItemChangeCallback += UpdateStatus;
         _Inventory.OnAddItemCallback += UpdateStatus;
         _Inventory.OnRemoveItemCallback += UpdateStatus;
         _Inventory.OnInventoryInitalizeCallback += UpdateStatus;
@@ -40,6 +41,7 @@ public class GatherObjective : IObjective
     }
     public void Removed()
     {
+        _Inventory.OnItemChangeCallback -= UpdateStatus;
         _Inventory.OnAddItemCallback -= UpdateStatus;
         _Inventory.OnRemoveItemCallback -= UpdateStatus;
         _Inventory.OnInventoryInitalizeCallback -= UpdateStatus;

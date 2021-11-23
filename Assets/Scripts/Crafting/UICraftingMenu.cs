@@ -31,6 +31,7 @@ public class UICraftingMenu : Singleton<UICraftingMenu>
     private Canvas _Canvas;
     private RectTransform _CanvasRect;
 
+    public bool Opened => _CanvasGroup.alpha > float.Epsilon;
     public Workbench Workbench => _Workbench;
 
     private void Awake()

@@ -40,7 +40,7 @@ public class ChestBehaviour : MonoBehaviour, IPlaceable, IInteractable
         if (!context.performed)
             return;
 
-
+        ContainerWindow.Instance.Open(_Data.ObjectData.Items);
     }
 
     public void OnPlace(PlacedContext context)

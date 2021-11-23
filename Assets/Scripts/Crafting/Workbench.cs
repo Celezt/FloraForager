@@ -47,7 +47,14 @@ public class Workbench : MonoBehaviour, IInteractable
 
         _Player = PlayerInput.GetPlayerByIndex(context.playerIndex).gameObject;
 
-        UICraftingMenu.Instance.ShowCraftableItems(this);
-        UICraftingMenu.Instance.Open();
+        if (!UICraftingMenu.Instance.Opened)
+        {
+            UICraftingMenu.Instance.ShowCraftableItems(this);
+            UICraftingMenu.Instance.Open();
+        }
+        else
+        {
+            UICraftingMenu.Instance.Exit();
+        }
     }
 }
