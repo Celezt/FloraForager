@@ -287,7 +287,7 @@ public class DialogueManager : MonoBehaviour
         string parsedText = _content.GetParsedText();
 
         int maxCount = _content.textInfo.characterCount + 1;
-        for (int count = 0, t = 0; count < maxCount; count++, t++)
+        for (int count = 0; count < maxCount; count++)
         {
             _content.maxVisibleCharacters = count;
 
