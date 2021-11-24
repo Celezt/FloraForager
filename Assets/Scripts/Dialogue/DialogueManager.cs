@@ -54,6 +54,9 @@ public class DialogueManager : MonoBehaviour
     private int _currentLayer;
     private bool _isAutoTextCompleted;
 
+    private bool _audible;
+    private float _pitch;
+
     /// <summary>
     /// Return Dialogue Manager based on the player index connected to it.
     /// </summary>
@@ -69,6 +72,15 @@ public class DialogueManager : MonoBehaviour
             _speedMultiplierHierarchy.Add(float.NaN);
 
         return _speedMultiplierHierarchy[layer] = speed;
+    }
+
+    public void SetAudible(bool value)
+    {
+        _audible = value;
+    }
+    public void SetPitch(float pitch)
+    {
+        _pitch = pitch;
     }
 
     public DialogueManager StartDialogue(string address, params string[] aliases)
@@ -98,6 +110,9 @@ public class DialogueManager : MonoBehaviour
 
         _speedMultiplierHierarchy = new List<float>();
         _currentLayer = 0;
+
+        _audible = true;
+        _pitch = 1.0f;
 
         if (aliases.NotNullOrEmpty())
         {
@@ -268,10 +283,21 @@ public class DialogueManager : MonoBehaviour
             yield return Dequeue();
 
         _content.ForceMeshUpdate();
+
+        string parsedText = _content.GetParsedText();
+
         int maxCount = _content.textInfo.characterCount + 1;
-        for (int count = 0; count < maxCount; count++)
+        for (int count = 0, t = 0; count < maxCount; count++, t++)
         {
             _content.maxVisibleCharacters = count;
+
+            if (_audible && count > 0)
+            {
+                string letter = parsedText[count - 1].ToString().ToUpper();
+
+                if (SoundPlayer.Instance.TryGetSound(letter, out SoundPlayer.Sound sound))
+                    SoundPlayer.Instance.Play(letter, 0, _pitch - sound.Pitch);
+            }
 
             while (true)
             {

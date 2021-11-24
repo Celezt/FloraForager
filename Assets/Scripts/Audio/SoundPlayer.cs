@@ -21,6 +21,9 @@ public class SoundPlayer : Singleton<SoundPlayer>
     [Space(10)]
     [SerializeField, ListDrawerSettings(ShowItemCount = false, Expanded = true)]
     private Sound[] _SoundEffects;
+    [Space(10)]
+    [SerializeField, ListDrawerSettings(ShowItemCount = false, Expanded = true)]
+    private Sound[] _DialogueSounds;
 
     private AudioSource[] _AudioSourcePool;
     private int _CurrentPoolSize;
@@ -40,7 +43,7 @@ public class SoundPlayer : Singleton<SoundPlayer>
             }
             else if ((_PoolIndex = value) < _CurrentPoolSize / 4)
             {
-                if (_CurrentPoolSize > 2)
+                if (_CurrentPoolSize > _InitialPoolSize)
                     ShrinkPool(_CurrentPoolSize / 2);
             }
         }
@@ -48,6 +51,8 @@ public class SoundPlayer : Singleton<SoundPlayer>
 
     private IEnumerator Start()
     {
+        _SoundEffects = _SoundEffects.Concat(_DialogueSounds).ToArray();
+
         _AudioSourcePool = new AudioSource[_InitialPoolSize];
         for (int i = 0; i < _AudioSourcePool.Length; ++i)
             _AudioSourcePool[i] = gameObject.AddComponent<AudioSource>();
