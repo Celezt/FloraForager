@@ -11,6 +11,7 @@ public class NPCInfoUI : MonoBehaviour
     [SerializeField] private LayerMask _LayerMasks;
     [SerializeField] private TMP_Text _Name;
     [SerializeField] private TMP_Text _Relation;
+    [SerializeField] private float _MaxHitDistance = 10.0f;
     [SerializeField] private float _HeightOffset = 0.2f;
 
     private CanvasGroup _CanvasGroup;
@@ -21,6 +22,8 @@ public class NPCInfoUI : MonoBehaviour
     private NPCObject _NPCObject;
     private Bounds _NPCBounds;
 
+    private GameObject _Player;
+
     private void Awake()
     {
         _CanvasGroup = GetComponent<CanvasGroup>();
@@ -28,6 +31,8 @@ public class NPCInfoUI : MonoBehaviour
 
         _Canvas = GetComponentInParent<Canvas>().rootCanvas;
         _CanvasRect = _Canvas.GetComponent<RectTransform>();
+
+        _Player = PlayerInput.GetPlayerByIndex(0).gameObject;
     }
 
     private void Update()
@@ -35,7 +40,11 @@ public class NPCInfoUI : MonoBehaviour
         Ray ray = Camera.main.ScreenPointToRay(Mouse.current.position.ReadValue());
         bool collision = Physics.Raycast(ray, out RaycastHit hitInfo, Mathf.Infinity, _LayerMasks) && !CanvasUtility.IsPointerOverUIElement();
 
-        if (collision)
+        float distance = Mathf.Sqrt(
+            Mathf.Pow(hitInfo.point.x - _Player.transform.position.x, 2) +
+            Mathf.Pow(hitInfo.point.z - _Player.transform.position.z, 2));
+
+        if (collision && distance <= _MaxHitDistance)
         {
             if (_NPCObject == null && hitInfo.transform.TryGetComponent(out NPCObject npc))
             {
@@ -58,8 +67,8 @@ public class NPCInfoUI : MonoBehaviour
     {
         _NPCObject = npc;
 
-        if (npc.TryGetComponent(out MeshFilter meshFilter))
-            _NPCBounds = meshFilter.mesh.bounds;
+        if (npc.TryGetComponent(out Collider collider))
+            _NPCBounds = collider.bounds;
 
         UpdateWindow();
 
@@ -75,7 +84,7 @@ public class NPCInfoUI : MonoBehaviour
     private void UpdatePosition()
     {
         transform.position = CanvasUtility.WorldToCanvasPosition(_Canvas, _CanvasRect, Camera.main,
-            _NPCObject.transform.position + Vector3.up * (_NPCBounds.extents.y + _HeightOffset));
+            _NPCObject.transform.position + Vector3.up * (_NPCBounds.size.y + _HeightOffset));
     }
 
     private void UpdateWindow()

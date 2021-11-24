@@ -7,6 +7,12 @@ using Sirenix.OdinInspector;
 
 public class PlaceableItem : IUse
 {
+    [OdinSerialize, PropertyOrder(int.MinValue + 1)]
+    float IUse.Cooldown { get; set; } = 0;
+
+    [Title("Place Behaviour")]
+    [SerializeField]
+    private string _placeSound = "place_object";
     [SerializeField]
     private float _placeRange = 3.0f;
     [SerializeField]
@@ -14,13 +20,21 @@ public class PlaceableItem : IUse
     [SerializeField]
     private LayerMask _placeMask = LayerMask.GetMask("Ground");
     [SerializeField, ListDrawerSettings(Expanded = true)]
-    private CellType[] _AllowedTypes = new CellType[1];
+    private CellType[] _allowedTypes = new CellType[1];
+    [SerializeField, AssetsOnly]
+    private Material _material;
     [SerializeField, AssetsOnly]
     private GameObject _placeableObject;
 
-    float IUse.Cooldown { get; set; } = 0;
+    private Quaternion _rotation = Quaternion.identity;
 
-    private Quaternion _Rotation = Quaternion.identity;
+    private Cell _cell;
+
+    private GameObject _objectAux;
+    private MeshFilter _objectAuxFilter;
+    private MeshRenderer _objectAuxRenderer;
+
+    private bool _canPlace;
 
     void IItem.OnInitialize(ItemTypeContext context)
     {
@@ -29,45 +43,61 @@ public class PlaceableItem : IUse
 
     void IItem.OnEquip(ItemContext context)
     {
-        
+        _objectAux = new GameObject("placeable auxiliary", typeof(MeshRenderer), typeof(MeshFilter));
+
+        _objectAuxFilter = _objectAux.GetComponent<MeshFilter>();
+        _objectAuxRenderer = _objectAux.GetComponent<MeshRenderer>();
+
+        _objectAuxFilter.mesh = _placeableObject.GetComponent<MeshFilter>().sharedMesh;
+        _objectAuxRenderer.material = _material;
     }
 
     void IItem.OnUnequip(ItemContext context)
     {
-
+        Object.Destroy(_objectAux);
     }
 
     void IItem.OnUpdate(ItemContext context)
     {
-
-    }
-
-    IEnumerator IUse.OnUse(UseContext context)
-    {
-        if (!context.started)
-            yield break;
+        _cell = Grid.Instance.HoveredCell;
 
         Ray ray = Camera.main.ScreenPointToRay(Mouse.current.position.ReadValue());
         Physics.Raycast(ray, out RaycastHit hitInfo, Mathf.Infinity, _placeMask);
 
         float distance = Mathf.Sqrt(
-            Mathf.Pow(hitInfo.point.x - context.transform.position.x, 2) + 
+            Mathf.Pow(hitInfo.point.x - context.transform.position.x, 2) +
             Mathf.Pow(hitInfo.point.z - context.transform.position.z, 2));
 
-        if (distance > _placeRange)
-            yield break;
-
-        Cell cell = Grid.Instance.HoveredCell;
-
-        if (cell == null)
-            yield break;
-
-        foreach (CellType type in _AllowedTypes)
+        if (distance <= _placeRange && _cell != null)
         {
-            if (type == cell.Type)
+            _canPlace = true;
+            _objectAuxRenderer.enabled = true;
+
+            _objectAux.transform.position = _cell.Middle;
+        }
+        else
+        {
+            _canPlace = false;
+            _objectAuxRenderer.enabled = false;
+        }
+    }
+
+    IEnumerator IUse.OnUse(UseContext context)
+    {
+        if (!context.started || !_canPlace || _cell == null)
+            yield break;
+
+        if (!_canPlace)
+            yield break;
+
+        foreach (CellType type in _allowedTypes)
+        {
+            if (type == _cell.Type)
             {
-                context.Place(_placeableObject, cell, _Rotation, _followNormal);
+                context.Place(_placeableObject, _cell, _rotation, _followNormal);
                 context.Consume();
+
+                SoundPlayer.Instance.Play(_placeSound);
 
                 yield break;
             }

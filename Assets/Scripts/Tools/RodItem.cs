@@ -32,11 +32,48 @@ public class RodItem : IUse, IStar, IValue
     private float _dragDamp = 10.0f;
     [SerializeField]
     private float _bounciness = 0.5f;
+    [SerializeField]
+    private float _staminaChange = -0.05f;
     [Space(10)]
     [SerializeField]
-    private float _Radius = 8.0f;
+    private string _castSound = "cast_rod";
+    [SerializeField]
+    private string _hookedSound = "hooked_fish";
+    [SerializeField]
+    private string _catchFishSound = "catch_fish";
+    [SerializeField]
+    private string _catchFailSound = "catch_fail";
+    [SerializeField, AssetsOnly]
+    private GameObject _model;
+    [SerializeField]
+    private AnimationClip _castClip;
+    [SerializeField]
+    private AnimationClip _idleClip;
+    [SerializeField]
+    private AnimationClip _hookClip;
+    [SerializeField]
+    private AnimationClip _catchClip;
+    [SerializeField]
+    private float _onSwing = 0.85f;
+    [SerializeField]
+    private float _onCatch = 0.1f;
+    [SerializeField]
+    private float _stunCastDuration = 1.2f;
+    [SerializeField, Sirenix.OdinInspector.MinValue("_onSwing")]
+    private float _onCastUse = 1.2f;
+    [SerializeField]
+    private float _stunCatchDuration = 1.2f;
+    [SerializeField, Sirenix.OdinInspector.MinValue("_onCatch")]
+    private float _onCatchUse = 1.2f;
+    [Space(10)]
+    [SerializeField]
+    private LayerMask _hitMask = LayerMask.NameToLayer("Grid");
+    [SerializeField]
+    private float _radius = 4.0f;
     [SerializeField, Range(0.0f, 360.0f)]
-    private float _Arc = 60.0f;
+    private float _arc = 80.0f;
+
+    private PlayerStamina _playerStamina;
 
     void IItem.OnInitialize(ItemTypeContext context)
     {
@@ -45,7 +82,7 @@ public class RodItem : IUse, IStar, IValue
 
     void IItem.OnEquip(ItemContext context)
     {
-
+        _playerStamina = context.transform.GetComponent<PlayerStamina>();
     }
 
     void IItem.OnUnequip(ItemContext context)
@@ -68,9 +105,9 @@ public class RodItem : IUse, IStar, IValue
             yield break;
 
         Ray ray = Camera.main.ScreenPointToRay(Mouse.current.position.ReadValue());
-        Physics.Raycast(ray, out RaycastHit hitInfo, Mathf.Infinity, LayerMask.NameToLayer("Grid"));
+        Physics.Raycast(ray, out RaycastHit hitInfo, Mathf.Infinity, _hitMask);
 
-        if (!MathUtility.PointInArc(hitInfo.point, context.transform.position, context.transform.localEulerAngles.y, _Arc, _Radius))
+        if (!MathUtility.PointInArc(hitInfo.point, context.transform.position, context.transform.localEulerAngles.y, _arc, _radius))
             yield break;
 
         Inventory inventory = PlayerInput.GetPlayerByIndex(context.playerIndex).GetComponent<PlayerInfo>().Inventory;
@@ -79,57 +116,173 @@ public class RodItem : IUse, IStar, IValue
         if (items.Count <= 0) // if no baits found, return
             yield break;
 
+        // -- START FISHING --
+
+        _playerStamina.Stamina += _staminaChange;
+
+        PlayerInput playerInput = PlayerInput.GetPlayerByIndex(context.playerIndex);
+
+        UIStateVisibility.Instance.Hide("inventory");
+        playerInput.DeactivateInput();
+
+        GameObject model = null;
+        SkinnedMeshRenderer rodMeshRenderer = null;
+
+        HumanoidAnimationBehaviour animationBehaviour = playerInput.GetComponentInChildren<HumanoidAnimationBehaviour>();
+        PlayerMovement playerMovement = playerInput.GetComponent<PlayerMovement>();
+
+        playerMovement.SetDirection((hitInfo.point - context.transform.position).normalized.xz());
+
         int fishBaitIndex = items.First().Item1; // select first found bait to use
 
         FishBaitItem fishBait = ItemTypeSettings.Instance.ItemTypeChunk[inventory.Get(fishBaitIndex).ID].Behaviour as FishBaitItem;
         RodItem rodItem = ItemTypeSettings.Instance.ItemTypeChunk[context.id].Behaviour as RodItem;
 
-        string fishID = FishPool.Instance.GetFish(fishBait);
+        string fishStatus = _catchFailSound; // sound to play depending on current fish status (success/failed)
 
-        if (string.IsNullOrWhiteSpace(fishID) || inventory.FindEmptySpace(fishID) <= 0) // if no fish available or no space for fish, return
+        IEnumerator exitEnumerator = Exit();
+
+        IEnumerator Exit() // exit from fishing
+        {
+            playerMovement.ActivaInput.Add(_stunCatchDuration);
+            animationBehaviour.CustomMotionRaise(_catchClip,
+                enterCallback: info =>
+                {
+                    if (_model == null)
+                        return;
+
+                    model.transform.SetParent(info.animationBehaviour.HoldTransform);
+                },
+                exitCallback: info =>
+                {
+                    if (_model == null)
+                        return;
+
+                    Object.Destroy(model);
+                });
+
+            SoundPlayer.Instance.Stop(_hookedSound);
+
+            yield return new WaitForSeconds(_onCatch);
+
+            SoundPlayer.Instance.Play(fishStatus);
+
+            yield return new WaitForSeconds(_onCatchUse - _onCatch);
+
+            UIStateVisibility.Instance.Show("inventory");
+            playerInput.ActivateInput();
+        };
+
+        // -- CAST ROD --
+
+        playerMovement.ActivaInput.Add(_stunCastDuration);
+        animationBehaviour.CustomMotionRaise(_castClip,
+            enterCallback: info =>
+            {
+                if (_model == null)
+                    return;
+
+                model = Object.Instantiate(_model, info.animationBehaviour.HoldTransform);
+                rodMeshRenderer = model.GetComponent<SkinnedMeshRenderer>();
+            }
+        );
+
+        yield return new WaitForSeconds(_onSwing);
+
+        SoundPlayer.Instance.Play(_castSound);
+
+        yield return new WaitForSeconds(_onCastUse - _onSwing);
+        
+        // -- IDLE LOOP --
+
+        animationBehaviour.CustomMotionRaise(_idleClip, loop: true,
+            enterCallback: info =>
+            {
+                if (_model == null)
+                    return;
+
+                model.transform.SetParent(info.animationBehaviour.HoldTransform);
+            }
+        );
+
+        // -- HOOK MINIGAME --
+
+        string hookedFish = null;
+
+        void HookAction(string fishID)
+        {
+            hookedFish = fishID; // resulting fish from hook minigame
+            FishHook.Instance.OnHook -= HookAction;
+        };
+
+        FishHook.Instance.OnHook += HookAction;
+
+        IEnumerator hookEnumerator = FishHook.Instance.PlayHook(this, fishBait); // start hook game
+        while (hookEnumerator.MoveNext())
+            yield return hookEnumerator.Current;
+
+        // if no fish available or no space for fish
+        if (string.IsNullOrWhiteSpace(hookedFish) || inventory.FindEmptySpace(hookedFish) <= 0)
+        {
+            while (exitEnumerator.MoveNext())
+                yield return exitEnumerator.Current;
+
             yield break;
+        }
 
-        PlayerInput playerInput = PlayerInput.GetPlayerByIndex(context.playerIndex);
+        SoundPlayer.Instance.Play(_hookedSound, 0, Random.Range(-0.2f, 0.5f), 0, Random.Range(3f, 4f), true);
+
+        // -- FISHING --
+
+        animationBehaviour.CustomMotionRaise(_hookClip, loop: true,
+            enterCallback: info =>
+            {
+                if (_model == null)
+                    return;
+
+                model.transform.SetParent(info.animationBehaviour.HoldTransform);
+            }
+        );
+
+        bool fishingDone = false;
 
         FishingManager fishingManager = FishingManager.GetByIndex(context.playerIndex);
 
-        fishingManager.OnPlayCallback += PlayAction;
-        fishingManager.StartFishing(fishID, context.id);
+        fishingManager.OnCatchCallback += CatchFishAction;
+        fishingManager.OnFleeCallback += FleeFishAction;
 
-        PlayerMovement playerMovement = playerInput.GetComponent<PlayerMovement>();
-        playerMovement.SetDirection((hitInfo.point - context.transform.position).normalized.xz());
+        fishingManager.StartFishing(hookedFish, context.id);
 
-        void PlayAction()
+        void CatchFishAction()
         {
-            UIStateVisibility.Instance.Hide("inventory");
-            playerInput.DeactivateInput();
-
-            fishingManager.OnCatchCallback -= CatchAction;
-            fishingManager.OnFleeCallback -= FleeAction;
-            fishingManager.OnCatchCallback += CatchAction;
-            fishingManager.OnFleeCallback += FleeAction;
-
-            fishingManager.OnPlayCallback -= PlayAction;
-        };
-        void CatchAction()
-        {
-            UIStateVisibility.Instance.Show("inventory");
-            playerInput.ActivateInput();
+            fishingDone = true;
+            fishStatus = _catchFishSound;
 
             inventory.RemoveAt(fishBaitIndex, 1);
-            inventory.Insert(new ItemAsset { ID = fishID, Amount = 1 });
+            inventory.Insert(new ItemAsset { ID = hookedFish, Amount = 1 });
 
-            fishingManager.OnCatchCallback -= CatchAction;
+            fishingManager.OnCatchCallback -= CatchFishAction;
         };
-        void FleeAction()
+        void FleeFishAction()
         {
-            UIStateVisibility.Instance.Show("inventory");
-            playerInput.ActivateInput();
+            fishingDone = true;
+            fishStatus = _catchFailSound;
 
             inventory.RemoveAt(fishBaitIndex, 1);
 
-            fishingManager.OnFleeCallback -= FleeAction;
+            fishingManager.OnFleeCallback -= FleeFishAction;
         };
+
+        while (!fishingDone) // while no fish has been caught
+        {
+            rodMeshRenderer.SetBlendShapeWeight(0, 100.0f * (0.5f + Mathf.PingPong(Time.time, 0.2f)));
+            yield return null;
+        }
+
+        rodMeshRenderer.SetBlendShapeWeight(0, 0);
+
+        while (exitEnumerator.MoveNext())
+            yield return exitEnumerator.Current;
 
         yield break;
     }

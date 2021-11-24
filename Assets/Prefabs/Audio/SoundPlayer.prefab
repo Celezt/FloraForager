@@ -55,8 +55,6 @@ MonoBehaviour:
     _Volume: 0.05
     _Pitch: 0.85
     _SpatialBlend: 0
-    _Cooldown: 0
-    _RepeatCount: 0
     AudioSource: {fileID: 0}
   - _Name: 
     _Asset:
@@ -65,10 +63,18 @@ MonoBehaviour:
       m_SubObjectType: 
       m_EditorAssetChanged: 0
     _Volume: 0.3
+    _Pitch: 1.2
+    _SpatialBlend: 0
+    AudioSource: {fileID: 0}
+  - _Name: 
+    _Asset:
+      m_AssetGUID: fa9c38437b55f274f91a24b954effde5
+      m_SubObjectName: 
+      m_SubObjectType: 
+      m_EditorAssetChanged: 0
+    _Volume: 0.3
     _Pitch: 1.1
     _SpatialBlend: 0
-    _Cooldown: 0
-    _RepeatCount: 0
     AudioSource: {fileID: 0}
   - _Name: hit_rock
     _Asset:
@@ -79,20 +85,6 @@ MonoBehaviour:
     _Volume: 0.3
     _Pitch: 1.25
     _SpatialBlend: 0
-    _Cooldown: 0
-    _RepeatCount: 0
-    AudioSource: {fileID: 0}
-  - _Name: break_rock
-    _Asset:
-      m_AssetGUID: 0667ef03fa3e2094aa9783bc9531d07b
-      m_SubObjectName: 
-      m_SubObjectType: 
-      m_EditorAssetChanged: 0
-    _Volume: 0.4
-    _Pitch: 0.75
-    _SpatialBlend: 0
-    _Cooldown: 0
-    _RepeatCount: 0
     AudioSource: {fileID: 0}
   - _Name: 
     _Asset:
@@ -103,8 +95,16 @@ MonoBehaviour:
     _Volume: 0.1
     _Pitch: 0.65
     _SpatialBlend: 0
-    _Cooldown: 0
-    _RepeatCount: 0
+    AudioSource: {fileID: 0}
+  - _Name: break_rock
+    _Asset:
+      m_AssetGUID: 0667ef03fa3e2094aa9783bc9531d07b
+      m_SubObjectName: 
+      m_SubObjectType: 
+      m_EditorAssetChanged: 0
+    _Volume: 0.4
+    _Pitch: 0.75
+    _SpatialBlend: 0
     AudioSource: {fileID: 0}
   - _Name: 
     _Asset:
@@ -115,20 +115,16 @@ MonoBehaviour:
     _Volume: 0.2
     _Pitch: 1.05
     _SpatialBlend: 0
-    _Cooldown: 0
-    _RepeatCount: 0
     AudioSource: {fileID: 0}
   - _Name: 
     _Asset:
-      m_AssetGUID: 67c56e80813ce224fb37cbd79351a57e
+      m_AssetGUID: 75aa58877f5f019409f4cecb9d4be427
       m_SubObjectName: 
       m_SubObjectType: 
       m_EditorAssetChanged: 0
-    _Volume: 0.2
-    _Pitch: 1.15
+    _Volume: 0.04
+    _Pitch: 2.7
     _SpatialBlend: 0
-    _Cooldown: 0
-    _RepeatCount: 0
     AudioSource: {fileID: 0}
   - _Name: 
     _Asset:
@@ -139,8 +135,6 @@ MonoBehaviour:
     _Volume: 0.25
     _Pitch: 1.5
     _SpatialBlend: 0
-    _Cooldown: 0
-    _RepeatCount: 0
     AudioSource: {fileID: 0}
   - _Name: 
     _Asset:
@@ -151,8 +145,6 @@ MonoBehaviour:
     _Volume: 0.2
     _Pitch: 1.4
     _SpatialBlend: 0
-    _Cooldown: 0
-    _RepeatCount: 0
     AudioSource: {fileID: 0}
   - _Name: 
     _Asset:
@@ -163,6 +155,74 @@ MonoBehaviour:
     _Volume: 0.04
     _Pitch: 1.5
     _SpatialBlend: 0
-    _Cooldown: 0
-    _RepeatCount: 0
+    AudioSource: {fileID: 0}
+  - _Name: 
+    _Asset:
+      m_AssetGUID: 03b2be5c5f0e0a44b95b91b5a4db7b84
+      m_SubObjectName: 
+      m_SubObjectType: 
+      m_EditorAssetChanged: 0
+    _Volume: 0.05
+    _Pitch: 1
+    _SpatialBlend: 0
+    AudioSource: {fileID: 0}
+  - _Name: 
+    _Asset:
+      m_AssetGUID: e8bcd812b15870a4b9ec0dc3575c0162
+      m_SubObjectName: 
+      m_SubObjectType: 
+      m_EditorAssetChanged: 0
+    _Volume: 0.12
+    _Pitch: 0.9
+    _SpatialBlend: 0
+    AudioSource: {fileID: 0}
+  - _Name: 
+    _Asset:
+      m_AssetGUID: b6a5c4e0feb90134fabd920d5ad44fce
+      m_SubObjectName: 
+      m_SubObjectType: 
+      m_EditorAssetChanged: 0
+    _Volume: 0.15
+    _Pitch: 0.85
+    _SpatialBlend: 0
+    AudioSource: {fileID: 0}
+  - _Name: 
+    _Asset:
+      m_AssetGUID: 2541332814643f846a8f676446949e32
+      m_SubObjectName: 
+      m_SubObjectType: 
+      m_EditorAssetChanged: 0
+    _Volume: 0.15
+    _Pitch: 1
+    _SpatialBlend: 0
+    AudioSource: {fileID: 0}
+  - _Name: 
+    _Asset:
+      m_AssetGUID: 1281f229ae78d9c42902f61301d19e93
+      m_SubObjectName: 
+      m_SubObjectType: 
+      m_EditorAssetChanged: 0
+    _Volume: 0.25
+    _Pitch: 1
+    _SpatialBlend: 0
+    AudioSource: {fileID: 0}
+  - _Name: 
+    _Asset:
+      m_AssetGUID: 9404e0ae2b54b694cafc5a7cd18d39c4
+      m_SubObjectName: 
+      m_SubObjectType: 
+      m_EditorAssetChanged: 0
+    _Volume: 0.2
+    _Pitch: 1.3
+    _SpatialBlend: 0
+    AudioSource: {fileID: 0}
+  - _Name: 
+    _Asset:
+      m_AssetGUID: 42546a759c4cb6f4c8e0d91c201e868e
+      m_SubObjectName: 
+      m_SubObjectType: 
+      m_EditorAssetChanged: 0
+    _Volume: 0.25
+    _Pitch: 0.9
+    _SpatialBlend: 0
     AudioSource: {fileID: 0}

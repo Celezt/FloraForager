@@ -10,10 +10,9 @@ using UnityEngine.InputSystem;
 
 public static class GameManager
 {
+    public const string SAVE_NAME = "save";
     public const string SAVES_PATH = "/Saves/";
     public const string SAVE_FILE_TYPE = ".sav";
-
-    public static string SAVE_NAME = string.Empty;
 
     public static StreamData Stream => _stream;
 
@@ -72,10 +71,12 @@ public static class GameManager
 
     public static void LoadGame()
     {
-        byte[] bytes = File.ReadAllBytes(SavePath + SAVE_NAME + SAVE_FILE_TYPE);
-        _stream.StreamedData = (Dictionary<Guid, object>)SerializationUtility.DeserializeValueWeak(bytes, DataFormat.Binary);
-
-        if (_stream.StreamedData == null) // if failed to load
+        if (SaveExists(SAVE_NAME))
+        {
+            byte[] bytes = File.ReadAllBytes(SavePath + SAVE_NAME + SAVE_FILE_TYPE);
+            _stream.StreamedData = (Dictionary<Guid, object>)SerializationUtility.DeserializeValueWeak(bytes, DataFormat.Binary);
+        }
+        else // if failed to load
             _stream.StreamedData = new Dictionary<Guid, object>();
 
         foreach (IStreamer streamer in _streamers)

@@ -16,6 +16,7 @@ MonoBehaviour:
     SerializedFormat: 2
     SerializedBytes: 
     ReferencedUnityObjects:
+    - {fileID: 2100000, guid: 6375bb90dfe234041aee782b02d97ac6, type: 2}
     - {fileID: 2559919514944511368, guid: 1f29d06801e01cd45beb27e3c137217b, type: 3}
     SerializedBytesString: 
     Prefab: {fileID: 0}
@@ -25,9 +26,12 @@ MonoBehaviour:
     - Name: Behaviour
       Entry: 7
       Data: 0|PlaceableItem, Assembly-CSharp
-    - Name: IItem.ItemStack
-      Entry: 3
-      Data: 16
+    - Name: IUse.Cooldown
+      Entry: 4
+      Data: 0
+    - Name: _placeSound
+      Entry: 6
+      Data: 
     - Name: _placeRange
       Entry: 4
       Data: 3
@@ -43,7 +47,7 @@ MonoBehaviour:
     - Name: 
       Entry: 8
       Data: 
-    - Name: _AllowedTypes
+    - Name: _allowedTypes
       Entry: 7
       Data: 1|CellType[], Assembly-CSharp
     - Name: 
@@ -58,9 +62,12 @@ MonoBehaviour:
     - Name: 
       Entry: 8
       Data: 
-    - Name: _placeableObject
+    - Name: _material
       Entry: 10
       Data: 0
+    - Name: _placeableObject
+      Entry: 10
+      Data: 1
     - Name: 
       Entry: 8
       Data: 
@@ -68,6 +75,6 @@ MonoBehaviour:
   Name: Wooden Chest
   ID: wooden_chest
   Description: 
+  ItemStack: 1
   Labels:
-  - placeable
-  - storage
+  - Storage

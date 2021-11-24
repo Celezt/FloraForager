@@ -38,7 +38,7 @@ public class PlayerData : IStreamable<PlayerData.Data>
 
         PlayerInfo playerInfo = player.GetComponent<PlayerInfo>();
 
-        PlayerStamina playerStamina = playerInfo.PlayerStamina;
+        PlayerStamina playerStamina = playerInfo.Stamina;
         Inventory playerInventory = playerInfo.Inventory;
 
         _Data.Position = player.transform.position;

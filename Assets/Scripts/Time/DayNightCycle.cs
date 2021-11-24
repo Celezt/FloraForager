@@ -8,20 +8,20 @@ public class DayNightCycle : MonoBehaviour
     private Light _Sun;
     [SerializeField, Range(0.0f, 360.0f)] 
     private float _Yaw = 30.0f;
-    [SerializeField, Range(0.0f, 1.0f)] 
-    private float _Damping = 0.25f;
     [SerializeField] 
     private Gradient _SunColor;
+    [SerializeField]
+    private Gradient _AmbientColor;
     [SerializeField] 
     private AnimationCurve _SunIntensity;
 
     private Quaternion _CurrentRotation;
-    private Quaternion _NewRotation;
     private float _MorningOffset;
 
     private void Awake()
     {
         RenderSettings.sun = _Sun;
+        RenderSettings.ambientMode = UnityEngine.Rendering.AmbientMode.Flat;
     }
 
     private void Start()
@@ -33,15 +33,14 @@ public class DayNightCycle : MonoBehaviour
     {
         float time = (GameTime.Instance.CurrentTime / 24.0f);
 
+        RenderSettings.ambientLight = _AmbientColor.Evaluate(time);
+
         _Sun.color = _SunColor.Evaluate(time);
         _Sun.intensity = _SunIntensity.Evaluate(time);
 
         float pitch = 360.0f * time - _MorningOffset;
         _CurrentRotation = Quaternion.Euler(pitch, _Yaw, 0.0f);
 
-        float angleDiff = Quaternion.Angle(_NewRotation, _CurrentRotation);
-        _NewRotation = (angleDiff < 2.5f) ? Quaternion.Slerp(_NewRotation, _CurrentRotation, _Damping * Time.deltaTime) : _CurrentRotation;
-
-        _Sun.transform.localRotation = _NewRotation;
+        _Sun.transform.localRotation = _CurrentRotation;
     }
 }

@@ -6,6 +6,7 @@ using UnityEngine.InputSystem;
 using UnityEngine.SceneManagement;
 using MyBox;
 using Sirenix.Serialization;
+using IngameDebugConsole;
 
 /// <summary>
 /// Manages all of the flora in this region
@@ -17,7 +18,7 @@ public class FloraMaster : SerializedScriptableSingleton<FloraMaster>, IStreamer
     [OdinSerialize]
     private System.Guid _Guid;
     [Space(5)]
-    [OdinSerialize]
+    [SerializeField]
     private GameObject _FloraPrefab;
     [OdinSerialize]
     private Dictionary<string, FloraInfo> _FloraDictionary = new Dictionary<string, FloraInfo>();
@@ -29,19 +30,16 @@ public class FloraMaster : SerializedScriptableSingleton<FloraMaster>, IStreamer
     {
         if (_Guid == System.Guid.Empty)
             _Guid = System.Guid.NewGuid();
-
-        GameManager.AddStreamer(this);
-        SceneManager.sceneLoaded += OnSceneLoaded;
     }
 
-#if UNITY_EDITOR
-    [UnityEditor.InitializeOnEnterPlayMode]
+    [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.AfterAssembliesLoaded)]
     private static void Initialize()
     {
-        GameManager.AddStreamer(FloraMaster.Instance);
+        GameManager.AddStreamer(Instance);
         SceneManager.sceneLoaded += Instance.OnSceneLoaded;
+
+        DebugLogConsole.AddCommandInstance("flora.grow", "Grows flora", nameof(Instance.DebugNotify), Instance);
     }
-#endif
 
     public void OnSceneLoaded(Scene scene, LoadSceneMode mode)
     {
@@ -122,6 +120,13 @@ public class FloraMaster : SerializedScriptableSingleton<FloraMaster>, IStreamer
             _Florae[i].Grow();
         }
     }
+    public void DebugNotify()
+    {
+        for (int i = _Florae.Count - 1; i >= 0; --i)
+        {
+            _Florae[i].ForceGrowth();
+        }
+    }
 
     public void UpLoad()
     {
@@ -148,7 +153,7 @@ public class FloraMaster : SerializedScriptableSingleton<FloraMaster>, IStreamer
 
             Flora.Data data = value as Flora.Data;
 
-            Flora flora = new Flora(_FloraDictionary[data.Name], data.CellPosition);
+            Flora flora = new Flora(_FloraDictionary[data.Name.ToLower()], data.CellPosition);
             flora.OnLoad(data);
 
             _Florae.Add(flora);

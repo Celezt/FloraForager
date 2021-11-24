@@ -29,15 +29,11 @@ public class MainMenu : MonoBehaviour
         _SaveFiles = GameManager.GetSaves();
         _ContinueButton.interactable = GameManager.SaveExists(SAVE_NAME);
 
-        GameManager.SAVE_NAME = SAVE_NAME;
         Time.timeScale = 1.0f;
     }
 
     public void OnContinue()
     {
-        if (!GameManager.SaveExists(SAVE_NAME))
-            return;
-
         GameManager.LoadGame();
 
         if (PlayerDataMaster.Instance.Exists(0) && PlayerDataMaster.Instance.Get(0).SaveData.SceneIndex != 0) // hard-coded for now
@@ -62,15 +58,12 @@ public class MainMenu : MonoBehaviour
                 new UnityAction(() => 
                 {
                     GameManager.DeleteSave(SAVE_NAME);
-                    GameManager.CreateSave(SAVE_NAME);
-
                     OnContinue();
                 }), 
                 new UnityAction(() => { }));
         }
         else
         {
-            GameManager.CreateSave(SAVE_NAME);
             OnContinue();
         }
     }

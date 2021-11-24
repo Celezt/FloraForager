@@ -9,10 +9,8 @@ using Sirenix.OdinInspector;
 
 public class LogItem : IUse
 {
-    [OdinSerialize, PropertyOrder(int.MinValue)]
-    public int ItemStack { get; set; } = 1;
     [OdinSerialize, PropertyOrder(int.MinValue + 1)]
-    public float Cooldown { get; set; } = 0.5f;
+    float IUse.Cooldown { get; set; } = 0.5f;
 
     [SerializeField, AssetList(Path = "Data/Dialogues"), AssetsOnly]
     private TextAsset _LogText;

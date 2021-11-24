@@ -8,15 +8,15 @@ using Sirenix.OdinInspector;
 
 public class FoodItem : IUse, IStar, IValue
 {
-    [OdinSerialize, PropertyOrder(float.MinValue)]
-    public int ItemStack { get; set; } = 64;
     [OdinSerialize, PropertyOrder(float.MinValue + 1)]
     Stars IStar.Star { get; set; } = Stars.One;
     [OdinSerialize, PropertyOrder(float.MinValue + 2)]
     int IValue.BaseValue { get; set; }
     [OdinSerialize, PropertyOrder(float.MinValue + 3)]
-    public float Cooldown { get; set; } = 2;
+    float IUse.Cooldown { get; set; } = 2;
 
+    [SerializeField]
+    private string _eatSound = "swallow";
     [SerializeField]
     private float _staminaChange;
     [SerializeField, InlineProperty]
@@ -53,6 +53,8 @@ public class FoodItem : IUse, IStar, IValue
             foreach (IEffect effect in _effects)
                 if (!effect.Duration.IsActive)
                     effect.OnEffect(context);
+
+            SoundPlayer.Instance.Play(_eatSound);
 
             context.Consume();
         }

@@ -13,7 +13,7 @@ using UnityEngine.AddressableAssets;
 [System.Serializable]
 public class NPCManager : SerializedScriptableSingleton<NPCManager>, IStreamer
 {
-    [SerializeField]
+    [OdinSerialize]
     private System.Guid _Guid;
     [SerializeField, ListDrawerSettings(DraggableItems = false, ShowItemCount = false, Expanded = true)]
     private List<NPCInfo> _NPCInfos;
@@ -21,28 +21,23 @@ public class NPCManager : SerializedScriptableSingleton<NPCManager>, IStreamer
     [System.NonSerialized]
     private Dictionary<string, NPC> _NPCs = new Dictionary<string, NPC>();
 
-    public void Initialize()
+    private void Awake()
     {
         if (_Guid == System.Guid.Empty)
             _Guid = System.Guid.NewGuid();
-
-        _NPCs = _NPCInfos.ToDictionary(n => n.Name.ToLower(), n => new NPC(n));
-
-        GameManager.AddStreamer(this);
     }
 
-    private void Awake()
+    public void Initialize()
     {
-        Initialize();
+        _NPCs = _NPCInfos.ToDictionary(n => n.Name.ToLower(), n => new NPC(n));
     }
 
-#if UNITY_EDITOR
-    [UnityEditor.InitializeOnEnterPlayMode]
-    private static void PlayModeInitialize()
+    [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.AfterAssembliesLoaded)]
+    private static void LoadInitialize()
     {
         Instance.Initialize();
+        GameManager.AddStreamer(Instance);
     }
-#endif
 
     public NPC Get(string id)
     {

@@ -12,13 +12,13 @@ public class PlayerInfo : MonoBehaviour
 
     private PlayerData _Data;
     private Inventory _Inventory;
-    private PlayerStamina _PlayerStamina;
+    private PlayerStamina _Stamina;
 
     private bool _DataExists;
 
     public PlayerData Data => _Data;
     public Inventory Inventory => _Inventory;
-    public PlayerStamina PlayerStamina => _PlayerStamina;
+    public PlayerStamina Stamina => _Stamina;
 
     private void Awake()
     {
@@ -28,7 +28,7 @@ public class PlayerInfo : MonoBehaviour
         _Data = PlayerDataMaster.Instance.Get(playerIndex);
 
         _Inventory = new Inventory();
-        _PlayerStamina = GetComponent<PlayerStamina>();
+        _Stamina = GetComponent<PlayerStamina>();
 
         if (_DataExists)
         {
@@ -52,7 +52,7 @@ public class PlayerInfo : MonoBehaviour
     private void OnDestroy()
     {
         _Data.SaveData.Items = _Inventory.Items.ToList();
-        _Data.SaveData.Stamina = _PlayerStamina.Stamina;
+        _Data.SaveData.Stamina = _Stamina.Stamina;
     }
 }
  

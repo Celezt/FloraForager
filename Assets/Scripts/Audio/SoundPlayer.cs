@@ -58,11 +58,23 @@ public class SoundPlayer : Singleton<SoundPlayer>
         _Cooldowns = new Dictionary<string, float>();
         _Sounds = new Dictionary<string, Sound>();
 
-        foreach (Sound sound in _SoundEffects)
+        AsyncOperationHandle<AudioClip>[] handles = new AsyncOperationHandle<AudioClip>[_SoundEffects.Length];
+
+        for (int i = 0; i < _SoundEffects.Length; ++i)
+            handles[i] = _SoundEffects[i].Load();
+
+        yield return new WaitUntil(() => handles.All(h =>
+            h.Status == AsyncOperationStatus.Succeeded ||
+            h.Status == AsyncOperationStatus.Failed));
+
+        for (int i = 0; i < _SoundEffects.Length; ++i)
         {
-            yield return new WaitUntil(() => sound.Load().Status == AsyncOperationStatus.Succeeded);
-            _Sounds[sound.Name] = sound;
+            if (handles[i].Status == AsyncOperationStatus.Succeeded)
+                _Sounds[_SoundEffects[i].Name] = _SoundEffects[i];
+
+            Addressables.Release(handles[i]);
         }
+
         _SoundEffects = null;
 
         DebugLogConsole.AddCommandInstance("play.sound", "Plays sound", nameof(Play), this);
@@ -72,9 +84,8 @@ public class SoundPlayer : Singleton<SoundPlayer>
     {
         if (_Cooldowns.Count > 0)
         {
-            for (int i = _Cooldowns.Count - 1; i >= 0; --i)
+            foreach (string key in _Cooldowns.Keys.ToList())
             {
-                string key = _Cooldowns.ElementAt(i).Key;
                 if ((_Cooldowns[key] -= Time.deltaTime) <= 0.0f)
                 {
                     _Cooldowns.Remove(key);
@@ -83,32 +94,37 @@ public class SoundPlayer : Singleton<SoundPlayer>
         }
     }
 
-    public void Play(string soundName)
-    {
-        StartCoroutine(PlaySound(soundName));
-    }
-
-    private IEnumerator PlaySound(string name)
+    public void Play(string name, float volumeChange = 0.0f, float pitchChange = 0.0f, int repeatCount = 0, float cooldown = 0.0f, bool loop = false)
     {
         if (string.IsNullOrWhiteSpace(name))
-            yield break;
+            return;
 
         if (!TryGetSound(name, out Sound sound))
-            yield break;
+            return;
 
+        StartCoroutine(PlaySound(sound, volumeChange, pitchChange, repeatCount, cooldown, loop));
+    }
+
+    private IEnumerator PlaySound(Sound sound, float volumeChange = 0.0f, float pitchChange = 0.0f, int repeatCount = 0, float cooldown = 0.0f, bool loop = false)
+    {
         AudioSource source = _AudioSourcePool[PoolIndex++];
         sound.AudioSource = source;
 
-        for (int i = 0; i < ((sound.RepeatCount > 0) ? sound.RepeatCount : 1); ++i)
+        for (int i = 0; i < ((repeatCount > 0) ? repeatCount : 1); ++i)
         {
-            while (_Cooldowns.ContainsKey(name))
+            while (_Cooldowns.ContainsKey(sound.Name))
                 yield return null;
 
-            SetAudioSource(source, sound);
-            source.Play();
+            if (cooldown > float.Epsilon)
+                _Cooldowns.Add(sound.Name, cooldown);
 
-            if (sound.Cooldown > float.Epsilon)
-                _Cooldowns.Add(sound.Name, sound.Cooldown);
+            SetAudioSource(source, sound);
+
+            source.volume += volumeChange;
+            source.pitch += pitchChange;
+            source.loop = loop;
+
+            source.Play();
 
             yield return new WaitUntil(() => !source.isPlaying);
         }
@@ -117,6 +133,21 @@ public class SoundPlayer : Singleton<SoundPlayer>
         source.clip = null;
 
         --PoolIndex;
+    }
+
+    public void Stop(string name)
+    {
+        if (string.IsNullOrWhiteSpace(name))
+            return;
+
+        if (!TryGetSound(name, out Sound sound))
+        {
+            Debug.LogError($"{name} does not exist");
+            return;
+        }
+
+        if (sound.AudioSource != null)
+            sound.AudioSource.Stop();
     }
 
     /// <summary>
@@ -166,7 +197,7 @@ public class SoundPlayer : Singleton<SoundPlayer>
             return;
 
         if (sound != null)
-            sound.Set(volume, pitch, spatialBlend, cooldown, repeatCount);
+            sound.Set(volume, pitch, spatialBlend);
     }
     public bool TryGetSound(string name, out Sound sound)
     {
@@ -241,10 +272,6 @@ public class SoundPlayer : Singleton<SoundPlayer>
         private float _Pitch = 1.0f;
         [SerializeField, HideInInspector, Range(0.0f, 1.0f)]
         private float _SpatialBlend = 0.0f;
-        [SerializeField]
-        private float _Cooldown = 0.0f;
-        [SerializeField]
-        private int _RepeatCount = 0;
 
         private AudioClip _AudioClip;
 
@@ -259,26 +286,28 @@ public class SoundPlayer : Singleton<SoundPlayer>
         public float Volume => _Volume;
         public float Pitch => _Pitch;
         public float SpatialBlend => _SpatialBlend;
-        public float Cooldown => _Cooldown;
-        public int RepeatCount => _RepeatCount;
 
-        public void Set(float volume, float pitch = 1.0f, float spatialBlend = 0, float cooldown = 0, int repeatCount = 0)
+        public void Set(float volume, float pitch, float spatialBlend = 0)
         {
             _Volume = volume;
             _Pitch = pitch;
             _SpatialBlend = spatialBlend;
-            _Cooldown = cooldown;
-            _RepeatCount = repeatCount;
         }
 
         public AsyncOperationHandle<AudioClip> Load()
         {
-            AsyncOperationHandle<AudioClip> handle = Addressables.LoadAssetAsync<AudioClip>(_Asset);
+            AsyncOperationHandle<AudioClip> handle = _Asset.LoadAssetAsync<AudioClip>();
 
-            handle.Completed += (AsyncOperationHandle<AudioClip> handle) => 
+            handle.Completed += (AsyncOperationHandle<AudioClip> hndl) => 
             {
-                _AudioClip = handle.Result;
-                _Name = handle.Result.name;
+                if (hndl.Result == null)
+                {
+                    Debug.LogError("sound was unable to load");
+                    return;
+                }
+
+                _AudioClip = hndl.Result;
+                _Name = hndl.Result.name;
             };
 
             return handle;

@@ -7,6 +7,26 @@ ModelImporter:
   - first:
       type: UnityEngine:Material
       assembly: UnityEngine.CoreModule
+      name: mtl_BirowLeaves_LOD0
+    second: {fileID: 2100000, guid: 09f89c018a9962a4c8db799cdabcd448, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: mtl_BirowLeaves_LOD1
+    second: {fileID: 2100000, guid: 89711aa3fb493d84ea40ad46bda3c89b, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: mtl_BirowTruck_LOD0
+    second: {fileID: 2100000, guid: f81ad68409f53e844b12c59bf31509fd, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: mtl_BirowTruck_LOD1
+    second: {fileID: 2100000, guid: 47867b71392706847937456629a6d81f, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
       name: mtl_birow_leaf
     second: {fileID: 2100000, guid: bbbbbd99c638cdf4699fe0dca4db362b, type: 2}
   - first:
@@ -43,7 +63,9 @@ ModelImporter:
     clipAnimations: []
     isReadable: 0
   meshes:
-    lODScreenPercentages: []
+    lODScreenPercentages:
+    - 0.25
+    - 0.01
     globalScale: 1
     meshCompression: 0
     addColliders: 0

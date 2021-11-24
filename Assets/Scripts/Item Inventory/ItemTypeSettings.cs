@@ -93,6 +93,11 @@ public class ItemTypeSettings : SerializedScriptableSingleton<ItemTypeSettings>
     {
         EnumGenerator.Generate("Items", "Assets/Data/Generated", _itemTypeChunk.Keys.ToList());
 
+        _itemLabelChunk.Clear();
+        _itemIconChunk.Clear();
+        _itemStackChunk.Clear();
+        _itemNameChunk.Clear();
+
         foreach (KeyValuePair<string, ItemType> item in _itemTypeChunk)
             UpdateItemType(item.Value);
     }
@@ -430,12 +435,13 @@ public class ItemTypeSettings : SerializedScriptableSingleton<ItemTypeSettings>
         if (string.IsNullOrEmpty(id))
             return;
 
-        EditorUtility.SetDirty(this);
 
         if (!_itemIconChunk.ContainsKey(id))
             _itemIconChunk.Add(id, newIcon == null ? _defaultIcon : newIcon);
         else
             _itemIconChunk[id] = newIcon == null ? _defaultIcon : newIcon;
+
+        EditorUtility.SetDirty(this);
     }
 
     public void ChangeName(string id, string newName)
@@ -443,12 +449,13 @@ public class ItemTypeSettings : SerializedScriptableSingleton<ItemTypeSettings>
         if (string.IsNullOrEmpty(id))
             return;
 
-        EditorUtility.SetDirty(this);
 
         if (!_itemNameChunk.ContainsKey(id))
             _itemNameChunk.Add(id, newName);
         else
             _itemNameChunk[id] = newName;
+
+        EditorUtility.SetDirty(this);
     }
 
     public void ChangeItemStack(string id, int newStack)
@@ -456,12 +463,13 @@ public class ItemTypeSettings : SerializedScriptableSingleton<ItemTypeSettings>
         if (string.IsNullOrEmpty(id))
             return;
 
-        EditorUtility.SetDirty(this);
 
         if (!_itemStackChunk.ContainsKey(id))
             _itemStackChunk.Add(id, newStack);
         else
             _itemStackChunk[id] = newStack;
+
+        EditorUtility.SetDirty(this);
     }
 #endif
 }

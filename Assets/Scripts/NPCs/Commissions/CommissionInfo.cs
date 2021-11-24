@@ -8,29 +8,29 @@ using Sirenix.OdinInspector;
 [CreateAssetMenu(fileName = "Commission", menuName = "Game Data/Commission")]
 public class CommissionInfo : SerializedScriptableObject
 {
-    [OdinSerialize, Required] 
+    [SerializeField, Required] 
     private string _Title;
-    [OdinSerialize, TextArea(5, 30)] 
+    [SerializeField, TextArea(5, 30)] 
     private string _Description;
 
     [Title("Challenge")]
-    [OdinSerialize]
+    [SerializeField]
     private bool _Repeatable = false;
-    [OdinSerialize, LabelText("Time Limit In Days")] 
+    [SerializeField, LabelText("Time Limit In Days")] 
     private int _TimeLimit;
     [OdinSerialize, ListDrawerSettings(DraggableItems = false, ShowItemCount = false, Expanded = true), Required]
     private IObjective[] _Objectives;
 
     [Title("Relations")]
-    [OdinSerialize] 
+    [SerializeField] 
     private Relation _MinRelation = Relation.Neutral;
-    [OdinSerialize] 
+    [SerializeField] 
     private float _RewardRelations;
-    [OdinSerialize] 
+    [SerializeField] 
     private float _PenaltyRelations;
 
     [Title("Rewards")]
-    [OdinSerialize, ListDrawerSettings(DraggableItems = false, ShowItemCount = false, Expanded = true), Required] 
+    [SerializeField, ListDrawerSettings(DraggableItems = false, ShowItemCount = false, Expanded = true), Required] 
     private ItemAsset[] _Rewards;
 
     [Title("Dialogue")]

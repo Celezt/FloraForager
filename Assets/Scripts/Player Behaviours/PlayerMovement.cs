@@ -268,7 +268,7 @@ public class PlayerMovement : MonoBehaviour
 
             void GroundAngle()
             {
-                _groundAngle = Vector3.Angle(hit.normal, Vector3.up);
+                _groundAngle = _slopeForward != Vector3.zero ? 90.0f - Vector3.Angle(Vector3.up, _slopeForward) : 0.0f;
             }
 
             void DrawDebugLines()

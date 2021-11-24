@@ -285,7 +285,7 @@ public class DialogueManager : MonoBehaviour
                 }
                 else
                 {
-                    float speedMultiplier = 0;
+                    float speedMultiplier = 1;
                     if (paragraph.Tag != null && paragraph.Tag.Contains("speed"))
                         speedMultiplier = _speedMultiplierHierarchy.Last();
                     else

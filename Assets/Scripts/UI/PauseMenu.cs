@@ -7,6 +7,11 @@ using UnityEngine.InputSystem;
 
 public class PauseMenu : MonoBehaviour
 {
+    [SerializeField]
+    private GameObject _Controls;
+    [SerializeField]
+    private GameObject _Back;
+
     private CanvasGroup _CanvasGroup;
 
     private PlayerAction _PlayerAction;
@@ -42,6 +47,9 @@ public class PauseMenu : MonoBehaviour
 
     private void TogglePause()
     {
+        _Controls.SetActive(false);
+        _Back.SetActive(false);
+
         _CanvasGroup.alpha = 1.0f - _CanvasGroup.alpha;
         _CanvasGroup.blocksRaycasts = !_CanvasGroup.blocksRaycasts;
 
@@ -75,7 +83,16 @@ public class PauseMenu : MonoBehaviour
     {
         TogglePause();
     }
-
+    public void OnControls()
+    {
+        _Controls.SetActive(true);
+        _Back.SetActive(true);
+    }
+    public void OnBack()
+    {
+        _Controls.SetActive(false);
+        _Back.SetActive(false);
+    }
     public void OnQuit()
     {
         if (_ConfirmMenu != null)

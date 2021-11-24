@@ -8,21 +8,21 @@ using MyBox;
 [CreateAssetMenu(fileName = "NPC", menuName = "Game Data/NPC")]
 public class NPCInfo : SerializedScriptableObject
 {
-    [OdinSerialize, Required]
+    [SerializeField, Required]
     private string _Name;
 
     [Title("Relations")]
-    [OdinSerialize]
+    [SerializeField]
     private bool _HasRelation;
-    [OdinSerialize, MinMaxRange(-100f, 100f), ShowIf("_HasRelation")]
+    [SerializeField, MinMaxRange(-100f, 100f), ShowIf("_HasRelation")]
     private MinMaxFloat _RelationRange = new MinMaxFloat(-100f, 100f);
-    [OdinSerialize, ShowIf("_HasRelation")]
+    [SerializeField, ShowIf("_HasRelation")]
     private float _StartRelation = 0f;
 
     [Title("Commissions")]
-    [OdinSerialize]
+    [SerializeField]
     private bool _HasCommissions;
-    [OdinSerialize, ShowIf("_HasCommissions"), ListDrawerSettings(ShowItemCount = false, Expanded = true)]
+    [SerializeField, ShowIf("_HasCommissions"), ListDrawerSettings(ShowItemCount = false, Expanded = true)]
     private CommissionInfo[] _CommissionsInfo;
 
     [Title("Dialogue")]

@@ -16,8 +16,76 @@ MonoBehaviour:
   deleteDllAfterBuilds: 1
   AutomateForAllAOTPlatforms: 1
   automateForPlatforms: 090000001400000005000000
-  lastScan: 637721765903249050
+  lastScan: 637732945006369695
   supportSerializedTypes:
+  - TypeName: CommissionData, Assembly-CSharp
+    IsCustom: 1
+    Emit: 1
+  - TypeName: CommissionData[*], Assembly-CSharp
+    IsCustom: 1
+    Emit: 1
+  - TypeName: DialogueRelationSave, Assembly-CSharp
+    IsCustom: 1
+    Emit: 1
+  - TypeName: DialogueRelationSave[], Assembly-CSharp
+    IsCustom: 1
+    Emit: 1
+  - TypeName: System.Collections.Generic.Dictionary`2[[System.Guid, mscorlib],[System.Int32,
+      mscorlib]], mscorlib
+    IsCustom: 1
+    Emit: 1
+  - TypeName: System.Collections.Generic.Dictionary`2[[System.Guid, mscorlib],[System.Object,
+      mscorlib]], mscorlib
+    IsCustom: 1
+    Emit: 1
+  - TypeName: System.Collections.Generic.Dictionary`2[[System.String, mscorlib],[System.ValueTuple`2[[System.String,
+      mscorlib],[System.String[], mscorlib]], mscorlib]], mscorlib
+    IsCustom: 1
+    Emit: 1
+  - TypeName: ItemAsset, Assembly-CSharp
+    IsCustom: 1
+    Emit: 1
+  - TypeName: ItemAsset[*], Assembly-CSharp
+    IsCustom: 1
+    Emit: 1
+  - TypeName: System.Collections.Generic.List`1[[ItemAsset, Assembly-CSharp]], mscorlib
+    IsCustom: 1
+    Emit: 1
+  - TypeName: System.Collections.Generic.List`1[[PriorityQueue`1+Element[[System.ValueTuple`2[[System.String,
+      mscorlib],[System.String[], mscorlib]], mscorlib]], Assembly-CSharp]], mscorlib
+    IsCustom: 1
+    Emit: 1
+  - TypeName: System.Collections.Generic.List`1[[System.ValueTuple`2[[System.String,
+      mscorlib],[System.String[], mscorlib]], mscorlib]], mscorlib
+    IsCustom: 1
+    Emit: 1
+  - TypeName: System.Object, mscorlib
+    IsCustom: 1
+    Emit: 1
+  - TypeName: PriorityQueue`1+Element[[System.ValueTuple`2[[System.String, mscorlib],[System.String[],
+      mscorlib]], mscorlib]], Assembly-CSharp
+    IsCustom: 1
+    Emit: 1
+  - TypeName: UnityEngine.Quaternion, UnityEngine.CoreModule
+    IsCustom: 1
+    Emit: 1
+  - TypeName: System.ValueTuple`3[[System.Single, mscorlib],[System.String, mscorlib],[System.String[],
+      mscorlib]], mscorlib
+    IsCustom: 1
+    Emit: 1
+  - TypeName: System.ValueTuple`3[[System.Single, mscorlib, Version=4.0.0.0, Culture=neutral,
+      PublicKeyToken=b77a5c561934e089],[System.String, mscorlib, Version=4.0.0.0,
+      Culture=neutral, PublicKeyToken=b77a5c561934e089],[System.String[], mscorlib,
+      Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089]][], mscorlib
+    IsCustom: 1
+    Emit: 1
+  - TypeName: System.ValueTuple`2[[System.String, mscorlib],[System.String[], mscorlib]],
+      mscorlib
+    IsCustom: 1
+    Emit: 1
+  - TypeName: UnityEngine.Vector2Int, UnityEngine.CoreModule
+    IsCustom: 1
+    Emit: 1
   - TypeName: UnityEngine.AnimationClip, UnityEngine.AnimationModule
     IsCustom: 0
     Emit: 1
@@ -39,14 +107,12 @@ MonoBehaviour:
   - TypeName: ChopItem, Assembly-CSharp
     IsCustom: 0
     Emit: 1
-  - TypeName: CommissionInfo, Assembly-CSharp
-    IsCustom: 0
-    Emit: 1
-  - TypeName: CommissionInfo[], Assembly-CSharp
-    IsCustom: 0
-    Emit: 1
   - TypeName: System.Collections.Generic.Dictionary`2[[System.String, mscorlib],[FloraInfo,
       Assembly-CSharp]], mscorlib
+    IsCustom: 0
+    Emit: 1
+  - TypeName: System.Collections.Generic.Dictionary`2[[System.String, mscorlib],[System.Int32,
+      mscorlib]], mscorlib
     IsCustom: 0
     Emit: 1
   - TypeName: System.Collections.Generic.Dictionary`2[[System.String, mscorlib],[ItemType,
@@ -89,9 +155,6 @@ MonoBehaviour:
   - TypeName: UnityEngine.GameObject, UnityEngine.CoreModule
     IsCustom: 0
     Emit: 1
-  - TypeName: UnityEngine.GameObject[], UnityEngine.CoreModule
-    IsCustom: 0
-    Emit: 1
   - TypeName: GatherObjective, Assembly-CSharp
     IsCustom: 0
     Emit: 1
@@ -103,9 +166,6 @@ MonoBehaviour:
     IsCustom: 0
     Emit: 1
   - TypeName: HarvestScythe, Assembly-CSharp
-    IsCustom: 0
-    Emit: 1
-  - TypeName: HoeItem, Assembly-CSharp
     IsCustom: 0
     Emit: 1
   - TypeName: IEffect, Assembly-CSharp
@@ -133,15 +193,6 @@ MonoBehaviour:
   - TypeName: ItemAsset, Assembly-CSharp
     IsCustom: 0
     Emit: 1
-  - TypeName: ItemAsset[], Assembly-CSharp
-    IsCustom: 0
-    Emit: 1
-  - TypeName: ItemLabels, Assembly-CSharp
-    IsCustom: 0
-    Emit: 1
-  - TypeName: Items, Assembly-CSharp
-    IsCustom: 0
-    Emit: 1
   - TypeName: ItemType, Assembly-CSharp
     IsCustom: 0
     Emit: 1
@@ -160,25 +211,19 @@ MonoBehaviour:
   - TypeName: System.Collections.Generic.List`1[[System.String, mscorlib]], mscorlib
     IsCustom: 0
     Emit: 1
-  - TypeName: LogItem, Assembly-CSharp
-    IsCustom: 0
-    Emit: 1
-  - TypeName: MyBox.MinMaxFloat, MyBox
-    IsCustom: 0
-    Emit: 1
   - TypeName: MyBox.MinMaxInt, MyBox
     IsCustom: 0
     Emit: 1
   - TypeName: PlaceableItem, Assembly-CSharp
     IsCustom: 0
     Emit: 1
-  - TypeName: Relation, Assembly-CSharp
-    IsCustom: 0
-    Emit: 1
   - TypeName: RodItem, Assembly-CSharp
     IsCustom: 0
     Emit: 1
   - TypeName: ScytheItem, Assembly-CSharp
+    IsCustom: 0
+    Emit: 1
+  - TypeName: SeedItem, Assembly-CSharp
     IsCustom: 0
     Emit: 1
   - TypeName: UnityEngine.Sprite, UnityEngine.CoreModule
@@ -191,9 +236,6 @@ MonoBehaviour:
     IsCustom: 0
     Emit: 1
   - TypeName: System.String[], mscorlib
-    IsCustom: 0
-    Emit: 1
-  - TypeName: UnityEngine.TextAsset, UnityEngine.CoreModule
     IsCustom: 0
     Emit: 1
   - TypeName: UnityEngine.Vector3, UnityEngine.CoreModule

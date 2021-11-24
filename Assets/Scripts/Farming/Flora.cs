@@ -62,7 +62,7 @@ public class Flora : IStreamable<Flora.Data>
         _StagesMeshFilters = System.Array.ConvertAll(_Info.Stages, mf => mf.GetComponent<MeshFilter>()); // extract mesh and materials from objects
         _StagesMeshRenderers = System.Array.ConvertAll(_Info.Stages, mr => mr.GetComponent<MeshRenderer>());
 
-        _StageUpdate = (_Info.GrowTime + 1f) / _Info.Stages.Length;
+        _StageUpdate = (_Info.GrowTime + 1) / (float)_Info.Stages.Length;
 
         _Data.HarvestMethod = (IHarvest)System.Activator.CreateInstance(_Info.HarvestMethod.GetType()); // create a new instance of the harvest method
         _Data.HarvestMethod.Initialize(_Info, _Info.HarvestMethod); 
@@ -84,6 +84,22 @@ public class Flora : IStreamable<Flora.Data>
             OnCompleted.Invoke();
 
         _Data.Watered = false;
+    }
+
+    public void ForceGrowth()
+    {
+        if (Completed)
+            return;
+
+        if (++_Data.Stage >= (_StageUpdate + _Data.Mesh))
+        {
+            ++_Data.Mesh; // update to next mesh
+        }
+
+        OnGrow.Invoke();
+
+        if (Completed)
+            OnCompleted.Invoke();
     }
 
     public bool Water()

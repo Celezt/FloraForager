@@ -24,18 +24,18 @@ MonoBehaviour:
     - Name: Behaviour
       Entry: 7
       Data: 0|FoodItem, Assembly-CSharp
-    - Name: ItemStack
-      Entry: 3
-      Data: 64
     - Name: IStar.Star
       Entry: 3
       Data: 1
     - Name: IValue.BaseValue
       Entry: 3
       Data: 5
-    - Name: Cooldown
+    - Name: IUse.Cooldown
       Entry: 4
-      Data: 2
+      Data: 0
+    - Name: _eatSound
+      Entry: 1
+      Data: swallow
     - Name: _staminaChange
       Entry: 4
       Data: 5
@@ -71,10 +71,6 @@ MonoBehaviour:
     penetrates the crust leaving cracks that begin to sprout.\r"
   ItemStack: 16
   Labels:
-  - food
-  - vegetable
-  - crop
-  - seed
-  - Crop
   - Food
+  - Fruit
   - Vegetable
