@@ -10,6 +10,11 @@ using UnityEngine.InputSystem;
 /// </summary>
 public class FloraObject : MonoBehaviour, IUsable
 {
+    [SerializeField]
+    private Material _DryMaterial;
+    [SerializeField]
+    private Material _WateredMaterial;
+
     private Flora _Flora;
 
     private MeshFilter _MeshFilter;
@@ -21,7 +26,10 @@ public class FloraObject : MonoBehaviour, IUsable
     private void OnDestroy()
     {
         if (_Flora != null)
+        {
             _Flora.OnGrow -= UpdateMesh;
+            _Flora.OnWatered -= Watered;
+        }
     }
 
     public void Initialize(Flora flora)
@@ -39,6 +47,7 @@ public class FloraObject : MonoBehaviour, IUsable
         }
 
         _Flora.OnGrow += UpdateMesh;
+        _Flora.OnWatered += Watered;
 
         UpdateMesh();
     }
@@ -49,6 +58,8 @@ public class FloraObject : MonoBehaviour, IUsable
         {
             _MeshFilter.mesh = _Flora.CurrentMeshFilter.sharedMesh;
             _MeshRenderer.materials = _Flora.CurrentMeshRenderer.sharedMaterials;
+            
+            _MeshRenderer.material = _DryMaterial;
         }
 
         transform.position = _Flora.Cell.Middle;
@@ -56,6 +67,11 @@ public class FloraObject : MonoBehaviour, IUsable
         _Collider.center = new Vector3(0, 
             _MeshFilter.mesh.bounds.center.y + 
             (_Collider.bounds.size.y - _MeshFilter.mesh.bounds.size.y) / 2.0f, 0);
+    }
+
+    private void Watered()
+    {
+        _MeshRenderer.material = _WateredMaterial;
     }
 
     public void OnUse(UsedContext context)
