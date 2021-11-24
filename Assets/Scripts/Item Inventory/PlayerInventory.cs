@@ -12,6 +12,10 @@ public class PlayerInventory : MonoBehaviour
     [SerializeField]
     private InventoryHandler _hotbarHandler;
     [SerializeField]
+    private string _openSound = "open_window";
+    [SerializeField]
+    private string _closeSound = "close_window";
+    [SerializeField]
     private float _frameDegreeSpeed = 4.0f;
     [SerializeField]
     private Color _selectColor = Color.white;
@@ -52,6 +56,7 @@ public class PlayerInventory : MonoBehaviour
         if (_isInventoryOpen)
         {
             UIStateVisibility.Instance.Hide("player_hud");
+            SoundPlayer.Instance.Play(_openSound);
 
             Show(_inventoryHandler.GetComponent<CanvasGroup>());
             Hide(_hotbarHandler.GetComponent<CanvasGroup>());
@@ -61,6 +66,7 @@ public class PlayerInventory : MonoBehaviour
         else
         {
             UIStateVisibility.Instance.Show("player_hud");
+            SoundPlayer.Instance.Play(_closeSound);
 
             Show(_hotbarHandler.GetComponent<CanvasGroup>());
             Hide(_inventoryHandler.GetComponent<CanvasGroup>());

@@ -61,19 +61,28 @@ public class SoundPlayer : Singleton<SoundPlayer>
         AsyncOperationHandle<AudioClip>[] handles = new AsyncOperationHandle<AudioClip>[_SoundEffects.Length];
 
         for (int i = 0; i < _SoundEffects.Length; ++i)
-            handles[i] = _SoundEffects[i].Load();
+        {
+            Sound sound = _SoundEffects[i];
+            (handles[i] = sound.Load()).Completed += (AsyncOperationHandle<AudioClip> handle) =>
+            {
+                if (handle.Status == AsyncOperationStatus.Succeeded)
+                {
+                    sound.AudioClip = handle.Result;
+                    sound.Name = handle.Result.name;
+
+                    _Sounds[sound.Name] = sound;
+                }
+                else
+                    Debug.LogError($"something went wrong when trying to load sound [{i}]");
+            };
+        }
 
         yield return new WaitUntil(() => handles.All(h =>
             h.Status == AsyncOperationStatus.Succeeded ||
             h.Status == AsyncOperationStatus.Failed));
 
-        for (int i = 0; i < _SoundEffects.Length; ++i)
-        {
-            if (handles[i].Status == AsyncOperationStatus.Succeeded)
-                _Sounds[_SoundEffects[i].Name] = _SoundEffects[i];
-
+        for (int i = 0; i < handles.Length; ++i)
             Addressables.Release(handles[i]);
-        }
 
         _SoundEffects = null;
 
@@ -141,10 +150,7 @@ public class SoundPlayer : Singleton<SoundPlayer>
             return;
 
         if (!TryGetSound(name, out Sound sound))
-        {
-            Debug.LogError($"{name} does not exist");
             return;
-        }
 
         if (sound.AudioSource != null)
             sound.AudioSource.Stop();
@@ -196,8 +202,7 @@ public class SoundPlayer : Singleton<SoundPlayer>
         if (!TryGetSound(name, out Sound sound))
             return;
 
-        if (sound != null)
-            sound.Set(volume, pitch, spatialBlend);
+        sound.Set(volume, pitch, spatialBlend);
     }
     public bool TryGetSound(string name, out Sound sound)
     {
@@ -260,8 +265,6 @@ public class SoundPlayer : Singleton<SoundPlayer>
     [System.Serializable]
     public class Sound
     {
-        [SerializeField, HideInInspector]
-        private string _Name;
         [SerializeField, AssetsOnly]
         private AssetReference _Asset;
 
@@ -273,15 +276,12 @@ public class SoundPlayer : Singleton<SoundPlayer>
         [SerializeField, HideInInspector, Range(0.0f, 1.0f)]
         private float _SpatialBlend = 0.0f;
 
-        private AudioClip _AudioClip;
-
+        [HideInInspector]
+        public string Name;
+        [HideInInspector]
+        public AudioClip AudioClip;
         [HideInInspector]
         public AudioSource AudioSource; // audio source playing this sound
-
-        public string Name => _Name;
-
-        public AssetReference Asset => _Asset;
-        public AudioClip AudioClip => _AudioClip;
 
         public float Volume => _Volume;
         public float Pitch => _Pitch;
@@ -294,23 +294,6 @@ public class SoundPlayer : Singleton<SoundPlayer>
             _SpatialBlend = spatialBlend;
         }
 
-        public AsyncOperationHandle<AudioClip> Load()
-        {
-            AsyncOperationHandle<AudioClip> handle = _Asset.LoadAssetAsync<AudioClip>();
-
-            handle.Completed += (AsyncOperationHandle<AudioClip> hndl) => 
-            {
-                if (hndl.Result == null)
-                {
-                    Debug.LogError("sound was unable to load");
-                    return;
-                }
-
-                _AudioClip = hndl.Result;
-                _Name = hndl.Result.name;
-            };
-
-            return handle;
-        }
+        public AsyncOperationHandle<AudioClip> Load() => _Asset.LoadAssetAsync<AudioClip>();
     }
 }
