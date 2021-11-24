@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Globalization;
 using UnityEngine;
 using TMPro;
 using UnityEngine.AddressableAssets;
@@ -256,7 +257,7 @@ public class DialogueManager : MonoBehaviour
         {
             (string, RangeInt) customRichTag = _richTagSpeedMultiplierQueue.Dequeue();
             indexRange = customRichTag.Item2;
-            if (!float.TryParse(customRichTag.Item1, out richTagSpeedMultiplier))
+            if (!float.TryParse(customRichTag.Item1, NumberStyles.Float, CultureInfo.InvariantCulture, out richTagSpeedMultiplier))
             {
                 Debug.LogError($"{DialogueUtility.DIALOGUE_EXCEPTION}: {customRichTag.Item1} could not be parsed to float");
                 yield break;
