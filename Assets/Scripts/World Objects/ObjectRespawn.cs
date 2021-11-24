@@ -46,8 +46,10 @@ public class ObjectRespawn : SerializedScriptableSingleton<ObjectRespawn>, IStre
 
     public void Add(Guid guid, int days, GameObject gameObject)
     {
-        _ObjectsRespawn.Add(guid, days);
-        _Objects.Add(guid, gameObject);
+        if (!_ObjectsRespawn.ContainsKey(guid))
+             _ObjectsRespawn.Add(guid, days);
+        if (!_Objects.ContainsKey(guid))
+            _Objects.Add(guid, gameObject);
     }
 
     public void AddObject(Guid guid, GameObject gameObject)
