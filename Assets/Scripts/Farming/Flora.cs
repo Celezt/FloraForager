@@ -78,12 +78,12 @@ public class Flora : IStreamable<Flora.Data>
             ++_Data.Mesh; // update to next mesh
         }
 
+        _Data.Watered = false;
+
         OnGrow.Invoke();
 
         if (Completed)
             OnCompleted.Invoke();
-
-        _Data.Watered = false;
     }
 
     public void ForceGrowth()
