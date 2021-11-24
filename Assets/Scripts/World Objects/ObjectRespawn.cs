@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 using MyBox;
 
 [CreateAssetMenu(fileName = "ObjectRespawn", menuName = "Game Logic/Object Respawn")]
@@ -14,7 +15,12 @@ public class ObjectRespawn : SerializedScriptableSingleton<ObjectRespawn>, IStre
     private Guid _Guid;
 
     [System.NonSerialized]
-    private List<(Guid, int)> _Objects = new List<(Guid, int)>();
+    private Dictionary<Guid, int> _ObjectsRespawn = new Dictionary<Guid, int>();
+    [System.NonSerialized]
+    private Dictionary<Guid, GameObject> _Objects = new Dictionary<Guid, GameObject>();
+
+    public IReadOnlyDictionary<Guid, int> ObjectsRespawn => _ObjectsRespawn;
+    public IReadOnlyDictionary<Guid, GameObject> Objects => _Objects;
 
     private void Awake()
     {
@@ -22,6 +28,8 @@ public class ObjectRespawn : SerializedScriptableSingleton<ObjectRespawn>, IStre
             _Guid = System.Guid.NewGuid();
 
         GameManager.AddStreamer(this);
+
+        SceneManager.sceneLoaded += OnSceneLoaded;
     }
 
 #if UNITY_EDITOR
@@ -29,50 +37,74 @@ public class ObjectRespawn : SerializedScriptableSingleton<ObjectRespawn>, IStre
     private static void Initialize()
     {
         GameManager.AddStreamer(Instance);
+        SceneManager.sceneLoaded += Instance.OnSceneLoaded;
     }
 #endif
 
-    public void Add(Guid guid, int days)
+    public void OnSceneLoaded(Scene scene, LoadSceneMode mode)
     {
-        _Objects.Add((guid, days));
+        List<Guid> badKeys = _Objects.Where(pair => pair.Value == null).Select(pair => pair.Key).ToList();
+        foreach (Guid key in badKeys)
+        {
+            _Objects.Remove(key);
+        }
+    }
+
+    public void Add(Guid guid, int days, GameObject gameObject)
+    {
+        _ObjectsRespawn.Add(guid, days);
+        _Objects.Add(guid, gameObject);
+    }
+
+    public void AddObject(Guid guid, GameObject gameObject)
+    {
+        if (_ObjectsRespawn.ContainsKey(guid) && !_Objects.ContainsKey(guid))
+        {
+            _Objects[guid] = gameObject;
+        }
     }
 
     public void Notify()
     {
-        for (int i = _Objects.Count - 1; i >= 0; --i)
+        foreach (Guid guid in _ObjectsRespawn.Keys.ToList())
         {
-            (Guid, int) item = _Objects[i];
+            int daysLeft = _ObjectsRespawn[guid];
 
-            if (--item.Item2 <= 0)
+            if (--daysLeft <= 0)
             {
-                if (GameManager.Stream.TryGet(item.Item1, out Dictionary<string, object> streamables))
+                if (GameManager.Stream.TryGet(guid, out Dictionary<string, object> streamables))
                 {
                     string typeName = typeof(StreamableBehaviour).ToString();
                     if (streamables.TryGetValue(typeName, out object value))
                     {
                         (value as StreamableBehaviour.Data).IsAlive = true;
+                        if (_Objects.TryGetValue(guid, out GameObject gameObject))
+                        {
+                            gameObject.SetActive(true);
+                        }
                     }
                 }
 
-                _Objects.RemoveAt(i);
+                _ObjectsRespawn.Remove(guid);
+                _Objects.Remove(guid);
             }
             else
-                _Objects[i] = item;
+                _ObjectsRespawn[guid] = daysLeft;
         }
     }
 
     public void UpLoad()
     {
-        GameManager.Stream.Load(_Guid, _Objects);
+        GameManager.Stream.Load(_Guid, _ObjectsRespawn);
     }
     public void Load()
     {
-        _Objects.Clear();
+        _ObjectsRespawn.Clear();
 
-        if (!GameManager.Stream.TryGet(_Guid, out List<(Guid, int)> streamables))
+        if (!GameManager.Stream.TryGet(_Guid, out Dictionary<Guid, int> streamables))
             return;
 
-        _Objects = streamables;
+        _ObjectsRespawn = streamables;
     }
     public void BeforeSaving()
     {

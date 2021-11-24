@@ -15,6 +15,7 @@ GameObject:
   - component: {fileID: 7601324173234069211}
   - component: {fileID: 6792902814104324864}
   - component: {fileID: 1313883262387028256}
+  - component: {fileID: 3244016830528624515}
   m_Layer: 0
   m_Name: ObsidianRock
   m_TagString: Untagged
@@ -120,6 +121,25 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: da25408ba2df7e846ae77b9f8f14da4a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!205 &3244016830528624515
+LODGroup:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2032678476091294719}
+  serializedVersion: 2
+  m_LocalReferencePoint: {x: -0.02138257, y: 0.95916593, z: -0.10465455}
+  m_Size: 3.7525277
+  m_FadeMode: 0
+  m_AnimateCrossFading: 0
+  m_LastLODIsBillboard: 0
+  m_LODs:
+  - screenRelativeHeight: 0.04553763
+    fadeTransitionWidth: 0
+    renderers:
+    - renderer: {fileID: 7798484590587023333}
+  m_Enabled: 1
 --- !u!1001 &8932992987666748257
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -180,5 +200,10 @@ PrefabInstance:
 --- !u!4 &8967481280200701066 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: -8679921383154817045, guid: ae8de31d45c93d043bc1a73d8442bc36, type: 3}
+  m_PrefabInstance: {fileID: 8932992987666748257}
+  m_PrefabAsset: {fileID: 0}
+--- !u!23 &7798484590587023333 stripped
+MeshRenderer:
+  m_CorrespondingSourceObject: {fileID: -7511558181221131132, guid: ae8de31d45c93d043bc1a73d8442bc36, type: 3}
   m_PrefabInstance: {fileID: 8932992987666748257}
   m_PrefabAsset: {fileID: 0}
