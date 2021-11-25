@@ -252,14 +252,16 @@ public class PlayerMovement : MonoBehaviour
 
             void CheckGround()
             {
-                _isGrounded = Physics.Raycast(position, -Vector3.up, out hit, _groundCheckDistance, _groundLayer);
+                _isGrounded = Physics.Raycast(position + Vector3.up * 0.1f, -Vector3.up, out hit, _groundCheckDistance, _groundLayer);
             }
 
             void ForwardSlope()
             {
                 if (!_isGrounded)
                 {
-                    _slopeForward = _forward;
+                    _slopeForward = Vector3.zero;
+                    _rigidbody.velocity = new Vector3(0, _rigidbody.velocity.y, 0);
+
                     return;
                 }
 
@@ -268,7 +270,7 @@ public class PlayerMovement : MonoBehaviour
 
             void GroundAngle()
             {
-                _groundAngle = _slopeForward != Vector3.zero ? 90.0f - Vector3.Angle(Vector3.up, _slopeForward) : 0.0f;
+                _groundAngle = _slopeForward != Vector3.zero ? 90.0f - Vector3.Angle(Vector3.up, _slopeForward) : float.MaxValue;
             }
 
             void DrawDebugLines()
