@@ -10,7 +10,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 4d2bcc035f066ed4598cafbdedd2b7d6, type: 3}
-  m_Name: comm_05
+  m_Name: comm_06
   m_EditorClassIdentifier: 
   serializationData:
     SerializedFormat: 2
@@ -35,10 +35,10 @@ MonoBehaviour:
       Data: ItemAsset, Assembly-CSharp
     - Name: ID
       Entry: 1
-      Data: floatish
+      Data: spookish
     - Name: Amount
       Entry: 3
-      Data: 3
+      Data: 1
     - Name: 
       Entry: 8
       Data: 
@@ -54,23 +54,21 @@ MonoBehaviour:
     - Name: 
       Entry: 8
       Data: 
-  _Title: Jane's passion for fish
-  _Description: Fish 3 Floatish for Jane before she starves to death.
+  _Title: Sylvia's Initation gift
+  _Description: Bring a spookish for Jane's gift for Sylvia.
   _Repeatable: 0
-  _TimeLimit: 3
-  _MinRelation: 3
-  _RewardRelations: 30
-  _PenaltyRelations: 30
+  _TimeLimit: 1
+  _MinRelation: 4
+  _RewardRelations: 50
+  _PenaltyRelations: -50
   _Rewards:
-  - ID: gelplant_seed
-    Amount: 10
-  - ID: porock_seed
-    Amount: 10
+  - ID: gel
+    Amount: 100
   _AcceptDialogue:
   - NPC: jane
     Dialogue:
       Asset:
-        m_AssetGUID: 8336135f126e9464aae5df35fd61d4e1
+        m_AssetGUID: 5a2acc4d84822634db22ece6a87930ab
         m_SubObjectName: 
         m_SubObjectType: 
         m_EditorAssetChanged: 0
@@ -79,7 +77,7 @@ MonoBehaviour:
   - NPC: jane
     Dialogue:
       Asset:
-        m_AssetGUID: a78d5472c5a7d704aa563a90ff7d2989
+        m_AssetGUID: 2efb0f913d0b0ce45a68be4d3b025c4a
         m_SubObjectName: 
         m_SubObjectType: 
         m_EditorAssetChanged: 0
