@@ -35,6 +35,9 @@ public class LachBehaviour : MonoBehaviour
 
     private void Start()
     {
+        _InitialMouth = _SkinnedRenderer.GetBlendShapeWeight(0);
+        _InitialShrink = _SkinnedRenderer.GetBlendShapeWeight(1);
+
         _StateMachine = new FSM_Machine();
 
         _StateMachine.AddState(IdleState);
@@ -43,9 +46,6 @@ public class LachBehaviour : MonoBehaviour
         _StateMachine.InitializeStates(new LachContext { Lach = this });
 
         _StateMachine.TransitionTo(IdleState);
-
-        _InitialMouth = _SkinnedRenderer.GetBlendShapeWeight(0);
-        _InitialShrink = _SkinnedRenderer.GetBlendShapeWeight(1);
     }
 
     private void Update()
