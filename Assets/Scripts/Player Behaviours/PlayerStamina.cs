@@ -88,17 +88,11 @@ public class PlayerStamina : MonoBehaviour
 
     private void NightDrain()
     {
-        float currentTime = GameTime.Instance.CurrentTime;
-
-        float timeToNight = SleepSchedule.Instance.TimeToNight(currentTime);
-        float timeToMorning = SleepSchedule.Instance.TimeToMorning(currentTime);
-
-        float totalTime = SleepSchedule.Instance.NightToMorning;
-
-        bool isNightTime = ((currentTime != SleepSchedule.Instance.MorningTime) && timeToNight > timeToMorning);
-
-        if (isNightTime)
+        if (SleepSchedule.Instance.IsNightTime)
         {
+            float timeToMorning = SleepSchedule.Instance.TimeToMorning(GameTime.Instance.CurrentTime);
+            float totalTime = SleepSchedule.Instance.NightToMorning;
+
             float sleepy = ((SleepSchedule.Instance.TimeToNight(SleepSchedule.Instance.MorningTime) - timeToMorning) - totalTime) / totalTime;
             Drain(_NightDrain * sleepy);
         }
