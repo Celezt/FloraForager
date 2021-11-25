@@ -270,7 +270,7 @@ public class PlayerMovement : MonoBehaviour
 
             void GroundAngle()
             {
-                _groundAngle = _slopeForward != Vector3.zero ? 90.0f - Vector3.Angle(Vector3.up, _slopeForward) : float.MaxValue;
+                _groundAngle = Vector3.Dot(_slopeForward, Vector3.down) <= 0.0f ? Vector3.Angle(Vector3.up, hit.normal) : 0.0f;
             }
 
             void DrawDebugLines()
@@ -306,8 +306,8 @@ public class PlayerMovement : MonoBehaviour
             _animationBehaviour.WalkSpeed = _speed01;
         }
 
+        SlopeMovement(); 
         Movement();
-        SlopeMovement();
         PhysicMaterialToUse();
         Animation();
     }
