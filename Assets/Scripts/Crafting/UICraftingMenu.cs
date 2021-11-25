@@ -17,6 +17,7 @@ public class UICraftingMenu : Singleton<UICraftingMenu>
     [SerializeField] private TMP_Text _ItemNameText;
     [SerializeField] private Image _ItemStarsImage;
     [SerializeField] private Image _ItemImage;
+    [SerializeField] private TMP_Text _ItemAmount;
     [SerializeField] private TMP_Text _RequirementsText;
 
     [SerializeField] private SpriteAtlas _StarsAtlas;
@@ -132,6 +133,7 @@ public class UICraftingMenu : Singleton<UICraftingMenu>
         _ItemNameText.text = ItemTypeSettings.Instance.ItemNameChunk[craftableItem.Item.ID];
         _ItemStarsImage.sprite = starSprite;
         _ItemImage.sprite = ItemTypeSettings.Instance.ItemIconChunk[craftableItem.Item.ID];
+        _ItemAmount.text = _SelectedItem.Item.Amount > 1 ? _SelectedItem.Item.Amount.ToString() : string.Empty;
         _RequirementsText.text = requirements;
 
         LayoutRebuilder.ForceRebuildLayoutImmediate(_Description.GetComponent<RectTransform>());

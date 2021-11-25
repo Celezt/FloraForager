@@ -19,6 +19,9 @@ public class CommissionGiverWindow : Singleton<CommissionGiverWindow>
     [SerializeField] private TMP_Text _Description;
     [SerializeField] private ScrollRect _ScrollRect;
 
+    [SerializeField] private string _acceptSound = string.Empty;
+    [SerializeField] private string _completeSound = "trophy";
+
     private CanvasGroup _CanvasGroup;
 
     private NPC _CommissionGiver; // giver assigned to this window
@@ -206,6 +209,8 @@ public class CommissionGiverWindow : Singleton<CommissionGiverWindow>
                 }
             }
         }
+
+        SoundPlayer.Instance.Play(_completeSound);
 
         Back();
     }

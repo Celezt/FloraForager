@@ -7,7 +7,7 @@ using UnityEngine;
 public class CommissionTag : ITag
 {
     /// <summary>
-    /// commission(actor, action)
+    /// commission{actor, action}
     /// </summary>
     public void Action(Taggable taggable, string parameter)
     {

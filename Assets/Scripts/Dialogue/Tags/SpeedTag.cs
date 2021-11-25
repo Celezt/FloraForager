@@ -1,3 +1,4 @@
+using System.Globalization;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -9,7 +10,7 @@ public struct SpeedTag : ITag
     {
         DialogueManager manager = taggable.Unwrap<DialogueManager>();
 
-        if (!float.TryParse(parameter, out float speedMultiplier))
+        if (!float.TryParse(parameter, NumberStyles.Float, CultureInfo.InvariantCulture, out float speedMultiplier))
         {
             Debug.LogError($"{DialogueUtility.DIALOGUE_EXCEPTION}: {parameter} could not be parsed to float");
             return;

@@ -34,11 +34,9 @@ public class StreamableBehaviour : MonoBehaviour, IStreamer, IStreamable<Streama
     public Data OnUpload() => _data = new Data();
     public void OnLoad(object state)
     {
-        Data data = state as Data;
-        
-        gameObject.SetActive(data.IsAlive);
+        _data = state as Data;
 
-        _data = data;
+        gameObject.SetActive(_data.IsAlive);
     }
     void IStreamable.OnBeforeSaving() 
     {
@@ -54,10 +52,10 @@ public class StreamableBehaviour : MonoBehaviour, IStreamer, IStreamable<Streama
 
     private void OnEnable()
     {
-        GameManager.AddStreamer(this);
-
         if (GameManager.Stream.StreamedData.ContainsKey(_guid))
             Load();
+
+        GameManager.AddStreamer(this);
     }
     private void OnDisable()
     {
