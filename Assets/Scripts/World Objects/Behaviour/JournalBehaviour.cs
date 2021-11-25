@@ -3,14 +3,11 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.InputSystem;
-using UnityEngine.SceneManagement;
-using UnityEngine.AddressableAssets;
-using MyBox;
 
-public class LogBehaviour : MonoBehaviour, IInteractable
+public class JournalBehaviour : MonoBehaviour, IInteractable
 {
     [SerializeField]
-    private string _LogID;
+    private string _JournalID;
 
     public int Priority => 2;
 
@@ -21,7 +18,7 @@ public class LogBehaviour : MonoBehaviour, IInteractable
 
         Inventory inventory = PlayerInput.GetPlayerByIndex(context.playerIndex).GetComponent<PlayerInfo>().Inventory;
 
-        if (inventory.Insert(_LogID, 1))
-            Destroy(gameObject);
+        if (inventory.Insert(_JournalID, 1))
+            gameObject.SetActive(false);
     }
 }
