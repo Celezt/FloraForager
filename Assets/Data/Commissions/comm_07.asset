@@ -10,7 +10,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 4d2bcc035f066ed4598cafbdedd2b7d6, type: 3}
-  m_Name: comm_03
+  m_Name: comm_07
   m_EditorClassIdentifier: 
   serializationData:
     SerializedFormat: 2
@@ -35,10 +35,10 @@ MonoBehaviour:
       Data: ItemAsset, Assembly-CSharp
     - Name: ID
       Entry: 1
-      Data: birow_log
+      Data: porock
     - Name: Amount
       Entry: 3
-      Data: 10
+      Data: 4
     - Name: 
       Entry: 8
       Data: 
@@ -54,35 +54,32 @@ MonoBehaviour:
     - Name: 
       Entry: 8
       Data: 
-  _Title: Birow for seeds
-  _Description: Gather 10 birow logs for Jane.
+  _Title: Jane hungry, go get porock!
+  _Description: Jane is in need of 4 porocks and is willing to trade some gleplant
+    seeds for them.
   _Repeatable: 1
-  _TimeLimit: 3
-  _MinRelation: 0
-  _RewardRelations: 10
-  _PenaltyRelations: 10
+  _TimeLimit: 7
+  _MinRelation: 2
+  _RewardRelations: 20
+  _PenaltyRelations: -20
   _Rewards:
-  - ID: porock_seed
+  - ID: gelplant_seed
     Amount: 10
   _AcceptDialogue:
   - NPC: jane
     Dialogue:
       Asset:
-        m_AssetGUID: e36772ea9d3585841b4ae2418aa0840d
+        m_AssetGUID: 88bcdc97947ef9046a3caade568cf7a4
         m_SubObjectName: 
         m_SubObjectType: 
         m_EditorAssetChanged: 0
-      Aliases:
-      - Fiona
-      - Jane
+      Aliases: []
   _CompleteDialogue:
   - NPC: jane
     Dialogue:
       Asset:
-        m_AssetGUID: 7326ee27ac874834ca5ae729e2f1218e
+        m_AssetGUID: c17e8ee4ab479394c8da79cf5eb73168
         m_SubObjectName: 
         m_SubObjectType: 
         m_EditorAssetChanged: 0
-      Aliases:
-      - Fiona
-      - Jane
+      Aliases: []
