@@ -26,6 +26,8 @@ public class SleepSchedule : Singleton<SleepSchedule>
     public float MorningTime => _MorningTime;
     public float NightTime => _NightTime;
     public float NightToMorning => _NightToMorning;
+    public bool IsNightTime => (GameTime.Instance.CurrentTime != MorningTime) &&
+        TimeToNight(GameTime.Instance.CurrentTime) > TimeToMorning(GameTime.Instance.CurrentTime);
 
     public bool IsSleeping => _IsSleeping;
 
