@@ -170,7 +170,7 @@ public class FishHook : Singleton<FishHook>
 
     public void OnTryHook(InputAction.CallbackContext context)
     {
-        if (DebugManager.IsFocused || !_HookGame.activeSelf || !_FishNear)
+        if (DebugManager.IsFocused || Time.timeScale <= float.Epsilon || !_HookGame.activeSelf || !_FishNear)
             return;
 
         if (_FishPosition >= LeftSide && _FishPosition <= RightSide)
@@ -180,7 +180,7 @@ public class FishHook : Singleton<FishHook>
     }
     public void OnCancel(InputAction.CallbackContext context)
     {
-        if (DebugManager.IsFocused || !_HookGame.activeSelf)
+        if (DebugManager.IsFocused || Time.timeScale <= float.Epsilon || !_HookGame.activeSelf)
             return;
 
         _Canceled = true;
