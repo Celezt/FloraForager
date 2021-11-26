@@ -67,8 +67,6 @@ public class RodItem : IUse, IStar, IValue
     private float _onCatchUse = 1.2f;
     [Space(10)]
     [SerializeField]
-    private LayerMask _hitMask = LayerMask.NameToLayer("Grid");
-    [SerializeField]
     private float _radius = 4.0f;
     [SerializeField, Range(0.0f, 360.0f)]
     private float _arc = 80.0f;

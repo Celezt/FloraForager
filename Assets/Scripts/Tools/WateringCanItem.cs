@@ -40,8 +40,6 @@ public class WateringCanItem : IUse, IStar
     private float _onFillUse = 0.8f;
     [Space(10)]
     [SerializeField]
-    private LayerMask _hitMask = LayerMask.NameToLayer("Grid");
-    [SerializeField]
     private float _radius = 2.0f;
     [SerializeField, Range(0.0f, 360.0f)]
     private float _arc = 140.0f;
