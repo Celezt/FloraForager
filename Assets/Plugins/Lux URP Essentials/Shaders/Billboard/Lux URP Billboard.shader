@@ -235,9 +235,7 @@
                 output.uv.x = (output.uv.x - 0.5) * _Shrink + 0.5;
 
                 #ifdef _NORMALMAP
-                //  Recalulate viewDirWS
                     viewDirWS = normalize(GetCameraPositionWS() - output.positionWS);
-                    viewDirWS = mul((float3x3)unity_WorldToObject, viewDirWS);
 
                     output.normalWS = half4(billboardNormalWS, viewDirWS.x);
                     output.tangentWS = half4(billboardTangentWS, viewDirWS.y);
@@ -278,7 +276,7 @@
 
                     InputData inputData = (InputData)0;
                     inputData.positionWS = input.positionWS;
-                    inputData.normalWS = NormalizeNormalPerPixel(normalWS);
+                    inputData.normalWS = SafeNormalize(half3(input.normalWS.w, input.tangentWS.w, input.bitangentWS.w));
                     inputData.viewDirectionWS = SafeNormalize(half3(input.normalWS.w, input.tangentWS.w, input.bitangentWS.w));
                     //inputData.fogCoord = 0;
                     //inputData.vertexLighting = 0;
