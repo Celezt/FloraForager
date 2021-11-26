@@ -73,7 +73,7 @@ public class RelationshipManager
             if (!string.IsNullOrWhiteSpace(dialogueRelation.RepeatingDialogue.Item1))
                 npc.SetRepeatingDialouge(dialogueRelation.RepeatingDialogue.Item1, dialogueRelation.RepeatingDialogue.Item2);
 
-            if (dialogueRelation.AddedDialogue != null || dialogueRelation.AddedDialogue.Length <= 0)
+            if (dialogueRelation.AddedDialogue != null)
             {
                 foreach ((float, string, string[]) dialogue in dialogueRelation.AddedDialogue)
                 {

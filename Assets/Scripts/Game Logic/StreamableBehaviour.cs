@@ -72,6 +72,10 @@ public class StreamableBehaviour : MonoBehaviour, IStreamer, IStreamable<Streama
 
         GameManager.RemoveStreamer(this);
     }
+    private void OnDestroy()
+    {
+        GameManager.RemoveStreamer(this);
+    }
 
     public void UpLoad()
     {
