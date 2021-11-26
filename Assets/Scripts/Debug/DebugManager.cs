@@ -90,6 +90,7 @@ public class DebugManager : Singleton<DebugManager>
             yield return null;
         }
 
+        _isFocused = false;
         playerInput.ActivateInput();
 
         yield break;

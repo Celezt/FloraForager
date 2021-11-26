@@ -59,7 +59,7 @@ public class StreamableBehaviour : MonoBehaviour, IStreamer, IStreamable<Streama
     }
     private void OnDisable()
     {
-        if (!LoadScene.SceneIsLoading)
+        if (gameObject.scene.isLoaded)
         {
             if (_saveIfDestroyed)
             {
