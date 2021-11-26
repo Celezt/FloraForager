@@ -30,7 +30,7 @@ public class Workbench : MonoBehaviour, IInteractable
 
     private void Update()
     {
-        if (UICraftingMenu.Instance.Workbench == null || _Player == null)
+        if (_Player == null || UICraftingMenu.Instance.Workbench == null)
             return;
 
         float distance = Vector3.Distance(transform.position, _Player.transform.position);

@@ -34,7 +34,7 @@ public class SleepSchedule : Singleton<SleepSchedule>
     private void Awake()
     {
         _PlayerInput = PlayerInput.GetPlayerByIndex(0);
-        _PlayerStamina = _PlayerInput.GetComponent<PlayerStamina>();
+        _PlayerStamina = _PlayerInput?.GetComponent<PlayerStamina>();
     }
 
     private void Start()

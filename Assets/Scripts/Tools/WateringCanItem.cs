@@ -78,10 +78,7 @@ public class WateringCanItem : IUse, IStar
         if ((cell = Grid.Instance.HoveredCell) == null)
             yield break;
 
-        Ray ray = Camera.main.ScreenPointToRay(Mouse.current.position.ReadValue());
-        Physics.Raycast(ray, out RaycastHit hitInfo, Mathf.Infinity, _hitMask);
-
-        if (MathUtility.PointInArc(hitInfo.point, context.transform.position, context.transform.localEulerAngles.y, _arc, _radius))
+        if (MathUtility.PointInArc(Grid.Instance.MouseHit, context.transform.position, context.transform.localEulerAngles.y, _arc, _radius))
         {
             if (cell.Type == CellType.Water) // fill watering can
             {
@@ -112,7 +109,7 @@ public class WateringCanItem : IUse, IStar
                 _usesLeft = _maxUses;
                 _playerStamina.Stamina += _fillStaminaChange;
             }
-            else if (cell.HeldObject != null && _usesLeft > 0)
+            else if (_usesLeft > 0 && cell.Type == CellType.Dirt && cell.HeldObject != null)
             {
                 if (cell.HeldObject.TryGetComponent(out FloraObject floraObject))
                 {
