@@ -39,7 +39,7 @@ public class ObjectInfoUI : MonoBehaviour
     private void Update()
     {
         Ray ray = Camera.main.ScreenPointToRay(Mouse.current.position.ReadValue());
-        bool collision = Physics.Raycast(ray, out RaycastHit hitInfo, Mathf.Infinity, _LayerMasks) && !CanvasUtility.IsPointerOverUIElement();
+        bool collision = Physics.Raycast(ray, out RaycastHit hitInfo, 50f, _LayerMasks) && !CanvasUtility.IsPointerOverUIElement();
 
         float distance = Mathf.Sqrt(
             Mathf.Pow(hitInfo.point.x - _Player.transform.position.x, 2) +

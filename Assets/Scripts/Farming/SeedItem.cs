@@ -54,10 +54,10 @@ public class SeedItem : IUse, IStar, IValue
         if (!context.started)
             yield break;
 
-        Ray ray = Camera.main.ScreenPointToRay(Mouse.current.position.ReadValue());
-        Physics.Raycast(ray, out RaycastHit hitInfo, Mathf.Infinity, _PlaceMask);
+        if (Grid.Instance.HoveredCell == null)
+            yield break;
 
-        if (MathUtility.PointInArc(hitInfo.point, context.transform.position, context.transform.localEulerAngles.y, _arc, _radius))
+        if (MathUtility.PointInArc(Grid.Instance.MouseHit, context.transform.position, context.transform.localEulerAngles.y, _arc, _radius))
         {
             if (FloraMaster.Instance.Add(_flora))
             {

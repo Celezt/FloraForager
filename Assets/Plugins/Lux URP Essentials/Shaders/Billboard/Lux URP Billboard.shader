@@ -183,7 +183,9 @@
 
             //  Instance world position
                 float3 positionWS = float3(UNITY_MATRIX_M[0].w, UNITY_MATRIX_M[1].w, UNITY_MATRIX_M[2].w);
-                half3 viewDirWS = normalize(GetCameraPositionWS() - positionWS);
+
+                half3 viewDirWS = normalize(positionWS - GetCameraPositionWS());
+                viewDirWS = mul((float3x3)unity_WorldToObject, viewDirWS);
 
                 #if !defined(_UPRIGHT)
                     input.positionOS.xyz = 0;
@@ -233,8 +235,8 @@
                 output.uv.x = (output.uv.x - 0.5) * _Shrink + 0.5;
 
                 #ifdef _NORMALMAP
-                //  Recalulate viewDirWS
                     viewDirWS = normalize(GetCameraPositionWS() - output.positionWS);
+
                     output.normalWS = half4(billboardNormalWS, viewDirWS.x);
                     output.tangentWS = half4(billboardTangentWS, viewDirWS.y);
                     output.bitangentWS = half4(billboardBitangentWS, viewDirWS.z);
@@ -274,7 +276,7 @@
 
                     InputData inputData = (InputData)0;
                     inputData.positionWS = input.positionWS;
-                    inputData.normalWS = NormalizeNormalPerPixel(normalWS);
+                    inputData.normalWS = SafeNormalize(half3(input.normalWS.w, input.tangentWS.w, input.bitangentWS.w));
                     inputData.viewDirectionWS = SafeNormalize(half3(input.normalWS.w, input.tangentWS.w, input.bitangentWS.w));
                     //inputData.fogCoord = 0;
                     //inputData.vertexLighting = 0;
@@ -394,7 +396,7 @@
                     float3 positionWS = mul(UNITY_MATRIX_I_V, positionVS).xyz;
                     positionWS -= _LightDirection * _ShadowOffset;
                 #else
-                    half3 viewDirWS = _LightDirection;
+                    half3 viewDirWS = mul((float3x3)unity_WorldToObject, _LightDirection);
                     half3 billboardTangentWS = normalize(float3(-viewDirWS.z, 0, viewDirWS.x));
                 //  Expand Billboard
                     float2 percent = input.texcoord.xy;
@@ -505,7 +507,8 @@
                 #else
                 //  Instance world position
                     float3 positionWS = float3(UNITY_MATRIX_M[0].w, UNITY_MATRIX_M[1].w, UNITY_MATRIX_M[2].w);
-                    half3 viewDirWS = normalize(GetCameraPositionWS() - positionWS);
+                    half3 viewDirWS = normalize(positionWS - GetCameraPositionWS());
+                    viewDirWS = mul((float3x3)unity_WorldToObject, viewDirWS);
                     half3 billboardTangentWS = normalize(float3(-viewDirWS.z, 0, viewDirWS.x));
                 //  Expand Billboard
                     float2 percent = input.texcoord.xy;

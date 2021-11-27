@@ -23,6 +23,7 @@ public class Grid : Singleton<Grid> // One grid per level
     private GameObject _Player;
 
     public Cell HoveredCell { get; private set; }
+    public Vector3 MouseHit { get; private set; }
 
     private void Awake()
     {
@@ -61,7 +62,7 @@ public class Grid : Singleton<Grid> // One grid per level
             return;
 
         Ray ray = Camera.main.ScreenPointToRay(Mouse.current.position.ReadValue());
-        bool hit = Physics.Raycast(ray, out RaycastHit hitInfo, Mathf.Infinity, _LayerMasks) && !CanvasUtility.IsPointerOverUIElement();
+        bool hit = Physics.Raycast(ray, out RaycastHit hitInfo, 50f, _LayerMasks) && !CanvasUtility.IsPointerOverUIElement();
 
         float distance = Mathf.Sqrt(
             Mathf.Pow(hitInfo.point.x - _Player.transform.position.x, 2) +
@@ -69,7 +70,7 @@ public class Grid : Singleton<Grid> // One grid per level
 
         if (_Player != null && hit && distance <= _MaxHitDistance)
         {
-            HoveredCell = GetCellWorld(hitInfo.point);
+            HoveredCell = GetCellWorld(MouseHit = hitInfo.point);
         }
         else
             HoveredCell = null;
