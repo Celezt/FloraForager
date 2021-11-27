@@ -10,8 +10,6 @@ public class DayNightCycle : MonoBehaviour
     private float _Yaw = 30.0f;
     [SerializeField] 
     private Gradient _SunColor;
-    [SerializeField]
-    private Gradient _AmbientColor;
     [SerializeField] 
     private AnimationCurve _SunIntensity;
 
@@ -21,7 +19,6 @@ public class DayNightCycle : MonoBehaviour
     private void Awake()
     {
         RenderSettings.sun = _Sun;
-        RenderSettings.ambientMode = UnityEngine.Rendering.AmbientMode.Flat;
     }
 
     private void Start()
@@ -32,8 +29,6 @@ public class DayNightCycle : MonoBehaviour
     private void LateUpdate()
     {
         float time = (GameTime.Instance.CurrentTime / 24.0f);
-
-        RenderSettings.ambientLight = _AmbientColor.Evaluate(time);
 
         _Sun.color = _SunColor.Evaluate(time);
         _Sun.intensity = _SunIntensity.Evaluate(time);

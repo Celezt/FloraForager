@@ -567,7 +567,7 @@ Shader "BruteForceURP/InteractiveGrassTerrainURP"
 					col.xyz += col.xyz * (light.color * light.distanceAttenuation * _LightIntensity * 7);
 				}
 #ifdef USE_AL
-				col.rgb = saturate(col.rgb + (SampleSH(i.normal) - 0.33) * 0.33);
+				col.rgb = saturate(col.rgb * half3(unity_SHAr.w, unity_SHAg.w, unity_SHAb.w));
 #endif
 				col.xyz = MixFog(col.xyz, i.fogCoord);
 
