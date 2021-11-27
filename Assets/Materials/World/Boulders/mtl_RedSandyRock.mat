@@ -9,7 +9,7 @@ Material:
   m_PrefabAsset: {fileID: 0}
   m_Name: mtl_RedSandyRock
   m_Shader: {fileID: 4800000, guid: 63209ce4a8ee948edbcc443d3479e530, type: 3}
-  m_ShaderKeywords: _DYNSCALE _TOPDOWNPROJECTION
+  m_ShaderKeywords: _DYNSCALE _SIMPLEFUZZ _TOPDOWNPROJECTION
   m_LightmapFlags: 6
   m_EnableInstancingVariants: 0
   m_DoubleSidedGI: 0
@@ -107,12 +107,12 @@ Material:
     - _DetailNormalMapScale: 1
     - _DstBlend: 0
     - _Emission: 0
-    - _EnableFuzzyLighting: 0
+    - _EnableFuzzyLighting: 1
     - _EnvironmentReflections: 1
     - _FuzzAmbient: 1
     - _FuzzBias: 0
     - _FuzzPower: 4
-    - _FuzzStrength: 1
+    - _FuzzStrength: 0.35
     - _FuzzWrap: 0.5
     - _GlossMapScale: 0
     - _GlossMapScaleDyn: 0.127
