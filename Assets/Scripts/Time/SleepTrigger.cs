@@ -28,23 +28,24 @@ public class SleepTrigger : MonoBehaviour
         playerInput.DeactivateInput();
 
         UIStateVisibility.Instance.Hide("inventory", "player_hud");
-        UIStateVisibility.Instance.Show("confirm_menu");
 
         ConfirmMenuFactory.Instance.CreateMenu(UIStateVisibility.Instance.transform, true, 
             "Sleep? Stamina is fully replenished and all unsaved progress is saved", 
             new UnityAction(() => 
             {
                 SleepSchedule.Instance.StartSleeping(false);
+                SleepSchedule.Instance.OnSlept += SleptAction;
 
-                UIStateVisibility.Instance.Show("inventory", "player_hud");
-                UIStateVisibility.Instance.Hide("confirm_menu");
+                void SleptAction(bool value)
+                {
+                    UIStateVisibility.Instance.Show("inventory", "player_hud");
+                    SleepSchedule.Instance.OnSlept -= SleptAction;
+                };
             }), 
             new UnityAction(() => 
             {
                 playerInput.ActivateInput();
-
                 UIStateVisibility.Instance.Show("inventory", "player_hud");
-                UIStateVisibility.Instance.Hide("confirm_menu");
             }));
 
         _Colliding = true;

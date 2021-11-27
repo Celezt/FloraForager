@@ -43,8 +43,7 @@ public class SoundPlayer : Singleton<SoundPlayer>
             }
             else if ((_PoolIndex = value) < _CurrentPoolSize / 4)
             {
-                if (_CurrentPoolSize > _InitialPoolSize)
-                    ShrinkPool(_CurrentPoolSize / 2);
+                ShrinkPool(Mathf.Max(_CurrentPoolSize / 2, _InitialPoolSize));
             }
         }
     }
@@ -229,23 +228,23 @@ public class SoundPlayer : Singleton<SoundPlayer>
 
     private void ExpandPool(int size)
     {
-        if (size == _CurrentPoolSize || size < _CurrentPoolSize)
+        if (size <= _CurrentPoolSize)
             return;
 
-        for (int i = size - 1; i >= _CurrentPoolSize; --i)
-        {
-            gameObject.AddComponent<AudioSource>();
-        }
+        AudioSource[] newPool = new AudioSource[size];
+        for (int i = 0; i < _CurrentPoolSize; ++i)
+            newPool[i] = _AudioSourcePool[i];
+        for (int i = _CurrentPoolSize; i < size; ++i)
+            newPool[i] = gameObject.AddComponent<AudioSource>();
 
-        _AudioSourcePool = GetComponents<AudioSource>();
-        _CurrentPoolSize = _AudioSourcePool.Length;
+        _CurrentPoolSize = (_AudioSourcePool = newPool).Length;
     }
     private void ShrinkPool(int size)
     {
-        if (size == _CurrentPoolSize || size > _CurrentPoolSize)
+        if (size >= _CurrentPoolSize)
             return;
 
-        for (int i = _CurrentPoolSize - 1; i >= size; --i)
+        for (int i = size; i < _CurrentPoolSize; ++i)
         {
             AudioSource source = _AudioSourcePool[i];
 

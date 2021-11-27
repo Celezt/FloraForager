@@ -15,8 +15,6 @@ public class JournalItem : IUse
     [SerializeField, AssetList(Path = "Data/Dialogues"), AssetsOnly]
     private TextAsset _JournalText;
     [SerializeField]
-    private bool _UseCustomAliases = false;
-    [SerializeField, ShowIf("_UseCustomAliases")]
     private string[] _Aliases;
 
     void IItem.OnInitialize(ItemTypeContext context)
@@ -49,7 +47,7 @@ public class JournalItem : IUse
         playerInput.DeactivateInput();
 
         string[] aliases = { context.name };
-        if (_UseCustomAliases && _Aliases != null && _Aliases.Length > 0)
+        if (_Aliases != null && _Aliases.Length > 0)
             aliases = _Aliases;
 
         DialogueManager.GetByIndex(context.playerIndex).StartDialogue(_JournalText.name, aliases).Completed += CompleteAction;

@@ -62,7 +62,7 @@ public class PlaceableItem : IUse
         _cell = Grid.Instance.HoveredCell;
 
         Ray ray = Camera.main.ScreenPointToRay(Mouse.current.position.ReadValue());
-        Physics.Raycast(ray, out RaycastHit hitInfo, Mathf.Infinity, _placeMask);
+        Physics.Raycast(ray, out RaycastHit hitInfo, 50f, _placeMask);
 
         float distance = Mathf.Sqrt(
             Mathf.Pow(hitInfo.point.x - context.transform.position.x, 2) +

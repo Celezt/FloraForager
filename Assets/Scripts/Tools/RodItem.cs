@@ -67,8 +67,6 @@ public class RodItem : IUse, IStar, IValue
     private float _onCatchUse = 1.2f;
     [Space(10)]
     [SerializeField]
-    private LayerMask _hitMask = LayerMask.NameToLayer("Grid");
-    [SerializeField]
     private float _radius = 4.0f;
     [SerializeField, Range(0.0f, 360.0f)]
     private float _arc = 80.0f;
@@ -104,10 +102,7 @@ public class RodItem : IUse, IStar, IValue
         if ((cell = Grid.Instance.HoveredCell) == null || cell.Type != CellType.Water)
             yield break;
 
-        Ray ray = Camera.main.ScreenPointToRay(Mouse.current.position.ReadValue());
-        Physics.Raycast(ray, out RaycastHit hitInfo, Mathf.Infinity, _hitMask);
-
-        if (!MathUtility.PointInArc(hitInfo.point, context.transform.position, context.transform.localEulerAngles.y, _arc, _radius))
+        if (!MathUtility.PointInArc(Grid.Instance.MouseHit, context.transform.position, context.transform.localEulerAngles.y, _arc, _radius))
             yield break;
 
         Inventory inventory = PlayerInput.GetPlayerByIndex(context.playerIndex).GetComponent<PlayerInfo>().Inventory;
@@ -131,7 +126,7 @@ public class RodItem : IUse, IStar, IValue
         HumanoidAnimationBehaviour animationBehaviour = playerInput.GetComponentInChildren<HumanoidAnimationBehaviour>();
         PlayerMovement playerMovement = playerInput.GetComponent<PlayerMovement>();
 
-        playerMovement.SetDirection((hitInfo.point - context.transform.position).normalized.xz());
+        playerMovement.SetDirection((Grid.Instance.MouseHit - context.transform.position).normalized.xz());
 
         int fishBaitIndex = items.First().Item1; // select first found bait to use
 
