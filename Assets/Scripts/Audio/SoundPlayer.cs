@@ -85,9 +85,6 @@ public class SoundPlayer : Singleton<SoundPlayer>
             h.Status == AsyncOperationStatus.Succeeded ||
             h.Status == AsyncOperationStatus.Failed));
 
-        for (int i = 0; i < handles.Length; ++i)
-            Addressables.Release(handles[i]);
-
         _SoundEffects = null;
 
         DebugLogConsole.AddCommandInstance("play.sound", "Plays sound", nameof(Play), this);

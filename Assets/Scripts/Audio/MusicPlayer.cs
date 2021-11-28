@@ -1,3 +1,4 @@
+using System.Linq;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -82,22 +83,16 @@ public class MusicPlayer : Singleton<MusicPlayer>
         {
             Music music = _Soundtrack[_CurrentTrack];
 
-            AsyncOperationHandle asyncLoad = music.Asset.LoadAssetAsync<AudioClip>();
-
-            yield return asyncLoad; // wait until complete
-
-            AudioClip audioClip = asyncLoad.Result as AudioClip;
-
-            _AudioSource.clip = audioClip;
+            _AudioSource.clip = music.AudioClip;
             _AudioSource.outputAudioMixerGroup = _Output;
             _AudioSource.volume = music.Volume;
             _AudioSource.pitch = music.Pitch;
+            _AudioSource.loop = music.Loop;
             _AudioSource.Play();
 
             yield return new WaitUntil(() => !_AudioSource.isPlaying && !_IsPaused); // wait until music has stopped playing
 
-            Addressables.Release(asyncLoad);
-            _AudioSource.clip = null; // set to null and release asset to free up memory
+            _AudioSource.clip = null;
 
             if (!_Loop && !_Shuffle && _CurrentTrack == _Soundtrack.Length - 1)
             {
@@ -119,19 +114,6 @@ public class MusicPlayer : Singleton<MusicPlayer>
             return;
 
         StartCoroutine(FadeOutMusic(track, fadeTime, shuffle, loop));
-    }
-    public void SetTrack(string trackName, float fadeTime = 0.0f, bool shuffle = false, bool loop = true)
-    {
-        // don't need dictionary since the array will usually be small
-        //
-        for (int i = 0; i < _Soundtrack.Length; ++i)
-        {
-            if (_Soundtrack[i].Name == trackName)
-            {
-                SetTrack(i, fadeTime, shuffle, loop);
-                break;
-            }
-        }
     }
 
     private IEnumerator FadeOutMusic(int track, float fadeTime, bool shuffle, bool loop)
@@ -160,9 +142,9 @@ public class MusicPlayer : Singleton<MusicPlayer>
     private class Music
     {
         [SerializeField]
-        private string _Name;
+        private AudioClip _Clip;
         [SerializeField]
-        private AssetReference _Asset;
+        private bool _Loop;
 
         [Space(5)]
         [SerializeField, Range(0.0f, 1.0f)]
@@ -170,9 +152,8 @@ public class MusicPlayer : Singleton<MusicPlayer>
         [SerializeField, Range(0.1f, 3.0f)]
         private float _Pitch = 1.0f;
 
-        public string Name => _Name;
-
-        public AssetReference Asset => _Asset;
+        public AudioClip AudioClip => _Clip;
+        public bool Loop => _Loop;
 
         public float Volume => _Volume;
         public float Pitch => _Pitch;
