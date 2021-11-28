@@ -10,7 +10,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 4d2bcc035f066ed4598cafbdedd2b7d6, type: 3}
-  m_Name: comm_00
+  m_Name: comm_BirowForSeeds
   m_EditorClassIdentifier: 
   serializationData:
     SerializedFormat: 2
@@ -21,18 +21,6 @@ MonoBehaviour:
     PrefabModificationsReferencedUnityObjects: []
     PrefabModifications: []
     SerializationNodes:
-    - Name: _Title
-      Entry: 1
-      Data: Gather potatoes
-    - Name: _Description
-      Entry: 1
-      Data: I NEEEEEED POTATOOOOOOOOOOES
-    - Name: _Repeatable
-      Entry: 5
-      Data: false
-    - Name: _TimeLimit
-      Entry: 3
-      Data: 2
     - Name: _Objectives
       Entry: 7
       Data: 0|IObjective[], Assembly-CSharp
@@ -47,7 +35,7 @@ MonoBehaviour:
       Data: ItemAsset, Assembly-CSharp
     - Name: ID
       Entry: 1
-      Data: porock
+      Data: birow_log
     - Name: Amount
       Entry: 3
       Data: 10
@@ -66,48 +54,35 @@ MonoBehaviour:
     - Name: 
       Entry: 8
       Data: 
-    - Name: _MinRelation
-      Entry: 3
-      Data: 3
-    - Name: _RewardRelations
-      Entry: 4
-      Data: 0
-    - Name: _PenaltyRelations
-      Entry: 4
-      Data: 0
-    - Name: _Rewards
-      Entry: 7
-      Data: 2|ItemAsset[], Assembly-CSharp
-    - Name: 
-      Entry: 12
-      Data: 1
-    - Name: 
-      Entry: 7
-      Data: ItemAsset, Assembly-CSharp
-    - Name: ID
-      Entry: 1
-      Data: porock
-    - Name: Amount
-      Entry: 3
-      Data: 10
-    - Name: 
-      Entry: 8
-      Data: 
-    - Name: 
-      Entry: 13
-      Data: 
-    - Name: 
-      Entry: 8
-      Data: 
+  _Title: Birow for seeds
+  _Description: Gather 10 birow logs for Jane.
+  _Repeatable: 1
+  _TimeLimit: 3
+  _MinRelation: 0
+  _RewardRelations: 10
+  _PenaltyRelations: 10
+  _Rewards:
+  - ID: porock_seed
+    Amount: 10
   _AcceptDialogue:
-  - NPC: monica
+  - NPC: jane
     Dialogue:
       Asset:
-        m_AssetGUID: 9239af2d7f92bde4c8b05f5abc8f20b7
+        m_AssetGUID: e36772ea9d3585841b4ae2418aa0840d
         m_SubObjectName: 
         m_SubObjectType: 
         m_EditorAssetChanged: 0
       Aliases:
       - Fiona
-      - Monica
-  _CompleteDialogue: []
+      - Jane
+  _CompleteDialogue:
+  - NPC: jane
+    Dialogue:
+      Asset:
+        m_AssetGUID: 7326ee27ac874834ca5ae729e2f1218e
+        m_SubObjectName: 
+        m_SubObjectType: 
+        m_EditorAssetChanged: 0
+      Aliases:
+      - Fiona
+      - Jane
