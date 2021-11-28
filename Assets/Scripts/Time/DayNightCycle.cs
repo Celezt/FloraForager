@@ -59,7 +59,7 @@ public class DayNightCycle : MonoBehaviour
         RenderSettings.sun = _Sun;
         RenderSettings.ambientMode = UnityEngine.Rendering.AmbientMode.Flat;
 
-        _MorningOffset = (360.0f / 24.0f) * SleepSchedule.Instance.MorningTime;
+        _MorningOffset = (360.0f / 24.0f) * 6.0f;
 
         float time = (_TimeOfDay = (_TimeOfDay % 24.0f + 24.0f) % 24.0f) / 24.0f;
 
