@@ -30,6 +30,17 @@ public class NPCManager : SerializedScriptableSingleton<NPCManager>, IStreamer
     public void Initialize()
     {
         _NPCs = _NPCInfos.ToDictionary(n => n.Name.ToLower(), n => new NPC(n));
+
+        foreach (KeyValuePair<string, NPC> item in _NPCs)
+        {
+            foreach (Commission commission in item.Value.Commissions)
+            {
+                foreach (IObjective objective in commission.Objectives)
+                {
+                    objective.UpdateStatus();
+                }
+            }
+        }
     }
 
     [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.AfterAssembliesLoaded)]

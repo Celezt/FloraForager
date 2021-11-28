@@ -120,7 +120,10 @@ public class SoundPlayer : Singleton<SoundPlayer>
 
     private IEnumerator PlaySound(Sound sound, float volumeChange = 0.0f, float pitchChange = 0.0f, int repeatCount = 0, float cooldown = 0.0f, bool loop = false)
     {
-        AudioSource source = _AudioSourcePool[PoolIndex++];
+        while (_AudioSourcePool[PoolIndex].isPlaying)
+            PoolIndex++;
+
+        AudioSource source = _AudioSourcePool[PoolIndex];
         sound.AudioSource = source;
 
         for (int i = 0; i < ((repeatCount > 0) ? repeatCount : 1); ++i)
@@ -145,7 +148,8 @@ public class SoundPlayer : Singleton<SoundPlayer>
         sound.AudioSource = null;
         source.clip = null;
 
-        --PoolIndex;
+        while(PoolIndex > 0 && !_AudioSourcePool[PoolIndex].isPlaying)
+            --PoolIndex;
     }
 
     public void Stop(string name)

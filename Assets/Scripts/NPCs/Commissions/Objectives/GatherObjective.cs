@@ -10,7 +10,7 @@ public class GatherObjective : IObjective
     [HideLabel, InlineProperty]
     public ItemAsset ItemToGather;
     [HideInInspector]
-    public int CurrentAmount;
+    public int CurrentAmount = 0;
 
     private Inventory _Inventory;
     private string _ItemName;
@@ -49,11 +49,16 @@ public class GatherObjective : IObjective
 
     public void UpdateStatus() 
     {
-        CurrentAmount = _Inventory.FindAmount(ItemToGather.ID);
+        if (_Inventory != null)
+        {
+            CurrentAmount = _Inventory.FindAmount(ItemToGather.ID);
 
-        CommissionLog.Instance.UpdateSelected();
-        CommissionLog.Instance.CheckCompletion();
-        CommissionTracker.Instance.UpdateTracker();
+            CommissionLog.Instance.UpdateSelected();
+            CommissionLog.Instance.CheckCompletion();
+            CommissionTracker.Instance.UpdateTracker();
+        }
+        else
+            CurrentAmount = 0;
     }
     public void UpdateStatus(int pos, ItemAsset item)
     {
