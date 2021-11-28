@@ -13,6 +13,12 @@ public class DayNightCycle : MonoBehaviour
     [SerializeField]
     private AnimationCurve _SunIntensity;
 
+    [Title("Fog")]
+    [SerializeField]
+    private bool _FogEnabled = true;
+    [SerializeField]
+    private Color _FogColor;
+
     [Title("Other")]
     [SerializeField, Range(0.0f, 360.0f)] 
     private float _Yaw = 30.0f;
@@ -28,6 +34,8 @@ public class DayNightCycle : MonoBehaviour
     {
         RenderSettings.sun = _Sun;
         RenderSettings.ambientMode = UnityEngine.Rendering.AmbientMode.Flat;
+        RenderSettings.fog = _FogEnabled;
+        RenderSettings.fogColor = _FogColor;
     }
 
     private void Start()
@@ -58,6 +66,9 @@ public class DayNightCycle : MonoBehaviour
 
         RenderSettings.sun = _Sun;
         RenderSettings.ambientMode = UnityEngine.Rendering.AmbientMode.Flat;
+
+        RenderSettings.fog = _FogEnabled;
+        RenderSettings.fogColor = _FogColor;
 
         _MorningOffset = (360.0f / 24.0f) * 6.0f;
 
