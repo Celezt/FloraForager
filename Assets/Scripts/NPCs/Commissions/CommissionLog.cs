@@ -16,6 +16,12 @@ public class CommissionLog : Singleton<CommissionLog>
     [SerializeField] private Transform _CommissionArea;
     [SerializeField] private TMP_Text _Description;
 
+    [Space(10)]
+    [SerializeField]
+    private string _OpenSound = "open_window";
+    [SerializeField]
+    private string _CloseSound = "close_window";
+
     private List<CommissionObject> _CommissionObjects = new List<CommissionObject>();
 
     private Commission _Selected; // selected commission in the log
@@ -166,10 +172,14 @@ public class CommissionLog : Singleton<CommissionLog>
 
         if (_CanvasGroup.alpha == 1.0f)
         {
+            SoundPlayer.Instance.Play(_OpenSound);
+
             Exit();
         }
         else
         {
+            SoundPlayer.Instance.Play(_CloseSound);
+
             _CanvasGroup.alpha = 1.0f;
             _CanvasGroup.blocksRaycasts = true;
         }
