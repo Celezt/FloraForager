@@ -83,10 +83,10 @@ public class GridWindow : OdinEditorWindow
 
         if (_Mesh == null)
         {
-            if (FindObjectOfType<Grid>() == null)
+            if (FindObjectOfType<GameGrid>() == null)
                 Debug.LogError("please add a grid to the scene in order to use the grid tool");
             else
-                _Mesh = Grid.Instance?.GetComponent<GridMesh>();
+                _Mesh = GameGrid.Instance?.GetComponent<GridMesh>();
         }
         else
             EditorUtility.SetDirty(_Mesh);
