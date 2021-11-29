@@ -43,10 +43,11 @@ public class PlayerInfo : MonoBehaviour
 
     private void Start()
     {
-        List<ItemAsset> initialItems = _DataExists ?
-            _Data.SaveData.Items : _InitialItems;
+        _Inventory.Initialize(_DataExists ?
+            _Data.SaveData.Items : _InitialItems);
 
-        _Inventory.Initialize(initialItems);
+        _Stamina.Stamina = _DataExists ? 
+            _Data.SaveData.Stamina : _Stamina.MaxStamina;
 
         FadeScreen.Instance.StartFadeOut(_FadeOutTime);
     }

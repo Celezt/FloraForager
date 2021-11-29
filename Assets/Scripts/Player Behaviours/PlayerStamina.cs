@@ -39,15 +39,11 @@ public class PlayerStamina : MonoBehaviour
     private void Awake()
     {
         _PlayerMovement = GetComponent<PlayerMovement>();
-        _Stamina = GetComponent<PlayerInfo>().Data.SaveData.Stamina;
-
         DebugLogConsole.AddCommandInstance("player.stamina_change", "Change player's stamina", nameof(ChangeStamina), this);
     }
 
     private void Start()
     {
-        _Stamina = _MaxStamina;
-
         OnStaminaDrained += NightDrain;
         OnStaminaDrained += WalkingDrain;
 
