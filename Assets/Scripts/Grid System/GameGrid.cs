@@ -2,10 +2,9 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.InputSystem;
-using Sirenix.OdinInspector;
 using MyBox;
 
-public class Grid : Singleton<Grid> // One grid per level
+public class GameGrid: Singleton<GameGrid> // One grid per level
 {
     [SerializeField]
     private float _MaxHitDistance = 10.0f;

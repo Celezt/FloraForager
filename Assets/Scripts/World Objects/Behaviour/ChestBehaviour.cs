@@ -19,7 +19,7 @@ public class ChestBehaviour : MonoBehaviour, IPlaceable, IInteractable
 
     private void Start()
     {
-        Cell cell = Grid.Instance.GetCellWorld(transform.position);
+        Cell cell = GameGrid.Instance.GetCellWorld(transform.position);
 
         if (cell == null)
         {

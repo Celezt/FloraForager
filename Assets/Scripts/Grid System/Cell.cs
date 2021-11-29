@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class Cell
 {
-    private Grid _Grid; // associated grid
+    private GameGrid _Grid; // associated grid
     private List<Cell> _Neighbours;
 
     private CellData _Data;
@@ -17,7 +17,7 @@ public class Cell
 
     public bool Occupied;
 
-    public Grid Grid => _Grid;
+    public GameGrid Grid => _Grid;
     public List<Cell> Neighbours => _Neighbours;
 
     public GameObject HeldObject => _Data.HeldObject;
@@ -29,7 +29,7 @@ public class Cell
     public int MeshIndex => _MeshIndex;
     public Vector3 Middle => _PositionWorld + new Vector3(_Size.x / 2.0f, 0, _Size.y / 2.0f);
 
-    public Cell(Grid grid, CellData data, Vector3 posW, Vector2Int posL, Vector2Int size, int meshIndex)
+    public Cell(GameGrid grid, CellData data, Vector3 posW, Vector2Int posL, Vector2Int size, int meshIndex)
     {
         _Grid = grid;
         _Data = data;

@@ -39,7 +39,7 @@ public class FloraInfoUI : MonoBehaviour
 
     private void Update()
     {
-        Cell cell = Grid.Instance.HoveredCell;
+        Cell cell = GameGrid.Instance.HoveredCell;
 
         if (cell != null && cell.Type == CellType.Dirt)
         {

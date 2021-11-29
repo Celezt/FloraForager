@@ -59,7 +59,7 @@ public class PlaceableItem : IUse
 
     void IItem.OnUpdate(ItemContext context)
     {
-        _cell = Grid.Instance.HoveredCell;
+        _cell = GameGrid.Instance.HoveredCell;
 
         Ray ray = Camera.main.ScreenPointToRay(Mouse.current.position.ReadValue());
         Physics.Raycast(ray, out RaycastHit hitInfo, 50f, _placeMask);

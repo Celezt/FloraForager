@@ -1,8 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using Sirenix.OdinInspector;
-using Sirenix.Serialization;
 
 /// <summary>
 /// Only used by grid tool to create grid mesh
@@ -95,7 +93,7 @@ public class CellMesh : MonoBehaviour
     {
         Data = data;
 
-        _GridMesh = Grid.Instance.transform.GetComponent<GridMesh>();
+        _GridMesh = GameGrid.Instance.transform.GetComponent<GridMesh>();
 
         _MeshFilter = GetComponent<MeshFilter>();
         _MeshRenderer = GetComponent<MeshRenderer>();

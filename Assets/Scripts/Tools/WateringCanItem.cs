@@ -73,10 +73,10 @@ public class WateringCanItem : IUse, IStar
             yield break;
 
         Cell cell;
-        if ((cell = Grid.Instance.HoveredCell) == null)
+        if ((cell = GameGrid.Instance.HoveredCell) == null)
             yield break;
 
-        if (MathUtility.PointInArc(Grid.Instance.MouseHit, context.transform.position, context.transform.localEulerAngles.y, _arc, _radius))
+        if (MathUtility.PointInArc(GameGrid.Instance.MouseHit, context.transform.position, context.transform.localEulerAngles.y, _arc, _radius))
         {
             if (cell.Type == CellType.Water) // fill watering can
             {
