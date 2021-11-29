@@ -36,7 +36,6 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 6771638918411329088}
-  - {fileID: 2413093846262211110}
   - {fileID: 2265097815070833664}
   - {fileID: 7498693329119307031}
   m_Father: {fileID: 0}
@@ -261,6 +260,14 @@ MonoBehaviour:
       m_Calls: []
     m_ActionId: f291d24c-1e81-4153-839f-701f89134a58
     m_ActionName: Ground/Pause[/Keyboard/escape]
+  - m_PersistentCalls:
+      m_Calls: []
+    m_ActionId: b23a3109-7845-4894-ad72-a839efbf9a0d
+    m_ActionName: Fishing/Hook[/Mouse/leftButton]
+  - m_PersistentCalls:
+      m_Calls: []
+    m_ActionId: 55a3ed88-f58a-441b-836c-4ab625b00ec0
+    m_ActionName: Fishing/Cancel[/Mouse/rightButton]
   m_NeverAutoSwitchControlSchemes: 0
   m_DefaultControlScheme: 
   m_DefaultActionMap: Ground
@@ -360,36 +367,6 @@ MonoBehaviour:
     Amount: 1
   - ID: scythe
     Amount: 1
---- !u!1 &5178136194200900361
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 2413093846262211110}
-  m_Layer: 8
-  m_Name: GroundPivot
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!4 &2413093846262211110
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 5178136194200900361}
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: -1, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_Children: []
-  m_Father: {fileID: 3292027561133824670}
-  m_RootOrder: 1
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &5388658128777660476
 GameObject:
   m_ObjectHideFlags: 0
@@ -449,7 +426,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 3292027561133824670}
-  m_RootOrder: 2
+  m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &1692419057029604849
 MonoBehaviour:
@@ -513,7 +490,7 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: -8679921383154817045, guid: 2b038fae91686c14caa74e9ba6937122, type: 3}
       propertyPath: m_RootOrder
-      value: 3
+      value: 2
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 2b038fae91686c14caa74e9ba6937122, type: 3}
       propertyPath: m_LocalScale.y
@@ -563,14 +540,6 @@ PrefabInstance:
       propertyPath: m_Materials.Array.size
       value: 3
       objectReference: {fileID: 0}
-    - target: {fileID: -7823293702887809713, guid: 2b038fae91686c14caa74e9ba6937122, type: 3}
-      propertyPath: m_Materials.Array.data[1]
-      value: 
-      objectReference: {fileID: 2100000, guid: eff43bb4bde6ecc4aa62a75dfe1ecbd7, type: 2}
-    - target: {fileID: -7823293702887809713, guid: 2b038fae91686c14caa74e9ba6937122, type: 3}
-      propertyPath: m_Materials.Array.data[2]
-      value: 
-      objectReference: {fileID: 2100000, guid: ec61403bf645b4643874f79d5fb8a195, type: 2}
     - target: {fileID: -4396642182433536433, guid: 2b038fae91686c14caa74e9ba6937122, type: 3}
       propertyPath: m_Materials.Array.size
       value: 2
