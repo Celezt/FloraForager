@@ -9,7 +9,7 @@ Material:
   m_PrefabAsset: {fileID: 0}
   m_Name: mtl_JaneHair
   m_Shader: {fileID: 4800000, guid: 6ea049e9f2f0d4ec693322ebc817af04, type: 3}
-  m_ShaderKeywords: _SECONDARYLOBE _STRANDDIR_BITANGENT
+  m_ShaderKeywords: _NORMALMAP _SECONDARYLOBE _STRANDDIR_BITANGENT
   m_LightmapFlags: 4
   m_EnableInstancingVariants: 0
   m_DoubleSidedGI: 0
@@ -82,7 +82,7 @@ Material:
     m_Floats:
     - _AlphaClip: 0
     - _AmbientReflection: 1
-    - _ApplyNormal: 0
+    - _ApplyNormal: 1
     - _Blend: 0
     - _BumpScale: 1
     - _ClearCoatMask: 0
