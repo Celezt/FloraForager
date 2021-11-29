@@ -22,12 +22,12 @@ public class FadeScreen : Singleton<FadeScreen>
         _CanvasGroup = GetComponent<CanvasGroup>();
     }
 
-    public void StartFadeIn(float fadeTime)
+    public void StartFadeIn(float fadeTime, float stayFaded = 0.0f)
     {
         if (_FadeCoroutine != null)
             StopCoroutine(_FadeCoroutine);
         
-        _FadeCoroutine = StartCoroutine(FadeIn(fadeTime));
+        _FadeCoroutine = StartCoroutine(FadeIn(fadeTime, stayFaded));
     }
     public void StartFadeOut(float fadeTime)
     {
@@ -37,7 +37,7 @@ public class FadeScreen : Singleton<FadeScreen>
         _FadeCoroutine = StartCoroutine(FadeOut(fadeTime));
     }
 
-    private IEnumerator FadeIn(float fadeTime)
+    private IEnumerator FadeIn(float fadeTime, float stayFaded = 0.0f)
     {
         OnStartFade.Invoke();
 
@@ -51,6 +51,8 @@ public class FadeScreen : Singleton<FadeScreen>
 
         _CanvasGroup.alpha = 1.0f;
         _CanvasGroup.blocksRaycasts = true;
+
+        yield return new WaitForSeconds(stayFaded);
 
         _FadeCoroutine = null;
         OnEndFade.Invoke();

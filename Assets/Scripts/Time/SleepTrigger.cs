@@ -6,6 +6,9 @@ using UnityEngine.Events;
 
 public class SleepTrigger : MonoBehaviour
 {
+    [SerializeField]
+    private string _SleepSound = "door_hit_sleep";
+
     private bool _Colliding = false;
 
     private void Awake()
@@ -33,6 +36,8 @@ public class SleepTrigger : MonoBehaviour
             "Sleep? Stamina is fully replenished and all unsaved progress is saved", 
             new UnityAction(() => 
             {
+                SoundPlayer.Instance.Play(_SleepSound);
+
                 SleepSchedule.Instance.StartSleeping(false);
                 SleepSchedule.Instance.OnSlept += SleptAction;
 

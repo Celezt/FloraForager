@@ -40,7 +40,7 @@ public class RelationshipManager
         UpdateRelation();
     }
 
-    private void UpdateRelation()
+    public void UpdateRelation()
     {
         float difference = maxRelation - minRelation;
 
