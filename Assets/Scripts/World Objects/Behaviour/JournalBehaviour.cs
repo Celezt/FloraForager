@@ -8,6 +8,8 @@ public class JournalBehaviour : MonoBehaviour, IInteractable
 {
     [SerializeField]
     private string _JournalID;
+    [SerializeField]
+    private string _PickupSound = "pickup_04";
 
     public int Priority => 2;
 
@@ -19,6 +21,9 @@ public class JournalBehaviour : MonoBehaviour, IInteractable
         Inventory inventory = PlayerInput.GetPlayerByIndex(context.playerIndex).GetComponent<PlayerInfo>().Inventory;
 
         if (inventory.Insert(_JournalID, 1))
+        {
+            SoundPlayer.Instance.Play(_PickupSound);
             gameObject.SetActive(false);
+        }
     }
 }
