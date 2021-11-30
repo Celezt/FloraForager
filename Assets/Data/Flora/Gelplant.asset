@@ -15,12 +15,28 @@ MonoBehaviour:
   serializationData:
     SerializedFormat: 2
     SerializedBytes: 
-    ReferencedUnityObjects: []
+    ReferencedUnityObjects:
+    - {fileID: 919132149155446097, guid: 783e6a1cc8a1b2143a41e7d8aec79cff, type: 3}
+    - {fileID: 919132149155446097, guid: 81882440559b72d40b3ef3731e10aee9, type: 3}
+    - {fileID: 919132149155446097, guid: 1f26941637baaa04da9c434785af01c9, type: 3}
+    - {fileID: 919132149155446097, guid: f606b9fe406764741b7ee5ca741ff259, type: 3}
     SerializedBytesString: 
     Prefab: {fileID: 0}
     PrefabModificationsReferencedUnityObjects: []
     PrefabModifications: []
     SerializationNodes:
+    - Name: _Name
+      Entry: 1
+      Data: Gelplant
+    - Name: _Description
+      Entry: 1
+      Data: 
+    - Name: _HarvestSound
+      Entry: 1
+      Data: break_flora
+    - Name: _ItemLabels
+      Entry: 3
+      Data: 40960
     - Name: _HarvestMethod
       Entry: 7
       Data: 0|HarvestScythe, Assembly-CSharp
@@ -60,13 +76,30 @@ MonoBehaviour:
     - Name: 
       Entry: 8
       Data: 
-  _Name: Gelplant
-  _Description: 
-  _HarvestSound: break_flora
-  _ItemLabels: 20480
-  _GrowTime: 3
-  _Stages:
-  - {fileID: 919132149155446097, guid: 783e6a1cc8a1b2143a41e7d8aec79cff, type: 3}
-  - {fileID: 919132149155446097, guid: 81882440559b72d40b3ef3731e10aee9, type: 3}
-  - {fileID: 919132149155446097, guid: 1f26941637baaa04da9c434785af01c9, type: 3}
-  - {fileID: 919132149155446097, guid: f606b9fe406764741b7ee5ca741ff259, type: 3}
+    - Name: _GrowTime
+      Entry: 3
+      Data: 3
+    - Name: _Stages
+      Entry: 7
+      Data: 2|UnityEngine.GameObject[], UnityEngine.CoreModule
+    - Name: 
+      Entry: 12
+      Data: 4
+    - Name: 
+      Entry: 10
+      Data: 0
+    - Name: 
+      Entry: 10
+      Data: 1
+    - Name: 
+      Entry: 10
+      Data: 2
+    - Name: 
+      Entry: 10
+      Data: 3
+    - Name: 
+      Entry: 13
+      Data: 
+    - Name: 
+      Entry: 8
+      Data: 

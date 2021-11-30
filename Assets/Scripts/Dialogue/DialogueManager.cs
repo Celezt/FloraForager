@@ -284,7 +284,7 @@ public class DialogueManager : MonoBehaviour
 
         _content.ForceMeshUpdate();
 
-        string parsedText = _content.GetParsedText().ToUpper();
+        string parsedText = _content.GetParsedText();
 
         int maxCount = _content.textInfo.characterCount + 1;
         for (int count = 0; count < maxCount; count++)
@@ -293,7 +293,7 @@ public class DialogueManager : MonoBehaviour
 
             if (_audible && count > 0)
             {
-                string letter = parsedText[count - 1].ToString();
+                string letter = parsedText[count - 1].ToString().ToUpper();
 
                 if (SoundPlayer.Instance.TryGetSound(letter, out SoundPlayer.Sound sound))
                     SoundPlayer.Instance.Play(letter, 0, _pitch - sound.Pitch);

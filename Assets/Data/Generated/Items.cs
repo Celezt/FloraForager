@@ -19,5 +19,4 @@ public enum Items
 	BirowLog,
 	Obsidian,
 	Gel,
-	Journal00,
 }

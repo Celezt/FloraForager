@@ -91,8 +91,7 @@ public class ItemTypeSettings : SerializedScriptableSingleton<ItemTypeSettings>
     [Button]
     public void Regenerate()
     {
-       // DEPRECATED: Enums no longer used because of flag limit.
-       // EnumGenerator.Generate("Items", "Assets/Data/Generated", _itemTypeChunk.Keys.ToList());
+        EnumGenerator.Generate("Items", "Assets/Data/Generated", _itemTypeChunk.Keys.ToList());
 
         _itemLabelChunk.Clear();
         _itemIconChunk.Clear();

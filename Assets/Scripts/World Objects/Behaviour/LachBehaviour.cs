@@ -1,7 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using Sirenix.OdinInspector;
 using FSM;
 
 public class LachBehaviour : MonoBehaviour
@@ -9,43 +8,33 @@ public class LachBehaviour : MonoBehaviour
     [SerializeField]
     private SkinnedMeshRenderer _SkinnedRenderer;
     [SerializeField]
-    private AnimationCurve _MouthIdle;
-    [SerializeField]
-    private AnimationCurve _MouthClose;
-    [SerializeField]
-    private bool _HasShrink;
-    [SerializeField, ShowIf("_HasShrink")]
-    private AnimationCurve _Shrink;
+    private AnimationCurve _MouthBehaviour;
 
     private FSM_Machine _StateMachine;
     private float _InitialMouth;
-    private float _InitialShrink;
 
     public readonly Idle IdleState = new Idle();
+    public readonly Eat EatState = new Eat();
     public readonly Sleep SleepState = new Sleep();
 
     public SkinnedMeshRenderer SkinnedRenderer => _SkinnedRenderer;
+    public AnimationCurve MouthBehaviour => _MouthBehaviour;
     public FSM_Machine StateMachine => _StateMachine;
-    public AnimationCurve MouthIdle => _MouthIdle;
-    public AnimationCurve MouthClose => _MouthClose;
-    public AnimationCurve Shrink => _Shrink;
-    public bool HasShrink => _HasShrink;
     public float InitialMouth => _InitialMouth;
-    public float InitialShrink => _InitialShrink;
 
     private void Start()
     {
-        _InitialMouth = _SkinnedRenderer.GetBlendShapeWeight(0);
-        _InitialShrink = _SkinnedRenderer.GetBlendShapeWeight(1);
-
         _StateMachine = new FSM_Machine();
 
         _StateMachine.AddState(IdleState);
+        _StateMachine.AddState(EatState);
         _StateMachine.AddState(SleepState);
 
         _StateMachine.InitializeStates(new LachContext { Lach = this });
 
         _StateMachine.TransitionTo(IdleState);
+
+        _InitialMouth = _SkinnedRenderer.GetBlendShapeWeight(0);
     }
 
     private void Update()
@@ -61,35 +50,25 @@ public class LachBehaviour : MonoBehaviour
     public class Idle : State
     {
         private LachContext _Context;
-
-        private float _RandomSleep = 10.0f;
+        private float _InitialMouth;
 
         public override void Init(object context)
         {
             _Context = context as LachContext;
+            _InitialMouth = _Context.Lach.InitialMouth;
         }
 
         public override void Enter()
         {
-            _Context.Lach.SkinnedRenderer.SetBlendShapeWeight(0, _Context.Lach.InitialMouth);
 
-            if (_Context.Lach.HasShrink)
-                _Context.Lach.SkinnedRenderer.SetBlendShapeWeight(1, _Context.Lach.InitialShrink);
-
-            _RandomSleep = Random.Range(0.0f, 10.0f);
         }
 
         public override void Update()
         {
+            _Context.Lach.SkinnedRenderer.SetBlendShapeWeight(0, _InitialMouth + 100.0f * _Context.Lach.MouthBehaviour.Evaluate(Time.time));
+
             if (SleepSchedule.Instance.IsNightTime)
-            {
-                _RandomSleep -= Time.deltaTime;
-
-                if (_RandomSleep <= 0.0f && _Context.Lach.StateMachine.TransitionTo(_Context.Lach.SleepState))
-                    return;
-            }
-
-            _Context.Lach.SkinnedRenderer.SetBlendShapeWeight(0, Mathf.Max(0, _Context.Lach.InitialMouth + 100.0f * _Context.Lach.MouthIdle.Evaluate(Time.time)));
+                _Context.Lach.StateMachine.TransitionTo(_Context.Lach.SleepState);
         }
 
         public override void Exit()
@@ -97,38 +76,54 @@ public class LachBehaviour : MonoBehaviour
 
         }
     }
-    public class Sleep : State
+
+    public class Eat : State
     {
         private LachContext _Context;
-        private float _InitialShrink;
-
-        private float _Time;
+        private float _InitialMouth;
 
         public override void Init(object context)
         {
             _Context = context as LachContext;
+            _InitialMouth = _Context.Lach.InitialMouth;
         }
 
         public override void Enter()
         {
-            _InitialShrink = _Context.Lach.SkinnedRenderer.GetBlendShapeWeight(1);
-            _Time = 0.0f;
+
         }
 
         public override void Update()
         {
-            if (!SleepSchedule.Instance.IsNightTime)
-            {
-                if (_Context.Lach.StateMachine.TransitionTo(_Context.Lach.IdleState))
-                    return;
-            }
 
-            _Time += Time.deltaTime;
+        }
 
-            if (_Context.Lach.HasShrink)
-                _Context.Lach.SkinnedRenderer.SetBlendShapeWeight(1, Mathf.SmoothStep(_InitialShrink, 100.0f, _Context.Lach.Shrink.Evaluate(_Time)));
+        public override void Exit()
+        {
 
-            _Context.Lach.SkinnedRenderer.SetBlendShapeWeight(0, Mathf.SmoothStep(_Context.Lach.InitialMouth, 100.0f, _Context.Lach.MouthClose.Evaluate(_Time)));
+        }
+    }
+
+    public class Sleep : State
+    {
+        private LachContext _Context;
+
+        private float _InitialMouth;
+
+        public override void Init(object context)
+        {
+            _Context = context as LachContext;
+            _InitialMouth = _Context.Lach.SkinnedRenderer.GetBlendShapeWeight(0);
+        }
+
+        public override void Enter()
+        {
+
+        }
+
+        public override void Update()
+        {
+
         }
 
         public override void Exit()

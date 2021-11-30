@@ -135,10 +135,8 @@ public class ItemBehaviour : MonoBehaviour
     {
         _visualEffect.Stop();
 
-        if (gameObject.scene.isLoaded)
-        {
-            _inventory?.Insert(_item.ID, _item.Amount);
-            SoundPlayer.Instance?.Play(_pickupSound, 0, 0, 0, 0.02f);
-        }
+        _inventory?.Insert(_item.ID, _item.Amount);
+
+        SoundPlayer.Instance.Play(_pickupSound, 0, 0, 0, 0.02f);
     }
 }

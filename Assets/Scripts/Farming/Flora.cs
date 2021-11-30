@@ -17,8 +17,8 @@ public class Flora : IStreamable<Flora.Data>
 
         public string Name;
         public IHarvest HarvestMethod;
-        public int Day;
         public int Stage;
+        public int Mesh;
         public bool Watered;
     }
     public Data OnUpload() => _Data;
@@ -41,14 +41,14 @@ public class Flora : IStreamable<Flora.Data>
 
     private float _StageUpdate = 0; // at what stages to update the mesh
 
-    public MeshFilter CurrentMeshFilter => _StagesMeshFilters[_Data.Stage];
-    public MeshRenderer CurrentMeshRenderer => _StagesMeshRenderers[_Data.Stage];
+    public MeshFilter CurrentMeshFilter => _StagesMeshFilters[_Data.Mesh];
+    public MeshRenderer CurrentMeshRenderer => _StagesMeshRenderers[_Data.Mesh];
 
     public FloraInfo Info => _Info;
     public Data FloraData => _Data;
     public Cell Cell => GameGrid.Instance.GetCellLocal(_Data.CellPosition);
 
-    public bool Completed => (_Data.Day >= _Info.GrowTime);
+    public bool Completed => (_Data.Stage >= _Info.GrowTime);
 
     public Flora(FloraInfo floraInfo, Vector2Int cellPos)
     {
@@ -73,9 +73,9 @@ public class Flora : IStreamable<Flora.Data>
         if (Completed || !_Data.Watered)
             return;
 
-        if (++_Data.Day >= (_StageUpdate + _Data.Stage))
+        if (++_Data.Stage >= (_StageUpdate + _Data.Mesh))
         {
-            ++_Data.Stage; // update to next mesh
+            ++_Data.Mesh; // update to next mesh
         }
 
         _Data.Watered = false;
@@ -91,9 +91,9 @@ public class Flora : IStreamable<Flora.Data>
         if (Completed)
             return;
 
-        if (++_Data.Day >= (_StageUpdate + _Data.Stage))
+        if (++_Data.Stage >= (_StageUpdate + _Data.Mesh))
         {
-            ++_Data.Stage; // update to next mesh
+            ++_Data.Mesh; // update to next mesh
         }
 
         OnGrow.Invoke();
