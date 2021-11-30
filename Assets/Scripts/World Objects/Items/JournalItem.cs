@@ -50,7 +50,7 @@ public class JournalItem : IUse
         if (_Aliases != null && _Aliases.Length > 0)
             aliases = _Aliases;
 
-        DialogueManager.GetByIndex(context.playerIndex).StartDialogue(_JournalText.name, aliases).Completed += CompleteAction;
+        DialogueManager.GetByIndex(context.playerIndex).StartDialogue($"Journals/{_JournalText.name}.json", aliases).Completed += CompleteAction;
 
         void CompleteAction(DialogueManager manager)
         {
