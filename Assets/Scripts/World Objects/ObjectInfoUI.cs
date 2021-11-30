@@ -1,7 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.UI;
 using UnityEngine.InputSystem;
 
 public class ObjectInfoUI : MonoBehaviour
@@ -9,11 +8,11 @@ public class ObjectInfoUI : MonoBehaviour
     [SerializeField]
     private LayerMask _LayerMasks;
     [SerializeField]
-    private Image _Image;
-    [SerializeField]
     private float _MaxHitDistance = 5.0f;
     [SerializeField] 
     private float _HeightOffset = 0.5f;
+    [SerializeField]
+    private string _EnterSound = "enter_button";
 
     private CanvasGroup _CanvasGroup;
 
@@ -70,6 +69,8 @@ public class ObjectInfoUI : MonoBehaviour
 
         if (interactable.TryGetComponent(out Collider collider))
             _ObjectBounds = collider.bounds;
+
+        SoundPlayer.Instance.Play(_EnterSound, 0.75f);
 
         _CanvasGroup.alpha = 1.0f;
     }

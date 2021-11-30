@@ -15,6 +15,9 @@ public class ChildOf : MonoBehaviour
 
     private void Update()
     {
+        if (_parent == null)
+            return;
+
         Vector3 targetPosition = _parent.position - _positionOffset;
         Quaternion targetRotation = _parent.rotation * _rotationOffset;
 

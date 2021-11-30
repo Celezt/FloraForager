@@ -8,6 +8,8 @@ using UnityEngine.SceneManagement;
 public class PlayerInfo : MonoBehaviour
 {
     [SerializeField]
+    private float _FadeOutTime = 2.0f;
+    [SerializeField]
     private List<ItemAsset> _InitialItems;
 
     private PlayerData _Data;
@@ -41,12 +43,13 @@ public class PlayerInfo : MonoBehaviour
 
     private void Start()
     {
-        List<ItemAsset> initialItems = _DataExists ?
-            _Data.SaveData.Items : _InitialItems;
+        _Inventory.Initialize(_DataExists ?
+            _Data.SaveData.Items : _InitialItems);
 
-        _Inventory.Initialize(initialItems);
+        _Stamina.Stamina = _DataExists ? 
+            _Data.SaveData.Stamina : _Stamina.MaxStamina;
 
-        FadeScreen.Instance.StartFadeOut(1f);
+        FadeScreen.Instance.StartFadeOut(_FadeOutTime);
     }
 
     private void OnDestroy()

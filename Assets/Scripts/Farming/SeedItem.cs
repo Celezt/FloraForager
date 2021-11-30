@@ -54,10 +54,10 @@ public class SeedItem : IUse, IStar, IValue
         if (!context.started)
             yield break;
 
-        if (Grid.Instance.HoveredCell == null)
+        if (GameGrid.Instance.HoveredCell == null)
             yield break;
 
-        if (MathUtility.PointInArc(Grid.Instance.MouseHit, context.transform.position, context.transform.localEulerAngles.y, _arc, _radius))
+        if (MathUtility.PointInArc(GameGrid.Instance.MouseHit, context.transform.position, context.transform.localEulerAngles.y, _arc, _radius))
         {
             if (FloraMaster.Instance.Add(_flora))
             {

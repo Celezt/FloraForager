@@ -99,10 +99,10 @@ public class RodItem : IUse, IStar, IValue
             yield break;
 
         Cell cell;
-        if ((cell = Grid.Instance.HoveredCell) == null || cell.Type != CellType.Water)
+        if ((cell = GameGrid.Instance.HoveredCell) == null || cell.Type != CellType.Water)
             yield break;
 
-        if (!MathUtility.PointInArc(Grid.Instance.MouseHit, context.transform.position, context.transform.localEulerAngles.y, _arc, _radius))
+        if (!MathUtility.PointInArc(GameGrid.Instance.MouseHit, context.transform.position, context.transform.localEulerAngles.y, _arc, _radius))
             yield break;
 
         Inventory inventory = PlayerInput.GetPlayerByIndex(context.playerIndex).GetComponent<PlayerInfo>().Inventory;
@@ -126,7 +126,7 @@ public class RodItem : IUse, IStar, IValue
         HumanoidAnimationBehaviour animationBehaviour = playerInput.GetComponentInChildren<HumanoidAnimationBehaviour>();
         PlayerMovement playerMovement = playerInput.GetComponent<PlayerMovement>();
 
-        playerMovement.SetDirection((Grid.Instance.MouseHit - context.transform.position).normalized.xz());
+        playerMovement.SetDirection((GameGrid.Instance.MouseHit - context.transform.position).normalized.xz());
 
         int fishBaitIndex = items.First().Item1; // select first found bait to use
 

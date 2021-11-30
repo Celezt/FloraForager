@@ -64,9 +64,9 @@ public class SleepSchedule : Singleton<SleepSchedule>
 
         _PlayerInput.DeactivateInput();
 
-        FadeScreen.Instance.StartFadeIn(_SleepTime);
-        yield return new WaitForSeconds(_SleepTime);
-        FadeScreen.Instance.StartFadeOut(2.5f);
+        FadeScreen.Instance.StartFadeIn(_SleepTime, 2.0f);
+        yield return new WaitForSeconds(_SleepTime + 2.0f);
+        FadeScreen.Instance.StartFadeOut(3.5f);
 
         // wake up
 

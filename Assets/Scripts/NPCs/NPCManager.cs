@@ -30,6 +30,18 @@ public class NPCManager : SerializedScriptableSingleton<NPCManager>, IStreamer
     public void Initialize()
     {
         _NPCs = _NPCInfos.ToDictionary(n => n.Name.ToLower(), n => new NPC(n));
+
+        foreach (KeyValuePair<string, NPC> item in _NPCs)
+        {
+            item.Value.Relation.UpdateRelation();
+            foreach (Commission commission in item.Value.Commissions)
+            {
+                foreach (IObjective objective in commission.Objectives)
+                {
+                    objective.UpdateStatus();
+                }
+            }
+        }
     }
 
     [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.AfterAssembliesLoaded)]
@@ -113,7 +125,7 @@ public class NPCManager : SerializedScriptableSingleton<NPCManager>, IStreamer
     }
     public void Load()
     {
-        _NPCs = _NPCInfos.ToDictionary(n => n.Name.ToLower(), n => new NPC(n));
+        Initialize();
 
         if (!GameManager.Stream.TryGet(_Guid, out Dictionary<string, object> streamables))
             return;
