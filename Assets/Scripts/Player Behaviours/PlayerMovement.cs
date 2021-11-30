@@ -241,8 +241,8 @@ public class PlayerMovement : MonoBehaviour
                 _rawVelocity = _slopeForward * CurrentSpeed;
                 _velocity = Vector3.Lerp(_velocity, _rawVelocity, _drag * fixedDeltaTime);
 
-                if (Physics.Raycast(position + Vector3.up * 0.3f, _velocity, 0.5f))
-                    _velocity = new Vector3(_velocity.x, 0, _velocity.z);
+                if (Physics.SphereCast(new Ray(position + Vector3.up * 0.45f, _velocity), 0.3f, 0.3f))
+                    _velocity = new Vector3(_velocity.x, _velocity.y <= float.Epsilon ? _velocity.y : 0, _velocity.z);
 
                 _rigidbody.AddForce(_velocity, ForceMode.VelocityChange);
             }
