@@ -15,13 +15,11 @@ public class LoadScene : Singleton<LoadScene>
     public static string ObjectToLoadPlayer = string.Empty;
 
     private CanvasGroup _CanvasGroup;
-
-    public static bool SceneIsLoading { get; private set; }
+    private bool _SceneIsLoading;
 
     private void Awake()
     {
         _CanvasGroup = GetComponent<CanvasGroup>();
-        SceneIsLoading = false;
     }
 
     private void OnEnable()
@@ -36,11 +34,11 @@ public class LoadScene : Singleton<LoadScene>
 
     public bool LoadSceneByName(string sceneName)
     {
-        if (SceneIsLoading)
+        if (_SceneIsLoading)
             return false;
 
         _CanvasGroup.alpha = 1.0f;
-        SceneIsLoading = true;
+        _SceneIsLoading = true;
 
         StartCoroutine(LoadSceneAsync(sceneName));
 
@@ -48,11 +46,11 @@ public class LoadScene : Singleton<LoadScene>
     }
     public bool LoadSceneByIndex(int sceneIndex)
     {
-        if (SceneIsLoading)
+        if (_SceneIsLoading)
             return false;
 
         _CanvasGroup.alpha = 1.0f;
-        SceneIsLoading = true;
+        _SceneIsLoading = true;
 
         StartCoroutine(LoadSceneAsync(sceneIndex));
 
