@@ -233,13 +233,16 @@ public class PlayerMovement : MonoBehaviour
 
             void FixedMove()
             {
-                _rigidbody.velocity = _isGrounded ? Vector3.zero : new Vector3(0, _rigidbody.velocity.y, 0);
+                _rigidbody.velocity = new Vector3(0, _rigidbody.velocity.y > float.Epsilon ? 0 : _rigidbody.velocity.y, 0);
 
                 if (_groundAngle >= _maxSlopeAngle)
                     return;
 
                 _rawVelocity = _slopeForward * CurrentSpeed;
                 _velocity = Vector3.Lerp(_velocity, _rawVelocity, _drag * fixedDeltaTime);
+
+                if (Physics.SphereCast(new Ray(position + Vector3.up * 0.45f, _velocity), 0.3f, 0.3f))
+                    _velocity = new Vector3(_velocity.x, _velocity.y <= float.Epsilon ? _velocity.y : 0, _velocity.z);
 
                 _rigidbody.AddForce(_velocity, ForceMode.VelocityChange);
             }
@@ -269,6 +272,12 @@ public class PlayerMovement : MonoBehaviour
                 {
                     _slopeForward = Vector3.zero;
                     return;
+                }
+                else
+                {
+                    float distance = Vector3.Distance(position, hit.point);
+                    if (distance < _velocity.y && distance > 0.045f)
+                        transform.position = hit.point;
                 }
 
                 _slopeForward = Vector3.Cross(Vector3.Cross(Vector3.up, _forward), hit.normal).normalized;
