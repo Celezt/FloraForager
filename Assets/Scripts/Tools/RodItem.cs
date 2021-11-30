@@ -113,15 +113,10 @@ public class RodItem : IUse, IStar, IValue
 
         // -- START FISHING --
 
-        _playerStamina.Stamina += _staminaChange;
-
         PlayerInput playerInput = PlayerInput.GetPlayerByIndex(context.playerIndex);
 
         UIStateVisibility.Instance.Hide("inventory");
         playerInput.DeactivateInput();
-
-        GameObject model = null;
-        SkinnedMeshRenderer rodMeshRenderer = null;
 
         HumanoidAnimationBehaviour animationBehaviour = playerInput.GetComponentInChildren<HumanoidAnimationBehaviour>();
         PlayerMovement playerMovement = playerInput.GetComponent<PlayerMovement>();
@@ -134,6 +129,9 @@ public class RodItem : IUse, IStar, IValue
         RodItem rodItem = ItemTypeSettings.Instance.ItemTypeChunk[context.id].Behaviour as RodItem;
 
         string fishStatus = _catchFailSound; // sound to play depending on current fish status (success/failed)
+
+        GameObject model = null;
+        SkinnedMeshRenderer rodMeshRenderer = null;
 
         IEnumerator exitEnumerator = Exit();
 
@@ -185,6 +183,7 @@ public class RodItem : IUse, IStar, IValue
         yield return new WaitForSeconds(_onSwing);
 
         SoundPlayer.Instance.Play(_castSound);
+        _playerStamina.Stamina += _staminaChange;
 
         yield return new WaitForSeconds(_onCastUse - _onSwing);
         

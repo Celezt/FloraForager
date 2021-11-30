@@ -40,12 +40,6 @@ public class FloraObject : MonoBehaviour, IUsable
         _MeshRenderer = GetComponent<MeshRenderer>();
         _Collider = GetComponent<BoxCollider>();
 
-        if (_Flora.CurrentMeshFilter != null && _Flora.CurrentMeshRenderer != null)
-        {
-            _MeshFilter.mesh = _Flora.CurrentMeshFilter.sharedMesh; // set new mesh and materials on this object
-            _MeshRenderer.materials = _Flora.CurrentMeshRenderer.sharedMaterials;
-        }
-
         _Flora.OnGrow += UpdateMesh;
         _Flora.OnWatered += Watered;
 
@@ -54,12 +48,17 @@ public class FloraObject : MonoBehaviour, IUsable
 
     private void UpdateMesh()
     {
-        if (_Flora.CurrentMeshFilter != null && _Flora.CurrentMeshRenderer != null)
+        if (_Flora.CurrentMeshFilter != null || _Flora.CurrentMeshRenderer != null)
         {
             _MeshFilter.mesh = _Flora.CurrentMeshFilter.sharedMesh;
             _MeshRenderer.materials = _Flora.CurrentMeshRenderer.sharedMaterials;
-            
-            _MeshRenderer.material = _DryMaterial;
+
+            Material[] materials = new Material[_MeshRenderer.materials.Length];
+            for (int i = 0; i < materials.Length; ++i)
+            {
+                materials[i] = (_Flora.CurrentMeshRenderer.sharedMaterials[i] == _WateredMaterial) ? _DryMaterial : _MeshRenderer.materials[i];
+            }
+            _MeshRenderer.materials = materials;
         }
 
         transform.position = _Flora.Cell.Middle;
@@ -71,7 +70,15 @@ public class FloraObject : MonoBehaviour, IUsable
 
     private void Watered()
     {
-        _MeshRenderer.material = _WateredMaterial;
+        if (_Flora.CurrentMeshRenderer != null)
+        {
+            Material[] materials = new Material[_MeshRenderer.materials.Length];
+            for (int i = 0; i < materials.Length; ++i)
+            {
+                materials[i] = (_Flora.CurrentMeshRenderer.sharedMaterials[i] == _DryMaterial) ? _WateredMaterial : _MeshRenderer.materials[i];
+            }
+            _MeshRenderer.materials = materials;
+        }
     }
 
     public void OnUse(UsedContext context)
