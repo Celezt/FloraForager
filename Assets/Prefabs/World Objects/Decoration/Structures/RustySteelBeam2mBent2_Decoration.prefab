@@ -14,6 +14,25 @@ MeshCollider:
   m_Convex: 0
   m_CookingOptions: 30
   m_Mesh: {fileID: -3911985959890712933, guid: 4d9ec23a092f52a44b4279d65fbe4f5d, type: 3}
+--- !u!205 &-5306039495867929584
+LODGroup:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2913471372763854464}
+  serializedVersion: 2
+  m_LocalReferencePoint: {x: -0.0068889856, y: -0.0051990002, z: -0.13402015}
+  m_Size: 1.9504409
+  m_FadeMode: 0
+  m_AnimateCrossFading: 0
+  m_LastLODIsBillboard: 0
+  m_LODs:
+  - screenRelativeHeight: 0.05
+    fadeTransitionWidth: 0
+    renderers:
+    - renderer: {fileID: 3705977294267111253}
+  m_Enabled: 1
 --- !u!1001 &2643563602444209105
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -71,7 +90,7 @@ PrefabInstance:
       objectReference: {fileID: 2100000, guid: bb0d827c5d0484443b4dbe0bd5200f0d, type: 2}
     - target: {fileID: 919132149155446097, guid: 4d9ec23a092f52a44b4279d65fbe4f5d, type: 3}
       propertyPath: m_Name
-      value: SteelBeam2mBent2_Decoration
+      value: RustySteelBeam2mBent2_Decoration
       objectReference: {fileID: 0}
     - target: {fileID: 919132149155446097, guid: 4d9ec23a092f52a44b4279d65fbe4f5d, type: 3}
       propertyPath: m_StaticEditorFlags
@@ -82,5 +101,10 @@ PrefabInstance:
 --- !u!1 &2913471372763854464 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 919132149155446097, guid: 4d9ec23a092f52a44b4279d65fbe4f5d, type: 3}
+  m_PrefabInstance: {fileID: 2643563602444209105}
+  m_PrefabAsset: {fileID: 0}
+--- !u!23 &3705977294267111253 stripped
+MeshRenderer:
+  m_CorrespondingSourceObject: {fileID: -7511558181221131132, guid: 4d9ec23a092f52a44b4279d65fbe4f5d, type: 3}
   m_PrefabInstance: {fileID: 2643563602444209105}
   m_PrefabAsset: {fileID: 0}

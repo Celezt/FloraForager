@@ -13,6 +13,25 @@ BoxCollider:
   serializedVersion: 2
   m_Size: {x: 4, y: 0.39999998, z: 0.2637734}
   m_Center: {x: 0, y: 0, z: 0}
+--- !u!205 &-5567665629794801715
+LODGroup:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3510465553757229465}
+  serializedVersion: 2
+  m_LocalReferencePoint: {x: 0, y: 0, z: 0}
+  m_Size: 4
+  m_FadeMode: 0
+  m_AnimateCrossFading: 0
+  m_LastLODIsBillboard: 0
+  m_LODs:
+  - screenRelativeHeight: 0.05
+    fadeTransitionWidth: 0
+    renderers:
+    - renderer: {fileID: 3150076221960646732}
+  m_Enabled: 1
 --- !u!1001 &4356885208905870536
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -70,7 +89,7 @@ PrefabInstance:
       objectReference: {fileID: 2100000, guid: bb0d827c5d0484443b4dbe0bd5200f0d, type: 2}
     - target: {fileID: 919132149155446097, guid: f4bb4c34aba3d1b4da6ae0eee982da5a, type: 3}
       propertyPath: m_Name
-      value: SteelBeam4m_Decoration
+      value: RustySteelBeam4m_Decoration
       objectReference: {fileID: 0}
     - target: {fileID: 919132149155446097, guid: f4bb4c34aba3d1b4da6ae0eee982da5a, type: 3}
       propertyPath: m_StaticEditorFlags
@@ -81,5 +100,10 @@ PrefabInstance:
 --- !u!1 &3510465553757229465 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 919132149155446097, guid: f4bb4c34aba3d1b4da6ae0eee982da5a, type: 3}
+  m_PrefabInstance: {fileID: 4356885208905870536}
+  m_PrefabAsset: {fileID: 0}
+--- !u!23 &3150076221960646732 stripped
+MeshRenderer:
+  m_CorrespondingSourceObject: {fileID: -7511558181221131132, guid: f4bb4c34aba3d1b4da6ae0eee982da5a, type: 3}
   m_PrefabInstance: {fileID: 4356885208905870536}
   m_PrefabAsset: {fileID: 0}
