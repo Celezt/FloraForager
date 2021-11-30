@@ -1,0 +1,86 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4d2bcc035f066ed4598cafbdedd2b7d6, type: 3}
+  m_Name: comm_JanesPassionForFish
+  m_EditorClassIdentifier: 
+  serializationData:
+    SerializedFormat: 2
+    SerializedBytes: 
+    ReferencedUnityObjects: []
+    SerializedBytesString: 
+    Prefab: {fileID: 0}
+    PrefabModificationsReferencedUnityObjects: []
+    PrefabModifications: []
+    SerializationNodes:
+    - Name: _Objectives
+      Entry: 7
+      Data: 0|IObjective[], Assembly-CSharp
+    - Name: 
+      Entry: 12
+      Data: 1
+    - Name: 
+      Entry: 7
+      Data: 1|GatherObjective, Assembly-CSharp
+    - Name: ItemToGather
+      Entry: 7
+      Data: ItemAsset, Assembly-CSharp
+    - Name: ID
+      Entry: 1
+      Data: floatish
+    - Name: Amount
+      Entry: 3
+      Data: 3
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: CurrentAmount
+      Entry: 3
+      Data: 0
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: 
+      Entry: 13
+      Data: 
+    - Name: 
+      Entry: 8
+      Data: 
+  _Title: Jane's passion for fish
+  _Description: Fish 3 Floatish for Jane before she starves to death.
+  _Repeatable: 0
+  _TimeLimit: 3
+  _MinRelation: 3
+  _RewardRelations: 30
+  _PenaltyRelations: 30
+  _Rewards:
+  - ID: gelplant_seed
+    Amount: 10
+  - ID: porock_seed
+    Amount: 10
+  _AcceptDialogue:
+  - NPC: jane
+    Dialogue:
+      Asset:
+        m_AssetGUID: 8336135f126e9464aae5df35fd61d4e1
+        m_SubObjectName: 
+        m_SubObjectType: 
+        m_EditorAssetChanged: 0
+      Aliases: []
+  _CompleteDialogue:
+  - NPC: jane
+    Dialogue:
+      Asset:
+        m_AssetGUID: a78d5472c5a7d704aa563a90ff7d2989
+        m_SubObjectName: 
+        m_SubObjectType: 
+        m_EditorAssetChanged: 0
+      Aliases: []

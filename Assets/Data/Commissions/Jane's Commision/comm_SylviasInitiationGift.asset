@@ -1,0 +1,84 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4d2bcc035f066ed4598cafbdedd2b7d6, type: 3}
+  m_Name: comm_SylviasInitiationGift
+  m_EditorClassIdentifier: 
+  serializationData:
+    SerializedFormat: 2
+    SerializedBytes: 
+    ReferencedUnityObjects: []
+    SerializedBytesString: 
+    Prefab: {fileID: 0}
+    PrefabModificationsReferencedUnityObjects: []
+    PrefabModifications: []
+    SerializationNodes:
+    - Name: _Objectives
+      Entry: 7
+      Data: 0|IObjective[], Assembly-CSharp
+    - Name: 
+      Entry: 12
+      Data: 1
+    - Name: 
+      Entry: 7
+      Data: 1|GatherObjective, Assembly-CSharp
+    - Name: ItemToGather
+      Entry: 7
+      Data: ItemAsset, Assembly-CSharp
+    - Name: ID
+      Entry: 1
+      Data: spookish
+    - Name: Amount
+      Entry: 3
+      Data: 1
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: CurrentAmount
+      Entry: 3
+      Data: 0
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: 
+      Entry: 13
+      Data: 
+    - Name: 
+      Entry: 8
+      Data: 
+  _Title: Sylvia's Initation gift
+  _Description: Bring a spookish for Jane's gift for Sylvia.
+  _Repeatable: 0
+  _TimeLimit: 1
+  _MinRelation: 4
+  _RewardRelations: 50
+  _PenaltyRelations: -50
+  _Rewards:
+  - ID: gel
+    Amount: 100
+  _AcceptDialogue:
+  - NPC: jane
+    Dialogue:
+      Asset:
+        m_AssetGUID: 5a2acc4d84822634db22ece6a87930ab
+        m_SubObjectName: 
+        m_SubObjectType: 
+        m_EditorAssetChanged: 0
+      Aliases: []
+  _CompleteDialogue:
+  - NPC: jane
+    Dialogue:
+      Asset:
+        m_AssetGUID: 2efb0f913d0b0ce45a68be4d3b025c4a
+        m_SubObjectName: 
+        m_SubObjectType: 
+        m_EditorAssetChanged: 0
+      Aliases: []

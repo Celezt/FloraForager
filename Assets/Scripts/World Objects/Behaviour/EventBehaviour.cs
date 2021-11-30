@@ -60,11 +60,11 @@ public class EventBehaviour : MonoBehaviour, IStreamable<EventBehaviour.Data>
 
     private void OnDestroy()
     {
-        if (LoadScene.SceneIsLoading)
-            return;
-
-        if (_SaveIfInvoked && _Data != null)
-            _Data.IsInvoked = true;
+        if (gameObject.scene.isLoaded)
+        {
+            if (_SaveIfInvoked && _Data != null)
+                _Data.IsInvoked = true;
+        }
     }
 
     private void OnTriggerEnter(Collider other)
@@ -72,7 +72,6 @@ public class EventBehaviour : MonoBehaviour, IStreamable<EventBehaviour.Data>
         if (other.CompareTag("Player"))
         {
             Invoke();
-            Destroy(this);
         }
     }
 }
