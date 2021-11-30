@@ -185,6 +185,11 @@ public class PlayerMovement : MonoBehaviour
         DebugLogConsole.AddCommandInstance("player.drag", "Sets player's drag value", nameof(SetDrag), this);
         DebugLogConsole.AddCommandInstance("player.ground_check_distance", "Sets player's ground check distance if on the ground", nameof(SetGroundCheckDistance), this);
         DebugLogConsole.AddCommandInstance("player.max_slope_angle", "Sets player's max slope angle that are possible to move over", nameof(SetMaxSlopeAngle), this);
+
+        _rigidbody.freezeRotation = true;
+
+        if (Physics.Raycast(transform.position + Vector3.up * 0.1f, -Vector3.up, out RaycastHit hit, 10f, _groundLayer))
+            transform.position = hit.point;
     }
 
     private void FixedUpdate()
@@ -228,12 +233,15 @@ public class PlayerMovement : MonoBehaviour
 
             void FixedMove()
             {
+                _rigidbody.velocity = _isGrounded ? Vector3.zero : new Vector3(0, _rigidbody.velocity.y, 0);
+
                 if (_groundAngle >= _maxSlopeAngle)
                     return;
 
-                _rawVelocity = _slopeForward * CurrentSpeed * fixedDeltaTime;
+                _rawVelocity = _slopeForward * CurrentSpeed;
                 _velocity = Vector3.Lerp(_velocity, _rawVelocity, _drag * fixedDeltaTime);
-                _rigidbody.MovePosition(position + _velocity);
+
+                _rigidbody.AddForce(_velocity, ForceMode.VelocityChange);
             }
 
             void FixedRotate()
@@ -260,8 +268,6 @@ public class PlayerMovement : MonoBehaviour
                 if (!_isGrounded)
                 {
                     _slopeForward = Vector3.zero;
-                    _rigidbody.velocity = new Vector3(0, _rigidbody.velocity.y, 0);
-
                     return;
                 }
 
