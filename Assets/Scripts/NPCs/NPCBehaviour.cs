@@ -7,13 +7,17 @@ using UnityEngine.InputSystem;
 /// <summary>
 /// foundation for NPC
 /// </summary>
-public class NPCObject : MonoBehaviour, IInteractable
+public class NPCBehaviour : MonoBehaviour, IInteractable, IUsable
 {
+    [SerializeField]
+    private HumanoidAnimationBehaviour _HumanoidAnimationBehaviour;
+    [SerializeField]
+    private AnimationClip _ScaredClip;
     [SerializeField] 
     private string _NameID;
     [SerializeField]
     private float _ExitRadius = 5.0f;
-
+        
     private GameObject _Player;
 
     public NPC NPC { get; private set; }
@@ -93,5 +97,15 @@ public class NPCObject : MonoBehaviour, IInteractable
             else
                 NPC.OpenCommissions();
         }
+    }
+
+    ItemLabels IUsable.Filter() => ItemLabels.Axe | ItemLabels.Scythe | ItemLabels.Pickaxe;
+
+    void IUsable.OnUse(UsedContext context)
+    {
+        if (_ScaredClip == null)
+            return;
+
+        _HumanoidAnimationBehaviour.CustomMotionRaise(_ScaredClip);
     }
 }
