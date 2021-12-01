@@ -111,7 +111,7 @@ public class WateringCanItem : IUse, IStar
             {
                 if (cell.HeldObject.TryGetComponent(out FloraObject floraObject))
                 {
-                    if (floraObject.Flora.Water())
+                    if (!floraObject.Flora.Watered)
                     {
                         GameObject model = null;
 
@@ -135,12 +135,13 @@ public class WateringCanItem : IUse, IStar
 
                         yield return new WaitForSeconds(_onWateringUse);
 
-                        SoundPlayer.Instance.TryGetSound(_wateringSound, out SoundPlayer.Sound sound);
-
-                        SoundPlayer.Instance.Play(_wateringSound, -sound.Volume / _maxUses * (_maxUses - _usesLeft));
+                        if (SoundPlayer.Instance.TryGetSound(_wateringSound, out SoundPlayer.Sound sound))
+                            SoundPlayer.Instance.Play(_wateringSound, -sound.Volume / _maxUses * (_maxUses - _usesLeft));
 
                         --_usesLeft;
                         _playerStamina.Stamina += _waterStaminaChange;
+
+                        floraObject.Flora.Water();
                     }
                 }
             }

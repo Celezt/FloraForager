@@ -49,6 +49,7 @@ public class Flora : IStreamable<Flora.Data>
     public Cell Cell => GameGrid.Instance.GetCellLocal(_Data.CellPosition);
 
     public bool Completed => (_Data.Day >= _Info.GrowTime);
+    public bool Watered => _Data.Watered;
 
     public Flora(FloraInfo floraInfo, Vector2Int cellPos)
     {
