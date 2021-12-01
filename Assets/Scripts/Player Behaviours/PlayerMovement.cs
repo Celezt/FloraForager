@@ -273,6 +273,12 @@ public class PlayerMovement : MonoBehaviour
                     _slopeForward = Vector3.zero;
                     return;
                 }
+                else
+                {
+                    float distance = Vector3.Distance(position, hit.point);
+                    if (distance < _velocity.y && distance > 0.045f)
+                        transform.position = hit.point;
+                }
 
                 _slopeForward = Vector3.Cross(Vector3.Cross(Vector3.up, _forward), hit.normal).normalized;
             };
