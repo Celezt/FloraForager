@@ -6,11 +6,16 @@ using Sirenix.OdinInspector;
 
 public class RockBehaviour : MonoBehaviour, IStreamable<RockBehaviour.Data>, IUsable
 {
-    [SerializeField] private Transform _shakeTransform;
+    [SerializeField] private string _hitSound = "hit_rock";
     [SerializeField] private string _breakSound = "break_wood";
     [SerializeField] private ItemLabels _filter = ItemLabels.Pickaxe;
     [SerializeField] private Stars _star = Stars.One;
     [SerializeField] private List<DropType> _drops = new List<DropType>();
+    [Header("Shake Settings")]
+    [SerializeField] private Transform _shakeTransform;
+    [SerializeField] private float _shakeDuration = 2.0f;
+    [SerializeField] private float _shakeStrength = 0.05f;
+    [SerializeField] private float _shakeAngleRotation = 0.0f;
 
     [SerializeField, PropertyOrder(-1), HideLabel, InlineProperty]
     private Data _data;
@@ -52,7 +57,12 @@ public class RockBehaviour : MonoBehaviour, IStreamable<RockBehaviour.Data>, IUs
         context.Damage(ref _data.Durability, new MinMaxFloat(1, 2), _star);
 
         if (_shakeTransform != null)
-            context.Shake(_shakeTransform, 2, angleRotation: 0);
+            context.Shake(_shakeTransform, _shakeDuration, strength: _shakeStrength, angleRotation: _shakeAngleRotation);
+
+        if (_data.Durability >= previousDurability)
+            SoundPlayer.Instance.Play("hit_poor");
+        else
+            SoundPlayer.Instance.Play(_hitSound);
 
         if (_data.Durability <= 0)
         {
@@ -60,11 +70,6 @@ public class RockBehaviour : MonoBehaviour, IStreamable<RockBehaviour.Data>, IUs
 
             context.Drop(transform.TransformPoint(_Collider.center), _drops);
             gameObject.SetActive(false);
-        }
-        else
-        {
-            if (_data.Durability >= previousDurability)
-                SoundPlayer.Instance.Play("hit_poor");
         }
     }
 }
