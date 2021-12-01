@@ -256,6 +256,7 @@ public class RodItem : IUse, IStar, IValue
             inventory.Insert(new ItemAsset { ID = hookedFish, Amount = 1 });
 
             fishingManager.OnCatchCallback -= CatchFishAction;
+            fishingManager.OnFleeCallback -= FleeFishAction;
         };
         void FleeFishAction()
         {
@@ -264,6 +265,7 @@ public class RodItem : IUse, IStar, IValue
 
             inventory.RemoveAt(fishBaitIndex, 1);
 
+            fishingManager.OnCatchCallback -= CatchFishAction;
             fishingManager.OnFleeCallback -= FleeFishAction;
         };
 
