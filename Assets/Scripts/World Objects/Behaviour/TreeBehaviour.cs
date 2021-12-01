@@ -8,6 +8,7 @@ using MyBox;
 
 public class TreeBehaviour : MonoBehaviour, IStreamable<TreeBehaviour.Data>, IUsable
 {
+    [SerializeField] private Transform _shakeTransform;
     [SerializeField] private string _breakSound = "break_wood";
     [SerializeField] private ItemLabels _filter = ItemLabels.Axe;
     [SerializeField] private Stars _star = Stars.One;
@@ -52,6 +53,9 @@ public class TreeBehaviour : MonoBehaviour, IStreamable<TreeBehaviour.Data>, IUs
 
         float previousDurability = _data.Durability;
         context.Damage(ref _data.Durability, new MinMaxFloat(1, 2), _star);
+
+        if (_shakeTransform != null)
+            context.Shake(_shakeTransform, 2);
 
         if (_data.Durability <= 0)
         {

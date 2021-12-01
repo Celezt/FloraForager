@@ -6,6 +6,7 @@ using Sirenix.OdinInspector;
 
 public class RockBehaviour : MonoBehaviour, IStreamable<RockBehaviour.Data>, IUsable
 {
+    [SerializeField] private Transform _shakeTransform;
     [SerializeField] private string _breakSound = "break_wood";
     [SerializeField] private ItemLabels _filter = ItemLabels.Pickaxe;
     [SerializeField] private Stars _star = Stars.One;
@@ -49,6 +50,9 @@ public class RockBehaviour : MonoBehaviour, IStreamable<RockBehaviour.Data>, IUs
 
         float previousDurability = _data.Durability;
         context.Damage(ref _data.Durability, new MinMaxFloat(1, 2), _star);
+
+        if (_shakeTransform != null)
+            context.Shake(_shakeTransform, 2, angleRotation: 0);
 
         if (_data.Durability <= 0)
         {
