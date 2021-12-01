@@ -9,6 +9,7 @@ using MyBox;
 public class TreeBehaviour : MonoBehaviour, IStreamable<TreeBehaviour.Data>, IUsable
 {
     [SerializeField] private Transform _shakeTransform;
+    [SerializeField] private string _hitSound = "hit_wood";
     [SerializeField] private string _breakSound = "break_wood";
     [SerializeField] private ItemLabels _filter = ItemLabels.Axe;
     [SerializeField] private Stars _star = Stars.One;
@@ -57,17 +58,17 @@ public class TreeBehaviour : MonoBehaviour, IStreamable<TreeBehaviour.Data>, IUs
         if (_shakeTransform != null)
             context.Shake(_shakeTransform, 2);
 
+        if (_data.Durability >= previousDurability)
+            SoundPlayer.Instance.Play("hit_poor");
+        else
+            SoundPlayer.Instance.Play(_hitSound);
+
         if (_data.Durability <= 0)
         {
             SoundPlayer.Instance.Play(_breakSound);
 
             context.Drop(transform.TransformPoint(_Collider.center), _drops);
             gameObject.SetActive(false);
-        }
-        else
-        {
-            if (_data.Durability >= previousDurability)
-                SoundPlayer.Instance.Play("hit_poor");
         }
 
     }
