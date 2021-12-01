@@ -8,7 +8,7 @@ using MyBox;
 
 public class TreeBehaviour : MonoBehaviour, IStreamable<TreeBehaviour.Data>, IUsable
 {
-    [SerializeField] private ParticleSystem _particleSystem;
+    
     [SerializeField] private string _hitSound = "hit_wood";
     [SerializeField] private string _breakSound = "break_wood";
     [SerializeField] private ItemLabels _filter = ItemLabels.Axe;
@@ -19,6 +19,11 @@ public class TreeBehaviour : MonoBehaviour, IStreamable<TreeBehaviour.Data>, IUs
     [SerializeField] private float _shakeDuration = 2.0f;
     [SerializeField] private float _shakeStrength = 0.05f;
     [SerializeField] private float _shakeAngleRotation = 1.0f;
+    [Header("Particle Settings")]
+    [SerializeField] private ParticleSystem _particleSystem;
+    [SerializeField] private ParticleSystem _particleSystemLeaf;
+    [SerializeField] private int _woodAmount = 0;
+    [SerializeField] private int _leafAmount = 0;
 
     [SerializeField, PropertyOrder(-1), HideLabel, InlineProperty]
     private Data _data;
@@ -63,8 +68,11 @@ public class TreeBehaviour : MonoBehaviour, IStreamable<TreeBehaviour.Data>, IUs
         if (_shakeTransform != null)
             context.Shake(_shakeTransform, _shakeDuration, strength: _shakeStrength, angleRotation: _shakeAngleRotation);
 
-        //if (_particleSystem != null)
-            //_particleSystem.Emit(100);
+        if (_particleSystem != null)
+            _particleSystem.Emit(_woodAmount);
+
+        if (_particleSystemLeaf != null)
+            _particleSystemLeaf.Emit(_leafAmount);
 
         if (_data.Durability >= previousDurability)
             SoundPlayer.Instance.Play("hit_poor");
