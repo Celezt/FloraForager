@@ -63,8 +63,8 @@ public class TreeBehaviour : MonoBehaviour, IStreamable<TreeBehaviour.Data>, IUs
         if (_shakeTransform != null)
             context.Shake(_shakeTransform, _shakeDuration, strength: _shakeStrength, angleRotation: _shakeAngleRotation);
 
-        if (_particleSystem != null)
-            _particleSystem.Emit(100);
+        //if (_particleSystem != null)
+            //_particleSystem.Emit(100);
 
         if (_data.Durability >= previousDurability)
             SoundPlayer.Instance.Play("hit_poor");
