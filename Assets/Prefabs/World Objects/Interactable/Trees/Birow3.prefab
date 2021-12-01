@@ -71,7 +71,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0cfc55175b8d81b4db5de5ab11e96c68, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _shakeTransform: {fileID: 296764789227573879}
+  _hitSound: hit_wood
   _breakSound: break_wood
   _filter: 8192
   _star: 1
@@ -80,6 +80,10 @@ MonoBehaviour:
     DropRate:
       Min: 4
       Max: 6
+  _shakeTransform: {fileID: 296764789227573879}
+  _shakeDuration: 2
+  _shakeStrength: 0.025
+  _shakeAngleRotation: 0.5
   _data:
     Durability: 24
 --- !u!114 &7601324173234069211
