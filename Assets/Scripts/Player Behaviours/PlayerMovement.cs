@@ -100,6 +100,7 @@ public class PlayerMovement : MonoBehaviour
     [SerializeField] private float _drag = 8.0f;
     [SerializeField] private float _angularDrag = 5.0f;
     [SerializeField] private LayerMask _groundLayer;
+    [SerializeField] private LayerMask _objectLayer;
     [SerializeField] private float _groundCheckDistance = 1.5f;
     [SerializeField, Tooltip("In degrees."), Range(0, 180)] private float _maxSlopeAngle = 45.0f;
     [SerializeField] private PhysicMaterial _groundPhysicMaterial;
@@ -241,7 +242,7 @@ public class PlayerMovement : MonoBehaviour
                 _rawVelocity = _slopeForward * CurrentSpeed;
                 _velocity = Vector3.Lerp(_velocity, _rawVelocity, _drag * fixedDeltaTime);
 
-                if (Physics.SphereCast(new Ray(position + Vector3.up * 0.45f, _velocity), 0.3f, 0.3f))
+                if (Physics.Raycast(position + Vector3.up * 0.3f, _velocity, 0.5f, _objectLayer))
                     _velocity = new Vector3(_velocity.x, _velocity.y <= float.Epsilon ? _velocity.y : 0, _velocity.z);
 
                 _rigidbody.AddForce(_velocity, ForceMode.VelocityChange);
