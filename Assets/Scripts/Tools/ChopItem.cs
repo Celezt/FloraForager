@@ -24,8 +24,6 @@ public class ChopItem : IUse, IDestructor, IStar, IValue
     [SerializeField]
     private string _swingSound = "swing_tool";
     [SerializeField]
-    private string _hitSound;
-    [SerializeField]
     private string _poorSound = "hit_poor";
     [SerializeField]
     private AnimationClip _clip;
@@ -114,9 +112,7 @@ public class ChopItem : IUse, IDestructor, IStar, IValue
 
         if (collider != null)
         {
-            if (context.CallUsable(collider.GetComponent<IUsable>()))
-                SoundPlayer.Instance.Play(_hitSound);
-            else
+            if (!context.CallUsable(collider.GetComponent<IUsable>()))
                 SoundPlayer.Instance.Play(_poorSound);
         }
     }
