@@ -126,6 +126,10 @@ public class NPC : IStreamable<NPC.Data>
         for (int i = _Commissions.Length - 1; i >= 0; --i)
         {
             Commission npcCommission = _Commissions[i];
+
+            if (npcCommission == null)
+                continue;
+
             if (npcCommission.Title == commission.Title && npcCommission.Giver == commission.Giver)
             {
                 _Commissions[i] = commission;
