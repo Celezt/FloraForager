@@ -17,7 +17,10 @@ public readonly struct UsedContext
     public readonly bool started;
     public readonly bool performed;
 
+    private readonly MonoBehaviour _usable;
+
     internal UsedContext(
+        MonoBehaviour usable,
         IUse used,
         List<string> labels,
         Transform transform,
@@ -29,6 +32,7 @@ public readonly struct UsedContext
         bool started,
         bool performed)
     {
+        this._usable = usable;
         this.used = used;
         this.labels = labels;
         this.transform = transform;
@@ -75,5 +79,72 @@ public readonly struct UsedContext
                 UnityEngine.Object.Instantiate(ItemTypeSettings.Instance.ItemObject, position, Quaternion.identity)
                     .Spawn(new ItemAsset { ID = drops[i].ID, Amount = dropStack });
         }
+    }
+
+    /// <summary>
+    /// Shake an object.
+    /// </summary>
+    /// <param name="shakeTransform">Object to shake.</param>
+    /// <param name="totalShakeDuration">Total duration of the shake.</param>
+    /// <param name="decreasePoint">Start decreasing the shake at that point of the total duration. WARNING: Cannot be greater or equal to the total shake duration.</param>
+    /// <param name="strength">Shake Speed.</param>
+    /// <param name="angleRotation">Rotate whiles shaking (Optional).</param>
+    public void Shake(Transform shakeTransform, float totalShakeDuration, float decreasePoint = 0.1f, float strength = 0.05f, float angleRotation = 1.0f)
+    {
+        IEnumerator ShakeCoroutine(Transform shakeTransform, float totalShakeDuration, float decreasePoint, float strength, float angleRotation)
+        {
+            if (decreasePoint >= totalShakeDuration)
+            {
+                Debug.LogError("ERROR: DecreasePoint must be less than totalShakeDuration...Exiting");
+                yield break;
+            }
+
+            // Snapshot the original transform.
+            Transform objTransform = shakeTransform;
+            Vector3 defaultPos = objTransform.position;
+            Quaternion defaultRot = objTransform.rotation;
+
+            float counter = 0f;
+
+            // Shake the object.
+            while (counter < totalShakeDuration)
+            {
+                float deltaTime = Time.deltaTime;
+
+                counter += deltaTime;
+          
+                float decreaseStrength = strength;
+                float decreaseAngle = angleRotation;
+
+                objTransform.position = defaultPos + UnityEngine.Random.insideUnitSphere * decreaseStrength;
+                objTransform.rotation = defaultRot * Quaternion.AngleAxis(UnityEngine.Random.Range(-angleRotation, angleRotation), new Vector3(1f, 1f, 1f));
+                yield return null;
+
+
+                // Check if we have reached the decreasePoint then start decreasing decreaseSpeed value.
+                if (counter >= decreasePoint)
+                {
+                    counter = 0f;
+                    while (counter <= decreasePoint)
+                    {
+                        counter += deltaTime;
+                        decreaseStrength = Mathf.Lerp(strength, 0, counter / decreasePoint);
+                        decreaseAngle = Mathf.Lerp(angleRotation, 0, counter / decreasePoint);
+
+                        objTransform.position = defaultPos + UnityEngine.Random.insideUnitSphere * decreaseStrength;
+                        objTransform.rotation = defaultRot * Quaternion.AngleAxis(UnityEngine.Random.Range(-decreaseAngle, decreaseAngle), new Vector3(1f, 1f, 1f));
+
+                        yield return null;
+                    }
+
+                    break;
+                }
+            }
+
+            objTransform.position = defaultPos; // Reset to original position.
+            objTransform.rotation = defaultRot; // Reset to original rotation.
+        }
+
+        _usable.StartCoroutine(ShakeCoroutine(shakeTransform, totalShakeDuration, decreasePoint, strength, angleRotation));
     }
 }

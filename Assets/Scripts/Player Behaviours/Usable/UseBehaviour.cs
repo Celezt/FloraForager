@@ -63,6 +63,7 @@ public class UseBehaviour : MonoBehaviour
             if (Enum.TryParse(label, true, out ItemLabels itemLabel) && usable.Filter().HasFlag(itemLabel))
             {
                 UsedContext usedContext = new UsedContext(
+                    (MonoBehaviour)usable,
                     _use,
                     _itemType.Labels,
                     transform,

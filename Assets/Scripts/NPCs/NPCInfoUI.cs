@@ -19,7 +19,7 @@ public class NPCInfoUI : MonoBehaviour
     private Canvas _Canvas;
     private RectTransform _CanvasRect;
 
-    private NPCObject _NPCObject;
+    private NPCBehaviour _NPCObject;
     private Bounds _NPCBounds;
 
     private GameObject _Player;
@@ -46,7 +46,7 @@ public class NPCInfoUI : MonoBehaviour
 
         if (collision && distance <= _MaxHitDistance)
         {
-            if (_NPCObject == null && hitInfo.transform.TryGetComponent(out NPCObject npc))
+            if (_NPCObject == null && hitInfo.transform.TryGetComponent(out NPCBehaviour npc))
             {
                 Show(npc);
             }
@@ -63,7 +63,7 @@ public class NPCInfoUI : MonoBehaviour
         UpdatePosition();
     }
 
-    private void Show(NPCObject npc)
+    private void Show(NPCBehaviour npc)
     {
         _NPCObject = npc;
 
