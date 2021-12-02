@@ -29,14 +29,12 @@ public class InventoryHandler : MonoBehaviour
 
     private Inventory _inventory;
     private ItemTypeSettings _settings;
-    private EventSystem _eventSystem;
 
     private bool _isItemSelectable;
 
     private void Start()
     {
         _settings = ItemTypeSettings.Instance;
-        _eventSystem = EventSystem.current;
 
         void SetEmptyIcon(int index)
         {
@@ -80,7 +78,7 @@ public class InventoryHandler : MonoBehaviour
 
         _inventory.OnInventoryInitalizeCallback += (items) =>
         {
-            _slots = GetComponentsInChildren<ItemSlot>();
+            _slots = GetComponentsInChildren<ItemSlot>(true);
 
             int currentCount = items.Count;
             for (int i = 0; i < _slots.Length; i++)

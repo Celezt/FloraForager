@@ -12,6 +12,10 @@ public class PlayerInventory : MonoBehaviour
     [SerializeField]
     private InventoryHandler _hotbarHandler;
     [SerializeField]
+    private GameObject _inventoryLayout;
+    [SerializeField]
+    private GameObject _hotbarLayout;
+    [SerializeField]
     private string _openSound = "open_window";
     [SerializeField]
     private string _closeSound = "close_window";
@@ -58,8 +62,11 @@ public class PlayerInventory : MonoBehaviour
             UIStateVisibility.Instance.Hide("player_hud");
             SoundPlayer.Instance.Play(_openSound);
 
-            Show(_inventoryHandler.GetComponent<CanvasGroup>());
-            Hide(_hotbarHandler.GetComponent<CanvasGroup>());
+            //Show(_inventoryHandler.GetComponent<CanvasGroup>());
+            //Hide(_hotbarHandler.GetComponent<CanvasGroup>());
+
+            _inventoryLayout.SetActive(true);
+            _hotbarLayout.SetActive(false);
 
             Time.timeScale = 0;
         }
@@ -68,8 +75,11 @@ public class PlayerInventory : MonoBehaviour
             UIStateVisibility.Instance.Show("player_hud");
             SoundPlayer.Instance.Play(_closeSound);
 
-            Show(_hotbarHandler.GetComponent<CanvasGroup>());
-            Hide(_inventoryHandler.GetComponent<CanvasGroup>());
+            //Show(_hotbarHandler.GetComponent<CanvasGroup>());
+            //Hide(_inventoryHandler.GetComponent<CanvasGroup>());
+
+            _hotbarLayout.SetActive(true);
+            _inventoryLayout.SetActive(false);
 
             Time.timeScale = 1;
         }
@@ -102,8 +112,10 @@ public class PlayerInventory : MonoBehaviour
 
     private void Start()
     {
-        Show(_hotbarHandler.GetComponent<CanvasGroup>());
-        Hide(_inventoryHandler.GetComponent<CanvasGroup>());
+        //Show(_hotbarHandler.GetComponent<CanvasGroup>());
+        //Hide(_inventoryHandler.GetComponent<CanvasGroup>());
+        _hotbarLayout.SetActive(true);
+        _inventoryLayout.SetActive(false);
 
         PlayerInput playerInput = PlayerInput.GetPlayerByIndex(0);
 
