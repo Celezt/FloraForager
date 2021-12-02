@@ -34,6 +34,7 @@ public class TreeBehaviour : MonoBehaviour, IStreamable<TreeBehaviour.Data>, IUs
     public class Data
     {
         public float Durability = 10;
+        public float MaxDurability;
     }
 
     public Data OnUpload() => _data;
@@ -43,7 +44,6 @@ public class TreeBehaviour : MonoBehaviour, IStreamable<TreeBehaviour.Data>, IUs
 
         _data = data;
     }
-
     void IStreamable.OnBeforeSaving()
     {
 
@@ -51,6 +51,11 @@ public class TreeBehaviour : MonoBehaviour, IStreamable<TreeBehaviour.Data>, IUs
 
     [SerializeField]
     ItemLabels IUsable.Filter() => _filter;
+
+    private void Awake()
+    {
+        _data.MaxDurability = _data.Durability;
+    }
 
     private void Start()
     {

@@ -27,6 +27,7 @@ public class RockBehaviour : MonoBehaviour, IStreamable<RockBehaviour.Data>, IUs
     public class Data
     {
         public float Durability = 10;
+        public float MaxDurability;
     }
 
     public Data OnUpload() => _data;
@@ -44,6 +45,10 @@ public class RockBehaviour : MonoBehaviour, IStreamable<RockBehaviour.Data>, IUs
     [SerializeField]
     ItemLabels IUsable.Filter() => _filter;
 
+    private void Awake()
+    {
+        _data.MaxDurability = _data.Durability;
+    }
     private void Start()
     {
         _Collider = GetComponent<BoxCollider>();
