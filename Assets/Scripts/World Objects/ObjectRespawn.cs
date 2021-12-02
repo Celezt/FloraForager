@@ -71,13 +71,21 @@ public class ObjectRespawn : SerializedScriptableSingleton<ObjectRespawn>, IStre
                 if (GameManager.Stream.TryGet(guid, out Dictionary<string, object> streamables))
                 {
                     string typeName = typeof(StreamableBehaviour).ToString();
-                    if (streamables.TryGetValue(typeName, out object value))
+                    if (streamables.TryGetValue(typeof(StreamableBehaviour).ToString(), out object streamable))
                     {
-                        (value as StreamableBehaviour.Data).IsAlive = true;
+                        (streamable as StreamableBehaviour.Data).IsAlive = true;
                         if (_Objects.TryGetValue(guid, out GameObject gameObject))
                         {
                             gameObject.SetActive(true);
                         }
+                    }
+                    if (streamables.TryGetValue(typeof(TreeBehaviour).ToString(), out object tree))
+                    {
+                        (tree as TreeBehaviour.Data).Durability = (tree as TreeBehaviour.Data).MaxDurability;
+                    }
+                    if (streamables.TryGetValue(typeof(RockBehaviour).ToString(), out object rock))
+                    {
+                        (tree as RockBehaviour.Data).Durability = (tree as RockBehaviour.Data).MaxDurability;
                     }
                 }
 
