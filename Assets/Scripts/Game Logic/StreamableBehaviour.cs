@@ -31,7 +31,7 @@ public class StreamableBehaviour : MonoBehaviour, IStreamer, IStreamable<Streama
         public bool IsAlive = true;
     }
 
-    public Data OnUpload() => _data = new Data();
+    public Data OnUpload() => _data;
     public void OnLoad(object state)
     {
         _data = state as Data;
@@ -52,6 +52,8 @@ public class StreamableBehaviour : MonoBehaviour, IStreamer, IStreamable<Streama
 
     private void OnEnable()
     {
+        _data = new Data();
+
         if (GameManager.Stream.StreamedData.ContainsKey(_guid))
             Load();
 

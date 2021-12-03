@@ -6,6 +6,7 @@ using Sirenix.OdinInspector;
 
 public class RockBehaviour : MonoBehaviour, IStreamable<RockBehaviour.Data>, IUsable
 {
+    [SerializeField] private ParticleSystem _particleSystem;
     [SerializeField] private string _hitSound = "hit_rock";
     [SerializeField] private string _breakSound = "break_wood";
     [SerializeField] private ItemLabels _filter = ItemLabels.Pickaxe;
@@ -26,6 +27,7 @@ public class RockBehaviour : MonoBehaviour, IStreamable<RockBehaviour.Data>, IUs
     public class Data
     {
         public float Durability = 10;
+        public float MaxDurability;
     }
 
     public Data OnUpload() => _data;
@@ -43,6 +45,10 @@ public class RockBehaviour : MonoBehaviour, IStreamable<RockBehaviour.Data>, IUs
     [SerializeField]
     ItemLabels IUsable.Filter() => _filter;
 
+    private void Awake()
+    {
+        _data.MaxDurability = _data.Durability;
+    }
     private void Start()
     {
         _Collider = GetComponent<BoxCollider>();
@@ -58,6 +64,9 @@ public class RockBehaviour : MonoBehaviour, IStreamable<RockBehaviour.Data>, IUs
 
         if (_shakeTransform != null)
             context.Shake(_shakeTransform, _shakeDuration, strength: _shakeStrength, angleRotation: _shakeAngleRotation);
+
+        if (_particleSystem != null)
+            _particleSystem.Emit(100);
 
         if (_data.Durability >= previousDurability)
             SoundPlayer.Instance.Play("hit_poor");
