@@ -172,13 +172,13 @@ public class CommissionLog : Singleton<CommissionLog>
 
         if (_CanvasGroup.alpha == 1.0f)
         {
-            SoundPlayer.Instance.Play(_OpenSound);
+            SoundPlayer.Instance.Play(_CloseSound);
 
             Exit();
         }
         else
         {
-            SoundPlayer.Instance.Play(_CloseSound);
+            SoundPlayer.Instance.Play(_OpenSound);
 
             _CanvasGroup.alpha = 1.0f;
             _CanvasGroup.blocksRaycasts = true;
