@@ -70,17 +70,17 @@ public class RelationshipManager
             if ((int)relation != (int)dialogueRelation.AtRelation)
                 continue;
 
-            if (!string.IsNullOrWhiteSpace(dialogueRelation.RepeatingDialogue.Item1))
-                npc.SetRepeatingDialouge(dialogueRelation.RepeatingDialogue.Item1, dialogueRelation.RepeatingDialogue.Item2);
+            if (!string.IsNullOrWhiteSpace(dialogueRelation.RepeatingDialogue))
+                npc.SetRepeatingDialouge(dialogueRelation.RepeatingDialogue);
 
             if (dialogueRelation.AddedDialogue != null)
             {
-                foreach ((float, string, string[]) dialogue in dialogueRelation.AddedDialogue)
+                foreach ((float, string) dialogue in dialogueRelation.AddedDialogue)
                 {
                     if (string.IsNullOrWhiteSpace(dialogue.Item2))
                         continue;
 
-                    npc.DialogueQueue.Enqueue((dialogue.Item2, dialogue.Item3), dialogue.Item1);
+                    npc.DialogueQueue.Enqueue(dialogue.Item2, dialogue.Item1);
                 }
                 dialogueRelation.AddedDialogue = null;
             }
