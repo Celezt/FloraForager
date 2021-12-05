@@ -34,7 +34,7 @@ public class TreeBehaviour : MonoBehaviour, IStreamable<TreeBehaviour.Data>, IUs
     public class Data
     {
         public float Durability = 10;
-        public float MaxDurability;
+        [HideInInspector] public float MaxDurability;
     }
 
     public Data OnUpload() => _data;
@@ -91,6 +91,5 @@ public class TreeBehaviour : MonoBehaviour, IStreamable<TreeBehaviour.Data>, IUs
             context.Drop(transform.TransformPoint(_Collider.center), _drops);
             gameObject.SetActive(false);
         }
-
     }
 }
