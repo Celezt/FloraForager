@@ -61,9 +61,9 @@ public class NPCBehaviour : MonoBehaviour, IInteractable, IUsable
 
         if (NPC.DialogueQueue.Count > 0)
         {
-            (string, string[]) dialogue = NPC.DialogueQueue.Dequeue();
+            string dialogue = NPC.DialogueQueue.Dequeue();
 
-            if (!string.IsNullOrWhiteSpace(dialogue.Item1))
+            if (!string.IsNullOrWhiteSpace(dialogue))
             {
                 void CompleteAction(DialogueManager manager)
                 {
@@ -71,16 +71,16 @@ public class NPCBehaviour : MonoBehaviour, IInteractable, IUsable
                     manager.Completed -= CompleteAction;
                 };
 
-                DialogueManager.GetByIndex(context.playerIndex).StartDialogue(dialogue.Item1, dialogue.Item2).Completed += CompleteAction;
+                DialogueManager.GetByIndex(context.playerIndex).StartDialogue(dialogue).Completed += CompleteAction;
             }
             else
                 playerInput.ActivateInput();
         }
         else
         {
-            (string, string[]) dialogue = NPC.RepeatingDialogue;
+            string dialogue = NPC.RepeatingDialogue;
 
-            if (!string.IsNullOrWhiteSpace(dialogue.Item1))
+            if (!string.IsNullOrWhiteSpace(dialogue))
             {
                 void CompleteAction(DialogueManager manager)
                 {
@@ -92,7 +92,7 @@ public class NPCBehaviour : MonoBehaviour, IInteractable, IUsable
                     manager.Completed -= CompleteAction;
                 };
 
-                DialogueManager.GetByIndex(context.playerIndex).StartDialogue(dialogue.Item1, dialogue.Item2).Completed += CompleteAction;
+                DialogueManager.GetByIndex(context.playerIndex).StartDialogue(dialogue).Completed += CompleteAction;
             }
             else
                 NPC.OpenCommissions();

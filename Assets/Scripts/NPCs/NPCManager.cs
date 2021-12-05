@@ -68,7 +68,7 @@ public class NPCManager : SerializedScriptableSingleton<NPCManager>, IStreamer
     {
         npc.DialogueQueue.Remove(pos);
     }
-    public void RemoveDialogue(NPC npc, (string, string[]) dialogue)
+    public void RemoveDialogue(NPC npc, string dialogue)
     {
         npc.DialogueQueue.Remove(dialogue);
     }
@@ -76,43 +76,43 @@ public class NPCManager : SerializedScriptableSingleton<NPCManager>, IStreamer
     {
         Get(npc).DialogueQueue.Remove(pos);
     }
-    public void RemoveDialogue(string npc, (string, string[]) dialogue)
+    public void RemoveDialogue(string npc, string dialogue)
     {
         Get(npc).DialogueQueue.Remove(dialogue);
     }
 
-    public void EnqueueDialogue(NPC npc, string address, float priority, params string[] aliases)
+    public void EnqueueDialogue(NPC npc, string address, float priority)
     {
-        npc.DialogueQueue.Enqueue((address, aliases), priority);
+        npc.DialogueQueue.Enqueue(address, priority);
     }
-    public void EnqueueDialogue(NPC npc, AssetReferenceText asset, float priority, params string[] aliases)
+    public void EnqueueDialogue(NPC npc, AssetReferenceText asset, float priority)
     {
-        EnqueueDialogue(npc, asset.AssetGUID, priority, aliases);
+        EnqueueDialogue(npc, asset.AssetGUID, priority);
     }
-    public void EnqueueDialogue(string npc, string address, float priority, params string[] aliases)
+    public void EnqueueDialogue(string npc, string address, float priority)
     {
-        Get(npc).DialogueQueue.Enqueue((address, aliases), priority);
+        Get(npc).DialogueQueue.Enqueue(address, priority);
     }
-    public void EnqueueDialogue(string npc, AssetReferenceText asset, float priority, params string[] aliases)
+    public void EnqueueDialogue(string npc, AssetReferenceText asset, float priority)
     {
-        EnqueueDialogue(npc, asset.AssetGUID, priority, aliases);
+        EnqueueDialogue(npc, asset.AssetGUID, priority);
     }
 
-    public void SetRepeatingDialogue(NPC npc, string address, params string[] aliases)
+    public void SetRepeatingDialogue(NPC npc, string address)
     {
-        npc.SetRepeatingDialouge(address, aliases);
+        npc.SetRepeatingDialouge(address);
     }
-    public void SetRepeatingDialogue(NPC npc, AssetReferenceText asset, params string[] aliases)
+    public void SetRepeatingDialogue(NPC npc, AssetReferenceText asset)
     {
-        SetRepeatingDialogue(npc, asset.AssetGUID, aliases);
+        SetRepeatingDialogue(npc, asset.AssetGUID);
     }
-    public void SetRepeatingDialogue(string npc, string address, params string[] aliases)
+    public void SetRepeatingDialogue(string npc, string address)
     {
-        Get(npc).SetRepeatingDialouge(address, aliases);
+        Get(npc).SetRepeatingDialouge(address);
     }
-    public void SetRepeatingDialogue(string npc, AssetReferenceText asset, params string[] aliases)
+    public void SetRepeatingDialogue(string npc, AssetReferenceText asset)
     {
-        SetRepeatingDialogue(npc, asset.AssetGUID, aliases);
+        SetRepeatingDialogue(npc, asset.AssetGUID);
     }
 
     public void UpLoad()

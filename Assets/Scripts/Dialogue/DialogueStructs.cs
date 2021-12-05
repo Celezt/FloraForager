@@ -5,25 +5,18 @@ using Sirenix.OdinInspector;
 [System.Serializable]
 public struct DialoguePriority
 {
+    [HorizontalGroup("Group")]
+    [VerticalGroup("Group/Left"), LabelWidth(50)]
     public float Priority;
-    public AssetReferenceText Asset;
-    [PropertySpace(5), ListDrawerSettings(AlwaysAddDefaultValue = true, ShowItemCount = false, Expanded = true)]
-    public string[] Aliases;
-}
-
-[System.Serializable]
-public struct DialogueElement
-{
-    public AssetReferenceText Asset;
-    [PropertySpace(5), ListDrawerSettings(AlwaysAddDefaultValue = true, ShowItemCount = false, Expanded = true)]
-    public string[] Aliases;
+    [HideLabel, InlineProperty, VerticalGroup("Group/Right")]
+    public AssetReferenceText Dialogue;
 }
 
 [System.Serializable]
 public struct DialogueRelation
 {
     public Relation AtRelation;
-    public DialogueElement RepeatingDialogue;
+    public AssetReferenceText RepeatingDialogue;
     [ListDrawerSettings(AlwaysAddDefaultValue = true, ShowItemCount = true, DraggableItems = false, Expanded = true)]
     public DialoguePriority[] AddedDialogue;
 }
@@ -32,8 +25,8 @@ public struct DialogueRelation
 public struct DialogueRelationSave
 {
     public Relation AtRelation;
-    public (string, string[]) RepeatingDialogue;
-    public (float, string, string[])[] AddedDialogue;
+    public string RepeatingDialogue;
+    public (float, string)[] AddedDialogue;
 }
 
 [System.Serializable]
@@ -49,5 +42,5 @@ public struct DialogueAction
 {
     public string NPC;
     [HideLabel, InlineProperty]
-    public DialogueElement Dialogue;
+    public AssetReferenceText Dialogue;
 }
