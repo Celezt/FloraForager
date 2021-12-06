@@ -6,7 +6,7 @@ using Sirenix.OdinInspector;
 
 public class RockBehaviour : MonoBehaviour, IStreamable<RockBehaviour.Data>, IUsable
 {
-    [SerializeField] private ParticleSystem _particleSystem;
+    [Header("Properties")]
     [SerializeField] private string _hitSound = "hit_rock";
     [SerializeField] private string _breakSound = "break_wood";
     [SerializeField] private ItemLabels _filter = ItemLabels.Pickaxe;
@@ -17,6 +17,8 @@ public class RockBehaviour : MonoBehaviour, IStreamable<RockBehaviour.Data>, IUs
     [SerializeField] private float _shakeDuration = 2.0f;
     [SerializeField] private float _shakeStrength = 0.05f;
     [SerializeField] private float _shakeAngleRotation = 0.0f;
+    [Header("Particle Settings")]
+    [SerializeField] private ParticleSystem _particleSystem;
 
     [SerializeField, PropertyOrder(-1), HideLabel, InlineProperty]
     private Data _data;
@@ -27,7 +29,7 @@ public class RockBehaviour : MonoBehaviour, IStreamable<RockBehaviour.Data>, IUs
     public class Data
     {
         public float Durability = 10;
-        public float MaxDurability;
+        [HideInInspector] public float MaxDurability;
     }
 
     public Data OnUpload() => _data;
@@ -68,10 +70,10 @@ public class RockBehaviour : MonoBehaviour, IStreamable<RockBehaviour.Data>, IUs
         if (_particleSystem != null)
             _particleSystem.Emit(100);
 
-        if (_data.Durability >= previousDurability)
-            SoundPlayer.Instance.Play("hit_poor");
-        else
+        if (_data.Durability < previousDurability)
             SoundPlayer.Instance.Play(_hitSound);
+        else
+            SoundPlayer.Instance.Play("hit_poor");
 
         if (_data.Durability <= 0)
         {
