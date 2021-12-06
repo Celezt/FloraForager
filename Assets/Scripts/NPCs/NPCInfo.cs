@@ -28,7 +28,7 @@ public class NPCInfo : SerializedScriptableObject
     [Title("Dialogue")]
     [Title("Repeating Dialogue", Bold = false)]
     [SerializeField, HideLabel, InlineProperty]
-    private DialogueElement _RepeatingDialogue;
+    private AssetReferenceText _RepeatingDialogue;
     [Title("Initial Dialogue", Bold = false)]
     [SerializeField, Space(5), ListDrawerSettings(ShowItemCount = false, DraggableItems = false, Expanded = true)]
     private DialoguePriority[] _InitialDialogue;
@@ -45,7 +45,7 @@ public class NPCInfo : SerializedScriptableObject
     public bool HasCommissions => _HasCommissions;
     public CommissionInfo[] CommissionsData => _CommissionsInfo;
 
-    public DialogueElement RepeatingDialogue => _RepeatingDialogue;
+    public AssetReferenceText RepeatingDialogue => _RepeatingDialogue;
     public DialoguePriority[] InitialDialogue => _InitialDialogue;
     public DialogueRelation[] RelationDialogue => _RelationDialogue;
 }

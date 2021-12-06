@@ -13,6 +13,19 @@ BoxCollider:
   serializedVersion: 2
   m_Size: {x: 0.15, y: 1, z: 0.56319666}
   m_Center: {x: 0.007998187, y: 0.5, z: -0.21840173}
+--- !u!65 &3684119629949642371
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4985317732182942685}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Size: {x: 0.5552826, y: 1, z: 0.15}
+  m_Center: {x: 0.2223587, y: 0.5, z: 0.0023036096}
 --- !u!205 &5065347759342013445
 LODGroup:
   m_ObjectHideFlags: 0
@@ -27,24 +40,11 @@ LODGroup:
   m_AnimateCrossFading: 0
   m_LastLODIsBillboard: 0
   m_LODs:
-  - screenRelativeHeight: 0.05
+  - screenRelativeHeight: 0.02
     fadeTransitionWidth: 0
     renderers:
     - renderer: {fileID: 6786806304877298184}
   m_Enabled: 1
---- !u!65 &3684119629949642371
-BoxCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 4985317732182942685}
-  m_Material: {fileID: 0}
-  m_IsTrigger: 0
-  m_Enabled: 1
-  serializedVersion: 2
-  m_Size: {x: 0.5552826, y: 1, z: 0.15}
-  m_Center: {x: 0.2223587, y: 0.5, z: 0.0023036096}
 --- !u!1001 &5327197339867504268
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -98,7 +98,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 919132149155446097, guid: 15ca406656006934bb66080d95a094c1, type: 3}
       propertyPath: m_Name
-      value: PipeFenceCorner Variant
+      value: RustyPipeFenceCorner Variant
       objectReference: {fileID: 0}
     - target: {fileID: 919132149155446097, guid: 15ca406656006934bb66080d95a094c1, type: 3}
       propertyPath: m_StaticEditorFlags

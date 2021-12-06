@@ -3,17 +3,18 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using Sirenix.OdinInspector;
+using UnityEngine.AddressableAssets;
 
 public class InterestBehaviour : MonoBehaviour, IInteractable
 {
     [SerializeField, HideLabel, InlineProperty]
-    private DialogueElement dialogue;
+    private AssetReferenceText dialogue;
 
     public int Priority => 3;
 
     public void OnInteract(InteractContext context)
     {
-        if (!context.performed || string.IsNullOrWhiteSpace(dialogue.Asset.AssetGUID))
+        if (!context.performed || string.IsNullOrWhiteSpace(dialogue.AssetGUID))
             return;
 
         PlayerInput playerInput = PlayerInput.GetPlayerByIndex(context.playerIndex);
@@ -26,6 +27,6 @@ public class InterestBehaviour : MonoBehaviour, IInteractable
             manager.Completed -= CompleteAction;
         };
 
-        DialogueManager.GetByIndex(context.playerIndex).StartDialogue(dialogue.Asset, dialogue.Aliases).Completed += CompleteAction;
+        DialogueManager.GetByIndex(context.playerIndex).StartDialogue(dialogue).Completed += CompleteAction;
     }
 }

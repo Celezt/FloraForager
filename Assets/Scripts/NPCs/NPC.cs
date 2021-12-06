@@ -20,8 +20,8 @@ public class NPC : IStreamable<NPC.Data>
         public string Name;
         public RelationshipManager Relation;
         public CommissionData[] CommissionsData;
-        public (string, string[]) RepeatingDialogue;
-        public PriorityQueue<(string, string[])> DialogueQueue;
+        public string RepeatingDialogue;
+        public PriorityQueue<string> DialogueQueue;
         public DialogueRelationSave[] DialogueRelations;
     }
     public Data OnUpload() => _Data;
@@ -46,8 +46,8 @@ public class NPC : IStreamable<NPC.Data>
     public string Name => _Data.Name;
     public RelationshipManager Relation => _Data.Relation;
     public Commission[] Commissions => _Commissions;
-    public (string, string[]) RepeatingDialogue => _Data.RepeatingDialogue;
-    public PriorityQueue<(string, string[])> DialogueQueue => _Data.DialogueQueue;
+    public string RepeatingDialogue => _Data.RepeatingDialogue;
+    public PriorityQueue<string> DialogueQueue => _Data.DialogueQueue;
     public DialogueRelationSave[] DialogueRelations => _Data.DialogueRelations;
     public bool HasCommissions => _HasCommissions;
 
@@ -62,27 +62,23 @@ public class NPC : IStreamable<NPC.Data>
 
         // add dialogue
 
-        _Data.RepeatingDialogue = (data.RepeatingDialogue.Asset?.AssetGUID, data.RepeatingDialogue.Aliases);
+        _Data.RepeatingDialogue = data.RepeatingDialogue?.AssetGUID;
 
-        _Data.DialogueQueue = new PriorityQueue<(string, string[])>(Heap.MaxHeap);
+        _Data.DialogueQueue = new PriorityQueue<string>(Heap.MaxHeap);
         for (int i = 0; i < data.InitialDialogue.Length; ++i)
         {
-            _Data.DialogueQueue.Enqueue((
-                data.InitialDialogue[i].Asset?.AssetGUID, 
-                data.InitialDialogue[i].Aliases), 
+            _Data.DialogueQueue.Enqueue(
+                data.InitialDialogue[i].Dialogue?.AssetGUID, 
                 data.InitialDialogue[i].Priority);
         }
 
         _Data.DialogueRelations = Array.ConvertAll(data.RelationDialogue, dialogue => new DialogueRelationSave 
         {  
             AtRelation = dialogue.AtRelation,
-            RepeatingDialogue = (
-                dialogue.RepeatingDialogue.Asset?.AssetGUID, 
-                dialogue.RepeatingDialogue.Aliases),
+            RepeatingDialogue = dialogue.RepeatingDialogue.AssetGUID,
             AddedDialogue = Array.ConvertAll(dialogue.AddedDialogue, addedDialogue => (
                 addedDialogue.Priority, 
-                addedDialogue.Asset?.AssetGUID, 
-                addedDialogue.Aliases))
+                addedDialogue.Dialogue?.AssetGUID))
         });
 
         _Data.Relation = new RelationshipManager(Name, data.RelationRange.Min, data.RelationRange.Max, data.StartRelation);
@@ -109,10 +105,10 @@ public class NPC : IStreamable<NPC.Data>
                 Rewards = info.Rewards,
                 AcceptDialogue = info.AcceptDialogue.ToDictionary(
                     d => d.NPC.ToLower(), 
-                    d => (d.Dialogue.Asset.AssetGUID, d.Dialogue.Aliases)),
+                    d => d.Dialogue.AssetGUID),
                 CompleteDialogue = info.CompleteDialogue.ToDictionary(
                     d => d.NPC.ToLower(), 
-                    d => (d.Dialogue.Asset.AssetGUID, d.Dialogue.Aliases)),
+                    d => d.Dialogue.AssetGUID),
                 Giver = Name,
                 Completed = false
             };
@@ -159,8 +155,8 @@ public class NPC : IStreamable<NPC.Data>
         _Data.CommissionsData[pos].Completed = true;
     }
 
-    public void SetRepeatingDialouge(string address, params string[] aliases)
+    public void SetRepeatingDialouge(string address)
     {
-        _Data.RepeatingDialogue = (address, aliases);
+        _Data.RepeatingDialogue = address;
     }
 }

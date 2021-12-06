@@ -8,7 +8,7 @@ using MyBox;
 
 public class TreeBehaviour : MonoBehaviour, IStreamable<TreeBehaviour.Data>, IUsable
 {
-    
+    [Header("Properties")]
     [SerializeField] private string _hitSound = "hit_wood";
     [SerializeField] private string _breakSound = "break_wood";
     [SerializeField] private ItemLabels _filter = ItemLabels.Axe;
@@ -24,6 +24,9 @@ public class TreeBehaviour : MonoBehaviour, IStreamable<TreeBehaviour.Data>, IUs
     [SerializeField] private ParticleSystem _particleSystemLeaf;
     [SerializeField] private int _woodAmount = 0;
     [SerializeField] private int _leafAmount = 0;
+    [Header("Objects")]
+    [SerializeField] private GameObject _Tree;
+    [SerializeField] private GameObject _Stump;
 
     [SerializeField, PropertyOrder(-1), HideLabel, InlineProperty]
     private Data _data;
@@ -34,15 +37,18 @@ public class TreeBehaviour : MonoBehaviour, IStreamable<TreeBehaviour.Data>, IUs
     public class Data
     {
         public float Durability = 10;
-        public float MaxDurability;
+        [HideInInspector] public float MaxDurability;
     }
 
     public Data OnUpload() => _data;
     public void OnLoad(object state)
     {
-        Data data = state as Data;
+        _data = state as Data;
 
-        _data = data;
+        bool destroyed = _data.Durability <= 0;
+
+        _Tree.SetActive(!destroyed);
+        _Stump.SetActive(destroyed);
     }
     void IStreamable.OnBeforeSaving()
     {
@@ -55,16 +61,12 @@ public class TreeBehaviour : MonoBehaviour, IStreamable<TreeBehaviour.Data>, IUs
     private void Awake()
     {
         _data.MaxDurability = _data.Durability;
-    }
-
-    private void Start()
-    {
         _Collider = GetComponent<CapsuleCollider>();
     }
 
     void IUsable.OnUse(UsedContext context)
     {
-        if (!(context.used is IDestructor))
+        if (!(context.used is IDestructor) || _data.Durability <= 0)
             return;
 
         float previousDurability = _data.Durability;
@@ -79,18 +81,22 @@ public class TreeBehaviour : MonoBehaviour, IStreamable<TreeBehaviour.Data>, IUs
         if (_particleSystemLeaf != null)
             _particleSystemLeaf.Emit(_leafAmount);
 
-        if (_data.Durability >= previousDurability)
-            SoundPlayer.Instance.Play("hit_poor");
-        else
+        if (_data.Durability < previousDurability)
             SoundPlayer.Instance.Play(_hitSound);
+        else
+            SoundPlayer.Instance.Play("hit_poor");
 
         if (_data.Durability <= 0)
         {
             SoundPlayer.Instance.Play(_breakSound);
 
             context.Drop(transform.TransformPoint(_Collider.center), _drops);
-            gameObject.SetActive(false);
-        }
 
+            _Tree.SetActive(false);
+            _Stump.SetActive(true);
+
+            if (TryGetComponent(out StreamableBehaviour streamable))
+                streamable.SetToRespawn();
+        }
     }
 }

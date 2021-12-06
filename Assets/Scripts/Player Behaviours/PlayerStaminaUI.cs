@@ -7,7 +7,7 @@ using UnityEngine.InputSystem;
 public class PlayerStaminaUI : MonoBehaviour
 {
     [SerializeField]
-    private Slider _StaminaSlider;
+    private Image _StaminaSlider;
 
     private PlayerStamina _PlayerStamina;
 
@@ -18,6 +18,6 @@ public class PlayerStaminaUI : MonoBehaviour
 
     public void LateUpdate()
     {
-        _StaminaSlider.value = (_PlayerStamina.Stamina / _PlayerStamina.MaxStamina);
+        _StaminaSlider.fillAmount = (_PlayerStamina.Stamina / _PlayerStamina.MaxStamina);
     }
 }

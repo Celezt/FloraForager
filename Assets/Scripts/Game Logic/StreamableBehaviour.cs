@@ -16,11 +16,11 @@ public class StreamableBehaviour : MonoBehaviour, IStreamer, IStreamable<Streama
     private bool _saveIfDestroyed = true;
 
     [Title("Respawn Behaviour")]
-    [SerializeField, ShowIf("_saveIfDestroyed")]
+    [SerializeField]
     private bool _respawnableObject = false;
-    [SerializeField, Min(1), ShowIf("@this._respawnableObject && this._saveIfDestroyed")]
+    [SerializeField, Min(1), ShowIf("@this._respawnableObject")]
     private int _respawnTimeInDays = 2;
-    [SerializeField, MinMaxRange(0.0f, 5.0f), ShowIf("@this._respawnableObject && this._saveIfDestroyed")]
+    [SerializeField, MinMaxRange(0.0f, 5.0f), ShowIf("@this._respawnableObject")]
     private MinMaxInt _randomRespawnTime = new MinMaxInt(0, 3);
 
     private Data _data;
@@ -45,38 +45,42 @@ public class StreamableBehaviour : MonoBehaviour, IStreamer, IStreamable<Streama
 
     private void Awake()
     {
-        _guid = GetComponent<GuidComponent>().Guid;
-
-        ObjectRespawn.Instance.AddObject(_guid, gameObject);
-    }
-
-    private void OnEnable()
-    {
         _data = new Data();
+        _guid = GetComponent<GuidComponent>().Guid;
 
         if (GameManager.Stream.StreamedData.ContainsKey(_guid))
             Load();
 
         GameManager.AddStreamer(this);
+        ObjectRespawn.Instance.AddObject(_guid, gameObject);
     }
+
     private void OnDisable()
     {
-        if (gameObject.scene.isLoaded)
-        {
-            if (_saveIfDestroyed)
-            {
-                _data.IsAlive = false;
-                
-                if (_respawnableObject)
-                    ObjectRespawn.Instance.Add(_guid, _respawnTimeInDays + _randomRespawnTime.RandomInRangeInclusive(), gameObject);
-            }
-        }
-
-        GameManager.RemoveStreamer(this);
+        Destroy();
     }
     private void OnDestroy()
     {
         GameManager.RemoveStreamer(this);
+    }
+
+    public void Destroy()
+    {
+        if (gameObject.scene.isLoaded)
+        {
+            if (_saveIfDestroyed)
+                _data.IsAlive = false;
+            if (_respawnableObject)
+                ObjectRespawn.Instance.Add(_guid, _respawnTimeInDays + _randomRespawnTime.RandomInRangeInclusive(), gameObject);
+        }
+    }
+    public void SetToRespawn()
+    {
+        if (gameObject.scene.isLoaded)
+        {
+            if (_respawnableObject)
+                ObjectRespawn.Instance.Add(_guid, _respawnTimeInDays + _randomRespawnTime.RandomInRangeInclusive(), gameObject);
+        }
     }
 
     public void UpLoad()

@@ -19,6 +19,6 @@ public struct CommissionData
 
     public bool Completed;
 
-    public Dictionary<string, (string, string[])> AcceptDialogue;
-    public Dictionary<string, (string, string[])> CompleteDialogue;
+    public Dictionary<string, string> AcceptDialogue;
+    public Dictionary<string, string> CompleteDialogue;
 }

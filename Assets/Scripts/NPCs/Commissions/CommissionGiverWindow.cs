@@ -215,12 +215,12 @@ public class CommissionGiverWindow : Singleton<CommissionGiverWindow>
         Back();
     }
 
-    private void StartDialogue(string giver, Dictionary<string, (string, string[])> dialogueAction)
+    private void StartDialogue(string giver, Dictionary<string, string> dialogueAction)
     {
-        if (!dialogueAction.TryGetValue(giver.ToLower(), out (string, string[]) dialogue))
+        if (!dialogueAction.TryGetValue(giver.ToLower(), out string dialogue))
             return;
 
-        if (string.IsNullOrWhiteSpace(dialogue.Item1) || dialogue.Item2 == null)
+        if (string.IsNullOrWhiteSpace(dialogue))
             return;
 
         PlayerInput playerInput = PlayerInput.GetPlayerByIndex(0);
@@ -232,6 +232,6 @@ public class CommissionGiverWindow : Singleton<CommissionGiverWindow>
             manager.Completed -= CompleteAction;
         };
 
-        DialogueManager.GetByIndex(0).StartDialogue(dialogue.Item1, dialogue.Item2).Completed += CompleteAction;
+        DialogueManager.GetByIndex(0).StartDialogue(dialogue).Completed += CompleteAction;
     }
 }
