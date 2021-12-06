@@ -322,16 +322,10 @@ public class PlayerMovement : MonoBehaviour
             _animationBehaviour.WalkSpeed = _speed01;
         }
 
-        void Sound()
-        {
-
-        }
-
         SlopeMovement(); 
         Movement();
         PhysicMaterialToUse();
         Animation();
-        Sound();
     }
 
     private void SetBaseSpeed(float speed) => _baseSpeed = speed;
