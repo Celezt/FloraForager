@@ -22,6 +22,7 @@ public class HumanoidAnimationBehaviour : MonoBehaviour
         get => _walkSpeed;
         set => _walkSpeed = Mathf.Clamp01(value);
     }
+    public AnimationClip CurrentCustomClip => _currentCustomClip;
     /// <summary>
     /// If currently in a loop.
     /// </summary>
@@ -39,6 +40,7 @@ public class HumanoidAnimationBehaviour : MonoBehaviour
     private Queue<System.Action<CustomMotionInfo>> _exitCustomMotionQueue = new Queue<System.Action<CustomMotionInfo>>();
     private System.Action<CustomMotionInfo> _enterCustomMotion;
     private Transform _headTransform;
+    private AnimationClip _currentCustomClip;
 
     private Quaternion _rotationHeadOffset;
     private float _walkSpeed;
@@ -69,6 +71,8 @@ public class HumanoidAnimationBehaviour : MonoBehaviour
         else
             _animatorOverrideController["EmptyCustomMotion0"] = clip;
 
+        _currentCustomClip = clip;
+
         _animator.SetLayerWeight(1, 0);
         _animator.SetBool(IS_CUSTOM_LOOP_HASH, _isCustomMotionLooping = loop);
         _animator.SetInteger(CUSTOM_INDEX_HASH, _customIndex);
@@ -93,7 +97,10 @@ public class HumanoidAnimationBehaviour : MonoBehaviour
         _isCustomMotionRunning = (_exitCustomMotionQueue.Count > 0);
 
         if (!_isCustomMotionRunning)
+        {
             _animator.SetLayerWeight(1, 1);
+            _currentCustomClip = null;
+        }
     }
 
     private void Start()
