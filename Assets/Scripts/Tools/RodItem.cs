@@ -115,7 +115,7 @@ public class RodItem : IUse, IStar, IValue
 
         PlayerInput playerInput = PlayerInput.GetPlayerByIndex(context.playerIndex);
 
-        UIStateVisibility.Instance.Hide("inventory");
+        UIStateVisibility.Instance.Hide("inventory", "stamina");
         playerInput.DeactivateInput();
 
         HumanoidAnimationBehaviour animationBehaviour = playerInput.GetComponentInChildren<HumanoidAnimationBehaviour>();
@@ -162,7 +162,7 @@ public class RodItem : IUse, IStar, IValue
 
             yield return new WaitForSeconds(_onCatchUse - _onCatch);
 
-            UIStateVisibility.Instance.Show("inventory");
+            UIStateVisibility.Instance.Show("inventory", "stamina");
             playerInput.ActivateInput();
         };
 
