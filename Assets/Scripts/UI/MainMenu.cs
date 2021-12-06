@@ -54,7 +54,7 @@ public class MainMenu : MonoBehaviour
             if (_ConfirmMenu != null)
                 return;
 
-            _ConfirmMenu = ConfirmMenuFactory.Instance.CreateMenu("This will delete your current save, are you sure?",
+            _ConfirmMenu = ConfirmMenuFactory.Instance.CreateMenu("This will delete your current save, are you sure?", 1,
                 new UnityAction(() => 
                 {
                     GameManager.DeleteSave(SAVE_NAME);
