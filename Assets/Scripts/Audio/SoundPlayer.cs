@@ -10,6 +10,7 @@ using UnityEngine.ResourceManagement.AsyncOperations;
 using Sirenix.OdinInspector;
 using MyBox;
 using IngameDebugConsole;
+using Celezt.Time;
 
 public class SoundPlayer : Singleton<SoundPlayer>
 {
@@ -30,7 +31,7 @@ public class SoundPlayer : Singleton<SoundPlayer>
     private int _PoolIndex;
 
     private Dictionary<string, Sound> _Sounds;
-    private Dictionary<string, float> _Cooldowns;
+    private Dictionary<string, Duration> _Cooldowns;
 
     private int PoolIndex
     {
@@ -59,7 +60,7 @@ public class SoundPlayer : Singleton<SoundPlayer>
         _CurrentPoolSize = _InitialPoolSize;
         PoolIndex = 0;
 
-        _Cooldowns = new Dictionary<string, float>();
+        _Cooldowns = new Dictionary<string, Duration>();
         _Sounds = new Dictionary<string, Sound>();
 
         AsyncOperationHandle<AudioClip>[] handles = new AsyncOperationHandle<AudioClip>[_SoundEffects.Length];
@@ -90,20 +91,6 @@ public class SoundPlayer : Singleton<SoundPlayer>
         DebugLogConsole.AddCommandInstance("play.sound", "Plays sound", nameof(Play), this);
     }
 
-    private void Update()
-    {
-        if (_Cooldowns.Count > 0)
-        {
-            foreach (string key in _Cooldowns.Keys.ToList())
-            {
-                if ((_Cooldowns[key] -= Time.deltaTime) <= 0.0f)
-                {
-                    _Cooldowns.Remove(key);
-                }
-            }
-        }
-    }
-
     public void Play(string name, float volumeChange = 0.0f, float pitchChange = 0.0f, int repeatCount = 0, float cooldown = 0.0f, bool loop = false)
     {
         if (string.IsNullOrWhiteSpace(name))
@@ -125,11 +112,14 @@ public class SoundPlayer : Singleton<SoundPlayer>
 
         for (int i = 0; i < ((repeatCount > 0) ? repeatCount : 1); ++i)
         {
-            while (_Cooldowns.ContainsKey(sound.Name))
+            if (!_Cooldowns.ContainsKey(sound.Name))
+                _Cooldowns.Add(sound.Name, Duration.Empty);
+
+            while (_Cooldowns[sound.Name].IsActive)
                 yield return null;
 
             if (cooldown > float.Epsilon)
-                _Cooldowns.Add(sound.Name, cooldown);
+                _Cooldowns[sound.Name] = new Duration(cooldown);
 
             SetAudioSource(source, sound);
 

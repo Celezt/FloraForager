@@ -18,7 +18,7 @@ public class ItemBehaviour : MonoBehaviour
     [SerializeField] private float _checkFrequency = 0.5f;
     [SerializeField] private LayerMask _pickMask;
     [SerializeField] private float _destroyTimer = 0.5f;
-    [SerializeField] private string _pickupSound = "pickup_04";
+    [SerializeField] private string _pickupSound = "pickup_4";
 
     private Transform _checkTransform;
     private Inventory _inventory;
@@ -138,7 +138,7 @@ public class ItemBehaviour : MonoBehaviour
         if (gameObject.scene.isLoaded)
         {
             _inventory?.Insert(_item.ID, _item.Amount);
-            SoundPlayer.Instance?.Play(_pickupSound, 0, 0, 0, 0.02f);
+            SoundPlayer.Instance?.Play(_pickupSound, 0, 0, 0, 0.035f);
         }
     }
 }

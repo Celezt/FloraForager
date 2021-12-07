@@ -37,7 +37,11 @@ public class InventoryManager : MonoBehaviour, IDropHandler
 
                 Transform playerTransform = PlayerInput.GetPlayerByIndex(_playerInventory.PlayerIndex).transform;
 
-                UnityEngine.Object.Instantiate(ItemTypeSettings.Instance.ItemObject, playerTransform.position, Quaternion.identity)
+                Vector3 dropPosition = playerTransform.position;
+                if (playerTransform.TryGetComponent(out Collider collider))
+                    dropPosition = collider.bounds.center;
+
+                UnityEngine.Object.Instantiate(ItemTypeSettings.Instance.ItemObject, dropPosition, Quaternion.identity)
                         .Spawn(new ItemAsset { ID = holder.Item.ID, Amount = holder.Item.Amount }, playerTransform.forward.xz());
 
                 holder.InventoryHandler.Inventory.RemoveAt(holder.Index);
