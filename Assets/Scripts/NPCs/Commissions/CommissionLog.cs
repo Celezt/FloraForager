@@ -172,8 +172,6 @@ public class CommissionLog : Singleton<CommissionLog>
 
         if (_CanvasGroup.alpha == 1.0f)
         {
-            SoundPlayer.Instance.Play(_CloseSound);
-
             Exit();
         }
         else
@@ -189,6 +187,8 @@ public class CommissionLog : Singleton<CommissionLog>
     {
         if (_Selected != null)
             _Selected.Object.Deselect();
+
+        SoundPlayer.Instance.Play(_CloseSound);
 
         _CanvasGroup.alpha = 0.0f;
         _CanvasGroup.blocksRaycasts = false;
