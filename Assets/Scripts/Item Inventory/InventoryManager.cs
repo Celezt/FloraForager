@@ -21,60 +21,63 @@ public class InventoryManager : MonoBehaviour, IDropHandler
 
     void IDropHandler.OnDrop(PointerEventData eventData)
     {
-        RectTransform uiGrid = transform as RectTransform;
-
-        if (!CanvasUtility.IsPointerOverUIElement())    // If dropping.
+        if (eventData.button == PointerEventData.InputButton.Left)
         {
-            ItemSlot holder = eventData.selectedObject.GetComponentInParent<ItemSlot>();
+            RectTransform uiGrid = transform as RectTransform;
 
-            if (holder == null)
-                return;
-
-            if (string.IsNullOrEmpty(holder.Item.ID))
-                return;
-
-            Transform playerTransform = PlayerInput.GetPlayerByIndex(_playerInventory.PlayerIndex).transform;
-            
-            UnityEngine.Object.Instantiate(ItemTypeSettings.Instance.ItemObject, playerTransform.position, Quaternion.identity)
-                    .Spawn(new ItemAsset { ID = holder.Item.ID, Amount = holder.Item.Amount }, playerTransform.forward.xz());
-
-            holder.InventoryHandler.Inventory.RemoveAt(holder.Index);
-        }
-        else
-        {
-            // Set up the new Pointer Event.
-            PointerEventData PointerEventData = new PointerEventData(_EventSystem);
-            // Set the Pointer Event Position to that of the mouse position.
-            PointerEventData.position = Mouse.current.position.ReadValue();
-
-            // Create a list of Raycast Results.
-            List<RaycastResult> results = new List<RaycastResult>();
-
-            // Raycast using the Graphics Raycaster and mouse click position
-            _raycaster.Raycast(PointerEventData, results);
-
-            // For every result returned, output the name of the GameObject on the Canvas hit by the Ray
-            // find and swap itemslots.
-            foreach (RaycastResult result in results)
+            if (!CanvasUtility.IsPointerOverUIElement())    // If dropping.
             {
-                ItemSlot firstHolder = result.gameObject.GetComponent<ItemSlot>();
+                ItemSlot holder = eventData.selectedObject.GetComponentInParent<ItemSlot>();
 
-                if (firstHolder != null)
+                if (holder == null)
+                    return;
+
+                if (string.IsNullOrEmpty(holder.Item.ID))
+                    return;
+
+                Transform playerTransform = PlayerInput.GetPlayerByIndex(_playerInventory.PlayerIndex).transform;
+
+                UnityEngine.Object.Instantiate(ItemTypeSettings.Instance.ItemObject, playerTransform.position, Quaternion.identity)
+                        .Spawn(new ItemAsset { ID = holder.Item.ID, Amount = holder.Item.Amount }, playerTransform.forward.xz());
+
+                holder.InventoryHandler.Inventory.RemoveAt(holder.Index);
+            }
+            else
+            {
+                // Set up the new Pointer Event.
+                PointerEventData PointerEventData = new PointerEventData(_EventSystem);
+                // Set the Pointer Event Position to that of the mouse position.
+                PointerEventData.position = Mouse.current.position.ReadValue();
+
+                // Create a list of Raycast Results.
+                List<RaycastResult> results = new List<RaycastResult>();
+
+                // Raycast using the Graphics Raycaster and mouse click position
+                _raycaster.Raycast(PointerEventData, results);
+
+                // For every result returned, output the name of the GameObject on the Canvas hit by the Ray
+                // find and swap itemslots.
+                foreach (RaycastResult result in results)
                 {
-                    ItemSlot secondHolder = eventData.selectedObject.GetComponentInParent<ItemSlot>();
-                    if (secondHolder != null)
-                    {
-                        if (firstHolder.Index != secondHolder.Index)
-                        {
-                            Inventory firstInventory = firstHolder.InventoryHandler.Inventory;
-                            Inventory secondInventory = secondHolder.InventoryHandler.Inventory;
+                    ItemSlot firstHolder = result.gameObject.GetComponent<ItemSlot>();
 
-                            if (!Inventory.Merge(secondHolder.Index, firstHolder.Index, secondInventory, firstInventory)) // If items is not mergeable.
-                                Inventory.Swap(firstHolder.Index, secondHolder.Index, firstInventory, secondInventory);
+                    if (firstHolder != null)
+                    {
+                        ItemSlot secondHolder = eventData.selectedObject.GetComponentInParent<ItemSlot>();
+                        if (secondHolder != null)
+                        {
+                            if (firstHolder.Index != secondHolder.Index)
+                            {
+                                Inventory firstInventory = firstHolder.InventoryHandler.Inventory;
+                                Inventory secondInventory = secondHolder.InventoryHandler.Inventory;
+
+                                if (!Inventory.Merge(secondHolder.Index, firstHolder.Index, secondInventory, firstInventory)) // If items is not mergeable.
+                                    Inventory.Swap(firstHolder.Index, secondHolder.Index, firstInventory, secondInventory);
+                            }
                         }
                     }
                 }
             }
-        }
+        }        
     }
 }

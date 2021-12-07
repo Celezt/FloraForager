@@ -19,24 +19,34 @@ public class ItemDragHandler : MonoBehaviour, IBeginDragHandler, IDragHandler, I
 
     void IBeginDragHandler.OnBeginDrag(PointerEventData eventData)
     {
-        _startParent = transform.parent;
-        transform.SetParent(_dragParent.transform);
-        transform.localPosition = Vector3.zero;
-        _canvasGroup.alpha = 0.8f;
+        if (eventData.button == PointerEventData.InputButton.Left)
+        {
+            _startParent = transform.parent;
+            transform.SetParent(_dragParent.transform);
+            transform.localPosition = Vector3.zero;
+            _canvasGroup.alpha = 0.8f;
+        }
+        
     }
 
     void IDragHandler.OnDrag(PointerEventData eventData)
     {
+        if (eventData.button == PointerEventData.InputButton.Left)
+        {
+            transform.position = Mouse.current.position.ReadValue();
+        }
         
-        transform.position = Mouse.current.position.ReadValue();
     }
 
     void IEndDragHandler.OnEndDrag(PointerEventData eventData)
     {
-        transform.localPosition = Vector3.zero;
-        _canvasGroup.alpha = 1f;
-        transform.SetParent(_startParent);
-        transform.localPosition = Vector3.zero;        
+        if (eventData.button == PointerEventData.InputButton.Left)
+        {
+            transform.localPosition = Vector3.zero;
+            _canvasGroup.alpha = 1f;
+            transform.SetParent(_startParent);
+            transform.localPosition = Vector3.zero;
+        }               
     }
 
 }
