@@ -10,7 +10,7 @@ public class GameTimeBehaviour : MonoBehaviour
     private void Awake()
     {
         GameTime.Instance.UpdateTime();
-        DebugLogConsole.AddCommandInstance("time.skip", "Accelerates time from point in current day by given amount in hours", nameof(GameTime.Instance.AccelerateTime), GameTime.Instance);
+        DebugLogConsole.AddCommandInstance("time.skip", "Accelerates time from point in current day by given amount in hours", nameof(CommandAccelerateTime), this);
     }
 
     private void Update()
@@ -18,4 +18,6 @@ public class GameTimeBehaviour : MonoBehaviour
         GameTime.Instance.ElapsedTime += (decimal)Time.deltaTime;
         GameTime.Instance.UpdateTime();
     }
+
+    public void CommandAccelerateTime(float hours) => GameTime.Instance.AccelerateTime(hours);
 }
