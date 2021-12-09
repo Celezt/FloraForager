@@ -208,12 +208,14 @@ public class UseBehaviour : MonoBehaviour
                 IEnumerator enumerator = _use.OnUse(useContext);
                 while (enumerator.MoveNext())
                     yield return enumerator.Current;
-
-                if (_cooldown.Item2.InitTime - _cooldown.Item2.TimeLeft < float.Epsilon)
-                    _cooldown.Item2.Done();
             }
 
             yield return UseTowardsCursor();
+
+            // experimental, needs testing
+            // implemented because unnecessary cooldown when item was unsuccessfully used
+            if (_cooldown.Item2.InitTime - _cooldown.Item2.TimeLeft < float.Epsilon)
+                _cooldown.Item2.Done();
         }
     }
 }
