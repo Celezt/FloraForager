@@ -68,7 +68,7 @@ Rigidbody:
   m_AngularDrag: 0.05
   m_UseGravity: 1
   m_IsKinematic: 0
-  m_Interpolate: 0
+  m_Interpolate: 1
   m_Constraints: 80
   m_CollisionDetection: 1
 --- !u!114 &4428014969485009576
@@ -268,6 +268,10 @@ MonoBehaviour:
       m_Calls: []
     m_ActionId: 55a3ed88-f58a-441b-836c-4ab625b00ec0
     m_ActionName: Fishing/Cancel[/Mouse/rightButton]
+  - m_PersistentCalls:
+      m_Calls: []
+    m_ActionId: b6073885-7e75-4aff-acde-720d3f185694
+    m_ActionName: Ground/Zoom[/Mouse/scroll]
   m_NeverAutoSwitchControlSchemes: 0
   m_DefaultControlScheme: 
   m_DefaultActionMap: Ground
@@ -302,8 +306,8 @@ MonoBehaviour:
     serializedVersion: 2
     m_Bits: 0
   _groundCheckDistance: 0.6
-  _maxSlopeAngle: 32.5
-  _groundPhysicMaterial: {fileID: 13400000, guid: a4767b41799feac47b7800098935937b, type: 2}
+  _maxSlopeAngle: 40
+  _groundPhysicMaterial: {fileID: 13400000, guid: 9bfea5fa8573a434bb6cdd09d5eecab7, type: 2}
   _fallPhysicMaterial: {fileID: 13400000, guid: 9bfea5fa8573a434bb6cdd09d5eecab7, type: 2}
 --- !u!114 &6098485419816427265
 MonoBehaviour:
@@ -444,9 +448,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 724e107787bbccf4487dac14fb188727, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _parent: {fileID: 3807256055904665989}
+  _parent: {fileID: 5895782597981071703}
   _inheritPosition: 1
-  _positionOffset: {x: -0.05, y: -0.1, z: 0}
+  _positionOffset: {x: 0, y: 0, z: 0}
   _inheritRotation: 1
   _rotationOffset: {x: 0, y: 0, z: 0.17364818, w: 0.9848077}
   _inheritScale: 0
@@ -1236,8 +1240,8 @@ Transform:
   m_CorrespondingSourceObject: {fileID: -8679921383154817045, guid: 2b038fae91686c14caa74e9ba6937122, type: 3}
   m_PrefabInstance: {fileID: 8041753996542739196}
   m_PrefabAsset: {fileID: 0}
---- !u!4 &3807256055904665989 stripped
+--- !u!4 &5895782597981071703 stripped
 Transform:
-  m_CorrespondingSourceObject: {fileID: 6578663465570075513, guid: 2b038fae91686c14caa74e9ba6937122, type: 3}
+  m_CorrespondingSourceObject: {fileID: -4735522165177881685, guid: 2b038fae91686c14caa74e9ba6937122, type: 3}
   m_PrefabInstance: {fileID: 8041753996542739196}
   m_PrefabAsset: {fileID: 0}

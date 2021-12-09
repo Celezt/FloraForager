@@ -107,6 +107,15 @@ public partial class @PlayerAction : IInputActionCollection2, IDisposable
                     ""processors"": """",
                     ""interactions"": """",
                     ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""Zoom"",
+                    ""type"": ""Value"",
+                    ""id"": ""b6073885-7e75-4aff-acde-720d3f185694"",
+                    ""expectedControlType"": ""Vector2"",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": true
                 }
             ],
             ""bindings"": [
@@ -393,6 +402,17 @@ public partial class @PlayerAction : IInputActionCollection2, IDisposable
                     ""processors"": """",
                     ""groups"": ""KeyboardAndMouse"",
                     ""action"": ""Pause"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""25f4afa7-1fae-46df-9035-46d0e90e4ddb"",
+                    ""path"": ""<Mouse>/scroll"",
+                    ""interactions"": """",
+                    ""processors"": ""NormalizeVector2,ScaleVector2(y=0.05)"",
+                    ""groups"": ""KeyboardAndMouse"",
+                    ""action"": ""Zoom"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
                 }
@@ -925,6 +945,7 @@ public partial class @PlayerAction : IInputActionCollection2, IDisposable
         m_Ground_Hotbar = m_Ground.FindAction("Hotbar", throwIfNotFound: true);
         m_Ground_CommissionLog = m_Ground.FindAction("CommissionLog", throwIfNotFound: true);
         m_Ground_Pause = m_Ground.FindAction("Pause", throwIfNotFound: true);
+        m_Ground_Zoom = m_Ground.FindAction("Zoom", throwIfNotFound: true);
         // Fishing
         m_Fishing = asset.FindActionMap("Fishing", throwIfNotFound: true);
         m_Fishing_Drag = m_Fishing.FindAction("Drag", throwIfNotFound: true);
@@ -1010,6 +1031,7 @@ public partial class @PlayerAction : IInputActionCollection2, IDisposable
     private readonly InputAction m_Ground_Hotbar;
     private readonly InputAction m_Ground_CommissionLog;
     private readonly InputAction m_Ground_Pause;
+    private readonly InputAction m_Ground_Zoom;
     public struct GroundActions
     {
         private @PlayerAction m_Wrapper;
@@ -1023,6 +1045,7 @@ public partial class @PlayerAction : IInputActionCollection2, IDisposable
         public InputAction @Hotbar => m_Wrapper.m_Ground_Hotbar;
         public InputAction @CommissionLog => m_Wrapper.m_Ground_CommissionLog;
         public InputAction @Pause => m_Wrapper.m_Ground_Pause;
+        public InputAction @Zoom => m_Wrapper.m_Ground_Zoom;
         public InputActionMap Get() { return m_Wrapper.m_Ground; }
         public void Enable() { Get().Enable(); }
         public void Disable() { Get().Disable(); }
@@ -1059,6 +1082,9 @@ public partial class @PlayerAction : IInputActionCollection2, IDisposable
                 @Pause.started -= m_Wrapper.m_GroundActionsCallbackInterface.OnPause;
                 @Pause.performed -= m_Wrapper.m_GroundActionsCallbackInterface.OnPause;
                 @Pause.canceled -= m_Wrapper.m_GroundActionsCallbackInterface.OnPause;
+                @Zoom.started -= m_Wrapper.m_GroundActionsCallbackInterface.OnZoom;
+                @Zoom.performed -= m_Wrapper.m_GroundActionsCallbackInterface.OnZoom;
+                @Zoom.canceled -= m_Wrapper.m_GroundActionsCallbackInterface.OnZoom;
             }
             m_Wrapper.m_GroundActionsCallbackInterface = instance;
             if (instance != null)
@@ -1090,6 +1116,9 @@ public partial class @PlayerAction : IInputActionCollection2, IDisposable
                 @Pause.started += instance.OnPause;
                 @Pause.performed += instance.OnPause;
                 @Pause.canceled += instance.OnPause;
+                @Zoom.started += instance.OnZoom;
+                @Zoom.performed += instance.OnZoom;
+                @Zoom.canceled += instance.OnZoom;
             }
         }
     }
@@ -1277,6 +1306,7 @@ public partial class @PlayerAction : IInputActionCollection2, IDisposable
         void OnHotbar(InputAction.CallbackContext context);
         void OnCommissionLog(InputAction.CallbackContext context);
         void OnPause(InputAction.CallbackContext context);
+        void OnZoom(InputAction.CallbackContext context);
     }
     public interface IFishingActions
     {
