@@ -39,6 +39,7 @@ public class PlayerStamina : MonoBehaviour
     private void Awake()
     {
         _PlayerMovement = GetComponent<PlayerMovement>();
+        DebugLogConsole.AddCommandInstance("player.stamina_set", "Set player's stamina", nameof(SetStamina), this);
         DebugLogConsole.AddCommandInstance("player.stamina_change", "Change player's stamina", nameof(ChangeStamina), this);
     }
 
@@ -94,7 +95,9 @@ public class PlayerStamina : MonoBehaviour
         }
     }
 
-    public void ChangeStamina(float change) => Stamina = change;
+    public void ChangeStamina(float change) => Stamina += change;
+
+    public void SetStamina(float value) => Stamina = value;
 
     public void Drain(float staminaDrain)
     {
