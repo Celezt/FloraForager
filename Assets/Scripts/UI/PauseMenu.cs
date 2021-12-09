@@ -98,7 +98,7 @@ public class PauseMenu : MonoBehaviour
         if (_ConfirmMenu != null)
             return;
 
-        _ConfirmMenu = ConfirmMenuFactory.Instance.CreateMenu("Return to Main Menu? All unsaved progress will be lost", 
+        _ConfirmMenu = ConfirmMenuFactory.Instance.CreateMenu("Return to Main Menu? All unsaved progress will be lost", 95,
             new UnityAction(() => 
             {
                 LoadScene.Instance.LoadSceneByName("MainMenu");

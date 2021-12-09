@@ -19,7 +19,7 @@ public class UseBehaviour : MonoBehaviour
     private IUse _use;
     private ItemType _itemType;
 
-    private Dictionary<int, Duration> _cooldowns = new Dictionary<int, Duration>();
+    private (int, Duration) _cooldown = (0, new Duration());
 
     private int _slotIndex;
     private int _amount;
@@ -144,8 +144,8 @@ public class UseBehaviour : MonoBehaviour
 
         _playerInfo.Inventory.OnRemoveItemCallback += (index, item) =>
         {
-            if (item.Amount == 0 && _cooldowns.ContainsKey(index))
-                _cooldowns.Remove(index);
+            if (item.Amount <= 0 && _cooldown.Item1 == index && _cooldown.Item2.IsActive)
+                _cooldown.Item2 = Duration.Empty;
 
             if (index == _slotIndex)
             {
@@ -185,13 +185,10 @@ public class UseBehaviour : MonoBehaviour
 
     private IEnumerator OnUseCoroutine(InputAction.CallbackContext context)
     {
-        if (!_cooldowns.ContainsKey(_slotIndex))
-            _cooldowns.Add(_slotIndex, Duration.Empty);
-
-        if (!_cooldowns[_slotIndex].IsActive)
+        if (!_cooldown.Item2.IsActive)
         {
             if (context.started)
-                _cooldowns[_slotIndex] = new Duration(_use.Cooldown);
+                _cooldown = (_slotIndex, new Duration(_use.Cooldown));
 
             IEnumerator UseTowardsCursor()
             {

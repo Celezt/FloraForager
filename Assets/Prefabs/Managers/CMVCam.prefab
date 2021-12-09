@@ -11,6 +11,7 @@ GameObject:
   - component: {fileID: 3628202683064602036}
   - component: {fileID: 3628202683064602039}
   - component: {fileID: 4386421465614367998}
+  - component: {fileID: 8379736005610698325}
   m_Layer: 0
   m_Name: CMVCam
   m_TagString: Untagged
@@ -88,6 +89,36 @@ MonoBehaviour:
   _cmFollow: {fileID: 3628202684967055463}
   _cmLookAt: {fileID: 3628202684725525848}
   _cm: {fileID: 3628202683064602039}
+--- !u!114 &8379736005610698325
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3628202683064602038}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e501d18bb52cf8c40b1853ca4904654f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_CollideAgainst:
+    serializedVersion: 2
+    m_Bits: 1
+  m_IgnoreTag: 
+  m_TransparentLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_MinimumDistanceFromTarget: 0.1
+  m_AvoidObstacles: 1
+  m_DistanceLimit: 0.5
+  m_MinimumOcclusionTime: 0
+  m_CameraRadius: 0.1
+  m_Strategy: 0
+  m_MaximumEffort: 4
+  m_SmoothingTime: 0
+  m_Damping: 0.1
+  m_DampingWhenOccluded: 0.1
+  m_OptimalTargetDistance: 0
 --- !u!1 &3628202683823838839
 GameObject:
   m_ObjectHideFlags: 0

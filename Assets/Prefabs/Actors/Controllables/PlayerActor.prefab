@@ -298,6 +298,9 @@ MonoBehaviour:
   _groundLayer:
     serializedVersion: 2
     m_Bits: 65
+  _objectLayer:
+    serializedVersion: 2
+    m_Bits: 0
   _groundCheckDistance: 0.6
   _maxSlopeAngle: 32.5
   _groundPhysicMaterial: {fileID: 13400000, guid: a4767b41799feac47b7800098935937b, type: 2}
@@ -360,6 +363,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a5242c5c185084c48af25fb662a5a7db, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _FadeOutTime: 2
   _InitialItems:
   - ID: pickaxe
     Amount: 1
@@ -481,6 +485,18 @@ MonoBehaviour:
   _animator: {fileID: 6835544909525107328}
   _holdTransform: {fileID: 2265097815070833664}
   _target: {x: 0, y: 0, z: 0}
+--- !u!114 &2341224800446840746
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7159427594328162221}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6efa050cd9fa864418361ea34ba699cc, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1001 &8041753996542739196
 PrefabInstance:
   m_ObjectHideFlags: 0

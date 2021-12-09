@@ -61,7 +61,7 @@ public class GameGrid: Singleton<GameGrid> // One grid per level
             return;
 
         Ray ray = Camera.main.ScreenPointToRay(Mouse.current.position.ReadValue());
-        bool hit = Physics.Raycast(ray, out RaycastHit hitInfo, 50f, _LayerMasks) && !CanvasUtility.IsPointerOverUIElement();
+        bool hit = Physics.Raycast(ray, out RaycastHit hitInfo, 50f, _LayerMasks) && hitInfo.transform.CompareTag("Grid") && !CanvasUtility.IsPointerOverUIElement();
 
         float distance = Mathf.Sqrt(
             Mathf.Pow(hitInfo.point.x - _Player.transform.position.x, 2) +

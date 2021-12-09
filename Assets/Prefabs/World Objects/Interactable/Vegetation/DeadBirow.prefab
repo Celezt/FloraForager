@@ -90,6 +90,8 @@ MonoBehaviour:
   _particleSystemLeaf: {fileID: 0}
   _woodAmount: 30
   _leafAmount: 8
+  _Tree: {fileID: 3150624274331636692}
+  _Stump: {fileID: 6374569872050715626}
   _data:
     Durability: 6
     MaxDurability: 0
@@ -197,6 +199,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: e9632949827f0e248898dabb85e33571, type: 3}
+--- !u!1 &3150624274331636692 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 919132149155446097, guid: e9632949827f0e248898dabb85e33571, type: 3}
+  m_PrefabInstance: {fileID: 2844073485868707461}
+  m_PrefabAsset: {fileID: 0}
 --- !u!4 &2374123476655196526 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: -8679921383154817045, guid: e9632949827f0e248898dabb85e33571, type: 3}
@@ -275,7 +282,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 919132149155446097, guid: 074338f4936d4f2438d3af49e92b5bdb, type: 3}
       propertyPath: m_IsActive
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 4741058097609768901, guid: 074338f4936d4f2438d3af49e92b5bdb, type: 3}
       propertyPath: m_Materials.Array.data[0]
@@ -287,6 +294,11 @@ PrefabInstance:
       objectReference: {fileID: 2100000, guid: 17d3dc8180117794e92c9bba6498b3cd, type: 2}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 074338f4936d4f2438d3af49e92b5bdb, type: 3}
+--- !u!1 &6374569872050715626 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 919132149155446097, guid: 074338f4936d4f2438d3af49e92b5bdb, type: 3}
+  m_PrefabInstance: {fileID: 6104185468942829243}
+  m_PrefabAsset: {fileID: 0}
 --- !u!4 &5997903183501664592 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: -8679921383154817045, guid: 074338f4936d4f2438d3af49e92b5bdb, type: 3}

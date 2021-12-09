@@ -47,8 +47,10 @@ public class TreeBehaviour : MonoBehaviour, IStreamable<TreeBehaviour.Data>, IUs
 
         bool destroyed = _data.Durability <= 0;
 
-        _Tree.SetActive(!destroyed);
-        _Stump.SetActive(destroyed);
+        if (_Tree != null)
+            _Tree.SetActive(!destroyed);
+        if (_Stump != null)
+            _Stump.SetActive(destroyed);
     }
     void IStreamable.OnBeforeSaving()
     {
@@ -92,8 +94,10 @@ public class TreeBehaviour : MonoBehaviour, IStreamable<TreeBehaviour.Data>, IUs
 
             context.Drop(transform.TransformPoint(_Collider.center), _drops);
 
-            _Tree.SetActive(false);
-            _Stump.SetActive(true);
+            if (_Tree != null)
+                _Tree.SetActive(false);
+            if (_Stump != null)
+                _Stump.SetActive(true);
 
             if (TryGetComponent(out StreamableBehaviour streamable))
                 streamable.SetToRespawn();
