@@ -30,7 +30,7 @@ public class ItemType : SerializedScriptableObject
 #if UNITY_EDITOR
     [OnValueChanged(nameof(OnStackChange))]
 #endif
-    public int ItemStack = 1;
+    public int ItemStack = 16;
     [OdinSerialize, HideLabel, InlineProperty]
     public IItem Behaviour;
 
