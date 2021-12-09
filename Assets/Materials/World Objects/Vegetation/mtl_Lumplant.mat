@@ -7,11 +7,11 @@ Material:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: mtl_Porock
-  m_Shader: {fileID: -6465566751694194690, guid: 63d266d8d6c5eb448ad4db9c70e06347, type: 3}
-  m_ShaderKeywords: BOOLEAN_B20ED48BDB0640FB9E2CB435C1F36518_ON
+  m_Name: mtl_Lumplant
+  m_Shader: {fileID: -6465566751694194690, guid: fb15eec1593c90a43ab5e872dcec1357, type: 3}
+  m_ShaderKeywords: 
   m_LightmapFlags: 4
-  m_EnableInstancingVariants: 1
+  m_EnableInstancingVariants: 0
   m_DoubleSidedGI: 0
   m_CustomRenderQueue: -1
   stringTagMap: {}
@@ -19,16 +19,24 @@ Material:
   m_SavedProperties:
     serializedVersion: 3
     m_TexEnvs:
+    - Texture2D_69d67ff2a7db4bebb2be3303c6443a5d:
+        m_Texture: {fileID: 2800000, guid: 41184ab27368baf49895873692847ec4, type: 3}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
     - Texture2D_77ca2867c05c45b38ed33b4bca0ab081:
-        m_Texture: {fileID: 2800000, guid: a9d845cf6831bee498e87d8d5d41a740, type: 3}
+        m_Texture: {fileID: 2800000, guid: 07bc683d41fccac4aa3a8d6d035747d9, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - Texture2D_a3b46ca200b945b2bd8a3e80359f8c68:
-        m_Texture: {fileID: 2800000, guid: 674f40d5ac6951145af71ff7e36b5c99, type: 3}
+        m_Texture: {fileID: 2800000, guid: 41184ab27368baf49895873692847ec4, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - Texture2D_d0a67e09e89c4bd2ad6a20e4406e6b04:
-        m_Texture: {fileID: 2800000, guid: bc4b15d3aae1de046bb8e0dc4a9a57d9, type: 3}
+        m_Texture: {fileID: 2800000, guid: 174a60b78006075468bff37a5bd35879, type: 3}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - Texture2D_ef70aaa946a54ec8859d47f9a4bdf31f:
+        m_Texture: {fileID: 2800000, guid: f32abf7f43f82904782fcd277246f81f, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _BaseMap:
@@ -56,7 +64,7 @@ Material:
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _MainTex:
-        m_Texture: {fileID: 0}
+        m_Texture: {fileID: 2800000, guid: 07bc683d41fccac4aa3a8d6d035747d9, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _MetallicGlossMap:
@@ -88,15 +96,15 @@ Material:
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     m_Floats:
-    - BOOLEAN_B20ED48BDB0640FB9E2CB435C1F36518: 1
-    - Boolean_cd8a7d6991174185b9de3b2a49d8c4d2: 1
-    - ENUM_82D1F2175D4F4FB2B60B69851E2B528C: 0
+    - BOOLEAN_B20ED48BDB0640FB9E2CB435C1F36518: 0
+    - Boolean_cd8a7d6991174185b9de3b2a49d8c4d2: 0
     - Vector1_403a5e46a56646e49c4d78bb9341acdf: 2
-    - Vector1_464f941fee60406e9229a38e0d8e2c54: 0
+    - Vector1_464f941fee60406e9229a38e0d8e2c54: 0.01
     - Vector1_6aeb326bd7d540dea99bc3499293ce9c: 1
+    - Vector1_6fd8a7f17657483ca42253853c20f20e: 3
     - Vector1_8c880fec5b5643a1b64dfe7ae8fc8a05: 1
     - Vector1_956559e20cda47abb489bf1ef342ab15: 7
-    - Vector1_9573131d8f0749938c1f56731cdcc331: 3
+    - Vector1_9573131d8f0749938c1f56731cdcc331: 2
     - Vector1_b131a6bd753443aaae2df6f877b8b889: 1
     - Vector1_bd1f023d66a14319adbc4b5604c89c4d: 0.7
     - Vector1_ed9127d32fd145a98248dfc9e94d26c2: 0.8
@@ -130,14 +138,14 @@ Material:
     - _ZWrite: 1
     m_Colors:
     - Color_3fd9ee22e9b34b129140a0825ac9e37e: {r: 1, g: 1, b: 1, a: 1}
-    - Color_55ff79ca7130440ba4094da6af02b992: {r: 1, g: 0.9579897, b: 0.504717, a: 1}
+    - Color_55ff79ca7130440ba4094da6af02b992: {r: 0.59166855, g: 0.8773585, b: 0.40970984, a: 1}
     - Vector2_f48f2b9d23cd44889f09e20cbb38cb73: {r: 1, g: 1, b: 0, a: 0}
-    - _BaseColor: {r: 0.8, g: 0.8, b: 0.8, a: 1}
-    - _Color: {r: 0.9063317, g: 0.9063317, b: 0.9063317, a: 1}
+    - _BaseColor: {r: 0.9063317, g: 0.9063317, b: 0.9063317, a: 1}
+    - _Color: {r: 0.8, g: 0.8, b: 0.8, a: 1}
     - _EmissionColor: {r: 0, g: 0, b: 0, a: 1}
-    - _SpecColor: {r: 0.2, g: 0.2, b: 0.2, a: 1}
+    - _SpecColor: {r: 0.19999996, g: 0.19999996, b: 0.19999996, a: 1}
   m_BuildTextureStacks: []
---- !u!114 &4957973677562907546
+--- !u!114 &1922585219296648827
 MonoBehaviour:
   m_ObjectHideFlags: 11
   m_CorrespondingSourceObject: {fileID: 0}
