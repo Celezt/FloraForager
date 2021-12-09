@@ -1,3 +1,4 @@
+using System.Linq;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -18,14 +19,21 @@ public class SeedItem : IUse, IStar, IValue
     [SerializeField, AssetSelector(Paths = "Assets/Data/Flora"), AssetsOnly]
     private FloraInfo _flora;
     [SerializeField]
-    private float _staminaChange = -0.025f;
+    private float _staminaChange = -0.1f;
     [Space(10)]
     [SerializeField]
-    private LayerMask _PlaceMask = LayerMask.NameToLayer("Grid");
+    private AnimationClip _sowClip;
     [SerializeField]
-    private float _radius = 2.75f;
+    private float _stunDuration = 2.333f;
+    [SerializeField]
+    private float _onUse = 1.1f;
+    [Space(10)]
+    [SerializeField]
+    private float _radius = 1.1f;
     [SerializeField, Range(0.0f, 360.0f)]
-    private float _arc = 360.0f;
+    private float _arc = 160.0f;
+    [SerializeField, ListDrawerSettings(Expanded = true, AlwaysAddDefaultValue = true, ShowItemCount = false, DraggableItems = false)]
+    private CellType[] _allowedUse = new CellType[] { CellType.Dirt };
 
     private PlayerStamina _playerStamina;
 
@@ -54,18 +62,24 @@ public class SeedItem : IUse, IStar, IValue
         if (!context.started)
             yield break;
 
-        if (GameGrid.Instance.HoveredCell == null)
+        Cell cell;
+        if ((cell = GameGrid.Instance.HoveredCell) == null || GameGrid.Instance.HoveredCell.Occupied ||
+            !_allowedUse.Contains(GameGrid.Instance.HoveredCell.Type))
             yield break;
 
         if (MathUtility.PointInArc(GameGrid.Instance.MouseHit, context.transform.position, context.transform.localEulerAngles.y, _arc, _radius))
         {
-            if (FloraMaster.Instance.Add(_flora))
-            {
-                SoundPlayer.Instance.Play("place_seed");
+            context.transform.GetComponentInChildren<PlayerMovement>().ActivaInput.Add(_stunDuration);
+            context.transform.GetComponentInChildren<HumanoidAnimationBehaviour>().CustomMotionRaise(_sowClip);
 
-                context.Consume();
-                _playerStamina.Stamina += _staminaChange;
-            }
+            yield return new WaitForSeconds(_onUse);
+
+            FloraMaster.Instance.Add(_flora, cell);
+
+            SoundPlayer.Instance.Play("place_seed");
+
+            context.Consume();
+            _playerStamina.Stamina += _staminaChange;
         }
 
         yield break;

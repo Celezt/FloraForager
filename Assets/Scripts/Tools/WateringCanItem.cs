@@ -45,7 +45,7 @@ public class WateringCanItem : IUse, IStar
     [SerializeField, Range(0.0f, 360.0f)]
     private float _arc = 140.0f;
     [SerializeField, ListDrawerSettings(Expanded = true, AlwaysAddDefaultValue = true, ShowItemCount = false, DraggableItems = false)]
-    private CellType[] _allowedUse = new CellType[] { CellType.Water };
+    private CellType[] _allowedUse = new CellType[] { CellType.Dirt, CellType.Water };
 
     private PlayerStamina _playerStamina;
     private int _usesLeft;

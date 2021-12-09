@@ -55,13 +55,8 @@ public class FloraMaster : SerializedScriptableSingleton<FloraMaster>, IStreamer
         }
     }
 
-    public bool Add(string floraName)
+    public bool Add(string floraName, Cell cell)
     {
-        Cell cell = GameGrid.Instance.HoveredCell;
-
-        if (cell == null || cell.Occupied || cell.Type != CellType.Dirt)
-            return false;
-
         string key = floraName.ToLower();
 
         if (!_FloraDictionary.ContainsKey(key))
@@ -76,13 +71,8 @@ public class FloraMaster : SerializedScriptableSingleton<FloraMaster>, IStreamer
 
         return true;
     }
-    public bool Add(FloraInfo floraInfo)
+    public bool Add(FloraInfo floraInfo, Cell cell)
     {
-        Cell cell = GameGrid.Instance.HoveredCell;
-
-        if (cell == null || cell.Occupied || cell.Type != CellType.Dirt)
-            return false;
-
         Flora flora = new Flora(floraInfo, cell.Local);
 
         if (!Create(flora, cell))
@@ -95,9 +85,6 @@ public class FloraMaster : SerializedScriptableSingleton<FloraMaster>, IStreamer
 
     public bool Create(Flora flora, Cell cell)
     {
-        if (cell.Occupied)
-            return false;
-
         GameObject obj = Instantiate(_FloraPrefab);
 
         FloraObject floraObject = obj.GetComponent<FloraObject>();
