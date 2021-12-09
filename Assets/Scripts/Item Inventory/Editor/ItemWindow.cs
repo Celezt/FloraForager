@@ -150,7 +150,9 @@ public class ItemWindow : OdinMenuEditorWindow
                 GUILayout.FlexibleSpace();
 
                 if (SirenixEditorGUI.ToolbarButton("Save"))
+                {
                     _customItem.Create();
+                }
             }
             else if (selected.Contains(MenuTree.GetMenuItem("Items")))
             {
@@ -186,6 +188,9 @@ public class ItemWindow : OdinMenuEditorWindow
 
                 if (SirenixEditorGUI.ToolbarButton("Regenerate"))
                     _settings.Regenerate();
+
+                if (SirenixEditorGUI.ToolbarButton("Refresh"))
+                    ForceMenuTreeRebuild();
 
                 GUILayout.FlexibleSpace();
 

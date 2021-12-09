@@ -72,10 +72,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 19d19582756fbda4282d1e0d0d350839, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _particleSystem: {fileID: 7967607448613512546}
   _hitSound: hit_rock
   _breakSound: break_rock
-  _filter: 16384
+  _filter: 4096
   _star: 1
   _drops:
   - ID: obsidian
@@ -86,8 +85,10 @@ MonoBehaviour:
   _shakeDuration: 2
   _shakeStrength: 0.05
   _shakeAngleRotation: 0
+  _particleSystem: {fileID: 7967607448613512546}
   _data:
     Durability: 20
+    MaxDurability: 0
 --- !u!114 &7601324173234069211
 MonoBehaviour:
   m_ObjectHideFlags: 0
