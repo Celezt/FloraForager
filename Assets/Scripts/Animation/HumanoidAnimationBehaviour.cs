@@ -9,6 +9,7 @@ public class HumanoidAnimationBehaviour : MonoBehaviour
     private static readonly int CUSTOM_MOTION_SPEED_HASH = Animator.StringToHash("CustomMotionSpeed");
     private static readonly int CUSTOM_TRIGGER_HASH = Animator.StringToHash("CustomTrigger");
     private static readonly int IS_CUSTOM_LOOP_HASH = Animator.StringToHash("IsCustomLoop");
+    private static readonly int IS_CUSTOM_CANCEL_TRIGGER_HASH = Animator.StringToHash("CustomCancelTrigger");
 
     /// <summary>
     /// Transform to hold items.
@@ -50,9 +51,14 @@ public class HumanoidAnimationBehaviour : MonoBehaviour
     private bool _isCustomMotionLooping;
 
     /// <summary>
-    /// Manually cancel custom motion loop.
+    /// Manually cancel custom motion loop. Will run until the current loop is done.
     /// </summary>
-    public void CancelLoop() => _animator.SetBool(IS_CUSTOM_LOOP_HASH, _isCustomMotionLooping = false);
+    public void CancelLoop() => _animator.SetBool(IS_CUSTOM_LOOP_HASH, false);
+
+    /// <summary>
+    /// Instant cancel the current custom motion.
+    /// </summary>
+    public void ForceCancelCustomMotion() => _animator.SetTrigger(IS_CUSTOM_CANCEL_TRIGGER_HASH);
 
     /// <summary>
     /// Raise a new custom animation.
@@ -72,7 +78,6 @@ public class HumanoidAnimationBehaviour : MonoBehaviour
             _animatorOverrideController["EmptyCustomMotion0"] = clip;
 
         _currentCustomClip = clip;
-
         _animator.SetLayerWeight(1, 0);
         _animator.SetBool(IS_CUSTOM_LOOP_HASH, _isCustomMotionLooping = loop);
         _animator.SetInteger(CUSTOM_INDEX_HASH, _customIndex);
