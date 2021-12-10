@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using UnityEngine;
 using UnityEditor;
 using UnityEditor.EditorTools;
@@ -19,6 +20,8 @@ public class CellTool : EditorTool
 
     private bool _QPressed = false;
     private bool _EPressed = false;
+
+    private Vector2 _Scroll;
 
     private Vector3 _MousePosition;
     private Vector3 _CreateAt;
@@ -59,9 +62,13 @@ public class CellTool : EditorTool
         _QPressed = Event.current.type == EventType.KeyDown && Event.current.keyCode == KeyCode.Q;
         _EPressed = Event.current.type == EventType.KeyDown && Event.current.keyCode == KeyCode.E;
 
+        _Scroll = Event.current.type == EventType.ScrollWheel ? Event.current.delta : Vector2.zero;
+
         if (_QPressed)
             Event.current.Use();
         if (_EPressed)
+            Event.current.Use();
+        if (_Scroll != Vector2.zero)
             Event.current.Use();
 
         if (Event.current.alt || Event.current.control)
@@ -106,18 +113,19 @@ public class CellTool : EditorTool
     {
         int changeType = 0;
 
-        if (_QPressed)
+        if (_QPressed || _Scroll.y > 0f)
             changeType = -1;
-        if (_EPressed)
+        if (_EPressed || _Scroll.y < 0f)
             changeType = 1;
 
         if (changeType == 0)
             return;
 
+        Filter();
+
         int range = Enum.GetValues(typeof(CellType)).Length;
 
-        GameObject[] selection = Array.ConvertAll(Selection.objects, o => (GameObject)o);
-        foreach (GameObject active in selection)
+        foreach (GameObject active in Selection.objects)
         {
             if (!active.TryGetComponent(out CellMesh cell))
                 continue;
@@ -131,6 +139,17 @@ public class CellTool : EditorTool
 
             cell.SetType((CellType)newType);
         }
+    }
+
+    private void Filter()
+    {
+        List<UnityEngine.Object> selectedCells = new List<UnityEngine.Object>();
+        foreach (GameObject active in Selection.objects)
+        {
+            if (active.GetComponent<CellMesh>() != null)
+                selectedCells.Add(active);
+        }
+        Selection.objects = selectedCells.ToArray();
     }
 
     private void CreateTypeTool()
