@@ -20,6 +20,8 @@ public class CellTool : EditorTool
     private bool _QPressed = false;
     private bool _EPressed = false;
 
+    private Vector2 _Scroll;
+
     private Vector3 _MousePosition;
     private Vector3 _CreateAt;
     private Vector3 _Start;
@@ -59,9 +61,13 @@ public class CellTool : EditorTool
         _QPressed = Event.current.type == EventType.KeyDown && Event.current.keyCode == KeyCode.Q;
         _EPressed = Event.current.type == EventType.KeyDown && Event.current.keyCode == KeyCode.E;
 
+        _Scroll = Event.current.type == EventType.ScrollWheel ? Event.current.delta : Vector2.zero;
+
         if (_QPressed)
             Event.current.Use();
         if (_EPressed)
+            Event.current.Use();
+        if (_Scroll != Vector2.zero)
             Event.current.Use();
 
         if (Event.current.alt || Event.current.control)
@@ -106,9 +112,9 @@ public class CellTool : EditorTool
     {
         int changeType = 0;
 
-        if (_QPressed)
+        if (_QPressed || _Scroll.y > 0f)
             changeType = -1;
-        if (_EPressed)
+        if (_EPressed || _Scroll.y < 0f)
             changeType = 1;
 
         if (changeType == 0)
