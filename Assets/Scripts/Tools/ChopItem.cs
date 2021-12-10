@@ -75,6 +75,8 @@ public class ChopItem : IUse, IDestructor, IStar, IValue
         if (!context.started)
             yield break;
 
+        context.behaviour.ApplyCooldown();
+
         GameObject model = null;
 
         context.transform.GetComponentInChildren<PlayerMovement>().ActivaInput.Add(_stunDuration);

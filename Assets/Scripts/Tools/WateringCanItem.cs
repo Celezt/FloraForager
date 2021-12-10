@@ -1,3 +1,4 @@
+using System.Linq;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -43,9 +44,14 @@ public class WateringCanItem : IUse, IStar
     private float _radius = 2.0f;
     [SerializeField, Range(0.0f, 360.0f)]
     private float _arc = 140.0f;
+    [SerializeField, ListDrawerSettings(Expanded = true, AlwaysAddDefaultValue = true, ShowItemCount = false, DraggableItems = false)]
+    private CellType[] _allowedUse = new CellType[] { CellType.Dirt, CellType.Water };
 
     private PlayerStamina _playerStamina;
     private int _usesLeft;
+
+    public int UsesLeft => _usesLeft;
+    public int MaxUses => _maxUses;
 
     public void OnInitialize(ItemTypeContext context)
     {
@@ -55,11 +61,12 @@ public class WateringCanItem : IUse, IStar
     public void OnEquip(ItemContext context)
     {
         _playerStamina = context.transform.GetComponent<PlayerStamina>();
+        WateringCanUI.Instance.Show(this);
     }
 
     public void OnUnequip(ItemContext context)
     {
-
+        WateringCanUI.Instance.Hide();
     }
 
     public void OnUpdate(ItemContext context)
@@ -73,13 +80,15 @@ public class WateringCanItem : IUse, IStar
             yield break;
 
         Cell cell;
-        if ((cell = GameGrid.Instance.HoveredCell) == null)
+        if ((cell = GameGrid.Instance.HoveredCell) == null || !_allowedUse.Contains(cell.Type))
             yield break;
 
         if (MathUtility.PointInArc(GameGrid.Instance.MouseHit, context.transform.position, context.transform.localEulerAngles.y, _arc, _radius))
         {
             if (cell.Type == CellType.Water) // fill watering can
             {
+                context.behaviour.ApplyCooldown();
+
                 GameObject model = null;
 
                 context.transform.GetComponentInChildren<PlayerMovement>().ActivaInput.Add(_stunFillDuration);
@@ -113,6 +122,8 @@ public class WateringCanItem : IUse, IStar
                 {
                     if (!floraObject.Flora.Watered)
                     {
+                        context.behaviour.ApplyCooldown();
+
                         GameObject model = null;
 
                         context.transform.GetComponentInChildren<PlayerMovement>().ActivaInput.Add(_stunWateringDuration);

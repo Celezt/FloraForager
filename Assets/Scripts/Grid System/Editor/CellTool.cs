@@ -119,9 +119,7 @@ public class CellTool : EditorTool
         GameObject[] selection = Array.ConvertAll(Selection.objects, o => (GameObject)o);
         foreach (GameObject active in selection)
         {
-            active.TryGetComponent(out CellMesh cell);
-
-            if (cell == null)
+            if (!active.TryGetComponent(out CellMesh cell))
                 continue;
 
             int newType = (int)cell.Data.Type + changeType;

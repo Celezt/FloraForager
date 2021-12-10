@@ -35,7 +35,7 @@ namespace StylizedWater
         void OnEnable()
         {
             RenderPipelineManager.beginCameraRendering += DoPlanarReflections;
-            reflectionLayer = ~(1 << 4);
+            //reflectionLayer = ~(1 << 4);
         }
 
         void OnDisable()
@@ -227,7 +227,7 @@ namespace StylizedWater
             {
                 GL.invertCulling = true;
                 RenderSettings.fog = false;
-                QualitySettings.maximumLODLevel = 1;
+                QualitySettings.maximumLODLevel = 0;
                 QualitySettings.lodBias = lodBias * 0.5f;
             }
 

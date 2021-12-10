@@ -42,6 +42,8 @@ public class JournalItem : IUse
         if (!context.started)
             yield break;
 
+        context.behaviour.ApplyCooldown();
+
         PlayerInput playerInput = PlayerInput.GetPlayerByIndex(context.playerIndex);
 
         playerInput.DeactivateInput();

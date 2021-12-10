@@ -1,3 +1,4 @@
+using System.Linq;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -17,14 +18,12 @@ public class PlaceableItem : IUse
     private float _placeRange = 3.0f;
     [SerializeField]
     private bool _followNormal;
-    [SerializeField]
-    private LayerMask _placeMask = LayerMask.GetMask("Ground");
-    [SerializeField, ListDrawerSettings(Expanded = true)]
-    private CellType[] _allowedTypes = new CellType[1];
     [SerializeField, AssetsOnly]
     private Material _material;
     [SerializeField, AssetsOnly]
     private GameObject _placeableObject;
+    [SerializeField, ListDrawerSettings(Expanded = true, AlwaysAddDefaultValue = true, ShowItemCount = false, DraggableItems = false)]
+    private CellType[] _allowedUse = new CellType[] { CellType.Water };
 
     private Quaternion _rotation = Quaternion.identity;
 
@@ -61,12 +60,9 @@ public class PlaceableItem : IUse
     {
         _cell = GameGrid.Instance.HoveredCell;
 
-        Ray ray = Camera.main.ScreenPointToRay(Mouse.current.position.ReadValue());
-        Physics.Raycast(ray, out RaycastHit hitInfo, 50f, _placeMask);
-
         float distance = Mathf.Sqrt(
-            Mathf.Pow(hitInfo.point.x - context.transform.position.x, 2) +
-            Mathf.Pow(hitInfo.point.z - context.transform.position.z, 2));
+            Mathf.Pow(GameGrid.Instance.MouseHit.x - context.transform.position.x, 2) +
+            Mathf.Pow(GameGrid.Instance.MouseHit.z - context.transform.position.z, 2));
 
         if (distance <= _placeRange && _cell != null)
         {
@@ -84,24 +80,18 @@ public class PlaceableItem : IUse
 
     IEnumerator IUse.OnUse(UseContext context)
     {
-        if (!context.started || !_canPlace || _cell == null)
+        if (!context.started)
             yield break;
 
-        if (!_canPlace)
+        if (!_canPlace || _cell == null || !_allowedUse.Contains(_cell.Type))
             yield break;
 
-        foreach (CellType type in _allowedTypes)
-        {
-            if (type == _cell.Type)
-            {
-                context.Place(_placeableObject, _cell, _rotation, _followNormal);
-                context.Consume();
+        context.behaviour.ApplyCooldown();
 
-                SoundPlayer.Instance.Play(_placeSound);
+        context.Place(_placeableObject, _cell, _rotation, _followNormal);
+        context.Consume();
 
-                yield break;
-            }
-        }
+        SoundPlayer.Instance.Play(_placeSound);
 
         yield break;
     }

@@ -116,6 +116,11 @@ public class GameTime : SerializedScriptableSingleton<GameTime>, IStreamer, IStr
     }
 
     /// <summary>
+    /// accelerates time from current time by given amount in hours
+    /// </summary>
+    /// <param name="hours"></param>
+    public void AccelerateTime(float hours) => AccelerateTime(CurrentTime, hours);
+    /// <summary>
     /// accelerates time from point in current day by given amount in hours
     /// </summary>
     public void AccelerateTime(float from, float hours)

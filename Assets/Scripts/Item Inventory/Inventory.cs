@@ -91,7 +91,10 @@ public class Inventory
         int amountToAdd = item.Amount;
 
         if (!ItemTypeSettings.Instance.ItemTypeChunk.TryGetValue(item.ID, out ItemType itemType))    // If it exit.
+        {
+            Debug.LogError($"{item.ID} does not exist");
             return false;
+        }
 
         int stack = (int)itemType.ItemStack;
 

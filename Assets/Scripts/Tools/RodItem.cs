@@ -70,6 +70,8 @@ public class RodItem : IUse, IStar, IValue
     private float _radius = 4.0f;
     [SerializeField, Range(0.0f, 360.0f)]
     private float _arc = 80.0f;
+    [SerializeField, ListDrawerSettings(Expanded = true, AlwaysAddDefaultValue = true, ShowItemCount = false, DraggableItems = false)]
+    private CellType[] _allowedUse = new CellType[] { CellType.Water };
 
     private PlayerStamina _playerStamina;
 
@@ -99,7 +101,7 @@ public class RodItem : IUse, IStar, IValue
             yield break;
 
         Cell cell;
-        if ((cell = GameGrid.Instance.HoveredCell) == null || cell.Type != CellType.Water)
+        if ((cell = GameGrid.Instance.HoveredCell) == null || !_allowedUse.Contains(cell.Type))
             yield break;
 
         if (!MathUtility.PointInArc(GameGrid.Instance.MouseHit, context.transform.position, context.transform.localEulerAngles.y, _arc, _radius))
@@ -112,6 +114,8 @@ public class RodItem : IUse, IStar, IValue
             yield break;
 
         // -- START FISHING --
+
+        context.behaviour.ApplyCooldown();
 
         PlayerInput playerInput = PlayerInput.GetPlayerByIndex(context.playerIndex);
 

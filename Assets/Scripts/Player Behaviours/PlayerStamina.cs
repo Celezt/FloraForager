@@ -7,21 +7,26 @@ using IngameDebugConsole;
 
 public class PlayerStamina : MonoBehaviour
 {
-    [SerializeField] 
+    [SerializeField]
+    private AnimationClip _passOutClip;
+    [SerializeField]
+    private AnimationClip _sleepClip;
+    [SerializeField]
     private float _MaxStamina = 100.0f;
-    [SerializeField] 
-    private float _WalkingDrain = 0.04f;  // amount stamina drained every second
-    [SerializeField] 
-    private float _RunningDrain = 0.09f;
-    [SerializeField] 
+    [SerializeField]
+    private float _WalkingDrain = 0.1f;  // amount stamina drained every second
+    [SerializeField]
+    private float _RunningDrain = 0.2f;
+    [SerializeField]
     private float _NightDrain = 7.5f;
-    [SerializeField, Range(0.0f, 1.0f)] 
+    [SerializeField, Range(0.0f, 1.0f)]
     private float _PassOutPenalty = 0.25f; // percentage of stamina lost
 
     public event System.Action OnStaminaDrained = delegate { };
     public event System.Action OnStaminaEmptied = delegate { };
 
     private PlayerMovement _PlayerMovement;
+    private HumanoidAnimationBehaviour _animationBehaviour;
 
     private float _Stamina;
     private float _Sleepy; // rate to increase stamina drain rate
@@ -36,10 +41,16 @@ public class PlayerStamina : MonoBehaviour
         }
     }
 
+    public void ChangeStamina(float change) => Stamina += change;
+    public void SetStamina(float value) => Stamina = value;
+
     private void Awake()
     {
         _PlayerMovement = GetComponent<PlayerMovement>();
+        _animationBehaviour = GetComponentInChildren<HumanoidAnimationBehaviour>();
+
         DebugLogConsole.AddCommandInstance("player.stamina_change", "Change player's stamina", nameof(ChangeStamina), this);
+        DebugLogConsole.AddCommandInstance("player.stamina_set", "Set player's stamina", nameof(SetStamina), this);
     }
 
     private void Start()
@@ -60,6 +71,9 @@ public class PlayerStamina : MonoBehaviour
                 OnStaminaDrained += RunningDrain;
             }
         };
+
+        OnStaminaEmptied += PassOut;
+        SleepSchedule.Instance.OnSlept += WakeUp;
     }
 
     private void Update()
@@ -68,20 +82,22 @@ public class PlayerStamina : MonoBehaviour
         if (_Stamina <= 0.0f && !SleepSchedule.Instance.IsSleeping)
         {
             OnStaminaEmptied.Invoke();
-            SleepSchedule.Instance.StartSleeping(true);
         }
+    }
+
+    public void Drain(float staminaDrain)
+    {
+        _Stamina -= staminaDrain * Time.deltaTime;
     }
 
     private void WalkingDrain()
     {
-        Drain(_WalkingDrain * ((_PlayerMovement.Velocity.magnitude > 0.01f) ? 1.0f : 0.0f));
+        Drain(_WalkingDrain * ((_PlayerMovement.RawVelocity.magnitude > float.Epsilon) ? 1.0f : 0.0f));
     }
-
     private void RunningDrain()
     {
-        Drain(_RunningDrain * ((_PlayerMovement.Velocity.magnitude > 0.01f) ? 1.0f : 0.0f));
+        Drain(_RunningDrain * ((_PlayerMovement.RawVelocity.magnitude > float.Epsilon) ? 1.0f : 0.0f));
     }
-
     private void NightDrain()
     {
         if (SleepSchedule.Instance.IsNightTime)
@@ -90,19 +106,29 @@ public class PlayerStamina : MonoBehaviour
             float totalTime = SleepSchedule.Instance.NightToMorning;
 
             float sleepy = ((SleepSchedule.Instance.TimeToNight(SleepSchedule.Instance.MorningTime) - timeToMorning) - totalTime) / totalTime;
+
             Drain(_NightDrain * sleepy);
         }
     }
 
-    public void ChangeStamina(float change) => Stamina = change;
-
-    public void Drain(float staminaDrain)
+    private void PassOut()
     {
-        _Stamina -= staminaDrain * Time.deltaTime;
+        SleepSchedule.Instance.StartSleeping(true);
+        StartCoroutine(PassOutAnimation());
+    }
+    private IEnumerator PassOutAnimation()
+    {
+        _animationBehaviour.CustomMotionRaise(_passOutClip);
+        yield return new WaitForSeconds(_passOutClip.length);
+        _animationBehaviour.CustomMotionRaise(_sleepClip, loop: true);
+    }
+    private void WakeUp(bool penalty)
+    {
+        _animationBehaviour.CancelLoop();
     }
 
     public void Recover(bool penalty)
     {
-        _Stamina = (penalty) ? _MaxStamina * (1.0f - _PassOutPenalty) : _MaxStamina;
+        _Stamina = penalty ? _MaxStamina * (1.0f - _PassOutPenalty) : _MaxStamina;
     }
 }
