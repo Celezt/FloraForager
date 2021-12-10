@@ -87,6 +87,8 @@ public class WateringCanItem : IUse, IStar
         {
             if (cell.Type == CellType.Water) // fill watering can
             {
+                context.behaviour.ApplyCooldown();
+
                 GameObject model = null;
 
                 context.transform.GetComponentInChildren<PlayerMovement>().ActivaInput.Add(_stunFillDuration);
@@ -120,6 +122,8 @@ public class WateringCanItem : IUse, IStar
                 {
                     if (!floraObject.Flora.Watered)
                     {
+                        context.behaviour.ApplyCooldown();
+
                         GameObject model = null;
 
                         context.transform.GetComponentInChildren<PlayerMovement>().ActivaInput.Add(_stunWateringDuration);

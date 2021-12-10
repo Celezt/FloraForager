@@ -69,6 +69,8 @@ public class SeedItem : IUse, IStar, IValue
 
         if (MathUtility.PointInArc(GameGrid.Instance.MouseHit, context.transform.position, context.transform.localEulerAngles.y, _arc, _radius))
         {
+            context.behaviour.ApplyCooldown();
+
             context.transform.GetComponentInChildren<PlayerMovement>().ActivaInput.Add(_stunDuration);
             context.transform.GetComponentInChildren<HumanoidAnimationBehaviour>().CustomMotionRaise(_sowClip);
 

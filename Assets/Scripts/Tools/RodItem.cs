@@ -115,6 +115,8 @@ public class RodItem : IUse, IStar, IValue
 
         // -- START FISHING --
 
+        context.behaviour.ApplyCooldown();
+
         PlayerInput playerInput = PlayerInput.GetPlayerByIndex(context.playerIndex);
 
         UIStateVisibility.Instance.Hide("inventory", "stamina");
