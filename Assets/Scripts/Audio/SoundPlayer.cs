@@ -108,7 +108,10 @@ public class SoundPlayer : Singleton<SoundPlayer>
         int poolIndex = 0;
 
         while (_AudioSourcePool[poolIndex].isPlaying)
-            PoolIndex++; poolIndex++;
+        {
+            PoolIndex++; 
+            poolIndex++;
+        }
 
         AudioSource source = _AudioSourcePool[poolIndex];
         sound.AudioSource = source;
