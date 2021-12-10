@@ -17,6 +17,7 @@ MonoBehaviour:
     SerializedBytes: 
     ReferencedUnityObjects:
     - {fileID: 11400000, guid: 9aa2c74b13507f94f8c889d61c870bcf, type: 2}
+    - {fileID: 5930328083879454729, guid: 71f23000df5978a4797f072ce373111b, type: 3}
     SerializedBytesString: 
     Prefab: {fileID: 0}
     PrefabModificationsReferencedUnityObjects: []
@@ -33,28 +34,43 @@ MonoBehaviour:
       Data: 10
     - Name: IUse.Cooldown
       Entry: 4
-      Data: 0.05
+      Data: 2.333
     - Name: _flora
       Entry: 10
       Data: 0
     - Name: _staminaChange
       Entry: 4
-      Data: -0.025
-    - Name: _PlaceMask
+      Data: -0.1
+    - Name: _sowClip
+      Entry: 10
+      Data: 1
+    - Name: _stunDuration
+      Entry: 4
+      Data: 2.333
+    - Name: _onUse
+      Entry: 4
+      Data: 1.1
+    - Name: _radius
+      Entry: 4
+      Data: 1.3
+    - Name: _arc
+      Entry: 4
+      Data: 140
+    - Name: _allowedUse
       Entry: 7
-      Data: UnityEngine.LayerMask, UnityEngine.CoreModule
+      Data: 1|CellType[], Assembly-CSharp
+    - Name: 
+      Entry: 12
+      Data: 1
     - Name: 
       Entry: 3
-      Data: 8
+      Data: 2
+    - Name: 
+      Entry: 13
+      Data: 
     - Name: 
       Entry: 8
       Data: 
-    - Name: _radius
-      Entry: 4
-      Data: 2.75
-    - Name: _arc
-      Entry: 4
-      Data: 360
     - Name: 
       Entry: 8
       Data: 

@@ -150,7 +150,9 @@ public class ItemWindow : OdinMenuEditorWindow
                 GUILayout.FlexibleSpace();
 
                 if (SirenixEditorGUI.ToolbarButton("Save"))
+                {
                     _customItem.Create();
+                }
             }
             else if (selected.Contains(MenuTree.GetMenuItem("Items")))
             {
@@ -187,6 +189,9 @@ public class ItemWindow : OdinMenuEditorWindow
                 if (SirenixEditorGUI.ToolbarButton("Regenerate"))
                     _settings.Regenerate();
 
+                if (SirenixEditorGUI.ToolbarButton("Refresh"))
+                    ForceMenuTreeRebuild();
+
                 GUILayout.FlexibleSpace();
 
                 if (SirenixEditorGUI.ToolbarButton("Delete"))
@@ -222,6 +227,7 @@ public class ItemWindow : OdinMenuEditorWindow
             _item.Name = _customItem.Name;
             _item.ID = _settings.GetUniqueID(_customItem.ID);
             _item.Description = _customItem.Description;
+            _item.ItemStack = _customItem.ItemStack;
             _item.Behaviour = _customItem.Behaviour;
             _item.Labels = _customItem.Labels;
             _item.Create();
@@ -253,7 +259,8 @@ public class ItemWindow : OdinMenuEditorWindow
             public string ID;
             [VerticalGroup("Group 1/Right"), TextArea(5, 30)]
             public string Description;
-            [Required, OdinSerialize, HideLabel, Indent]
+            public int ItemStack = 16;
+            [OdinSerialize, HideLabel, Indent, InfoBox("Behaviour is optional", infoMessageType: InfoMessageType.Info)]
             [ListDrawerSettings(Expanded = true)]
             public IItem Behaviour;
             [HideInInspector]
