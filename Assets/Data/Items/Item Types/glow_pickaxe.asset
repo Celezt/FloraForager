@@ -7,17 +7,17 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 0}
-  m_Enabled: 0
+  m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 00a108d415261c34b9fe06714b46e722, type: 3}
-  m_Name: scythe
+  m_Name: glow_pickaxe
   m_EditorClassIdentifier: 
   serializationData:
     SerializedFormat: 2
     SerializedBytes: 
     ReferencedUnityObjects:
-    - {fileID: -806904893743546587, guid: 71f23000df5978a4797f072ce373111b, type: 3}
-    - {fileID: 919132149155446097, guid: 5a1057dee949e7f459d3dc90a0328545, type: 3}
+    - {fileID: 8509585312402549256, guid: 71f23000df5978a4797f072ce373111b, type: 3}
+    - {fileID: 2591757034945707133, guid: 3ee8bcc4da5099545b210f0e9982878d, type: 3}
     SerializedBytesString: 
     Prefab: {fileID: 0}
     PrefabModificationsReferencedUnityObjects: []
@@ -25,28 +25,25 @@ MonoBehaviour:
     SerializationNodes:
     - Name: Behaviour
       Entry: 7
-      Data: 0|ScytheItem, Assembly-CSharp
+      Data: 0|ChopItem, Assembly-CSharp
     - Name: IStar.Star
       Entry: 3
-      Data: 1
+      Data: 2
     - Name: IValue.BaseValue
       Entry: 3
-      Data: 100
+      Data: 300
     - Name: IUse.Cooldown
       Entry: 4
-      Data: 1
+      Data: 1.5
     - Name: IDestructor.Damage
       Entry: 4
-      Data: 2
+      Data: 3
     - Name: _staminaChange
       Entry: 4
-      Data: -0.075
+      Data: -0.1
     - Name: _swingSound
       Entry: 1
       Data: swing_tool
-    - Name: _hitSound
-      Entry: 1
-      Data: 
     - Name: _poorSound
       Entry: 1
       Data: hit_poor
@@ -58,27 +55,51 @@ MonoBehaviour:
       Data: 1
     - Name: _stunDuration
       Entry: 4
-      Data: 1
+      Data: 1.5
     - Name: _onSwing
       Entry: 4
-      Data: 0.2
+      Data: 0.55
     - Name: _onUse
       Entry: 4
+      Data: 1
+    - Name: _halfExtents
+      Entry: 7
+      Data: UnityEngine.Vector3, UnityEngine.CoreModule
+    - Name: 
+      Entry: 4
       Data: 0.5
-    - Name: _radius
+    - Name: 
       Entry: 4
-      Data: 2
-    - Name: _arc
+      Data: 1
+    - Name: 
       Entry: 4
-      Data: 0.4
+      Data: 0.5
     - Name: 
       Entry: 8
       Data: 
-  Icon: {fileID: 21300000, guid: f00f3ffdf7cc25744a5bc2a6befeba7c, type: 3}
-  Name: Scythe
-  ID: scythe
+    - Name: _centerOffset
+      Entry: 7
+      Data: UnityEngine.Vector3, UnityEngine.CoreModule
+    - Name: 
+      Entry: 4
+      Data: 0
+    - Name: 
+      Entry: 4
+      Data: 1
+    - Name: 
+      Entry: 4
+      Data: 1
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: 
+      Entry: 8
+      Data: 
+  Icon: {fileID: 21300000, guid: 273b2f710ed811c40bdc9bc418adb9ff, type: 3}
+  Name: Glow Pickaxe
+  ID: glow_pickaxe
   Description: 
   ItemStack: 1
   Labels:
-  - Scythe
+  - Pickaxe
   - Tool

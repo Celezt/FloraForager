@@ -10,14 +10,14 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 00a108d415261c34b9fe06714b46e722, type: 3}
-  m_Name: axe
+  m_Name: glow_axe
   m_EditorClassIdentifier: 
   serializationData:
     SerializedFormat: 2
     SerializedBytes: 
     ReferencedUnityObjects:
     - {fileID: -7102883963023437372, guid: 71f23000df5978a4797f072ce373111b, type: 3}
-    - {fileID: 919132149155446097, guid: 9bd5b15c7881cce49a86eb42f89d51af, type: 3}
+    - {fileID: 2635398963971326557, guid: 1031d7167b6dbf74c95be5c3562f6225, type: 3}
     SerializedBytesString: 
     Prefab: {fileID: 0}
     PrefabModificationsReferencedUnityObjects: []
@@ -28,16 +28,16 @@ MonoBehaviour:
       Data: 0|ChopItem, Assembly-CSharp
     - Name: IStar.Star
       Entry: 3
-      Data: 1
+      Data: 2
     - Name: IValue.BaseValue
       Entry: 3
-      Data: 100
+      Data: 300
     - Name: IUse.Cooldown
       Entry: 4
       Data: 1.2
     - Name: IDestructor.Damage
       Entry: 4
-      Data: 2
+      Data: 3
     - Name: _staminaChange
       Entry: 4
       Data: -0.1
@@ -85,7 +85,7 @@ MonoBehaviour:
       Data: 0
     - Name: 
       Entry: 4
-      Data: 1
+      Data: 0
     - Name: 
       Entry: 4
       Data: 1
@@ -95,9 +95,9 @@ MonoBehaviour:
     - Name: 
       Entry: 8
       Data: 
-  Icon: {fileID: 21300000, guid: 9a2292155ac55964197b05d0db855877, type: 3}
-  Name: Axe
-  ID: axe
+  Icon: {fileID: 21300000, guid: 88747ec73ab3ce64c991733208cd8683, type: 3}
+  Name: Glow Axe
+  ID: glow_axe
   Description: 
   ItemStack: 1
   Labels:

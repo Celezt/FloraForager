@@ -14,7 +14,7 @@ public class ChopItem : IUse, IDestructor, IStar, IValue
     [OdinSerialize, PropertyOrder(float.MinValue + 2)]
     int IValue.BaseValue { get; set; }
     [OdinSerialize, PropertyOrder(float.MinValue + 3)]
-    float IUse.Cooldown { get; set; } = 0.6f;
+    float IUse.Cooldown { get; set; } = 1.2f;
     [OdinSerialize, PropertyOrder(float.MinValue + 4)]
     float IDestructor.Damage { get; set; } = 2.0f;
 
@@ -30,11 +30,11 @@ public class ChopItem : IUse, IDestructor, IStar, IValue
     [SerializeField, AssetsOnly]
     private GameObject _model;
     [SerializeField]
-    private float _stunDuration = 0.6f;
+    private float _stunDuration = 1.2f;
     [SerializeField]
-    private float _onSwing = 0.1f;
+    private float _onSwing = 0.55f;
     [SerializeField, Sirenix.OdinInspector.MinValue("_onSwing")]
-    private float _onUse = 0.2f;
+    private float _onUse = 0.8f;
     [SerializeField]
     private Vector3 _halfExtents = new Vector3(0.5f, 1.0f, 0.5f);
     [SerializeField]
