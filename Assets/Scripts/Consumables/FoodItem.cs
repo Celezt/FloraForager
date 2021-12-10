@@ -46,18 +46,20 @@ public class FoodItem : IUse, IStar, IValue
 
     IEnumerator IUse.OnUse(UseContext context)
     {
-        if (context.started)
-        {
-            _playerStamina.Stamina += _staminaChange;
+        if (!context.started)
+            yield break;
 
-            foreach (IEffect effect in _effects)
-                if (!effect.Duration.IsActive)
-                    effect.OnEffect(context);
+        context.behaviour.ApplyCooldown();
 
-            SoundPlayer.Instance.Play(_eatSound);
+        _playerStamina.Stamina += _staminaChange;
 
-            context.Consume();
-        }
+        foreach (IEffect effect in _effects)
+            if (!effect.Duration.IsActive)
+                effect.OnEffect(context);
+
+        SoundPlayer.Instance.Play(_eatSound);
+
+        context.Consume();
 
         yield break;
     }

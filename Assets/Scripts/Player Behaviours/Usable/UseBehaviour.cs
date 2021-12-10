@@ -187,9 +187,6 @@ public class UseBehaviour : MonoBehaviour
     {
         if (!_cooldown.Item2.IsActive)
         {
-            if (context.started)
-                _cooldown = (_slotIndex, new Duration(_use.Cooldown));
-
             IEnumerator UseTowardsCursor()
             {
                 UseContext useContext = new UseContext(
@@ -208,14 +205,14 @@ public class UseBehaviour : MonoBehaviour
                 IEnumerator enumerator = _use.OnUse(useContext);
                 while (enumerator.MoveNext())
                     yield return enumerator.Current;
-
-                // experimental, needs testing
-                // implemented because unnecessary cooldown when item was unsuccessfully used
-                if (_cooldown.Item2.InitTime - _cooldown.Item2.TimeLeft < float.Epsilon)
-                    _cooldown.Item2.Done();
             }
 
             yield return UseTowardsCursor();
         }
+    }
+
+    public void ApplyCooldown()
+    {
+        _cooldown = (_slotIndex, new Duration(_use.Cooldown));
     }
 }

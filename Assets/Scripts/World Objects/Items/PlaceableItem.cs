@@ -86,6 +86,8 @@ public class PlaceableItem : IUse
         if (!_canPlace || _cell == null || !_allowedUse.Contains(_cell.Type))
             yield break;
 
+        context.behaviour.ApplyCooldown();
+
         context.Place(_placeableObject, _cell, _rotation, _followNormal);
         context.Consume();
 
