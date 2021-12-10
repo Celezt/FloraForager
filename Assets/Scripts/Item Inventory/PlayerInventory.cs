@@ -62,26 +62,22 @@ public class PlayerInventory : MonoBehaviour
             UIStateVisibility.Instance.Hide("player_hud");
             SoundPlayer.Instance.Play(_openSound);
 
-            //Show(_inventoryHandler.GetComponent<CanvasGroup>());
-            //Hide(_hotbarHandler.GetComponent<CanvasGroup>());
-
             _inventoryLayout.SetActive(true);
             _hotbarLayout.SetActive(false);
 
             Time.timeScale = 0;
+            PlayerInput.GetPlayerByIndex(_playerIndex).DeactivateInput();
         }
         else
         {
             UIStateVisibility.Instance.Show("player_hud");
             SoundPlayer.Instance.Play(_closeSound);
 
-            //Show(_hotbarHandler.GetComponent<CanvasGroup>());
-            //Hide(_inventoryHandler.GetComponent<CanvasGroup>());
-
             _hotbarLayout.SetActive(true);
             _inventoryLayout.SetActive(false);
 
             Time.timeScale = 1;
+            PlayerInput.GetPlayerByIndex(_playerIndex).ActivateInput();
         }
     }
 

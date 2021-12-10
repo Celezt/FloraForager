@@ -31,7 +31,7 @@ public class ItemBehaviour : MonoBehaviour
         _item = item;
         _visualEffect.SetTexture(TEXTURE_ATTRIBUTE, ItemTypeSettings.Instance.ItemIconChunk[item.ID].texture);
 
-        StartCoroutine(Drop(new Vector3(direction.x, 0.8f, direction.y) * _impulse));
+        StartCoroutine(Drop(new Vector3(direction.x, Random.Range(0.8f, 2f), direction.y).normalized * _impulse));
     }
 
     private void Start()
@@ -75,19 +75,19 @@ public class ItemBehaviour : MonoBehaviour
 
         while (true)
         {
-            float deltaTime = Time.fixedDeltaTime;
+            float deltaTime = Time.deltaTime;
             Vector3 checkPosition = _checkTransform.position + Vector3.up * offset;
 
             position = Vector3.MoveTowards(position, checkPosition, 10 * deltaTime);
 
-            if (Vector3.Distance(position, checkPosition) <= float.Epsilon)
+            if (Vector3.Distance(position, checkPosition) <= 0.00001f)
             {
                 Destroy(gameObject, _destroyTimer);
             }
 
             transform.position = position;
 
-            yield return new WaitForFixedUpdate();
+            yield return null;
         }
     }
 
@@ -138,7 +138,7 @@ public class ItemBehaviour : MonoBehaviour
         if (gameObject.scene.isLoaded)
         {
             _inventory?.Insert(_item.ID, _item.Amount);
-            SoundPlayer.Instance?.Play(_pickupSound, 0, 0, 0, 0.035f);
+            SoundPlayer.Instance?.Play(_pickupSound, 0, 0, 0, 0.04f);
         }
     }
 }

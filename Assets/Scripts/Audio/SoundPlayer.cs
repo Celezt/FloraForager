@@ -87,6 +87,7 @@ public class SoundPlayer : Singleton<SoundPlayer>
             h.Status == AsyncOperationStatus.Failed));
 
         _SoundEffects = null;
+        _DialogueSounds = null;
 
         DebugLogConsole.AddCommandInstance("play.sound", "Plays sound", nameof(Play), this);
     }
@@ -104,10 +105,12 @@ public class SoundPlayer : Singleton<SoundPlayer>
 
     private IEnumerator PlaySound(Sound sound, float volumeChange = 0.0f, float pitchChange = 0.0f, int repeatCount = 0, float cooldown = 0.0f, bool loop = false)
     {
-        while (_AudioSourcePool[PoolIndex].isPlaying)
-            PoolIndex++;
+        int poolIndex = 0;
 
-        AudioSource source = _AudioSourcePool[PoolIndex];
+        while (_AudioSourcePool[poolIndex].isPlaying)
+            PoolIndex++; poolIndex++;
+
+        AudioSource source = _AudioSourcePool[poolIndex];
         sound.AudioSource = source;
 
         for (int i = 0; i < ((repeatCount > 0) ? repeatCount : 1); ++i)
@@ -135,7 +138,7 @@ public class SoundPlayer : Singleton<SoundPlayer>
         sound.AudioSource = null;
         source.clip = null;
 
-        while(PoolIndex > 0 && !_AudioSourcePool[PoolIndex].isPlaying)
+        while (PoolIndex > 0 && !_AudioSourcePool[PoolIndex].isPlaying)
             --PoolIndex;
     }
 
