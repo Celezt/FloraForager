@@ -124,7 +124,7 @@ public class PlayerStamina : MonoBehaviour
     }
     private void WakeUp(bool penalty)
     {
-        _animationBehaviour.CancelLoop();
+        _animationBehaviour.ForceCancelCustomMotion();
     }
 
     public void Recover(bool penalty)
