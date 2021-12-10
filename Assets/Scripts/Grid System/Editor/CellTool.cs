@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using UnityEngine;
 using UnityEditor;
 using UnityEditor.EditorTools;
@@ -120,10 +121,11 @@ public class CellTool : EditorTool
         if (changeType == 0)
             return;
 
+        Filter();
+
         int range = Enum.GetValues(typeof(CellType)).Length;
 
-        GameObject[] selection = Array.ConvertAll(Selection.objects, o => (GameObject)o);
-        foreach (GameObject active in selection)
+        foreach (GameObject active in Selection.objects)
         {
             if (!active.TryGetComponent(out CellMesh cell))
                 continue;
@@ -137,6 +139,17 @@ public class CellTool : EditorTool
 
             cell.SetType((CellType)newType);
         }
+    }
+
+    private void Filter()
+    {
+        List<UnityEngine.Object> selectedCells = new List<UnityEngine.Object>();
+        foreach (GameObject active in Selection.objects)
+        {
+            if (active.GetComponent<CellMesh>() != null)
+                selectedCells.Add(active);
+        }
+        Selection.objects = selectedCells.ToArray();
     }
 
     private void CreateTypeTool()
