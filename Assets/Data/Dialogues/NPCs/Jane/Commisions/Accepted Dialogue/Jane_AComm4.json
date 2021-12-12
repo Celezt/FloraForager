@@ -1,35 +1,35 @@
 {
-  "tag": [ "speed{1}" ],
+  "tag": [ "actors{player, jane}" ],
   "dialogue": [
     {
       "id": "Fiona",
       "text": "Uh oh, I know that look on your face, Jane. Spit it out, what do you need?",
-      "tag": [ "pitch{1}", "speed{1.4}" ]
+      "tag": [ "pitch{1}", "speed{1.4}", "animation{player, talking}" ]
     },
     {
       "id": "Jane",
       "text": "You know me well, Fiona! <3 You remember my friend Sylvia, right?",
-      "tag": [ "pitch{1.3}" ]
+      "tag": [ "pitch{1.3}", "animation{jane, talking}" ]
     },
     {
       "id": "Fiona",
       "text": "Yeah, the one you borrowed a fishing rod and broke it...",
-      "tag": [ "pitch{1}" ]
+      "tag": [ "pitch{1}", "animation{player, talking}" ]
     },
     {
       "id": "Jane",
       "text": "Yeah, that one! It's her initiation day soon and I want to give her a special gift.",
-      "tag": [ "pitch{1.3}" ]
+      "tag": [ "pitch{1.3}", "animation{jane, talking}" ]
     },
     {
       "id": "Jane",
       "text": "Her favorite fish, spookish, would be a perfect initiation gift. Problem is I'm too weak to fish one myself. Bring me one and in exchange I'll give you some gel and my eternal gratitude.",
-      "tag": [ "pitch{1.3}" ]
+      "tag": [ "pitch{1.3}", "animation{jane, talking}" ]
     },
     {
       "id": "Fiona",
       "text": "Sure, I've got your back. Be right back.",
-      "tag": [ "pitch{1}" ]
+      "tag": [ "pitch{1}", "animation{fiona, talking}" ]
     }
   ]
 }

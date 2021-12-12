@@ -223,15 +223,8 @@ public class CommissionGiverWindow : Singleton<CommissionGiverWindow>
         if (string.IsNullOrWhiteSpace(dialogue))
             return;
 
-        PlayerInput playerInput = PlayerInput.GetPlayerByIndex(0);
-        playerInput.DeactivateInput();
-
-        void CompleteAction(DialogueManager manager)
-        {
-            playerInput.ActivateInput();
-            manager.Completed -= CompleteAction;
-        };
-
-        DialogueManager.GetByIndex(0).StartDialogue(dialogue).Completed += CompleteAction;
+        NPCBehaviour npc;
+        if ((npc = NPCManager.Instance.GetObject(giver)) != null)
+            npc.StartDialogue(0, dialogue);
     }
 }

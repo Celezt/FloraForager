@@ -57,6 +57,8 @@ public class DialogueManager : MonoBehaviour
     private bool _audible;
     private float _pitch;
 
+    private Dictionary<string, GameObject> _actors;
+
     /// <summary>
     /// Return Dialogue Manager based on the player index connected to it.
     /// </summary>
@@ -82,6 +84,12 @@ public class DialogueManager : MonoBehaviour
     {
         _pitch = pitch;
     }
+
+    public void SetActors(Dictionary<string, GameObject> actors)
+    {
+        _actors = actors;
+    }
+    public IReadOnlyDictionary<string, GameObject> GetActors() => _actors;
 
     public DialogueManager StartDialogue(string address, params string[] aliases)
     {
@@ -114,6 +122,8 @@ public class DialogueManager : MonoBehaviour
         _audible = true;
         _pitch = 1.0f;
 
+        _actors = new Dictionary<string, GameObject>();
+
         if (aliases.NotNullOrEmpty())
         {
             for (int i = 0; i < aliases.Length; i++)
@@ -142,6 +152,13 @@ public class DialogueManager : MonoBehaviour
 
         if (_autoTypeCoroutine != null)
             StopCoroutine(_autoTypeCoroutine);
+
+        foreach (KeyValuePair<string, GameObject> item in _actors)
+        {
+            HumanoidAnimationBehaviour animationBehaviour;
+            if ((animationBehaviour = item.Value.GetComponentInChildren<HumanoidAnimationBehaviour>()) != null)
+                animationBehaviour.BlendCancelCustomMotion();
+        }
 
         Completed.Invoke(this);
     }

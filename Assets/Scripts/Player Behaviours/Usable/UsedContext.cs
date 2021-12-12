@@ -65,6 +65,8 @@ public readonly struct UsedContext
 
         if (usedStar + 1 >= (int)star)   // Can damage if at least one star below.
             durability = Mathf.Clamp(durability - destructor.Damage * cmath.Map(usedStar / (int)star, new MinMaxFloat(1, 5), damageMultiplier), 0, float.MaxValue);
+        else
+            return false;
 
         return true;
     }

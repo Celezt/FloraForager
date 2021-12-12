@@ -61,17 +61,16 @@ public class RockBehaviour : MonoBehaviour, IStreamable<RockBehaviour.Data>, IUs
         if (!(context.used is IDestructor))
             return;
 
-        float previousDurability = _data.Durability;
-        context.Damage(ref _data.Durability, new MinMaxFloat(1, 2), _star);
+        if (context.Damage(ref _data.Durability, new MinMaxFloat(1, 2), _star))
+        {
+            if (_shakeTransform != null)
+                context.Shake(_shakeTransform, _shakeDuration, strength: _shakeStrength, angleRotation: _shakeAngleRotation);
 
-        if (_shakeTransform != null)
-            context.Shake(_shakeTransform, _shakeDuration, strength: _shakeStrength, angleRotation: _shakeAngleRotation);
+            if (_particleSystem != null)
+                _particleSystem.Emit(100);
 
-        if (_particleSystem != null)
-            _particleSystem.Emit(100);
-
-        if (_data.Durability < previousDurability)
             SoundPlayer.Instance.Play(_hitSound);
+        }
         else
             SoundPlayer.Instance.Play("hit_poor");
 

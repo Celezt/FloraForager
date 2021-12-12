@@ -1,26 +1,26 @@
 {
-  "tag": [ "speed{1}" ],
+  "tag": [ "actors{player, jane}" ],
   "dialogue": [
     {
       "id": "Fiona",
-      "text": "Hi... Jane.",
-      "tag": [ "pitch{1}", "speed{1}" ]
+      "text": "Hi... Jane",
+      "tag": [ "pitch{1}", "speed{1}", "animation{player, talking}" ]
     },
     {
       "id": "Jane",
       "text": "What do you want from me?",
-      "tag": [ "pitch{1.3}", "speed{1.4}" ]
+      "tag": [ "pitch{1.3}", "speed{1.4}", "animation{jane, talking}" ]
 
     },
     {
       "id": "Fiona",
-      "text": "No, nothing. Just passing by.",
-      "tag": [ "pitch{1}", "speed{1}" ]
+      "text": "No, nothing. Just passing by",
+      "tag": [ "pitch{1}", "speed{1}", "animation{player, talking}" ]
     },
     {
       "id": "Jane",
-      "text": "I was rooting for you.",
-      "tag": [ "pitch{1.3}" ]
+      "text": "I was rooting for you",
+      "tag": [ "pitch{1.3}", "animation{jane, talking}" ]
     }
   ]
 }
