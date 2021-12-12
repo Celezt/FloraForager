@@ -9,7 +9,8 @@ public class HumanoidAnimationBehaviour : MonoBehaviour
     private static readonly int CUSTOM_MOTION_SPEED_HASH = Animator.StringToHash("CustomMotionSpeed");
     private static readonly int CUSTOM_TRIGGER_HASH = Animator.StringToHash("CustomTrigger");
     private static readonly int IS_CUSTOM_LOOP_HASH = Animator.StringToHash("IsCustomLoop");
-    private static readonly int IS_CUSTOM_CANCEL_TRIGGER_HASH = Animator.StringToHash("CustomCancelTrigger");
+    private static readonly int IS_CUSTOM_FORCE_CANCEL_TRIGGER_HASH = Animator.StringToHash("CustomForceCancelTrigger");
+    private static readonly int IS_CUSTOM_BLEND_CANCEL_TRIGGER_HASH = Animator.StringToHash("CustomBlendCancelTrigger");
 
     /// <summary>
     /// Transform to hold items.
@@ -58,7 +59,11 @@ public class HumanoidAnimationBehaviour : MonoBehaviour
     /// <summary>
     /// Instant cancel the current custom motion.
     /// </summary>
-    public void ForceCancelCustomMotion() => _animator.SetTrigger(IS_CUSTOM_CANCEL_TRIGGER_HASH);
+    public void ForceCancelCustomMotion() => _animator.SetTrigger(IS_CUSTOM_FORCE_CANCEL_TRIGGER_HASH);
+    /// <summary>
+    /// Cancel and blend the current custom motion.
+    /// </summary>
+    public void BlendCancelCustomMotion() => _animator.SetTrigger(IS_CUSTOM_BLEND_CANCEL_TRIGGER_HASH);
 
     /// <summary>
     /// Raise a new custom animation.
