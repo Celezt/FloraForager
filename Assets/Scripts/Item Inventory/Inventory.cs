@@ -300,7 +300,8 @@ public class Inventory
             if (string.IsNullOrEmpty(_items[i].ID))
                 continue;
 
-            List<string> labels = ItemTypeSettings.Instance.ItemLabelChunk[_items[i].ID];
+            if (!ItemTypeSettings.Instance.ItemLabelChunk.TryGetValue(_items[i].ID, out List<string> labels))
+                continue;
 
             foreach (string label in labels)
             {

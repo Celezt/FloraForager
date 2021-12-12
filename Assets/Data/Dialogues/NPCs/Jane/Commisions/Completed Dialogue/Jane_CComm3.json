@@ -1,20 +1,20 @@
 {
-  "tag": [ "speed{1}" ],
+  "tag": [ "actors{player, jane}" ],
   "dialogue": [
     {
       "id": "Jane",
       "text": "*Sniff sniff* Is my nose hallucinating or am I smelling floatish?!",
-      "tag": [ "pitch{1.3}", "speed{1.4}" ]
+      "tag": [ "pitch{1.3}", "speed{1.4}", "animation{jane, talking}" ]
     },
     {
       "id": "Fiona",
       "text": "Here you go, 3 floatish",
-      "tag": [ "pitch{1}" ]
+      "tag": [ "pitch{1}", "animation{player, talking}" ]
     },
     {
       "id": "Jane",
       "text": "Oh you were also here, Fiona. Here you go, some gelplant seeds for you! Now leave me alone with these beauties",
-      "tag": [ "pitch{1.3}" ]
+      "tag": [ "pitch{1.3}", "animation{jane, talking}" ]
     }
   ]
 }
