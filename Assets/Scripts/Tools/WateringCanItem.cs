@@ -81,7 +81,10 @@ public class WateringCanItem : IUse, IStar
 
         Cell cell;
         if ((cell = GameGrid.Instance.HoveredCell) == null || !_allowedUse.Contains(cell.Type))
+        {
+            SoundPlayer.Instance.Play("use_error");
             yield break;
+        }
 
         if (MathUtility.PointInArc(GameGrid.Instance.MouseHit, context.transform.position, context.transform.localEulerAngles.y, _arc, _radius))
         {
@@ -156,6 +159,8 @@ public class WateringCanItem : IUse, IStar
                     }
                 }
             }
+            else
+                SoundPlayer.Instance.Play("use_error");
         }
 
         yield break;
