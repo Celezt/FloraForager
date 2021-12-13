@@ -72,4 +72,14 @@ public class MainMenu : MonoBehaviour
     {
         ConsoleUtility.QuitGame();
     }
+
+    public void OnSurvey()
+    {
+
+    }
+
+    public void OnCredits()
+    {
+
+    }
 }
