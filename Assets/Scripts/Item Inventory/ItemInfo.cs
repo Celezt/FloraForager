@@ -5,6 +5,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.EventSystems;
 using UnityEngine.InputSystem;
+using UnityEngine.U2D;
 using TMPro;
 
 public class ItemInfo : MonoBehaviour
@@ -15,6 +16,10 @@ public class ItemInfo : MonoBehaviour
     private TMP_Text _ItemName;
     [SerializeField]
     private TMP_Text _ItemLabels;
+    [SerializeField] 
+    private Image _ItemStarsImage;
+
+    [SerializeField] private SpriteAtlas _StarsAtlas;
 
     private GraphicRaycaster _Raycaster;
     private EventSystem _EventSystem;
@@ -75,6 +80,15 @@ public class ItemInfo : MonoBehaviour
                         if (label != labels[labels.Count - 1])
                             _ItemLabels.text += " | ";
                     }
+                }
+                if (ItemTypeSettings.Instance.ItemTypeChunk.TryGetValue(itemSlot.Item.ID, out ItemType itemType))
+                {
+                    Stars? star = (itemType.Behaviour as IStar)?.Star;
+
+                    int index = star.HasValue ? (int)star : 0;
+                    Sprite starSprite = _StarsAtlas.GetSprite($"stars_{index}");
+
+                    _ItemStarsImage.sprite = starSprite;
                 }
             }
 

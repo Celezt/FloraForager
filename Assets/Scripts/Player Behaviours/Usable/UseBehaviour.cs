@@ -24,6 +24,8 @@ public class UseBehaviour : MonoBehaviour
     private int _slotIndex;
     private int _amount;
 
+    public (int, Duration) Cooldown => _cooldown;
+
     public void ConsumeCurrentItem(int amount)
     {
         _playerInfo.Inventory.RemoveAt(_slotIndex, amount);

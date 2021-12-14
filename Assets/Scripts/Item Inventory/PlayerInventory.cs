@@ -41,10 +41,10 @@ public class PlayerInventory : MonoBehaviour
 
         float value = context.ReadValue<float>();
 
-        if (_isInventoryOpen)
+        if (_isInventoryOpen || value > _hotbarHandler.Slots.Count)
             return;
 
-        if (value > _hotbarHandler.Slots.Count)
+        if (PlayerInput.GetPlayerByIndex(_playerIndex).GetComponent<UseBehaviour>().Cooldown.Item2.IsActive)
             return;
 
         _inventory.SetSelectedItem((int)(value - 1.0f));
