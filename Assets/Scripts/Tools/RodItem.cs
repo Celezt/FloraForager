@@ -102,7 +102,10 @@ public class RodItem : IUse, IStar, IValue
 
         Cell cell;
         if ((cell = GameGrid.Instance.HoveredCell) == null || !_allowedUse.Contains(cell.Type))
+        {
+            SoundPlayer.Instance.Play("use_error");
             yield break;
+        }
 
         if (!MathUtility.PointInArc(GameGrid.Instance.MouseHit, context.transform.position, context.transform.localEulerAngles.y, _arc, _radius))
             yield break;
@@ -111,7 +114,10 @@ public class RodItem : IUse, IStar, IValue
         List<(int, int)> items = inventory.FindAllByLabels(ItemLabels.FishBait); // find all baits in inventory
 
         if (items.Count <= 0) // if no baits found, return
+        {
+            SoundPlayer.Instance.Play("use_error");
             yield break;
+        }
 
         // -- START FISHING --
 

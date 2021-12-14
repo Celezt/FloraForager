@@ -64,6 +64,9 @@ public class DebugManager : Singleton<DebugManager>
         bool oldIsFocused = !_inputField.isFocused;
         PlayerInput playerInput = PlayerInput.GetPlayerByIndex(0);
 
+        if (playerInput == null)
+            yield break;
+
         while (_debugMode)
         {
             bool isFocused = _inputField.isFocused;

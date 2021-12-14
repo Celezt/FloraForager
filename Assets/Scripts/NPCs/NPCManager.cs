@@ -20,6 +20,8 @@ public class NPCManager : SerializedScriptableSingleton<NPCManager>, IStreamer
 
     [System.NonSerialized]
     private Dictionary<string, NPC> _NPCs = new Dictionary<string, NPC>();
+    [System.NonSerialized]
+    private Dictionary<string, NPCBehaviour> _NPCObjects = new Dictionary<string, NPCBehaviour>();
 
     private void Awake()
     {
@@ -49,6 +51,15 @@ public class NPCManager : SerializedScriptableSingleton<NPCManager>, IStreamer
     {
         Instance.Initialize();
         GameManager.AddStreamer(Instance);
+
+        SceneManager.sceneLoaded += Instance.OnSceneLoaded;
+    }
+
+    public void OnSceneLoaded(Scene scene, LoadSceneMode mode)
+    {
+        List<string> badKeys = _NPCObjects.Where(pair => pair.Value == null).Select(pair => pair.Key).ToList();
+        foreach (string key in badKeys)
+            _NPCObjects.Remove(key);
     }
 
     public NPC Get(string id)
@@ -58,10 +69,16 @@ public class NPCManager : SerializedScriptableSingleton<NPCManager>, IStreamer
 
         return npc;
     }
-
-    public NPC Add(string id, NPC npc)
+    public NPCBehaviour GetObject(string id)
     {
-        return _NPCs[id.ToLower()] = npc;
+        if (!_NPCObjects.TryGetValue(id.ToLower(), out NPCBehaviour npc))
+            return null;
+
+        return npc;
+    }
+    public void AddObject(string id, NPCBehaviour npcObject)
+    {
+        _NPCObjects.Add(id.ToLower(), npcObject);
     }
 
     public void RemoveDialogue(NPC npc, int pos)

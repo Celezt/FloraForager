@@ -15,68 +15,67 @@ MonoBehaviour:
   serializationData:
     SerializedFormat: 2
     SerializedBytes: 
-    ReferencedUnityObjects:
-    - {fileID: 11400000, guid: 85ab3117fc62a394db3d49fdd3998315, type: 2}
-    - {fileID: 11400000, guid: cff78c915dad8d648860122dd6ea3d5f, type: 2}
-    - {fileID: 11400000, guid: 41778cf08183e0e4499dec8420581872, type: 2}
+    ReferencedUnityObjects: []
     SerializedBytesString: 
     Prefab: {fileID: 0}
     PrefabModificationsReferencedUnityObjects: []
     PrefabModifications: []
-    SerializationNodes:
-    - Name: _Name
-      Entry: 1
-      Data: Monica
-    - Name: _HasRelation
-      Entry: 5
-      Data: true
-    - Name: _RelationRange
-      Entry: 7
-      Data: MyBox.MinMaxFloat, MyBox
-    - Name: Min
-      Entry: 4
-      Data: -100
-    - Name: Max
-      Entry: 4
-      Data: 100
-    - Name: 
-      Entry: 8
-      Data: 
-    - Name: _StartRelation
-      Entry: 4
-      Data: 0
-    - Name: _HasCommissions
-      Entry: 5
-      Data: true
-    - Name: _CommissionsInfo
-      Entry: 7
-      Data: 0|CommissionInfo[], Assembly-CSharp
-    - Name: 
-      Entry: 12
-      Data: 3
-    - Name: 
-      Entry: 10
-      Data: 0
-    - Name: 
-      Entry: 10
-      Data: 1
-    - Name: 
-      Entry: 10
-      Data: 2
-    - Name: 
-      Entry: 13
-      Data: 
-    - Name: 
-      Entry: 8
-      Data: 
+    SerializationNodes: []
+  _Name: Monica
+  _HasRelation: 1
+  _RelationRange:
+    Min: -100
+    Max: 100
+  _StartRelation: 0
+  _HasCommissions: 1
+  _CommissionsInfo:
+  - {fileID: 11400000, guid: 5e1783c4b14822444a4488287de8e3d1, type: 2}
+  - {fileID: 11400000, guid: 6ed4971159b5f7d458dc36d49bbf5160, type: 2}
   _RepeatingDialogue:
-    Asset:
-      m_AssetGUID: 9239af2d7f92bde4c8b05f5abc8f20b7
+    m_AssetGUID: 
+    m_SubObjectName: 
+    m_SubObjectType: 
+    m_EditorAssetChanged: 0
+  _InitialDialogue:
+  - Priority: 1
+    Dialogue:
+      m_AssetGUID: 4fe57d31225c5234b97b861aa06af1e9
       m_SubObjectName: 
       m_SubObjectType: 
       m_EditorAssetChanged: 0
-    Aliases:
-    - Fiona
-    - Monica
-  _InitialDialogue: []
-  _RelationDialogue: []
+  _RelationDialogue:
+  - AtRelation: 2
+    RepeatingDialogue:
+      m_AssetGUID: 52e8a988d001f9d4b8495b3b450b3859
+      m_SubObjectName: 
+      m_SubObjectType: 
+      m_EditorAssetChanged: 0
+    AddedDialogue: []
+  - AtRelation: 3
+    RepeatingDialogue:
+      m_AssetGUID: cf89621a7e9c67e449af2354f74027cc
+      m_SubObjectName: 
+      m_SubObjectType: 
+      m_EditorAssetChanged: 0
+    AddedDialogue: []
+  - AtRelation: 4
+    RepeatingDialogue:
+      m_AssetGUID: e4040eeaed25b01469def689946448c7
+      m_SubObjectName: 
+      m_SubObjectType: 
+      m_EditorAssetChanged: 0
+    AddedDialogue: []
+  - AtRelation: 1
+    RepeatingDialogue:
+      m_AssetGUID: 8f1d5c15d194b6442ae62ac2c24d2285
+      m_SubObjectName: 
+      m_SubObjectType: 
+      m_EditorAssetChanged: 0
+    AddedDialogue: []
+  - AtRelation: 0
+    RepeatingDialogue:
+      m_AssetGUID: 0491dc37eaa024d4293a29fee8b64393
+      m_SubObjectName: 
+      m_SubObjectType: 
+      m_EditorAssetChanged: 0
+    AddedDialogue: []

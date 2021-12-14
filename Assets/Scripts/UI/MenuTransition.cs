@@ -10,6 +10,7 @@ public class MenuTransition : MonoBehaviour
     [SerializeField] private GameObject _Main;
     [SerializeField] private GameObject _Settings;
     [SerializeField] private GameObject _Controls;
+    [SerializeField] private GameObject _Credits;
     [SerializeField] private GameObject _Back;
 
     private GameObject _CurrentMenu;
@@ -34,6 +35,14 @@ public class MenuTransition : MonoBehaviour
         _Back.gameObject.SetActive(true);
 
         _CurrentMenu = _Controls;
+    }
+    public void OpenCredits()
+    {
+        _Main.SetActive(false);
+        _Credits.SetActive(true);
+        _Back.gameObject.SetActive(true);
+
+        _CurrentMenu = _Credits;
     }
     public void Back()
     {

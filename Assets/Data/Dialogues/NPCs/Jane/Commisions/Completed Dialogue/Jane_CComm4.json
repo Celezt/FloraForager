@@ -1,20 +1,20 @@
 {
-  "tag": [ "speed{1}" ],
+  "tag": [ "actors{player, jane}" ],
   "dialogue": [
     {
       "id": "Jane",
-      "text": "Oh you're back! I hope you have some good news? ",
-      "tag": [ "pitch{1.3}", "speed{1.4}" ]
+      "text": "Oh you're back! I hope you have some good news?",
+      "tag": [ "pitch{1.3}", "speed{1.4}", "animation{jane, talking}" ]
     },
     {
       "id": "Fiona",
-      "text": "It sure was a wild one but I caught one, here you go. ",
-      "tag": [ "pitch{1}" ]
+      "text": "It sure was a wild one but I caught one, here you go",
+      "tag": [ "pitch{1}", "animation{player, talking}" ]
     },
     {
       "id": "Jane",
       "text": "You're the best, Jane! You can expect the best initiation gift from me when it's your time!",
-      "tag": [ "pitch{1.3}" ]
+      "tag": [ "pitch{1.3}", "animation{jane, talking}" ]
     }
   ]
 }

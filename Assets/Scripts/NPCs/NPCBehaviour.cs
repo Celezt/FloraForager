@@ -17,8 +17,13 @@ public class NPCBehaviour : MonoBehaviour, IInteractable, IUsable
     private string _NameID;
     [SerializeField]
     private float _ExitRadius = 5.0f;
+
+    private Quaternion _startRotation;
         
     private GameObject _Player;
+
+    private Coroutine _RotateTowards;
+    private Coroutine _RotateBack;
 
     public NPC NPC { get; private set; }
 
@@ -26,11 +31,14 @@ public class NPCBehaviour : MonoBehaviour, IInteractable, IUsable
 
     private void Awake()
     {
-        NPC = NPCManager.Instance.Get(_NameID.ToLower());
+        NPC = NPCManager.Instance.Get(_NameID);
+        NPCManager.Instance.AddObject(_NameID, this);
     }
 
     private void Start()
     {
+        _startRotation = transform.rotation;
+
         foreach (Commission commission in CommissionList.Instance.Commissions)
         {
             NPC.SetCommission(commission);
@@ -64,15 +72,7 @@ public class NPCBehaviour : MonoBehaviour, IInteractable, IUsable
             string dialogue = NPC.DialogueQueue.Dequeue();
 
             if (!string.IsNullOrWhiteSpace(dialogue))
-            {
-                void CompleteAction(DialogueManager manager)
-                {
-                    playerInput.ActivateInput();
-                    manager.Completed -= CompleteAction;
-                };
-
-                DialogueManager.GetByIndex(context.playerIndex).StartDialogue(dialogue).Completed += CompleteAction;
-            }
+                StartDialogue(context.playerIndex, dialogue);
             else
                 playerInput.ActivateInput();
         }
@@ -82,20 +82,23 @@ public class NPCBehaviour : MonoBehaviour, IInteractable, IUsable
 
             if (!string.IsNullOrWhiteSpace(dialogue))
             {
+                StartDialogue(context.playerIndex, dialogue);
+
                 void CompleteAction(DialogueManager manager)
                 {
-                    playerInput.ActivateInput();
-
                     if (!CommissionGiverWindow.Instance.Opened)
                         NPC.OpenCommissions();
 
                     manager.Completed -= CompleteAction;
                 };
 
-                DialogueManager.GetByIndex(context.playerIndex).StartDialogue(dialogue).Completed += CompleteAction;
+                DialogueManager.GetByIndex(context.playerIndex).Completed += CompleteAction;
             }
             else
+            {
                 NPC.OpenCommissions();
+                playerInput.ActivateInput();
+            }
         }
     }
 
@@ -107,5 +110,93 @@ public class NPCBehaviour : MonoBehaviour, IInteractable, IUsable
             return;
 
         _HumanoidAnimationBehaviour.CustomMotionRaise(_ScaredClip);
+    }
+
+    public void StartDialogue(int playerIndex, string assetGUID)
+    {
+        PlayerInput playerInput = PlayerInput.GetPlayerByIndex(playerIndex);
+        playerInput.DeactivateInput();
+
+        if (_RotateBack != null)
+            StopCoroutine(_RotateBack);
+
+        _RotateTowards = StartCoroutine(RotateTowardsTarget(playerInput.gameObject));
+
+        void CompleteAction(DialogueManager manager)
+        {
+            if (_RotateTowards != null)
+                StopCoroutine(_RotateTowards);
+
+            _RotateBack = StartCoroutine(RotateBack());
+
+            playerInput.ActivateInput();
+
+            manager.Completed -= CompleteAction;
+        };
+
+        DialogueManager.GetByIndex(playerIndex).StartDialogue(assetGUID).Completed += CompleteAction;
+    }
+
+    private IEnumerator RotateTowardsTarget(GameObject target, float timeToRotate = 1.0f)
+    {
+        Quaternion startRotation = transform.rotation;
+        Vector3 direction = target.transform.position - transform.position;
+        Quaternion finalRotation = Quaternion.LookRotation(direction);
+
+        Quaternion start = new Quaternion(0, startRotation.y, 0, startRotation.w);
+        Quaternion final = new Quaternion(0, finalRotation.y, 0, finalRotation.w);
+
+        float walkSpeed = 0.05f;
+
+        _HumanoidAnimationBehaviour.WalkSpeed = walkSpeed;
+
+        float time = 0.0f;
+        while (time <= 1f)
+        {
+            time += Time.deltaTime / timeToRotate;
+            transform.rotation = Quaternion.Slerp(start, final, time);
+            yield return null;
+        }
+
+        time = 0.0f;
+        while (time <= 1f)
+        {
+            time += Time.deltaTime / 0.5f;
+            _HumanoidAnimationBehaviour.WalkSpeed = Mathf.Lerp(walkSpeed, 0.0f, time);
+            yield return null;
+        }
+
+        transform.rotation = final;
+        _RotateTowards = null;
+    }
+    private IEnumerator RotateBack(float timeToRotate = 1.0f)
+    {
+        Quaternion startRotation = transform.rotation;
+
+        Quaternion start = new Quaternion(0, startRotation.y, 0, startRotation.w);
+        Quaternion final = new Quaternion(0, _startRotation.y, 0, _startRotation.w);
+
+        float walkSpeed = 0.05f;
+
+        _HumanoidAnimationBehaviour.WalkSpeed = walkSpeed;
+
+        float time = 0.0f;
+        while (time <= 1f)
+        {
+            time += Time.deltaTime / timeToRotate;
+            transform.rotation = Quaternion.Slerp(start, final, time);
+            yield return null;
+        }
+
+        time = 0.0f;
+        while (time <= 1f)
+        {
+            time += Time.deltaTime / 0.5f;
+            _HumanoidAnimationBehaviour.WalkSpeed = Mathf.Lerp(walkSpeed, 0.0f, time);
+            yield return null;
+        }
+
+        transform.rotation = final;
+        _RotateBack = null;
     }
 }

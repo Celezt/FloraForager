@@ -1,20 +1,20 @@
 {
-  "tag": ["speed{1}"],
+  "tag": [ "actors{player, jane}" ],
   "dialogue": [
     {
       "id": "Fiona",
       "text": "Hey Jane. What's up?",
-      "tag": [ "pitch{1}", "speed{1.4}" ]
+      "tag": [ "pitch{1}", "speed{1.4}", "animation{player, talking}" ]
     },
     {
       "id": "Jane",
-      "text": "Not much... just looking to find some joy in this world.",
-      "tag": [ "pitch{1.3}" ]
+      "text": "Not much... just looking to find some joy in this world",
+      "tag": [ "pitch{1.3}", "animation{jane, talking}" ]
     },
     {
       "id": "Fiona",
-      "text": "Alright cool, I won't disturb you.",
-      "tag": [ "pitch{1}" ]
+      "text": "Alright cool, I won't disturb you",
+      "tag": [ "pitch{1}", "animation{player, talking}" ]
     }
   ]
 }

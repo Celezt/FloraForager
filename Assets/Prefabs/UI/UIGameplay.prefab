@@ -84,7 +84,9 @@ MonoBehaviour:
 
     -   LMB
 
-    -   LMB'
+    -   LMB
+
+    -   S-Wheel'
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 3de56de749fc4914499215788d0b06bb, type: 2}
   m_sharedMaterial: {fileID: 2100000, guid: 985fc63ab620c9349904e2bd9ecb9c0e, type: 2}
@@ -94,7 +96,7 @@ MonoBehaviour:
   m_fontColor32:
     serializedVersion: 2
     rgba: 4279742204
-  m_fontColor: {r: 0.9882353, g: 0.68235296, b: 0.09019608, a: 1}
+  m_fontColor: {r: 1, g: 0.76862746, b: 0.19215687, a: 1}
   m_enableVertexGradient: 0
   m_colorMode: 3
   m_fontColorGradient:
@@ -472,8 +474,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 700, y: 781.154}
+  m_AnchoredPosition: {x: -0.000141, y: 0}
+  m_SizeDelta: {x: 700, y: 830}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &1085075320
 CanvasRenderer:
@@ -1282,7 +1284,7 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls: []
   m_text: "Movement\nRunning\nUse Item \nInteract\nCommissions\nInventory\nHotbar\nPause\nSkip
-    Dialogue\nFish Pull\n"
+    Dialogue\nFish Pull\nZoom Camera\n"
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 3de56de749fc4914499215788d0b06bb, type: 2}
   m_sharedMaterial: {fileID: 2100000, guid: 985fc63ab620c9349904e2bd9ecb9c0e, type: 2}
@@ -1292,7 +1294,7 @@ MonoBehaviour:
   m_fontColor32:
     serializedVersion: 2
     rgba: 4279742204
-  m_fontColor: {r: 0.9882353, g: 0.68235296, b: 0.09019608, a: 1}
+  m_fontColor: {r: 1, g: 0.76862746, b: 0.19215687, a: 1}
   m_enableVertexGradient: 0
   m_colorMode: 3
   m_fontColorGradient:
@@ -2920,6 +2922,54 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 2479041195636282158}
     m_Modifications:
+    - target: {fileID: 4053913479760285035, guid: 317e8678d0684374c93a68f6dca3309c, type: 3}
+      propertyPath: m_AnchorMax.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4053913479760285035, guid: 317e8678d0684374c93a68f6dca3309c, type: 3}
+      propertyPath: m_AnchorMin.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4053913479760285035, guid: 317e8678d0684374c93a68f6dca3309c, type: 3}
+      propertyPath: m_SizeDelta.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4053913479760285035, guid: 317e8678d0684374c93a68f6dca3309c, type: 3}
+      propertyPath: m_SizeDelta.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4053913479760285035, guid: 317e8678d0684374c93a68f6dca3309c, type: 3}
+      propertyPath: m_AnchoredPosition.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4053913479760285035, guid: 317e8678d0684374c93a68f6dca3309c, type: 3}
+      propertyPath: m_AnchoredPosition.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8746159657826435434, guid: 317e8678d0684374c93a68f6dca3309c, type: 3}
+      propertyPath: m_AnchorMax.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8746159657826435434, guid: 317e8678d0684374c93a68f6dca3309c, type: 3}
+      propertyPath: m_AnchorMin.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8746159657826435434, guid: 317e8678d0684374c93a68f6dca3309c, type: 3}
+      propertyPath: m_SizeDelta.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8746159657826435434, guid: 317e8678d0684374c93a68f6dca3309c, type: 3}
+      propertyPath: m_SizeDelta.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8746159657826435434, guid: 317e8678d0684374c93a68f6dca3309c, type: 3}
+      propertyPath: m_AnchoredPosition.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8746159657826435434, guid: 317e8678d0684374c93a68f6dca3309c, type: 3}
+      propertyPath: m_AnchoredPosition.y
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 9168743647898260764, guid: 317e8678d0684374c93a68f6dca3309c, type: 3}
       propertyPath: m_Name
       value: UIWateringCan
