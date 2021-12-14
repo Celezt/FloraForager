@@ -55,14 +55,18 @@ MonoBehaviour:
       Entry: 8
       Data: 
   _Title: A Spookish challenge
-  _Description: 
-  _Repeatable: 0
-  _TimeLimit: 0
+  _Description: Deliver 3 spookish to Monica
+  _Repeatable: 1
+  _TimeLimit: 2
   _MinRelation: 2
   _RewardRelations: 30
   _PenaltyRelations: 30
   _Rewards:
   - ID: obsidian
+    Amount: 10
+  - ID: glowirch_stipe
+    Amount: 10
+  - ID: porock_seed
     Amount: 5
   _AcceptDialogue:
   - NPC: monica

@@ -87,7 +87,7 @@ public class FishPool : Singleton<FishPool>
         [VerticalGroup("Group/Left"), LabelWidth(45)]
         public string FishID;
         [VerticalGroup("Group/Right"), LabelWidth(115)]
-        [Tooltip("The higher the weight, the higher the chance of being picked")]
+        [Tooltip("The higher the weight, the higher the chance of being picked"), Min(1)]
         public float ProbabilityWeight;
 
         [HideInInspector]
