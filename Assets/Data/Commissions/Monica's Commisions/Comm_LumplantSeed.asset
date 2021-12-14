@@ -1,0 +1,80 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4d2bcc035f066ed4598cafbdedd2b7d6, type: 3}
+  m_Name: Comm_LumplantSeed
+  m_EditorClassIdentifier: 
+  serializationData:
+    SerializedFormat: 2
+    SerializedBytes: 
+    ReferencedUnityObjects: []
+    SerializedBytesString: 
+    Prefab: {fileID: 0}
+    PrefabModificationsReferencedUnityObjects: []
+    PrefabModifications: []
+    SerializationNodes:
+    - Name: _Objectives
+      Entry: 7
+      Data: 0|IObjective[], Assembly-CSharp
+    - Name: 
+      Entry: 12
+      Data: 1
+    - Name: 
+      Entry: 7
+      Data: 1|GatherObjective, Assembly-CSharp
+    - Name: ItemToGather
+      Entry: 7
+      Data: ItemAsset, Assembly-CSharp
+    - Name: ID
+      Entry: 1
+      Data: glow_rod
+    - Name: Amount
+      Entry: 3
+      Data: 2
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: CurrentAmount
+      Entry: 3
+      Data: 0
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: 
+      Entry: 13
+      Data: 
+    - Name: 
+      Entry: 8
+      Data: 
+  _Title: Monica broke Sylvia's fishing rod
+  _Description: Deliver two glow rods to Monica
+  _Repeatable: 0
+  _TimeLimit: 5
+  _MinRelation: 3
+  _RewardRelations: 50
+  _PenaltyRelations: 50
+  _Rewards:
+  - ID: lumplant_seed
+    Amount: 10
+  _AcceptDialogue:
+  - NPC: 
+    Dialogue:
+      m_AssetGUID: dec6c1cef207d784b95faebdb8b39d89
+      m_SubObjectName: 
+      m_SubObjectType: 
+      m_EditorAssetChanged: 0
+  _CompleteDialogue:
+  - NPC: 
+    Dialogue:
+      m_AssetGUID: e03f695b14e80b04e89dae5a3f69d939
+      m_SubObjectName: 
+      m_SubObjectType: 
+      m_EditorAssetChanged: 0
