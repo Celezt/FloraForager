@@ -14,6 +14,7 @@ public class TreeBehaviour : MonoBehaviour, IStreamable<TreeBehaviour.Data>, IUs
     [SerializeField] private ItemLabels _filter = ItemLabels.Axe;
     [SerializeField] private Stars _star = Stars.One;
     [SerializeField] private List<DropType> _drops = new List<DropType>();
+    [SerializeField] private bool _disableColliderOnDestroy = false;
     [Header("Shake Settings")]
     [SerializeField] private Transform _shakeTransform;
     [SerializeField] private float _shakeDuration = 2.0f;
@@ -51,6 +52,8 @@ public class TreeBehaviour : MonoBehaviour, IStreamable<TreeBehaviour.Data>, IUs
             _Tree.SetActive(!destroyed);
         if (_Stump != null)
             _Stump.SetActive(destroyed);
+        if (_disableColliderOnDestroy)
+            _Collider.enabled = false;
     }
     void IStreamable.OnBeforeSaving()
     {
@@ -97,6 +100,8 @@ public class TreeBehaviour : MonoBehaviour, IStreamable<TreeBehaviour.Data>, IUs
                 _Tree.SetActive(false);
             if (_Stump != null)
                 _Stump.SetActive(true);
+            if (_disableColliderOnDestroy)
+                _Collider.enabled = false;
 
             if (TryGetComponent(out StreamableBehaviour streamable))
                 streamable.SetToRespawn();
