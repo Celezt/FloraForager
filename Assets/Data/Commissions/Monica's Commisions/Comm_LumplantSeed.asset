@@ -57,22 +57,22 @@ MonoBehaviour:
   _Title: Monica broke Sylvia's fishing rod
   _Description: Deliver two glow rods to Monica
   _Repeatable: 0
-  _TimeLimit: 5
+  _TimeLimit: 3
   _MinRelation: 3
   _RewardRelations: 50
-  _PenaltyRelations: 50
+  _PenaltyRelations: -50
   _Rewards:
   - ID: lumplant_seed
     Amount: 10
   _AcceptDialogue:
-  - NPC: 
+  - NPC: monica
     Dialogue:
       m_AssetGUID: dec6c1cef207d784b95faebdb8b39d89
       m_SubObjectName: 
       m_SubObjectType: 
       m_EditorAssetChanged: 0
   _CompleteDialogue:
-  - NPC: 
+  - NPC: monica
     Dialogue:
       m_AssetGUID: e03f695b14e80b04e89dae5a3f69d939
       m_SubObjectName: 
