@@ -1,3 +1,4 @@
+using System;
 using System.Linq;
 using System.Collections;
 using System.Collections.Generic;
@@ -28,7 +29,7 @@ public class Workbench : MonoBehaviour, IInteractable
             _CraftableItems[i] = new CraftableItem(_CraftableItemsData[i]);
         }
 
-        //_CraftableItems.OrderBy(i => ItemTypeSettings.Instance.ItemLabelChunk[i.Item.ID]
+        _CraftableItems = _CraftableItems.OrderBy(i => ItemTypeSettings.Instance.ItemLabelChunk[i.Item.ID].First()).ToArray();
     }
 
     private void Update()
