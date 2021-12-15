@@ -65,7 +65,10 @@ public class SeedItem : IUse, IStar, IValue
         Cell cell;
         if ((cell = GameGrid.Instance.HoveredCell) == null || GameGrid.Instance.HoveredCell.Occupied ||
             !_allowedUse.Contains(GameGrid.Instance.HoveredCell.Type))
+        {
+            SoundPlayer.Instance.Play("use_error");
             yield break;
+        }
 
         if (MathUtility.PointInArc(GameGrid.Instance.MouseHit, context.transform.position, context.transform.localEulerAngles.y, _arc, _radius))
         {

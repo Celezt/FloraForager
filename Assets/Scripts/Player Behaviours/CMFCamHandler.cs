@@ -38,7 +38,9 @@ public class CMFCamHandler : MonoBehaviour
     private void Action(InputAction.CallbackContext context)
     {
         Vector2 value = context.ReadValue<Vector2>();
-        _yAxis = Mathf.Clamp01(_yAxis + value.y);
+
+        if (!CanvasUtility.IsPointerOverUIElement())
+            _yAxis = Mathf.Clamp01(_yAxis + value.y);
     }
 
     private void LateUpdate()

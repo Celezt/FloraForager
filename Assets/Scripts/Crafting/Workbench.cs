@@ -1,3 +1,4 @@
+using System.Linq;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -26,6 +27,8 @@ public class Workbench : MonoBehaviour, IInteractable
         {
             _CraftableItems[i] = new CraftableItem(_CraftableItemsData[i]);
         }
+
+        //_CraftableItems.OrderBy(i => ItemTypeSettings.Instance.ItemLabelChunk[i.Item.ID]
     }
 
     private void Update()
