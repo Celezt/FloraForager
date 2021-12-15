@@ -54,7 +54,7 @@ public class TreeBehaviour : MonoBehaviour, IStreamable<TreeBehaviour.Data>, IUs
         if (_Stump != null)
             _Stump.SetActive(destroyed);
         if (_disableColliderOnDestroy)
-            _Collider.enabled = false;
+            _Collider.enabled = !destroyed;
     }
     void IStreamable.OnBeforeSaving()
     {
