@@ -30,6 +30,7 @@ public class NPCBehaviour : MonoBehaviour, IInteractable, IUsable
     public NPC NPC { get; private set; }
 
     public int Priority => 3;
+    public bool OpenCommissions = false;
 
     private void Awake()
     {
@@ -74,7 +75,21 @@ public class NPCBehaviour : MonoBehaviour, IInteractable, IUsable
             string dialogue = NPC.DialogueQueue.Dequeue();
 
             if (!string.IsNullOrWhiteSpace(dialogue))
+            {
                 StartDialogue(context.playerIndex, dialogue);
+
+                void CompleteAction(DialogueManager manager)
+                {
+                    if (!CommissionGiverWindow.Instance.Opened && OpenCommissions)
+                        NPC.OpenCommissions();
+
+                    OpenCommissions = false;
+
+                    manager.Completed -= CompleteAction;
+                };
+
+                DialogueManager.GetByIndex(context.playerIndex).Completed += CompleteAction;
+            }
             else
                 playerInput.ActivateInput();
         }

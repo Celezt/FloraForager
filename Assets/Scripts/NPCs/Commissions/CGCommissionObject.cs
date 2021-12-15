@@ -6,8 +6,9 @@ public class CGCommissionObject : MonoBehaviour
 {
     [SerializeField]
     private TMP_Text _Text;
-
+    [SerializeField]
     private Image _Background;
+
     private Color _NormalColor;
 
     public Image Background => _Background;
@@ -17,7 +18,6 @@ public class CGCommissionObject : MonoBehaviour
 
     private void Awake()
     {
-        _Background = GetComponent<Image>();
         _NormalColor = _Text.color;
     }
 

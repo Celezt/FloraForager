@@ -155,10 +155,10 @@ public class CommissionGiverWindow : Singleton<CommissionGiverWindow>
     /// </summary>
     public void Accept()
     {
-        StartDialogue(_SelectedCommission.Giver, _SelectedCommission.CommissionData.AcceptDialogue);
-
         CommissionLog.Instance.Accept(_SelectedCommission);
         Back();
+
+        StartDialogue(_SelectedCommission.Giver, _SelectedCommission.CommissionData.AcceptDialogue);
     }
 
     /// <summary>
@@ -180,8 +180,6 @@ public class CommissionGiverWindow : Singleton<CommissionGiverWindow>
     {
         if (!_SelectedCommission.IsCompleted)
             return;
-
-        StartDialogue(_SelectedCommission.Giver, _SelectedCommission.CommissionData.CompleteDialogue);
 
         _SelectedCommission.Complete();
         CommissionLog.Instance.Remove(_SelectedCommission);
@@ -213,6 +211,8 @@ public class CommissionGiverWindow : Singleton<CommissionGiverWindow>
         SoundPlayer.Instance.Play(_completeSound);
 
         Back();
+
+        StartDialogue(_SelectedCommission.Giver, _SelectedCommission.CommissionData.CompleteDialogue);
     }
 
     private void StartDialogue(string giver, Dictionary<string, string> dialogueAction)
