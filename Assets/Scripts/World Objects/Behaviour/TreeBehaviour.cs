@@ -14,7 +14,6 @@ public class TreeBehaviour : MonoBehaviour, IStreamable<TreeBehaviour.Data>, IUs
     [SerializeField] private ItemLabels _filter = ItemLabels.Axe;
     [SerializeField] private Stars _star = Stars.One;
     [SerializeField] private List<DropType> _drops = new List<DropType>();
-    [SerializeField] private bool _disableColliderOnDestroy = false;
     [Header("Shake Settings")]
     [SerializeField] private Transform _shakeTransform;
     [SerializeField] private float _shakeDuration = 2.0f;
@@ -28,6 +27,8 @@ public class TreeBehaviour : MonoBehaviour, IStreamable<TreeBehaviour.Data>, IUs
     [Header("Objects")]
     [SerializeField] private GameObject _Tree;
     [SerializeField] private GameObject _Stump;
+    [Header("Other")]
+    [SerializeField] private bool _disableColliderOnDestroy = false;
 
     [SerializeField, PropertyOrder(-1), HideLabel, InlineProperty]
     private Data _data;
