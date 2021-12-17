@@ -73,7 +73,6 @@ public class PlayerStamina : MonoBehaviour
         };
 
         OnStaminaEmptied += PassOut;
-        SleepSchedule.Instance.OnSlept += WakeUp;
     }
 
     private void Update()
@@ -121,9 +120,7 @@ public class PlayerStamina : MonoBehaviour
         _animationBehaviour.CustomMotionRaise(_passOutClip);
         yield return new WaitForSeconds(_passOutClip.length);
         _animationBehaviour.CustomMotionRaise(_sleepClip, loop: true);
-    }
-    private void WakeUp(bool penalty)
-    {
+        yield return new WaitUntil(() => !SleepSchedule.Instance.IsSleeping);
         _animationBehaviour.ForceCancelCustomMotion();
     }
 
