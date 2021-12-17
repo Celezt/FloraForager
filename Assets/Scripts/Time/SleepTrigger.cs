@@ -28,8 +28,6 @@ public class SleepTrigger : MonoBehaviour
 
         PlayerInput playerInput = other.GetComponent<PlayerInput>();
 
-        playerInput.DeactivateInput();
-
         UIStateVisibility.Instance.Hide("inventory", "player_hud");
 
         ConfirmMenuFactory.Instance.CreateMenu(UIStateVisibility.Instance.transform, 10, true,
@@ -49,7 +47,6 @@ public class SleepTrigger : MonoBehaviour
             }), 
             new UnityAction(() => 
             {
-                playerInput.ActivateInput();
                 UIStateVisibility.Instance.Show("inventory", "player_hud");
             }));
 

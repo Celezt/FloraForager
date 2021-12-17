@@ -153,7 +153,7 @@ public class Inventory
                 OnItemChangeCallback.Invoke(index, itemAsset);
 
                 if (index == _selectedIndex && itemAsset.Amount <= 0)
-                    TrySelectItem(index + 1);
+                    SelectFirst();
 
                 return true;
             }
