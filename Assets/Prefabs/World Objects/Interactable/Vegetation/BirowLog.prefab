@@ -20,7 +20,7 @@ GameObject:
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
+  m_StaticEditorFlags: 64
   m_IsActive: 1
 --- !u!4 &1421306173773649276
 Transform:
@@ -91,6 +91,7 @@ MonoBehaviour:
   _leafAmount: 8
   _Tree: {fileID: 6606696623314948372}
   _Stump: {fileID: 0}
+  _disableColliderOnDestroy: 0
   _data:
     Durability: 12
     MaxDurability: 0
@@ -192,6 +193,18 @@ PrefabInstance:
       propertyPath: m_Name
       value: BirowLog
       objectReference: {fileID: 0}
+    - target: {fileID: 919132149155446097, guid: f8964513ac2448c488847bec3f055ec4, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 64
+      objectReference: {fileID: 0}
+    - target: {fileID: 6708090067846186310, guid: f8964513ac2448c488847bec3f055ec4, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 64
+      objectReference: {fileID: 0}
+    - target: {fileID: 8976148544853690053, guid: f8964513ac2448c488847bec3f055ec4, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 64
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: f8964513ac2448c488847bec3f055ec4, type: 3}
 --- !u!1 &6606696623314948372 stripped
@@ -270,6 +283,10 @@ PrefabInstance:
     - target: {fileID: 7267777741509580462, guid: 6c20128f853bfd04699b50fc9df4ae07, type: 3}
       propertyPath: m_Name
       value: RedWoodEffect
+      objectReference: {fileID: 0}
+    - target: {fileID: 7267777741509580462, guid: 6c20128f853bfd04699b50fc9df4ae07, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 64
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 6c20128f853bfd04699b50fc9df4ae07, type: 3}
