@@ -110,7 +110,7 @@ public class CommissionGiverWindow : Singleton<CommissionGiverWindow>
         string objectives = "<u><b>Objectives</b></u>\n<size=22>";
         commission.Objectives.ForEach(o =>
         {
-            objectives += o.Status + '\n';
+            objectives += o.Objective + '\n';
         });
         objectives += "</size>";
 
@@ -123,7 +123,7 @@ public class CommissionGiverWindow : Singleton<CommissionGiverWindow>
 
         string daysLeft = "<u><b>Time limit</b></u>\n<size=22>" + commission.CommissionData.TimeLimit.ToString() + " Days</size>";
 
-        string minRelation = "<u><b>Minimum Relations</b></u>\n<size=22>" + commission.CommissionData.MinRelation + "</size>";
+        string minRelation = "<u><b>Min Relations</b></u>\n<size=22>" + commission.CommissionData.MinRelation + "</size>";
 
         string repeatable = "<u><b>Repeatable</b></u>\n<size=22>" + (commission.Repeatable ? "Yes" : "No") + "</size>";
 

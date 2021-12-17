@@ -77,6 +77,8 @@ public class Commission : IStreamable<Commission.Data>
             inventory.Insert(_Data.Commission.Rewards[i]);
 
         NPCManager.Instance.Get(Giver).Relation.AddRelation(_Data.Commission.RewardRelation);
+
+        _Data.DaysLeft = _Data.Commission.TimeLimit;
     }
 
     public void DayPassed()
@@ -91,5 +93,6 @@ public class Commission : IStreamable<Commission.Data>
     public void Penalty()
     {
         NPCManager.Instance.Get(Giver).Relation.AddRelation(_Data.Commission.PenaltyRelation);
+        _Data.DaysLeft = _Data.Commission.TimeLimit;
     }
 }

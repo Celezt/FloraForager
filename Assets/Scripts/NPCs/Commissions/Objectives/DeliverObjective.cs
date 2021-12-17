@@ -10,6 +10,8 @@ public class DeliverObjective : IObjective
     public bool IsCompleted => false;
     public string Status => string.Empty;
 
+    public string Objective => string.Empty;
+
     public void Initialize(IObjective objectiveData)
     {
 

@@ -89,6 +89,7 @@ public class ItemInfo : MonoBehaviour
                     Sprite starSprite = _StarsAtlas.GetSprite($"stars_{index}");
 
                     _ItemStarsImage.sprite = starSprite;
+                    _ItemStarsImage.enabled = index > 0;
                 }
             }
 

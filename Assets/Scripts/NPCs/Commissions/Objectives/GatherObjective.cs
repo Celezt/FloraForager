@@ -18,6 +18,8 @@ public class GatherObjective : IObjective
     public bool IsCompleted => (CurrentAmount >= ItemToGather.Amount);
     public string Status => $"{_ItemName}: {CurrentAmount}/{ItemToGather.Amount}";
 
+    public string Objective => $"{_ItemName}: 0/{ItemToGather.Amount}";
+
     public void Initialize(IObjective objectiveData)
     {
         GatherObjective gatheringObjective = objectiveData as GatherObjective;
