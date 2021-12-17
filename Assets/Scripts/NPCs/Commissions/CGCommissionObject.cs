@@ -34,7 +34,7 @@ public class CGCommissionObject : MonoBehaviour
     public void IsUnavailable()
     {
         Color c = _Text.color;
-        c.a = 0.5f;
+        c.a = 0.3f;
         _Text.color = c;
     }
 }
