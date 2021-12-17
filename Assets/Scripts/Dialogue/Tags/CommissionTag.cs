@@ -25,7 +25,7 @@ public class CommissionTag : ITag
             npcName = actor;
         }
 
-        NPC npc = NPCManager.Instance.Get(npcName);
+        NPCBehaviour npc = NPCManager.Instance.GetObject(npcName);
 
         if (npc != null)
         {
@@ -33,11 +33,11 @@ public class CommissionTag : ITag
             {
                 if (action.ToLower() == "open")
                 {
-                    npc.OpenCommissions();
+                    npc.OpenCommissions = true;
                 }
                 else if (action.ToLower() == "close")
                 {
-                    npc.CloseCommissions();
+                    npc.OpenCommissions = false;
                 }
             }
             else

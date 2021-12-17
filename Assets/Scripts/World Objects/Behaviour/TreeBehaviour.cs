@@ -27,6 +27,8 @@ public class TreeBehaviour : MonoBehaviour, IStreamable<TreeBehaviour.Data>, IUs
     [Header("Objects")]
     [SerializeField] private GameObject _Tree;
     [SerializeField] private GameObject _Stump;
+    [Header("Other")]
+    [SerializeField] private bool _disableColliderOnDestroy = false;
 
     [SerializeField, PropertyOrder(-1), HideLabel, InlineProperty]
     private Data _data;
@@ -51,6 +53,8 @@ public class TreeBehaviour : MonoBehaviour, IStreamable<TreeBehaviour.Data>, IUs
             _Tree.SetActive(!destroyed);
         if (_Stump != null)
             _Stump.SetActive(destroyed);
+        if (_disableColliderOnDestroy)
+            _Collider.enabled = !destroyed;
     }
     void IStreamable.OnBeforeSaving()
     {
@@ -97,6 +101,8 @@ public class TreeBehaviour : MonoBehaviour, IStreamable<TreeBehaviour.Data>, IUs
                 _Tree.SetActive(false);
             if (_Stump != null)
                 _Stump.SetActive(true);
+            if (_disableColliderOnDestroy)
+                _Collider.enabled = false;
 
             if (TryGetComponent(out StreamableBehaviour streamable))
                 streamable.SetToRespawn();

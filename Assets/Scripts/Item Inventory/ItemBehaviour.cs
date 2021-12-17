@@ -22,7 +22,7 @@ public class ItemBehaviour : MonoBehaviour
 
     private Transform _checkTransform;
     private Inventory _inventory;
-
+    
     private bool _isdropped = true;
 
     public void Spawn(ItemAsset item) => Spawn(item, Random.insideUnitCircle.normalized);
@@ -95,6 +95,8 @@ public class ItemBehaviour : MonoBehaviour
     {
         float deltaTime;
 
+        bool hasCollided = false;
+
         _isdropped = false;
         Vector3 position = transform.position;
         Vector3 velocity = impulse / _mass;
@@ -115,9 +117,18 @@ public class ItemBehaviour : MonoBehaviour
             if (Physics.Raycast(position, Vector3.down, out RaycastHit hit, float.MaxValue, _groundMask))
                 point = hit.point;
 
+            if (hasCollided = 
+                Physics.Raycast(position, Vector3.right, out hit, 0.5f, _groundMask) ||
+                Physics.Raycast(position, Vector3.left, out hit, 0.5f, _groundMask) ||
+                Physics.Raycast(position, Vector3.forward, out hit, 0.5f, _groundMask) ||
+                Physics.Raycast(position, Vector3.back, out hit, 0.5f, _groundMask))
+            {
+                point = hit.point;
+            }
+
             DropPhysics();
 
-            if (position.y <= point.y)  // End if at or below the hit point.
+            if (position.y <= point.y || hasCollided)  // End if at or below the hit point.
             {
                 position.y = point.y;
                 transform.position = position;

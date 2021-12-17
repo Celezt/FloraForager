@@ -3,18 +3,23 @@
   "dialogue": [
     {
       "id": "Monica",
-      "text": "Back already? That was fast. Guess I've underestimated you, lass. ",
+      "text": "Back already? That was fast. Guess I've underestimated you, lass",
       "tag": [ "pitch{0.8}", "animation{monica, talking}" ]
     },
     {
       "id": "Monica",
-      "text": "Here, some freshly cracked Porocks for your efforts. Cracked these myself with these guns *Kisses biceps*.",
+      "text": "Here, some freshly cracked Porocks for your efforts. Cracked these myself with these guns",
       "tag": [ "pitch{0.8}", "animation{monica, talking}" ]
     },
     {
+      "id": "Monica",
+      "text": "*Kisses biceps*",
+      "tag": [ "pitch{0.8}", "animation{null, talking}", "audible{false}" ]
+    },
+    {
       "id": "Fiona",
-      "text": "Oh ok...Thanks!",
-      "tag": [ "pitch{1}", "animation{player, talking}" ]
+      "text": "Oh ok... Thanks!",
+      "tag": [ "pitch{1}", "audible{true}", "animation{player, talking}" ]
     }
   ]
 }

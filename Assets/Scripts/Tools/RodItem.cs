@@ -110,32 +110,44 @@ public class RodItem : IUse, IStar, IValue
         if (!MathUtility.PointInArc(GameGrid.Instance.MouseHit, context.transform.position, context.transform.localEulerAngles.y, _arc, _radius))
             yield break;
 
-        Inventory inventory = PlayerInput.GetPlayerByIndex(context.playerIndex).GetComponent<PlayerInfo>().Inventory;
-        List<(int, int)> items = inventory.FindAllByLabels(ItemLabels.FishBait); // find all baits in inventory
+        PlayerInput playerInput = PlayerInput.GetPlayerByIndex(context.playerIndex);
+        Inventory inventory = playerInput.GetComponent<PlayerInfo>().Inventory;
 
-        if (items.Count <= 0) // if no baits found, return
+        List<int> fishBaitsIndices = inventory
+            .FindAllByLabels(ItemLabels.FishBait)
+            .OrderByDescending(i => (ItemTypeSettings.Instance.ItemTypeChunk[inventory.Get(i.Item1).ID].Behaviour as IBait).Efficiency)
+            .Select(i => i.Item1).ToList(); // find all baits in inventory and sort by efficiency
+
+        if (fishBaitsIndices.Count <= 0) // if no baits found, return
         {
             SoundPlayer.Instance.Play("use_error");
             yield break;
         }
 
+        List<FishBaitItem> fishBaits = fishBaitsIndices.ConvertAll(f => (FishBaitItem)ItemTypeSettings.Instance.ItemTypeChunk[inventory.Get(f).ID].Behaviour);
+        List<FishBaitItem> fishBaitCandidates = fishBaits.Where(f => f.AllowedUse.Contains(cell.Type)).ToList();
+
+        if (fishBaitCandidates.Count <= 0) // if there is no candidate bait that can be used on allowed type
+        {
+            SoundPlayer.Instance.Play("use_error");
+            yield break;
+        }
+
+        FishBaitItem fishBait = fishBaitCandidates.First();
+        int fishBaitIndex = fishBaitsIndices.First();
+
         // -- START FISHING --
 
         context.behaviour.ApplyCooldown();
-
-        PlayerInput playerInput = PlayerInput.GetPlayerByIndex(context.playerIndex);
-
-        UIStateVisibility.Instance.Hide("inventory", "stamina");
-        playerInput.DeactivateInput();
 
         HumanoidAnimationBehaviour animationBehaviour = playerInput.GetComponentInChildren<HumanoidAnimationBehaviour>();
         PlayerMovement playerMovement = playerInput.GetComponent<PlayerMovement>();
 
         playerMovement.SetDirection((GameGrid.Instance.MouseHit - context.transform.position).normalized.xz());
 
-        int fishBaitIndex = items.First().Item1; // select first found bait to use
+        UIStateVisibility.Instance.Hide("inventory", "stamina");
+        playerInput.DeactivateInput();
 
-        FishBaitItem fishBait = ItemTypeSettings.Instance.ItemTypeChunk[inventory.Get(fishBaitIndex).ID].Behaviour as FishBaitItem;
         RodItem rodItem = ItemTypeSettings.Instance.ItemTypeChunk[context.id].Behaviour as RodItem;
 
         string fishStatus = _catchFailSound; // sound to play depending on current fish status (success/failed)

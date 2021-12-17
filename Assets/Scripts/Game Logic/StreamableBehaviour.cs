@@ -47,7 +47,10 @@ public class StreamableBehaviour : MonoBehaviour, IStreamer, IStreamable<Streama
     {
         _data = new Data();
         _guid = GetComponent<GuidComponent>().Guid;
+    }
 
+    private void Start()
+    {
         if (GameManager.Stream.StreamedData.ContainsKey(_guid))
             Load();
 

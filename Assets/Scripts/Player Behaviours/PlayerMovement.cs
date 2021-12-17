@@ -131,6 +131,9 @@ public class PlayerMovement : MonoBehaviour
 
     private PlayerInput _playerInput;
 
+    public Coroutine _RotateTowards;
+    public Coroutine RotateTowards => _RotateTowards;
+
     /// <summary>
     /// Instantly set relative forward direction.
     /// </summary>
@@ -329,4 +332,42 @@ public class PlayerMovement : MonoBehaviour
     }
 
     private void SetBaseSpeed(float speed) => _baseSpeed = speed;
+
+    public void RotateTowardsTarget(GameObject target, float timeToRotate = 0.75f)
+    {
+        IEnumerator Rotate()
+        {
+            Vector3 start = transform.forward;
+            Vector3 final = target.transform.position - transform.position;
+
+            float walkSpeed = 0.06f;
+
+            _animationBehaviour.WalkSpeed = walkSpeed;
+
+            float time = 0.0f;
+            while (time <= 1f)
+            {
+                final = target.transform.position - transform.position;
+
+                time += Time.deltaTime / timeToRotate;
+                SetDirection(Vector3.Slerp(start, final, time).xz());
+
+                yield return null;
+            }
+
+            time = 0.0f;
+            while (time <= 1f)
+            {
+                time += Time.deltaTime / 0.5f;
+                _animationBehaviour.WalkSpeed = Mathf.Lerp(walkSpeed, 0.0f, time);
+                yield return null;
+            }
+
+            SetDirection(final.xz());
+
+            _RotateTowards = null;
+        };
+
+        _RotateTowards = StartCoroutine(Rotate());
+    }
 }

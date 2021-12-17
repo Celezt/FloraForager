@@ -25,9 +25,12 @@ public class NPCBehaviour : MonoBehaviour, IInteractable, IUsable
     private Coroutine _RotateTowards;
     private Coroutine _RotateBack;
 
+    private event System.Action OnRotate = delegate { };
+
     public NPC NPC { get; private set; }
 
     public int Priority => 3;
+    public bool OpenCommissions = false;
 
     private void Awake()
     {
@@ -72,7 +75,21 @@ public class NPCBehaviour : MonoBehaviour, IInteractable, IUsable
             string dialogue = NPC.DialogueQueue.Dequeue();
 
             if (!string.IsNullOrWhiteSpace(dialogue))
+            {
                 StartDialogue(context.playerIndex, dialogue);
+
+                void CompleteAction(DialogueManager manager)
+                {
+                    if (!CommissionGiverWindow.Instance.Opened && OpenCommissions)
+                        NPC.OpenCommissions();
+
+                    OpenCommissions = false;
+
+                    manager.Completed -= CompleteAction;
+                };
+
+                DialogueManager.GetByIndex(context.playerIndex).Completed += CompleteAction;
+            }
             else
                 playerInput.ActivateInput();
         }
@@ -117,27 +134,44 @@ public class NPCBehaviour : MonoBehaviour, IInteractable, IUsable
         PlayerInput playerInput = PlayerInput.GetPlayerByIndex(playerIndex);
         playerInput.DeactivateInput();
 
+        PlayerMovement playerMovement = playerInput.GetComponent<PlayerMovement>();
+        UseBehaviour playerUse = playerInput.GetComponent<UseBehaviour>();
+
+        UIStateVisibility.Instance.Hide("player_hud", "inventory");
+
         if (_RotateBack != null)
             StopCoroutine(_RotateBack);
 
         _RotateTowards = StartCoroutine(RotateTowardsTarget(playerInput.gameObject));
+        playerMovement.RotateTowardsTarget(gameObject);
 
-        void CompleteAction(DialogueManager manager)
+        OnRotate += OnRotateAction;
+
+        void OnRotateAction()
         {
-            if (_RotateTowards != null)
-                StopCoroutine(_RotateTowards);
+            void CompleteAction(DialogueManager manager)
+            {
+                if (_RotateTowards != null)
+                    StopCoroutine(_RotateTowards);
+                if (playerMovement.RotateTowards != null)
+                    playerMovement.StopCoroutine(playerMovement.RotateTowards);
 
-            _RotateBack = StartCoroutine(RotateBack());
+                _RotateBack = StartCoroutine(RotateBack());
 
-            playerInput.ActivateInput();
+                playerUse.ApplyCooldown();
 
-            manager.Completed -= CompleteAction;
+                playerInput.ActivateInput();
+
+                manager.Completed -= CompleteAction;
+            };
+
+            DialogueManager.GetByIndex(playerIndex).StartDialogue(assetGUID).Completed += CompleteAction;
+
+            OnRotate -= OnRotateAction;
         };
-
-        DialogueManager.GetByIndex(playerIndex).StartDialogue(assetGUID).Completed += CompleteAction;
     }
 
-    private IEnumerator RotateTowardsTarget(GameObject target, float timeToRotate = 1.0f)
+    private IEnumerator RotateTowardsTarget(GameObject target, float timeToRotate = 0.75f)
     {
         Quaternion startRotation = transform.rotation;
         Vector3 direction = target.transform.position - transform.position;
@@ -146,17 +180,25 @@ public class NPCBehaviour : MonoBehaviour, IInteractable, IUsable
         Quaternion start = new Quaternion(0, startRotation.y, 0, startRotation.w);
         Quaternion final = new Quaternion(0, finalRotation.y, 0, finalRotation.w);
 
-        float walkSpeed = 0.05f;
+        float walkSpeed = 0.06f;
 
         _HumanoidAnimationBehaviour.WalkSpeed = walkSpeed;
 
         float time = 0.0f;
         while (time <= 1f)
         {
+            direction = target.transform.position - transform.position;
+            finalRotation = Quaternion.LookRotation(direction);
+
+            final = new Quaternion(0, finalRotation.y, 0, finalRotation.w);
+
             time += Time.deltaTime / timeToRotate;
             transform.rotation = Quaternion.Slerp(start, final, time);
+
             yield return null;
         }
+
+        OnRotate.Invoke();
 
         time = 0.0f;
         while (time <= 1f)
