@@ -117,7 +117,7 @@ public class DialogueManager : MonoBehaviour
         Started.Invoke(this);
         _dialogueUI.SetActive(true);
 
-        _speedMultiplierHierarchy = new List<float>();
+        _speedMultiplierHierarchy = new List<float>() { 1 };    // Speed 1 at layer 0 by default.
         _currentLayer = 0;
 
         _audible = true;
@@ -238,7 +238,7 @@ public class DialogueManager : MonoBehaviour
 
         _content.text = content.ToString();
 
-        if (string.IsNullOrWhiteSpace(paragraph.ID))     // Hide namecard if no id exist
+        if (string.IsNullOrWhiteSpace(paragraph.ID))     // Hide namecard if no id exist.
             _namecardUI.SetActive(false);
         else
         {
@@ -311,6 +311,16 @@ public class DialogueManager : MonoBehaviour
 
         string parsedText = _content.GetParsedText().ToUpper();
 
+        bool speedTagExist = false;
+        if (paragraph.Tag != null)
+        {
+            for (int i = 0; i < paragraph.Tag.Count; i++)   // Look for any speed tag.
+                if (Regex.Match(paragraph.Tag[0], @"^.*?(?=\{)").Value == "speed")
+                    speedTagExist = true;
+        }
+
+        int startSearchSpeedTag = _currentLayer > _speedMultiplierHierarchy.Count - 1 ? _speedMultiplierHierarchy.Count - 1 : _speedMultiplierHierarchy.Count - 2; // Use the last speed if current is ahead of the hierarchy.
+
         int maxCount = _content.textInfo.characterCount + 1;
         for (int count = 0; count < maxCount; count++)
         {
@@ -326,7 +336,7 @@ public class DialogueManager : MonoBehaviour
 
             while (true)
             {
-                if (count >= indexRange.start && count < indexRange.end)
+                if (count >= indexRange.start && count < indexRange.end)    // Always prioritize rich tags.
                 {
                     yield return new WaitForSeconds(_autoTextSpeed / richTagSpeedMultiplier);
                     break;
@@ -338,16 +348,16 @@ public class DialogueManager : MonoBehaviour
                 else
                 {
                     float speedMultiplier = 1;
-                    if (paragraph.Tag != null && paragraph.Tag.Contains("speed"))
-                        speedMultiplier = _speedMultiplierHierarchy.Last();
+
+                    if (speedTagExist)  // If speed tag exist.
+                        speedMultiplier = _speedMultiplierHierarchy[_currentLayer];
                     else
                     {
-                        int hierarchyCount = _speedMultiplierHierarchy.Count;
-                        for (int i = 1; i < hierarchyCount; i++)
+                        for (int i = startSearchSpeedTag; i >= 0; i--) // Search for existing speed tag.
                         {
-                            speedMultiplier = _speedMultiplierHierarchy[hierarchyCount - i];
+                            speedMultiplier = _speedMultiplierHierarchy[i];
 
-                            if (speedMultiplier != float.NaN)
+                            if (speedMultiplier != float.NaN)   // Stop searching if layer contains speed tag.
                                 break;
                         }
                     }
