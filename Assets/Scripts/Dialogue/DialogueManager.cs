@@ -30,8 +30,12 @@ public class DialogueManager : MonoBehaviour
     /// Callback when the current dialogue has started a conversation.
     /// </summary>
     public event Action<DialogueManager> Started = delegate { };
-
     public IReadOnlyDictionary<string, string> Aliases => _aliases;
+    /// <summary>
+    /// Base text read speed.
+    /// </summary>
+    public float AutoTextSpeed => _autoTextSpeed;
+
 
     [SerializeField] private TextMeshProUGUI _content;
     [SerializeField] private TextMeshProUGUI _namecard;
@@ -44,11 +48,11 @@ public class DialogueManager : MonoBehaviour
     [SerializeField, Min(0)] private int _playerIndex;
 
     private Stack<ParagraphAsset> _paragraphStack;
-    private Queue<(string, RangeInt)> _richTagSpeedMultiplierQueue;
     private List<float> _speedMultiplierHierarchy;
     private List<GameObject> _actions;
     private Dictionary<string, string> _aliases = new Dictionary<string, string>();
     private Dictionary<string, Action<Taggable, string>> _tags = new Dictionary<string, Action<Taggable, string>>();
+    private Dictionary<string, RichTagData> _richTags = new Dictionary<string, RichTagData>();
 
     private Coroutine _autoTypeCoroutine;
 
@@ -59,6 +63,19 @@ public class DialogueManager : MonoBehaviour
     private float _pitch;
 
     private Dictionary<string, GameObject> _actors;
+
+    public struct RichTagData
+    {
+        public IRichTag Execution;
+        public Queue<(string, RangeInt)> Sequences;
+    }
+
+    public struct CurrentRichTagData
+    {
+        public IRichTag Execution;
+        public (string, RangeInt) Sequence;
+        public bool HasExecuted;
+    }
 
     /// <summary>
     /// Return Dialogue Manager based on the player index connected to it.
@@ -234,7 +251,14 @@ public class DialogueManager : MonoBehaviour
 
         DialogueUtility.Alias(content, _aliases);
         DialogueUtility.Tag(this, _currentLayer, paragraph.Tag, _tags);
-        DialogueUtility.ExtractCustomRichTag(content, "speed", out _richTagSpeedMultiplierQueue);
+
+        for (int i = 0; i < _richTags.Count; i++)
+        {
+            KeyValuePair<string, RichTagData> richTag = _richTags.ElementAt(i);
+            RichTagData data = richTag.Value;
+            DialogueUtility.ExtractCustomRichTag(content, richTag.Key, out data.Sequences);
+            _richTags[richTag.Key] = data;
+        }
 
         _content.text = content.ToString();
 
@@ -260,7 +284,6 @@ public class DialogueManager : MonoBehaviour
 
     private void Awake()
     {
-        DialogueUtility.InitializeAllTags(this, _currentLayer, _tags);
         _dialogues.Add(_playerIndex, this);
     }
 
@@ -269,6 +292,8 @@ public class DialogueManager : MonoBehaviour
         DebugLogConsole.AddCommandInstance("dialogue.cancel", "Cancel current dialogue", nameof(CancelDialogue), this);
         DebugLogConsole.AddCommandInstance("dialogue.start", "Start dialogue", nameof(StartDialogueConsole), this);
         DebugLogConsole.AddCommandInstance("dialogue.speed", "Sets auto text speed", nameof(SetAutoTextSpeedConsole), this);
+
+        DialogueUtility.InitializeAllTags(this, _currentLayer, _tags, _richTags);
 
         _dialogueUI.SetActive(false);
 
@@ -293,19 +318,32 @@ public class DialogueManager : MonoBehaviour
         float richTagSpeedMultiplier = 1;
         _isAutoTextCompleted = false;
 
-        IEnumerator Dequeue()
-        {
-            (string, RangeInt) customRichTag = _richTagSpeedMultiplierQueue.Dequeue();
-            indexRange = customRichTag.Item2;
-            if (!float.TryParse(customRichTag.Item1, NumberStyles.Float, CultureInfo.InvariantCulture, out richTagSpeedMultiplier))
-            {
-                Debug.LogError($"{DialogueUtility.DIALOGUE_EXCEPTION}: {customRichTag.Item1} could not be parsed to float");
-                yield break;
-            }
-        }
+        //Queue<(string, RangeInt)> rishTagSpeedMultiplierQueue = _richTags["speed"].TagQueue;
 
-        if (_richTagSpeedMultiplierQueue.Count > 0)
-            yield return Dequeue();
+        //IEnumerator Dequeue()
+        //{
+        //    (string, RangeInt) customRichTag = rishTagSpeedMultiplierQueue.Dequeue();
+        //    indexRange = customRichTag.Item2;
+        //    if (!float.TryParse(customRichTag.Item1, NumberStyles.Float, CultureInfo.InvariantCulture, out richTagSpeedMultiplier))
+        //    {
+        //        Debug.LogError($"{DialogueUtility.DIALOGUE_EXCEPTION}: {customRichTag.Item1} could not be parsed to float");
+        //        yield break;
+        //    }
+        //}
+
+        //if (rishTagSpeedMultiplierQueue.Count > 0)
+        //    yield return Dequeue();
+
+        List<CurrentRichTagData> richTagsCurrent = new List<CurrentRichTagData>();
+        List<RichTagData> richTagsUsed = new List<RichTagData>();
+        foreach (RichTagData data in _richTags.Values)  // Look for all rich tags used in this paragraph.
+            if (data.Sequences.Count > 0)
+            {
+                (string, RangeInt) tag = data.Sequences.Dequeue();
+                richTagsCurrent.Add(new CurrentRichTagData { Execution = data.Execution, Sequence = tag });
+                richTagsUsed.Add(data);
+
+            }
 
         _content.ForceMeshUpdate();
 
@@ -321,51 +359,84 @@ public class DialogueManager : MonoBehaviour
 
         int startSearchSpeedTag = _currentLayer > _speedMultiplierHierarchy.Count - 1 ? _speedMultiplierHierarchy.Count - 1 : _speedMultiplierHierarchy.Count - 2; // Use the last speed if current is ahead of the hierarchy.
 
-        int maxCount = _content.textInfo.characterCount + 1;
-        for (int count = 0; count < maxCount; count++)
+        int maxLength = _content.textInfo.characterCount + 1;
+        for (int currentIndex = 0; currentIndex < maxLength; currentIndex++)  
         {
-            _content.maxVisibleCharacters = count;
+            _content.maxVisibleCharacters = currentIndex;
 
-            if (_audible && count > 0)
+            if (_audible && currentIndex > 0)
             {
-                string letter = parsedText[count - 1].ToString();
+                string letter = parsedText[currentIndex - 1].ToString();
 
                 if (SoundPlayer.Instance.TryGetSound(letter, out SoundPlayer.Sound sound))
                     SoundPlayer.Instance.Play(letter, 0, _pitch - sound.Pitch);
             }
 
-            while (true)
+            Debug.Log(currentIndex + " " + (indexRange.start, indexRange.end));
+
+            for (int i = richTagsUsed.Count - 1; i >= 0; i--)   // Loop through all current rich tags.
             {
-                if (count >= indexRange.start && count < indexRange.end)    // Always prioritize rich tags.
+                CurrentRichTagData data = richTagsCurrent[i];
+                if (currentIndex >= data.Sequence.Item2.start && currentIndex < data.Sequence.Item2.end) // Execute in range.
                 {
-                    yield return new WaitForSeconds(_autoTextSpeed / richTagSpeedMultiplier);
-                    break;
-                }
-                else if (_richTagSpeedMultiplierQueue.Count > 0)
-                {
-                    yield return Dequeue();
-                }
-                else
-                {
-                    float speedMultiplier = 1;
-
-                    if (speedTagExist)  // If speed tag exist.
-                        speedMultiplier = _speedMultiplierHierarchy[_currentLayer];
-                    else
+                    if (!data.HasExecuted)  // Execute at the start of the process.
                     {
-                        for (int i = startSearchSpeedTag; i >= 0; i--) // Search for existing speed tag.
-                        {
-                            speedMultiplier = _speedMultiplierHierarchy[i];
-
-                            if (speedMultiplier != float.NaN)   // Stop searching if layer contains speed tag.
-                                break;
-                        }
+                        data.HasExecuted = true;
+                        data.Execution.EnterTag(Taggable.CreatePackage(this, _currentLayer), currentIndex, data.Sequence.Item2, data.Sequence.Item1);  
                     }
-                       
-                    yield return new WaitForSeconds(_autoTextSpeed / speedMultiplier);
-                    break;
+
+                    richTagsCurrent[i] = data;
+
+                    yield return data.Execution.ProcessTag(Taggable.CreatePackage(this, _currentLayer), currentIndex, data.Sequence.Item2, data.Sequence.Item1);
+                }
+                else if (data.HasExecuted)  // If executed and no longer in range.
+                {
+                    data.Execution.ExitTag(Taggable.CreatePackage(this, _currentLayer), currentIndex, data.Sequence.Item2, data.Sequence.Item1);
+
+                    if (richTagsUsed[i].Sequences.Count > 0)    // Try get next rich tag from this type.
+                    {
+                       richTagsCurrent[i] = new CurrentRichTagData { Execution = richTagsUsed[i].Execution, Sequence = richTagsUsed[i].Sequences.Dequeue() };
+                    }
+                    else    // Remove if no more rich tags of this type is found.
+                    {
+                        richTagsUsed.RemoveAt(i);
+                        richTagsCurrent.RemoveAt(i);
+                    }
                 }
             }
+
+            //while (true)
+            //{
+            //    if (count >= indexRange.start && count < indexRange.end)    // Always prioritize rich tags.
+            //    {
+            //        yield return new WaitForSeconds(_autoTextSpeed / richTagSpeedMultiplier);
+            //        break;
+            //    }
+            //    else if (rishTagSpeedMultiplierQueue.Count > 0 && (count < indexRange.start || count >= indexRange.end))
+            //    {
+            //        yield return Dequeue();
+            //    }
+            //    else
+            //    {
+            //        float speedMultiplier = 1;
+
+            //        if (speedTagExist)  // If speed tag exist.
+            //            speedMultiplier = _speedMultiplierHierarchy[_currentLayer];
+            //        else
+            //        {
+            //            for (int i = startSearchSpeedTag; i >= 0; i--) // Search for existing speed tag.
+            //            {
+            //                speedMultiplier = _speedMultiplierHierarchy[i];
+
+            //                if (speedMultiplier != float.NaN)   // Stop searching if layer contains speed tag.
+            //                    break;
+            //            }
+            //        }
+
+            //        yield return new WaitForSeconds(_autoTextSpeed / speedMultiplier);
+            //        break;
+            //    }
+            //}
         }
 
         _isAutoTextCompleted = true;

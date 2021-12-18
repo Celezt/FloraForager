@@ -104,7 +104,7 @@ public static class DialogueUtility
                 }
             }
 
-            queue.Enqueue((openGroup.Value, new RangeInt(openIndex, closedIndex)));
+            queue.Enqueue((openGroup.Value, new RangeInt(openIndex, closedIndex - openIndex)));
 
             text.Replace(openMatches[i].Groups[0].Value, "");
             text.Replace(closeMatches[i].Groups[0].Value, "");
@@ -143,7 +143,7 @@ public static class DialogueUtility
     /// <param name="wrap">Wrapped reference.</param>
     /// <param name="layer">Hierarchy layer.</param>
     /// <param name="tagDictionary">All actions.</param>
-    public static void InitializeAllTags<T>(T wrap, int layer, IDictionary<string, Action<Taggable, string>> tagDictionary)
+    public static void InitializeAllTags<T>(T wrap, int layer, IDictionary<string, Action<Taggable, string>> tagDictionary, Dictionary<string, DialogueManager.RichTagData> richTagDicitonary)
     {
         static string ReplaceLastOccurrence(string source, string find, string replace)
         {
@@ -158,17 +158,27 @@ public static class DialogueUtility
 
         foreach (Type type in ReflectionUtility.GetTypesWithAttribute<CustomDialogueTagAttribute>(Assembly.GetExecutingAssembly()))
         {
-            if (!typeof(ITag).IsAssignableFrom(type))
+            if (!typeof(ITaggable).IsAssignableFrom(type))
             {
-                Debug.LogError($"{DIALOGUE_EXCEPTION}: {type} has no derived {nameof(ITag)}");
+                Debug.LogError($"{DIALOGUE_EXCEPTION}: {type} has no derived {nameof(ITaggable)}");
                 continue;
             }
 
-            ITag instance = (ITag)Activator.CreateInstance(type);
+            ITaggable instance = (ITaggable)Activator.CreateInstance(type);
             CustomDialogueTagAttribute attribute = (CustomDialogueTagAttribute)Attribute.GetCustomAttribute(type, typeof(CustomDialogueTagAttribute));
             
             instance.Initalize(Taggable.CreatePackage(wrap, layer));
-            tagDictionary.Add(ReplaceLastOccurrence(instance.GetType().Name, "Tag", "").ToLower(), instance.Action);
+
+            if (instance is ITag)
+            {
+
+                tagDictionary.Add(ReplaceLastOccurrence(instance.GetType().Name, "Tag", "").ToSnakeCase(), (instance as ITag).Action);
+            }
+            else if (instance is IRichTag)
+            {
+
+                richTagDicitonary.Add(ReplaceLastOccurrence(instance.GetType().Name, "RichTag", "").ToSnakeCase(), new DialogueManager.RichTagData { Execution = instance as IRichTag });
+            }
         }
     }
 }
