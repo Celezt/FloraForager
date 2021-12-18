@@ -35,6 +35,7 @@ public class DialogueManager : MonoBehaviour
 
     [SerializeField] private TextMeshProUGUI _content;
     [SerializeField] private TextMeshProUGUI _namecard;
+    [SerializeField] private GameObject _namecardUI;
     [SerializeField] private GameObject _dialogueUI;
     [SerializeField] private Transform _buttonParent;
     [SerializeField] private GameObject _buttonType;
@@ -191,7 +192,7 @@ public class DialogueManager : MonoBehaviour
                 Button button = obj.GetComponentInChildren<Button>();
                 TextMeshProUGUI textMesh = obj.GetComponentInChildren<TextMeshProUGUI>();
 
-                StringBuilder act = new StringBuilder(paragraph.Action[i].Act);
+                StringBuilder act = new StringBuilder(paragraph.Action[i].Act ?? "");
                 DialogueUtility.Alias(act, _aliases);
 
                 textMesh.text = act.ToString();
@@ -229,7 +230,7 @@ public class DialogueManager : MonoBehaviour
         DestroyActions();
 
         ParagraphAsset paragraph = _paragraphStack.Pop();
-        StringBuilder content = new StringBuilder(paragraph.Text.ToString());
+        StringBuilder content = new StringBuilder(paragraph.Text ?? "");
 
         DialogueUtility.Alias(content, _aliases);
         DialogueUtility.Tag(this, _currentLayer, paragraph.Tag, _tags);
@@ -237,10 +238,17 @@ public class DialogueManager : MonoBehaviour
 
         _content.text = content.ToString();
 
-        if (_aliases.TryGetValue(paragraph.ID, out string alias))
-            _namecard.text = alias;
+        if (string.IsNullOrWhiteSpace(paragraph.ID))     // Hide namecard if no id exist
+            _namecardUI.SetActive(false);
         else
-            _namecard.text = paragraph.ID;
+        {
+            _namecardUI.SetActive(true);
+
+            if (_aliases.TryGetValue(paragraph.ID, out string alias))
+                _namecard.text = alias;
+            else
+                _namecard.text = paragraph.ID;
+        }
 
         if (_autoTypeCoroutine != null)
             StopCoroutine(_autoTypeCoroutine);
