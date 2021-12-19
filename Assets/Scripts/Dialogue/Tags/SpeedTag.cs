@@ -32,33 +32,37 @@ public struct SpeedTag : ITag, IHierarchyTag
             _speedMultiplierHierarchy.Add(float.NaN);
 
         _speedMultiplierHierarchy[taggable.Layer] = speedMultiplier;
+
+        Debug.Log("enter " + taggable.Layer);
     }
 
     void ITag.ExitTag(Taggable taggable, string parameter)
     {
-
+        Debug.Log("exit " + taggable.Layer);
     }
 
     IEnumerator ITag.ProcessTag(Taggable taggable, int currentIndex, int length, string parameter)
     {
         DialogueManager dm = taggable.Unwrap<DialogueManager>();
+        Debug.Log("process " + taggable.Layer);
         yield return new WaitForSeconds(dm.AutoTextSpeed / _speedMultiplierHierarchy[taggable.Layer]);
     }
 
     void IHierarchyTag.EnterChild(Taggable thisTaggable, Taggable childTaggable, string parameter)
     {
-
+        Debug.Log("enter: " + childTaggable.Layer);
     }
 
     void IHierarchyTag.ExitChild(Taggable thisTaggable, Taggable childTaggable, string parameter)
     {
-        
+        Debug.Log("exit: " + childTaggable.Layer);
     }
 
     IEnumerator IHierarchyTag.ProcessChild(Taggable thisTaggable, Taggable childTaggable, int currentIndex, int length, string parameter)
     {
         DialogueManager dm = thisTaggable.Unwrap<DialogueManager>();
 
+        Debug.Log("update: " + childTaggable.Layer);
         float speedMultiplier = 1;
 
         for (int i = thisTaggable.Layer > _speedMultiplierHierarchy.Count - 1 ? _speedMultiplierHierarchy.Count - 1 : _speedMultiplierHierarchy.Count - 2; i >= 0; i--) // Use the last speed if current is ahead of the hierarchy.

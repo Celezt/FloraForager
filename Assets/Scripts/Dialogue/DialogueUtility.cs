@@ -14,6 +14,36 @@ public static class DialogueUtility
 {
     public const string DIALOGUE_EXCEPTION = "DialogueException";
 
+    public class Node
+    {
+        public List<List<Node>> NodeTree;
+        public int Layer;
+        public Tag[] NodeBehaviour;
+
+        public Node(Node connectToNode, int layer, Tag[] tags)
+        {
+            if (connectToNode == null)  // If is root.
+                NodeTree = new List<List<Node>>();
+            else
+                NodeTree = connectToNode.NodeTree;
+
+            while (NodeTree.Count <= layer)
+                NodeTree.Add(new List<Node>());
+
+            if (!NodeTree[layer].Contains(this))
+                NodeTree[layer].Add(this);
+
+            Layer = layer;
+            NodeBehaviour = tags;
+        }
+    }
+
+    public struct Tag
+    {
+        public ITag Type;
+        public string Parameter;
+    }
+
     /// <summary>
     /// Convert all id to mapped alias.
     /// </summary>
@@ -65,10 +95,10 @@ public static class DialogueUtility
     /// <param name="text">Text.</param>
     /// <param name="richTag">RichTag to find.</param>
     /// <param name="queue">Queue with the value and range of effect.</param>
-    public static void ExtractCustomRichTag(StringBuilder text, string richTag, out Queue<(string, RangeInt)> queue)
+    public static void DeserializeRichTags(StringBuilder text, string richTag, out Queue<(string, RangeInt)> queue)
     {
         string copy = text.ToString();
-        queue = new Queue<(string, RangeInt)>(); 
+        queue = new Queue<(string, RangeInt)>();
         Regex openRegex = new Regex($"<{richTag}(=((?:.(?!\\1|>))*.?)\\1?)?>");
         Regex closeRegex = new Regex($"((<\\/){richTag}(>))");
 
@@ -112,58 +142,19 @@ public static class DialogueUtility
     }
 
     /// <summary>
-    /// Invoke all enter actions connected to tags.
+    /// Deserialize all tags and convert it into <see cref="ITag"/>.
     /// </summary>
-    /// <param name="wrap">Wrapped reference.</param>
-    /// <param name="layer">Hierarchy layer.</param>
-    /// <param name="tags">Tags.</param>
-    /// <param name="tagDictionary">All actions.</param>
-    public static void TagEnterInvoke<T>(T wrap, int layer, IList<string> tags, IDictionary<string, ITag> tagDictionary, List<(string, ITag)> tagsToUpdate = null)
-    {
-        // Invoke all tags.
-        if (tags != null)
-            for (int i = 0; i < tags.Count; i++)
-            {
-                string value = Regex.Match(tags[i], @"(?<=\{).*?(?=\})").Value;        // Match value.
-                string tag = Regex.Match(tags[i], @"\w+(?=(?>[^{}]+|\{|\})*$)").Value; // Match tag name.
+    public static Tag[] DeserializeTags(List<string> serializedTags, IDictionary<string, ITag> tagTypes) =>
+        serializedTags?.Select(x =>
+        {
+            string tag = Regex.Match(x, @"\w+(?=(?>[^{}]+|\{|\})*$)").Value; // Match tag name.
+            string parameter = Regex.Match(x, @"(?<=\{).*?(?=\})").Value;        // Match parameter.
 
-                if (!tagDictionary.ContainsKey(tag))
-                {
-                    Debug.LogWarning($"{DIALOGUE_EXCEPTION}: {tag} does not exist");
-                    return;
-                }
-                
-                tagDictionary[tag].EnterTag(Taggable.CreatePackage(wrap, layer),  value);
-                tagsToUpdate?.Add((value, tagDictionary[tag]));
-            }
-    }
+            if (!tagTypes.ContainsKey(tag))    // If tag type exist.
+                throw new Exception($"{DIALOGUE_EXCEPTION}: {tag} does not exist");
 
-    /// <summary>
-    /// Invoke all exit actions connected to tags.
-    /// </summary>
-    /// <param name="wrap">Wrapped reference.</param>
-    /// <param name="layer">Hierarchy layer.</param>
-    /// <param name="tags">Tags.</param>
-    /// <param name="tagDictionary">All actions.</param>
-    public static void TagExitInvoke<T>(T wrap, int layer, IList<string> tags, IDictionary<string, ITag> tagDictionary, List<(string, ITag)> tagsToUpdate = null)
-    {
-        // Invoke all tags.
-        if (tags != null)
-            for (int i = 0; i < tags.Count; i++)
-            {
-                string value = Regex.Match(tags[i], @"(?<=\{).*?(?=\})").Value;        // Match value.
-                string tag = Regex.Match(tags[i], @"\w+(?=(?>[^{}]+|\{|\})*$)").Value; // Match tag name.
-
-                if (!tagDictionary.ContainsKey(tag))
-                {
-                    Debug.LogWarning($"{DIALOGUE_EXCEPTION}: {tag} does not exist");
-                    return;
-                }
-
-                tagDictionary[tag].ExitTag(Taggable.CreatePackage(wrap, layer), value);
-                tagsToUpdate?.Remove((value, tagDictionary[tag]));
-            }
-    }
+            return new Tag { Type = tagTypes[tag], Parameter = parameter };
+        }).ToArray() ?? new Tag[0];
 
     /// <summary>
     /// Reflect all tags inside the assembly.
@@ -171,7 +162,7 @@ public static class DialogueUtility
     /// <param name="wrap">Wrapped reference.</param>
     /// <param name="layer">Hierarchy layer.</param>
     /// <param name="tagDictionary">All actions.</param>
-    public static void InitializeAllTags<T>(T wrap, int layer, IDictionary<string, ITag> tagDictionary, Dictionary<string, DialogueManager.RichTagData> richTagDicitonary)
+    public static void InitializeAllTags<T>(T wrap, IDictionary<string, ITag> tagDictionary, IDictionary<string, IHierarchyTag> hierarchyDictionary, Dictionary<string, DialogueManager.RichTagData> richTagDicitonary)
     {
         static string ReplaceLastOccurrence(string source, string find, string replace)
         {
@@ -195,16 +186,18 @@ public static class DialogueUtility
             ITaggable instance = (ITaggable)Activator.CreateInstance(type);
             CustomDialogueTagAttribute attribute = (CustomDialogueTagAttribute)Attribute.GetCustomAttribute(type, typeof(CustomDialogueTagAttribute));
             
-            instance.Initialize(Taggable.CreatePackage(wrap, layer));
+            instance.Initialize(Taggable.CreatePackage(wrap, int.MinValue));
 
             if (instance is ITag)
             {
+                string name = ReplaceLastOccurrence(instance.GetType().Name, "Tag", "").ToSnakeCase();
+                tagDictionary.Add(name, instance as ITag);
 
-                tagDictionary.Add(ReplaceLastOccurrence(instance.GetType().Name, "Tag", "").ToSnakeCase(), instance as ITag);
+                if (instance is IHierarchyTag)  // Optional variant.
+                    hierarchyDictionary.Add(name, instance as IHierarchyTag);
             }
             else if (instance is IRichTag)
             {
-
                 richTagDicitonary.Add(ReplaceLastOccurrence(instance.GetType().Name, "RichTag", "").ToSnakeCase(), new DialogueManager.RichTagData { Execution = instance as IRichTag });
             }
         }
