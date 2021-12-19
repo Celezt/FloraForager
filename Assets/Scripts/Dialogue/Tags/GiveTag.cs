@@ -7,7 +7,12 @@ using UnityEngine.InputSystem;
 [CustomDialogueTag]
 public class GiveTag : ITag
 {
-    public void Action(Taggable taggable, string parameter) // parameter (id,amount)
+    public void Initialize(Taggable taggable)
+    {
+
+    }
+
+    public void EnterTag(Taggable taggable, string parameter) // parameter (id,amount)
     {
         parameter = Regex.Replace(parameter, @"\s", "");
 
@@ -19,8 +24,18 @@ public class GiveTag : ITag
         playerInput.GetComponent<PlayerInfo>().Inventory.Insert(itemID,int.Parse(itemAmount));
     }
 
-    public void Initalize(Taggable taggable)
+    public void ExitTag(Taggable taggable, string parameter)
     {
         
+    }
+
+    public IEnumerator ProcessTag(Taggable taggable, int currentIndex, int length, string parameter)
+    {
+        yield return null;
+    }
+
+    public void OnActive(Taggable taggable)
+    {
+
     }
 }

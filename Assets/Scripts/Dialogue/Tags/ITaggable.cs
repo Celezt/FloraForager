@@ -4,5 +4,12 @@ using UnityEngine;
 
 public interface ITaggable
 {
-    public void Initalize(Taggable taggable);
+    /// <summary>
+    /// Called on awake.
+    /// </summary>
+    public void Initialize(Taggable taggable);
+    /// <summary>
+    /// Called every time activated.
+    /// </summary>
+    public void OnActive(Taggable taggable);
 }

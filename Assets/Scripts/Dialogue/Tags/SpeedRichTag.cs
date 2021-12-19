@@ -8,17 +8,22 @@ public class SpeedRichTag : IRichTag
 {
     void IRichTag.EnterTag(Taggable taggable, int currentIndex, RangeInt range, string parameter)
     {
-        
+
     }
 
     void IRichTag.ExitTag(Taggable taggable, int currentIndex, RangeInt range, string parameter)
     {
+
+    }
+
+    void ITaggable.Initialize(Taggable taggable)
+    {
         
     }
 
-    void ITaggable.Initalize(Taggable taggable)
+    void ITaggable.OnActive(Taggable taggable)
     {
-        
+
     }
 
     IEnumerator IRichTag.ProcessTag(Taggable taggable, int currentIndex, RangeInt range, string parameter)

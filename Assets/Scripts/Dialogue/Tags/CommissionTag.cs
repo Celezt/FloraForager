@@ -9,7 +9,7 @@ public class CommissionTag : ITag
     /// <summary>
     /// commission{actor, action}
     /// </summary>
-    public void Action(Taggable taggable, string parameter)
+    public void EnterTag(Taggable taggable, string parameter)
     {
         parameter = Regex.Replace(parameter, @"\s", "");
 
@@ -47,8 +47,23 @@ public class CommissionTag : ITag
             Debug.LogError($"{npcName} does not exist among NPCs");
     }
 
-    public void Initalize(Taggable taggable)
+    public void ExitTag(Taggable taggable, string parameter)
     {
 
+    }
+
+    public void Initialize(Taggable taggable)
+    {
+
+    }
+
+    public void OnActive(Taggable taggable)
+    {
+
+    }
+
+    public IEnumerator ProcessTag(Taggable taggable, int currentIndex, int length, string parameter)
+    {
+        yield return null;
     }
 }

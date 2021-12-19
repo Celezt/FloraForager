@@ -5,13 +5,29 @@ using UnityEngine;
 [CustomDialogueTag]
 public struct AudioTag : ITag
 {
-    public void Initalize(Taggable taggable)
+    public void Initialize(Taggable taggable)
     {
 
     }
 
-    public void Action(Taggable taggable, string parameter)
+    public void EnterTag(Taggable taggable, string parameter)
     {
         SoundPlayer.Instance.Play(parameter);
+    }
+
+
+    public void ExitTag(Taggable taggable, string parameter)
+    {
+
+    }
+
+    public IEnumerator ProcessTag(Taggable taggable, int currentIndex, int length, string parameter)
+    {
+        yield return null;
+    }
+
+    public void OnActive(Taggable taggable)
+    {
+
     }
 }

@@ -7,12 +7,12 @@ using UnityEngine.InputSystem;
 [CustomDialogueTag]
 public class AnimationTag : ITag
 {
-    public void Initalize(Taggable taggable)
+    public void Initialize(Taggable taggable)
     {
 
     }
 
-    public void Action(Taggable taggable, string parameter)
+    public void EnterTag(Taggable taggable, string parameter)
     {
         parameter = Regex.Replace(parameter, @"\s", "");
 
@@ -44,5 +44,20 @@ public class AnimationTag : ITag
             else
                 Debug.LogError($"no HumanoidAnimationBehaviour found on given actor: {item.Key}");
         }
+    }
+
+    public void ExitTag(Taggable taggable, string parameter)
+    {
+
+    }
+
+    public IEnumerator ProcessTag(Taggable taggable, int currentIndex, int length, string parameter)
+    {
+        yield return null;
+    }
+
+    public void OnActive(Taggable taggable)
+    {
+
     }
 }

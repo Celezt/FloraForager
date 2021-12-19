@@ -50,19 +50,21 @@ public class DialogueManager : MonoBehaviour
     private Stack<ParagraphAsset> _paragraphStack;
     private List<float> _speedMultiplierHierarchy;
     private List<GameObject> _actions;
+    private List<(string, ITag)> _tagsToUpdate = new List<(string, ITag)>();
     private Dictionary<string, string> _aliases = new Dictionary<string, string>();
-    private Dictionary<string, Action<Taggable, string>> _tags = new Dictionary<string, Action<Taggable, string>>();
+    private Dictionary<string, ITag> _tags = new Dictionary<string, ITag>();
     private Dictionary<string, RichTagData> _richTags = new Dictionary<string, RichTagData>();
+    private Dictionary<string, GameObject> _actors;
 
     private Coroutine _autoTypeCoroutine;
 
+    private (ParagraphAsset, int) _currentParagraph;
     private int _currentLayer;
-    private bool _isAutoTextCompleted;
-
-    private bool _audible;
+    private int _currentTextIndex;
+    private int _currentTextMaxLength;
     private float _pitch;
-
-    private Dictionary<string, GameObject> _actors;
+    private bool _isAutoTextCompleted;
+    private bool _audible;
 
     public struct RichTagData
     {
@@ -140,6 +142,9 @@ public class DialogueManager : MonoBehaviour
         _audible = true;
         _pitch = 1.0f;
 
+        _tags.ForEach(x => x.Value.OnActive(Taggable.CreatePackage(this, _currentLayer)));
+        _richTags.ForEach(x => x.Value.Execution.OnActive(Taggable.CreatePackage(this, _currentLayer)));
+
         _actors = new Dictionary<string, GameObject>();
 
         if (aliases.NotNullOrEmpty())
@@ -155,7 +160,8 @@ public class DialogueManager : MonoBehaviour
         }
 
         DialogueAsset asset = JsonConvert.DeserializeObject<DialogueAsset>(handle.Result.text);
-        DialogueUtility.Tag(this, _currentLayer, asset.Tag, _tags);
+        DialogueUtility.TagEnterInvoke(this, _currentLayer, asset.Tag, _tags);
+        DialogueUtility.TagExitInvoke(this, _currentLayer, asset.Tag, _tags);
         _paragraphStack = new Stack<ParagraphAsset>(asset.Dialogue.Reverse<ParagraphAsset>());
         _currentLayer++;
         _isAutoTextCompleted = true;
@@ -216,7 +222,7 @@ public class DialogueManager : MonoBehaviour
                 button.onClick.AddListener(() =>
                 {
                     _paragraphStack = new Stack<ParagraphAsset>(paragraph.Action[index].Dialogue.Reverse<ParagraphAsset>());
-                    DialogueUtility.Tag(this, _currentLayer, paragraph.Action[index].Tag, _tags);
+                    DialogueUtility.TagEnterInvoke(this, _currentLayer, paragraph.Action[index].Tag, _tags);
                     _currentLayer++;
                     _isAutoTextCompleted = true;
                     Next();
@@ -236,9 +242,11 @@ public class DialogueManager : MonoBehaviour
             return;
         }
 
+        DialogueUtility.TagExitInvoke(this, _currentParagraph.Item2, _currentParagraph.Item1.Tag, _tags, _tagsToUpdate);
+
         if (_paragraphStack.IsNullOrEmpty())
         {
-            if (_actions.IsNullOrEmpty())
+            if (_actions.IsNullOrEmpty())   // Cancel dialogue.
                 CancelDialogue();
 
             return;
@@ -250,7 +258,9 @@ public class DialogueManager : MonoBehaviour
         StringBuilder content = new StringBuilder(paragraph.Text ?? "");
 
         DialogueUtility.Alias(content, _aliases);
-        DialogueUtility.Tag(this, _currentLayer, paragraph.Tag, _tags);
+        DialogueUtility.TagEnterInvoke(this, _currentLayer, paragraph.Tag, _tags, _tagsToUpdate);
+
+        _currentParagraph = (paragraph, _currentLayer); // Save current paragraph and layer.
 
         for (int i = 0; i < _richTags.Count; i++)
         {
@@ -285,6 +295,8 @@ public class DialogueManager : MonoBehaviour
     private void Awake()
     {
         _dialogues.Add(_playerIndex, this);
+
+        DialogueUtility.InitializeAllTags(this, _currentLayer, _tags, _richTags);
     }
 
     private void Start()
@@ -292,8 +304,6 @@ public class DialogueManager : MonoBehaviour
         DebugLogConsole.AddCommandInstance("dialogue.cancel", "Cancel current dialogue", nameof(CancelDialogue), this);
         DebugLogConsole.AddCommandInstance("dialogue.start", "Start dialogue", nameof(StartDialogueConsole), this);
         DebugLogConsole.AddCommandInstance("dialogue.speed", "Sets auto text speed", nameof(SetAutoTextSpeedConsole), this);
-
-        DialogueUtility.InitializeAllTags(this, _currentLayer, _tags, _richTags);
 
         _dialogueUI.SetActive(false);
 
@@ -314,25 +324,7 @@ public class DialogueManager : MonoBehaviour
 
     private IEnumerator AutoType(ParagraphAsset paragraph)
     {
-        RangeInt indexRange = new RangeInt();
-        float richTagSpeedMultiplier = 1;
         _isAutoTextCompleted = false;
-
-        //Queue<(string, RangeInt)> rishTagSpeedMultiplierQueue = _richTags["speed"].TagQueue;
-
-        //IEnumerator Dequeue()
-        //{
-        //    (string, RangeInt) customRichTag = rishTagSpeedMultiplierQueue.Dequeue();
-        //    indexRange = customRichTag.Item2;
-        //    if (!float.TryParse(customRichTag.Item1, NumberStyles.Float, CultureInfo.InvariantCulture, out richTagSpeedMultiplier))
-        //    {
-        //        Debug.LogError($"{DialogueUtility.DIALOGUE_EXCEPTION}: {customRichTag.Item1} could not be parsed to float");
-        //        yield break;
-        //    }
-        //}
-
-        //if (rishTagSpeedMultiplierQueue.Count > 0)
-        //    yield return Dequeue();
 
         List<CurrentRichTagData> richTagsCurrent = new List<CurrentRichTagData>();
         List<RichTagData> richTagsUsed = new List<RichTagData>();
@@ -349,20 +341,23 @@ public class DialogueManager : MonoBehaviour
 
         string parsedText = _content.GetParsedText().ToUpper();
 
-        bool speedTagExist = false;
-        if (paragraph.Tag != null)
-        {
-            for (int i = 0; i < paragraph.Tag.Count; i++)   // Look for any speed tag.
-                if (Regex.Match(paragraph.Tag[0], @"^.*?(?=\{)").Value == "speed")
-                    speedTagExist = true;
-        }
-
-        int startSearchSpeedTag = _currentLayer > _speedMultiplierHierarchy.Count - 1 ? _speedMultiplierHierarchy.Count - 1 : _speedMultiplierHierarchy.Count - 2; // Use the last speed if current is ahead of the hierarchy.
-
-        int maxLength = _content.textInfo.characterCount + 1;
+        int maxLength = _currentTextMaxLength = _content.textInfo.characterCount + 1;
         for (int currentIndex = 0; currentIndex < maxLength; currentIndex++)  
         {
-            _content.maxVisibleCharacters = currentIndex;
+            object yieldValue = null;
+            _currentTextIndex = currentIndex;
+
+            _content.maxVisibleCharacters = currentIndex;   // How many letters that should be visible.
+
+            for (int i = 0; i < _tagsToUpdate.Count; i++)
+            {
+                IEnumerator enumerator = _tagsToUpdate[i].Item2.ProcessTag(Taggable.CreatePackage(this, _currentLayer), _currentTextIndex, _currentTextMaxLength, _tagsToUpdate[i].Item1); ;
+                enumerator.MoveNext();
+                object returnValue = enumerator.Current;
+
+                if (returnValue != null)  // Don't Return if the IEnumerator returns null.
+                    yieldValue = returnValue;
+            }
 
             if (_audible && currentIndex > 0)
             {
@@ -372,22 +367,26 @@ public class DialogueManager : MonoBehaviour
                     SoundPlayer.Instance.Play(letter, 0, _pitch - sound.Pitch);
             }
 
-            Debug.Log(currentIndex + " " + (indexRange.start, indexRange.end));
-
             for (int i = richTagsUsed.Count - 1; i >= 0; i--)   // Loop through all current rich tags.
             {
                 CurrentRichTagData data = richTagsCurrent[i];
+                
                 if (currentIndex >= data.Sequence.Item2.start && currentIndex < data.Sequence.Item2.end) // Execute in range.
                 {
                     if (!data.HasExecuted)  // Execute at the start of the process.
                     {
                         data.HasExecuted = true;
-                        data.Execution.EnterTag(Taggable.CreatePackage(this, _currentLayer), currentIndex, data.Sequence.Item2, data.Sequence.Item1);  
+                        data.Execution.EnterTag(Taggable.CreatePackage(this, _currentLayer), currentIndex, data.Sequence.Item2, data.Sequence.Item1);
                     }
 
                     richTagsCurrent[i] = data;
 
-                    yield return data.Execution.ProcessTag(Taggable.CreatePackage(this, _currentLayer), currentIndex, data.Sequence.Item2, data.Sequence.Item1);
+                    IEnumerator enumerator = data.Execution.ProcessTag(Taggable.CreatePackage(this, _currentLayer), currentIndex, data.Sequence.Item2, data.Sequence.Item1);
+                    enumerator.MoveNext();
+                    object returnValue = enumerator.Current;
+ 
+                    if (returnValue != null)  // Don't Return if the IEnumerator returns null.
+                        yieldValue = returnValue;
                 }
                 else if (data.HasExecuted)  // If executed and no longer in range.
                 {
@@ -395,7 +394,7 @@ public class DialogueManager : MonoBehaviour
 
                     if (richTagsUsed[i].Sequences.Count > 0)    // Try get next rich tag from this type.
                     {
-                       richTagsCurrent[i] = new CurrentRichTagData { Execution = richTagsUsed[i].Execution, Sequence = richTagsUsed[i].Sequences.Dequeue() };
+                        richTagsCurrent[i] = new CurrentRichTagData { Execution = richTagsUsed[i].Execution, Sequence = richTagsUsed[i].Sequences.Dequeue() };
                     }
                     else    // Remove if no more rich tags of this type is found.
                     {
@@ -405,38 +404,8 @@ public class DialogueManager : MonoBehaviour
                 }
             }
 
-            //while (true)
-            //{
-            //    if (count >= indexRange.start && count < indexRange.end)    // Always prioritize rich tags.
-            //    {
-            //        yield return new WaitForSeconds(_autoTextSpeed / richTagSpeedMultiplier);
-            //        break;
-            //    }
-            //    else if (rishTagSpeedMultiplierQueue.Count > 0 && (count < indexRange.start || count >= indexRange.end))
-            //    {
-            //        yield return Dequeue();
-            //    }
-            //    else
-            //    {
-            //        float speedMultiplier = 1;
-
-            //        if (speedTagExist)  // If speed tag exist.
-            //            speedMultiplier = _speedMultiplierHierarchy[_currentLayer];
-            //        else
-            //        {
-            //            for (int i = startSearchSpeedTag; i >= 0; i--) // Search for existing speed tag.
-            //            {
-            //                speedMultiplier = _speedMultiplierHierarchy[i];
-
-            //                if (speedMultiplier != float.NaN)   // Stop searching if layer contains speed tag.
-            //                    break;
-            //            }
-            //        }
-
-            //        yield return new WaitForSeconds(_autoTextSpeed / speedMultiplier);
-            //        break;
-            //    }
-            //}
+            if (yieldValue != null)
+                yield return yieldValue;
         }
 
         _isAutoTextCompleted = true;

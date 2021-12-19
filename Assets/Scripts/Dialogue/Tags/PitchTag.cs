@@ -5,10 +5,15 @@ using UnityEngine;
 [CustomDialogueTag]
 public class PitchTag : ITag
 {
+    public void Initialize(Taggable taggable)
+    {
+
+    }
+
     /// <summary>
     /// pitch{float}
     /// </summary>
-    public void Action(Taggable taggable, string parameter)
+    public void EnterTag(Taggable taggable, string parameter)
     {
         DialogueManager manager = taggable.Unwrap<DialogueManager>();
 
@@ -16,7 +21,17 @@ public class PitchTag : ITag
             manager.SetPitch(pitch);
     }
 
-    public void Initalize(Taggable taggable)
+    public void ExitTag(Taggable taggable, string parameter)
+    {
+
+    }
+
+    public IEnumerator ProcessTag(Taggable taggable, int currentIndex, int length, string parameter)
+    {
+        yield return null;
+    }
+
+    public void OnActive(Taggable taggable)
     {
 
     }
