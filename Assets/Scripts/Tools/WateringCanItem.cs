@@ -86,82 +86,88 @@ public class WateringCanItem : IUse, IStar
             yield break;
         }
 
-        if (MathUtility.PointInArc(GameGrid.Instance.MouseHit, context.transform.position, context.transform.localEulerAngles.y, _arc, _radius))
+        if (!MathUtility.PointInArc(GameGrid.Instance.MouseHit, context.transform.position, context.transform.localEulerAngles.y, _arc, _radius))
+            yield break;
+
+        if (cell.Type == CellType.Water) // fill watering can
         {
-            if (cell.Type == CellType.Water) // fill watering can
-            {
-                context.behaviour.ApplyCooldown();
+            context.behaviour.ApplyCooldown();
 
-                GameObject model = null;
+            GameObject model = null;
 
-                context.transform.GetComponentInChildren<PlayerMovement>().ActivaInput.Add(_stunFillDuration);
-                context.transform.GetComponentInChildren<HumanoidAnimationBehaviour>().CustomMotionRaise(_fillClip,
-                    enterCallback: info =>
-                    {
-                        if (_model == null)
-                            return;
-
-                        model = Object.Instantiate(_model, info.animationBehaviour.HoldTransform);
-                    },
-                    exitCallback: info =>
-                    {
-                        if (_model == null)
-                            return;
-
-                        Object.Destroy(model);
-                    }
-                );
-
-                yield return new WaitForSeconds(_onFillUse);
-
-                SoundPlayer.Instance.Play(_fillSound);
-
-                _usesLeft = _maxUses;
-                _playerStamina.Stamina += _fillStaminaChange;
-            }
-            else if (_usesLeft > 0 && cell.Type == CellType.Dirt && cell.HeldObject != null)
-            {
-                if (cell.HeldObject.TryGetComponent(out FloraObject floraObject))
+            context.transform.GetComponentInChildren<PlayerMovement>().ActivaInput.Add(_stunFillDuration);
+            context.transform.GetComponentInChildren<HumanoidAnimationBehaviour>().CustomMotionRaise(_fillClip,
+                enterCallback: info =>
                 {
-                    if (!floraObject.Flora.Watered)
-                    {
-                        context.behaviour.ApplyCooldown();
+                    if (_model == null)
+                        return;
 
-                        GameObject model = null;
+                    model = Object.Instantiate(_model, info.animationBehaviour.HoldTransform);
+                },
+                exitCallback: info =>
+                {
+                    if (_model == null)
+                        return;
 
-                        context.transform.GetComponentInChildren<PlayerMovement>().ActivaInput.Add(_stunWateringDuration);
-                        context.transform.GetComponentInChildren<HumanoidAnimationBehaviour>().CustomMotionRaise(_wateringClip,
-                            enterCallback: info =>
-                            {
-                                if (_model == null)
-                                    return;
+                    Object.Destroy(model);
+                }
+            );
 
-                                model = Object.Instantiate(_model, info.animationBehaviour.HoldTransform);
-                            },
-                            exitCallback: info =>
-                            {
-                                if (_model == null)
-                                    return;
+            yield return new WaitForSeconds(_onFillUse);
 
-                                Object.Destroy(model);
-                            }
-                        );
+            SoundPlayer.Instance.Play(_fillSound);
 
-                        yield return new WaitForSeconds(_onWateringUse);
+            _usesLeft = _maxUses;
+            _playerStamina.Stamina += _fillStaminaChange;
+        }
+        else if (_usesLeft > 0 && cell.Type == CellType.Dirt && cell.HeldObject != null)
+        {
+            if (cell.HeldObject.TryGetComponent(out FloraObject floraObject))
+            {
+                if (!floraObject.Flora.Watered)
+                {
+                    context.behaviour.ApplyCooldown();
 
-                        if (SoundPlayer.Instance.TryGetSound(_wateringSound, out SoundPlayer.Sound sound))
-                            SoundPlayer.Instance.Play(_wateringSound, -sound.Volume / _maxUses * (_maxUses - _usesLeft));
+                    GameObject model = null;
 
-                        --_usesLeft;
-                        _playerStamina.Stamina += _waterStaminaChange;
+                    context.transform.GetComponentInChildren<PlayerMovement>().ActivaInput.Add(_stunWateringDuration);
+                    context.transform.GetComponentInChildren<HumanoidAnimationBehaviour>().CustomMotionRaise(_wateringClip,
+                        enterCallback: info =>
+                        {
+                            if (_model == null)
+                                return;
 
-                        floraObject.Flora.Water();
-                    }
+                            model = Object.Instantiate(_model, info.animationBehaviour.HoldTransform);
+                        },
+                        exitCallback: info =>
+                        {
+                            if (_model == null)
+                                return;
+
+                            Object.Destroy(model);
+                        }
+                    );
+
+                    yield return new WaitForSeconds(_onWateringUse);
+
+                    model.GetComponentInChildren<ParticleSystem>().Play();
+
+                    if (SoundPlayer.Instance.TryGetSound(_wateringSound, out SoundPlayer.Sound sound))
+                        SoundPlayer.Instance.Play(_wateringSound, -sound.Volume / _maxUses * (_maxUses - _usesLeft));
+
+                    --_usesLeft;
+                    _playerStamina.Stamina += _waterStaminaChange;
+
+                    floraObject.Flora.Water();
+
+                    yield return new WaitForSeconds(0.8f);
+
+                    model.GetComponentInChildren<ParticleSystem>().Stop();
                 }
             }
-            else
-                SoundPlayer.Instance.Play("use_error");
         }
+        else
+            SoundPlayer.Instance.Play("use_error");
 
         yield break;
     }
