@@ -120,50 +120,47 @@ public class WateringCanItem : IUse, IStar
             _usesLeft = _maxUses;
             _playerStamina.Stamina += _fillStaminaChange;
         }
-        else if (_usesLeft > 0 && cell.Type == CellType.Dirt && cell.HeldObject != null)
+        else if (cell.Type == CellType.Dirt && cell.HeldObject.TryGetComponent(out FloraObject floraObject) && _usesLeft > 0)
         {
-            if (cell.HeldObject.TryGetComponent(out FloraObject floraObject))
+            if (!floraObject.Flora.Watered)
             {
-                if (!floraObject.Flora.Watered)
-                {
-                    context.behaviour.ApplyCooldown();
+                context.behaviour.ApplyCooldown();
 
-                    GameObject model = null;
+                GameObject model = null;
 
-                    context.transform.GetComponentInChildren<PlayerMovement>().ActivaInput.Add(_stunWateringDuration);
-                    context.transform.GetComponentInChildren<HumanoidAnimationBehaviour>().CustomMotionRaise(_wateringClip,
-                        enterCallback: info =>
-                        {
-                            if (_model == null)
-                                return;
+                context.transform.GetComponentInChildren<PlayerMovement>().ActivaInput.Add(_stunWateringDuration);
+                context.transform.GetComponentInChildren<HumanoidAnimationBehaviour>().CustomMotionRaise(_wateringClip,
+                    enterCallback: info =>
+                    {
+                        if (_model == null)
+                            return;
 
-                            model = Object.Instantiate(_model, info.animationBehaviour.HoldTransform);
-                        },
-                        exitCallback: info =>
-                        {
-                            if (_model == null)
-                                return;
+                        model = Object.Instantiate(_model, info.animationBehaviour.HoldTransform);
+                    },
+                    exitCallback: info =>
+                    {
+                        if (_model == null)
+                            return;
 
-                            Object.Destroy(model);
-                        }
-                    );
+                        Object.Destroy(model);
+                    }
+                );
 
-                    yield return new WaitForSeconds(_onWateringUse);
+                yield return new WaitForSeconds(_onWateringUse);
 
-                    model.GetComponentInChildren<ParticleSystem>().Play();
+                model.GetComponentInChildren<ParticleSystem>().Play();
 
-                    if (SoundPlayer.Instance.TryGetSound(_wateringSound, out SoundPlayer.Sound sound))
-                        SoundPlayer.Instance.Play(_wateringSound, -sound.Volume / _maxUses * (_maxUses - _usesLeft));
+                if (SoundPlayer.Instance.TryGetSound(_wateringSound, out SoundPlayer.Sound sound))
+                    SoundPlayer.Instance.Play(_wateringSound, -sound.Volume / _maxUses * (_maxUses - _usesLeft));
 
-                    --_usesLeft;
-                    _playerStamina.Stamina += _waterStaminaChange;
+                --_usesLeft;
+                _playerStamina.Stamina += _waterStaminaChange;
 
-                    floraObject.Flora.Water();
+                floraObject.Flora.Water();
 
-                    yield return new WaitForSeconds(0.8f);
+                yield return new WaitForSeconds(0.8f);
 
-                    model.GetComponentInChildren<ParticleSystem>().Stop();
-                }
+                model.GetComponentInChildren<ParticleSystem>().Stop();
             }
         }
         else
