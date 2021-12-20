@@ -7,7 +7,7 @@ public interface IHierarchyTag : ITag
     /// <summary>
     /// Called when entering a child.
     /// </summary>
-    public void EnterChild(Taggable thisTaggable, Taggable childTaggable, string parameter);
+    public void EnterChild(Taggable thisTaggable, Taggable childTaggable, string thisParameter);
     /// <summary>
     /// Called when exiting a child.
     /// </summary>

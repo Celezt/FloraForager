@@ -36,10 +36,13 @@ public class DialogueManager : MonoBehaviour
     public IReadOnlyDictionary<string, ITag> TagTypes => _tagTypes;
     public IReadOnlyDictionary<string, IHierarchyTag> HierarchyTagTypes => _hierarchyTagTypes;
     public IReadOnlyDictionary<string, RichTagData> RichTagTypes => _richTagTypes;
+    public TextMeshProUGUI Text => _content;
+    public TextMeshProUGUI Namecard => _namecard;
     public DialogueUtility.Tree Tree => _tree;
     public Node RootNode => _rootNode;
     public Node CurrentNode => _currentNode;
     public Node CurrentParent => _currentParent;
+    public string ParsedText => _parsedText;
     public int CurrentLayer => _currentLayer;
     public int CurrentTextIndex => _currentTextIndex;
     public int CurrentTextMaxLength => _currentTextMaxLength;
@@ -61,6 +64,7 @@ public class DialogueManager : MonoBehaviour
     private Stack<ParagraphAsset> _paragraphStack;
     private List<GameObject> _actions;
     private Dictionary<string, string> _aliases = new Dictionary<string, string>();
+    private Dictionary<string, (ITag, string)> _defaultTagTypes = new Dictionary<string, (ITag, string)>();
     private Dictionary<string, ITag> _tagTypes = new Dictionary<string, ITag>();
     private Dictionary<string, IHierarchyTag> _hierarchyTagTypes = new Dictionary<string, IHierarchyTag>();
     private Dictionary<string, RichTagData> _richTagTypes = new Dictionary<string, RichTagData>();
@@ -72,6 +76,7 @@ public class DialogueManager : MonoBehaviour
     private Node _currentParent;
     private Coroutine _autoTypeCoroutine;
 
+    private string _parsedText;
     private int _currentLayer;
     private int _currentTextIndex;
     private int _currentTextMaxLength;
@@ -96,6 +101,32 @@ public class DialogueManager : MonoBehaviour
     /// <param name="playerIndex">Index.</param>
     /// <returns>Dialogue Manager.</returns>
     public static DialogueManager GetByIndex(int playerIndex) => _dialogues[playerIndex];
+
+    public DialogueManager SetDefaultTag(ITag self, bool isDefault, string defualtParameter = "")
+    {
+        static string ReplaceLastOccurrence(string source, string find, string replace)
+        {
+            int place = source.LastIndexOf(find);
+
+            if (place == -1)
+                return source;
+
+            string result = source.Remove(place, find.Length).Insert(place, replace);
+            return result;
+        }
+
+        string name = ReplaceLastOccurrence(self.ToString(), "Tag", "").ToSnakeCase();
+
+        if (isDefault)
+        { 
+            if (!_defaultTagTypes.ContainsKey(name))
+                _defaultTagTypes.Add(name, (self, defualtParameter));
+        }
+        else
+          _defaultTagTypes.Remove(name);
+
+        return this;
+    }
 
     public void SetActors(Dictionary<string, GameObject> actors)
     {
@@ -154,6 +185,16 @@ public class DialogueManager : MonoBehaviour
 
         // Create root node.
         _rootNode = new Node(null, _currentLayer, DeserializeTags(asset.Tag, _tagTypes));
+
+        // Add all default tags.
+        List<Tag> tempTags = _rootNode.Tags.ToList();
+        foreach (KeyValuePair<string, (ITag, string)> defaultTag in _defaultTagTypes)
+        {
+            if (!tempTags.Any(x => x.Name == defaultTag.Key))
+                tempTags.Add(new Tag() { Name = defaultTag.Key, TagBehaviour = defaultTag.Value.Item1, Parameter = defaultTag.Value.Item2 });
+        }
+        _rootNode.Tags = tempTags.ToArray();
+
         _rootNode.Tags.ForEach(x => x.TagBehaviour.EnterTag(Taggable.CreatePackage(this, _rootNode.Layer), x.Parameter));
         _tree.Add(_currentLayer, _rootNode);
         _currentNode = _rootNode;
@@ -367,11 +408,11 @@ public class DialogueManager : MonoBehaviour
             }
 
         List<(IHierarchyTag, Node, Tag)> _currentHierarchy = new List<(IHierarchyTag, Node, Tag)>();
-        FindHierarchyNodes(_hierarchyTagTypes, _currentNode.Parent, (hierarchy, parent, tag) => _currentHierarchy.Add((hierarchy, parent, tag)));
+        FindHierarchyNodes(_hierarchyTagTypes, _currentNode.Parent, (hierarchy, parent, tag) => _currentHierarchy.Add((hierarchy, parent, tag)));   // Look for all hierarchy tags to update.
 
         _content.ForceMeshUpdate();
 
-        string parsedText = _content.GetParsedText().ToUpper();
+        _parsedText = _content.GetParsedText().ToUpper();
 
         int maxLength = _currentTextMaxLength = _content.textInfo.characterCount + 1;
         for (int currentIndex = 0; currentIndex < maxLength; currentIndex++)  

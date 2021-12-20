@@ -8,7 +8,8 @@ public struct SpeedTag : IHierarchyTag
 {
     void ITaggable.Initialize(Taggable taggable)
     {
-
+        DialogueManager manager = taggable.Unwrap<DialogueManager>();
+        manager.SetDefaultTag(this, true, "1");
     }
 
     void ITaggable.OnActive(Taggable taggable)
@@ -29,7 +30,6 @@ public struct SpeedTag : IHierarchyTag
     IEnumerator ITag.ProcessTag(Taggable taggable, int currentIndex, int length, string parameter)
     {
         DialogueManager manager = taggable.Unwrap<DialogueManager>();
-
 
         if (!float.TryParse(parameter, NumberStyles.Float, CultureInfo.InvariantCulture, out float speedMultiplier))
         {

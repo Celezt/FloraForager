@@ -48,11 +48,13 @@ public static class DialogueUtility
         }
     }
 
-    public struct Tag
+    public struct Tag : IEquatable<Tag>
     {
         public string Name;
         public ITag TagBehaviour;
         public string Parameter;
+
+        bool IEquatable<Tag>.Equals(Tag other) => other.Name == Name;
     }
 
     /// <summary>

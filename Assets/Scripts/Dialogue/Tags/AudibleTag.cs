@@ -2,7 +2,7 @@
 using UnityEngine;
 
 [CustomDialogueTag]
-public class AudibleTag : ITag
+public class AudibleTag : IHierarchyTag
 {
     public float Pitch
     {
@@ -41,13 +41,30 @@ public class AudibleTag : ITag
 
     public IEnumerator ProcessTag(Taggable taggable, int currentIndex, int length, string parameter)
     {
-        //if (_audible && currentIndex > 0)
-        //{
-        //    string letter = parsedText[currentIndex - 1].ToString();
+        yield return null;
+    }
 
-        //    if (SoundPlayer.Instance.TryGetSound(letter, out SoundPlayer.Sound sound))
-        //        SoundPlayer.Instance.Play(letter, 0, _pitch - sound.Pitch);
-        //}
+    public void EnterChild(Taggable thisTaggable, Taggable childTaggable, string thisParameter)
+    {
+
+    }
+
+    public void ExitChild(Taggable thisTaggable, Taggable childTaggable, string parameter)
+    {
+
+    }
+
+    public IEnumerator ProcessChild(Taggable thisTaggable, Taggable childTaggable, int currentIndex, int length, string parameter)
+    {
+        DialogueManager manager = thisTaggable.Unwrap<DialogueManager>();
+
+        if (_audible && currentIndex > 0)
+        {
+            string letter = manager.ParsedText[currentIndex - 1].ToString();
+
+            if (SoundPlayer.Instance.TryGetSound(letter, out SoundPlayer.Sound sound))
+                SoundPlayer.Instance.Play(letter, 0, _pitch - sound.Pitch);
+        }
 
         yield return null;
     }
