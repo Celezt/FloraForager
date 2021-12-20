@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public interface IHierarchyTag
+public interface IHierarchyTag : ITag
 {
     /// <summary>
     /// Called when entering a child.

@@ -28,7 +28,7 @@ public class SpeedRichTag : IRichTag
 
     IEnumerator IRichTag.ProcessTag(Taggable taggable, int currentIndex, RangeInt range, string parameter)
     {
-        DialogueManager dialogue = taggable.Unwrap<DialogueManager>();
+        DialogueManager manager = taggable.Unwrap<DialogueManager>();
 
         if (!float.TryParse(parameter, NumberStyles.Float, CultureInfo.InvariantCulture, out float speedMultiplier))
         {
@@ -36,6 +36,6 @@ public class SpeedRichTag : IRichTag
             yield break;
         }
 
-        yield return new WaitForSeconds(dialogue.AutoTextSpeed / speedMultiplier);
+        yield return new WaitForSeconds(manager.AutoTextSpeed / speedMultiplier);
     }
 }

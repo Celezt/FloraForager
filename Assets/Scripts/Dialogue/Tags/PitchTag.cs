@@ -18,7 +18,7 @@ public class PitchTag : ITag
         DialogueManager manager = taggable.Unwrap<DialogueManager>();
 
         if (float.TryParse(parameter, NumberStyles.Float, CultureInfo.InvariantCulture, out float pitch))
-            manager.SetPitch(pitch);
+            (manager.TagTypes["audible"] as AudibleTag).Pitch = pitch;
     }
 
     public void ExitTag(Taggable taggable, string parameter)

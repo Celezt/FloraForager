@@ -1,3 +1,4 @@
+using MyBox;
 using Newtonsoft.Json;
 using System;
 using System.Collections;
@@ -14,33 +15,43 @@ public static class DialogueUtility
 {
     public const string DIALOGUE_EXCEPTION = "DialogueException";
 
+    public class Tree 
+    {
+        public IReadOnlyList<IReadOnlyList<Node>> Nodes => _nodes;
+
+        private List<List<Node>> _nodes = new List<List<Node>>();
+
+        public void Add(int layer, Node node)
+        {
+            while (_nodes.Count <= layer)
+                _nodes.Add(new List<Node>());
+
+            if (!_nodes[layer].Contains(node))
+                _nodes[layer].Add(node);
+
+            node.Tree = this;
+        }
+    }
+
     public class Node
     {
-        public List<List<Node>> NodeTree;
+        public Tree Tree;
+        public Node Parent;
         public int Layer;
-        public Tag[] NodeBehaviour;
+        public Tag[] Tags;
 
-        public Node(Node connectToNode, int layer, Tag[] tags)
+        public Node(Node parent, int layer, Tag[] tags)
         {
-            if (connectToNode == null)  // If is root.
-                NodeTree = new List<List<Node>>();
-            else
-                NodeTree = connectToNode.NodeTree;
-
-            while (NodeTree.Count <= layer)
-                NodeTree.Add(new List<Node>());
-
-            if (!NodeTree[layer].Contains(this))
-                NodeTree[layer].Add(this);
-
+            Parent = parent;
             Layer = layer;
-            NodeBehaviour = tags;
+            Tags = tags;
         }
     }
 
     public struct Tag
     {
-        public ITag Type;
+        public string Name;
+        public ITag TagBehaviour;
         public string Parameter;
     }
 
@@ -94,11 +105,11 @@ public static class DialogueUtility
     /// </summary>
     /// <param name="text">Text.</param>
     /// <param name="richTag">RichTag to find.</param>
-    /// <param name="queue">Queue with the value and range of effect.</param>
-    public static void DeserializeRichTags(StringBuilder text, string richTag, out Queue<(string, RangeInt)> queue)
+    /// <returns>Queue with the value and range of effect.</returns>
+    public static Queue<(string, RangeInt)> DeserializeRichTag(StringBuilder text, string richTag)
     {
         string copy = text.ToString();
-        queue = new Queue<(string, RangeInt)>();
+        Queue<(string, RangeInt)> queue = new Queue<(string, RangeInt)>();
         Regex openRegex = new Regex($"<{richTag}(=((?:.(?!\\1|>))*.?)\\1?)?>");
         Regex closeRegex = new Regex($"((<\\/){richTag}(>))");
 
@@ -106,10 +117,7 @@ public static class DialogueUtility
         MatchCollection closeMatches = closeRegex.Matches(text.ToString());
 
         if (openMatches.Count != closeMatches.Count)
-        {
-            Debug.LogError($"{DIALOGUE_EXCEPTION}: Uneven number of open and closed tags");
-            return;
-        }
+            throw new Exception($"{DIALOGUE_EXCEPTION}: Uneven number of open and closed tags");
 
         for (int i = 0; i < openMatches.Count; i++)
         {
@@ -139,6 +147,8 @@ public static class DialogueUtility
             text.Replace(openMatches[i].Groups[0].Value, "");
             text.Replace(closeMatches[i].Groups[0].Value, "");
         }
+
+        return queue;
     }
 
     /// <summary>
@@ -153,16 +163,48 @@ public static class DialogueUtility
             if (!tagTypes.ContainsKey(tag))    // If tag type exist.
                 throw new Exception($"{DIALOGUE_EXCEPTION}: {tag} does not exist");
 
-            return new Tag { Type = tagTypes[tag], Parameter = parameter };
+            return new Tag { Name = tag, TagBehaviour = tagTypes[tag], Parameter = parameter };
         }).ToArray() ?? new Tag[0];
+
+    /// <summary>
+    /// Find first hierarchy node.
+    /// </summary>
+    public static void FindHierarchyNodes(Dictionary<string, IHierarchyTag> hierarchyTagTypes, Node parent, Action<IHierarchyTag, Node, Tag> action)
+    {
+        if (parent == null)
+            return;
+
+        hierarchyTagTypes.ForEach(x =>
+        {
+            void FindHierarchyNodes(Node parent)
+            {
+                for (int i = 0; i < parent.Tags.Length; i++)
+                {
+                    if (x.Key == parent.Tags[i].Name)
+                    {
+                        action.Invoke(x.Value, parent, parent.Tags[i]);
+                        return;
+                    }
+
+                }
+
+                if (parent.Parent == null)  // Stop searching if no parent of hierarchy type is found.
+                    return;
+
+                FindHierarchyNodes(parent.Parent);
+            }
+
+            FindHierarchyNodes(parent);
+        });
+    }
 
     /// <summary>
     /// Reflect all tags inside the assembly.
     /// </summary>
-    /// <param name="wrap">Wrapped reference.</param>
+    /// <param name="manager">Wrapped reference.</param>
     /// <param name="layer">Hierarchy layer.</param>
-    /// <param name="tagDictionary">All actions.</param>
-    public static void InitializeAllTags<T>(T wrap, IDictionary<string, ITag> tagDictionary, IDictionary<string, IHierarchyTag> hierarchyDictionary, Dictionary<string, DialogueManager.RichTagData> richTagDicitonary)
+    /// <param name="tagTypes">All actions.</param>
+    public static void InitializeAllTags(DialogueManager manager, IDictionary<string, ITag> tagTypes, IDictionary<string, IHierarchyTag> hierarchyTypes, Dictionary<string, DialogueManager.RichTagData> richTagTypes)
     {
         static string ReplaceLastOccurrence(string source, string find, string replace)
         {
@@ -186,19 +228,19 @@ public static class DialogueUtility
             ITaggable instance = (ITaggable)Activator.CreateInstance(type);
             CustomDialogueTagAttribute attribute = (CustomDialogueTagAttribute)Attribute.GetCustomAttribute(type, typeof(CustomDialogueTagAttribute));
             
-            instance.Initialize(Taggable.CreatePackage(wrap, int.MinValue));
+            instance.Initialize(Taggable.CreatePackage(manager, int.MinValue));
 
             if (instance is ITag)
             {
                 string name = ReplaceLastOccurrence(instance.GetType().Name, "Tag", "").ToSnakeCase();
-                tagDictionary.Add(name, instance as ITag);
+                tagTypes.Add(name, instance as ITag);
 
                 if (instance is IHierarchyTag)  // Optional variant.
-                    hierarchyDictionary.Add(name, instance as IHierarchyTag);
+                    hierarchyTypes.Add(name, instance as IHierarchyTag);
             }
             else if (instance is IRichTag)
             {
-                richTagDicitonary.Add(ReplaceLastOccurrence(instance.GetType().Name, "RichTag", "").ToSnakeCase(), new DialogueManager.RichTagData { Execution = instance as IRichTag });
+                richTagTypes.Add(ReplaceLastOccurrence(instance.GetType().Name, "RichTag", "").ToSnakeCase(), new DialogueManager.RichTagData { Execution = instance as IRichTag });
             }
         }
     }

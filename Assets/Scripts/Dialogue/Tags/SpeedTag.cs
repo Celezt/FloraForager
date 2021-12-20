@@ -4,10 +4,8 @@ using System.Collections.Generic;
 using UnityEngine;
 
 [CustomDialogueTag]
-public struct SpeedTag : ITag, IHierarchyTag
+public struct SpeedTag : IHierarchyTag
 {
-    private List<float> _speedMultiplierHierarchy;
-
     void ITaggable.Initialize(Taggable taggable)
     {
 
@@ -15,64 +13,53 @@ public struct SpeedTag : ITag, IHierarchyTag
 
     void ITaggable.OnActive(Taggable taggable)
     {
-        _speedMultiplierHierarchy = new List<float>() { 1 };    // Speed 1 at layer 0 by default.
+
     }
 
     void ITag.EnterTag(Taggable taggable, string parameter)
     {
-        DialogueManager manager = taggable.Unwrap<DialogueManager>();
 
-        if (!float.TryParse(parameter, NumberStyles.Float, CultureInfo.InvariantCulture, out float speedMultiplier))
-        {
-            Debug.LogError($"{DialogueUtility.DIALOGUE_EXCEPTION}: {parameter} could not be parsed to float");
-            return;
-        }
-
-        while (_speedMultiplierHierarchy.Count <= taggable.Layer)
-            _speedMultiplierHierarchy.Add(float.NaN);
-
-        _speedMultiplierHierarchy[taggable.Layer] = speedMultiplier;
-
-        Debug.Log("enter " + taggable.Layer);
     }
 
     void ITag.ExitTag(Taggable taggable, string parameter)
     {
-        Debug.Log("exit " + taggable.Layer);
+
     }
 
     IEnumerator ITag.ProcessTag(Taggable taggable, int currentIndex, int length, string parameter)
     {
-        DialogueManager dm = taggable.Unwrap<DialogueManager>();
-        Debug.Log("process " + taggable.Layer);
-        yield return new WaitForSeconds(dm.AutoTextSpeed / _speedMultiplierHierarchy[taggable.Layer]);
+        DialogueManager manager = taggable.Unwrap<DialogueManager>();
+
+
+        if (!float.TryParse(parameter, NumberStyles.Float, CultureInfo.InvariantCulture, out float speedMultiplier))
+        {
+            Debug.LogError($"{DialogueUtility.DIALOGUE_EXCEPTION}: {parameter} could not be parsed to float");
+            yield return null;
+        }
+
+        yield return new WaitForSeconds(manager.AutoTextSpeed / speedMultiplier);
     }
 
     void IHierarchyTag.EnterChild(Taggable thisTaggable, Taggable childTaggable, string parameter)
     {
-        Debug.Log("enter: " + childTaggable.Layer);
+
     }
 
     void IHierarchyTag.ExitChild(Taggable thisTaggable, Taggable childTaggable, string parameter)
     {
-        Debug.Log("exit: " + childTaggable.Layer);
+
     }
 
     IEnumerator IHierarchyTag.ProcessChild(Taggable thisTaggable, Taggable childTaggable, int currentIndex, int length, string parameter)
     {
-        DialogueManager dm = thisTaggable.Unwrap<DialogueManager>();
+        DialogueManager manager = thisTaggable.Unwrap<DialogueManager>();
 
-        Debug.Log("update: " + childTaggable.Layer);
-        float speedMultiplier = 1;
-
-        for (int i = thisTaggable.Layer > _speedMultiplierHierarchy.Count - 1 ? _speedMultiplierHierarchy.Count - 1 : _speedMultiplierHierarchy.Count - 2; i >= 0; i--) // Use the last speed if current is ahead of the hierarchy.
+        if (!float.TryParse(parameter, NumberStyles.Float, CultureInfo.InvariantCulture, out float speedMultiplier))
         {
-            speedMultiplier = _speedMultiplierHierarchy[i];
-
-            if (speedMultiplier != float.NaN)   // Stop searching if layer contains speed tag.
-                break;
+            Debug.LogError($"{DialogueUtility.DIALOGUE_EXCEPTION}: {parameter} could not be parsed to float");
+            yield return null;
         }
 
-        yield return new WaitForSeconds(dm.AutoTextSpeed / speedMultiplier);
+        yield return new WaitForSeconds(manager.AutoTextSpeed / speedMultiplier);
     }
 }
