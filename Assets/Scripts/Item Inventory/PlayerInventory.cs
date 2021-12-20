@@ -151,7 +151,7 @@ public class PlayerInventory : MonoBehaviour
 
         _hotbarHandler.OnInventoryInitalizedCallback += () =>
         {
-            _inventory.SetSelectedItem(0);
+            _selectedIndex = _inventory.SelectFirst();
 
             for (int i = 0; i < _hotbarHandler.Slots.Count; i++)
             {
@@ -172,19 +172,20 @@ public class PlayerInventory : MonoBehaviour
                 if (beforeIndex == _selectedIndex)
                 {
                     if (string.IsNullOrEmpty(afterItem.ID))
-                        _inventory.SelectFirst();
+                        _selectedIndex = _inventory.SelectFirst();
                     else
-                        _inventory.SetSelectedItem(_selectedIndex);
+                        _selectedIndex = _inventory.TrySelectItem(_selectedIndex);
                 }
             }
 
             // from inventory to hotbar
             if (beforeIndex >= count && afterIndex < count)
             {
-                if (string.IsNullOrEmpty(_inventory.Get(_selectedIndex).ID) || _selectedIndex >= count)
+                if (string.IsNullOrEmpty(_inventory.SelectedItem.ID) || _selectedIndex >= count)
                 {
-                    _inventory.SetSelectedItem(afterIndex);
-                    _selectedIndex = afterIndex;
+                    SetColorWithoutTransparency(Color.white);
+                    _selectedIndex = _inventory.TrySelectItem(afterIndex);
+                    SetColorWithoutTransparency(_selectColor);
                 }
             }
 
@@ -205,7 +206,7 @@ public class PlayerInventory : MonoBehaviour
             if (index < 0 || index >= _hotbarHandler.Slots.Count)
                 return;
 
-            if (string.IsNullOrEmpty(_inventory.Get(index).ID))
+            if (string.IsNullOrEmpty(item.ID))
                 return;
 
             if (_selectedIndex != index)    // Change selected's color.

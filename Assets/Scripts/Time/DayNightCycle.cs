@@ -30,6 +30,8 @@ public class DayNightCycle : MonoBehaviour
     private Quaternion _CurrentRotation;
     private float _MorningOffset;
 
+    private float _EditorTime;
+
     private void Awake()
     {
         RenderSettings.sun = _Sun;
@@ -61,8 +63,10 @@ public class DayNightCycle : MonoBehaviour
 #if UNITY_EDITOR
     private void OnValidate()
     {
-        if (_Sun == null)
+        if (_Sun == null || _EditorTime == _TimeOfDay)
             return;
+
+        _EditorTime = _TimeOfDay;
 
         RenderSettings.sun = _Sun;
         RenderSettings.ambientMode = UnityEngine.Rendering.AmbientMode.Flat;

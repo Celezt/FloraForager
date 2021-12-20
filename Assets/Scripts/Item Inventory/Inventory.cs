@@ -29,19 +29,32 @@ public class Inventory
     /// <summary>
     /// Select first existing item.
     /// </summary>
-    public void SelectFirst() => TrySelectItem(0);
+    public int SelectFirst(int hotbarSize = 8) => TrySelectItem(0, hotbarSize);
 
     /// <summary>
     /// Try select at index. If no item exist, try next to it and continue until one is found.
     /// </summary>
-    public void TrySelectItem(int index)
+    public int TrySelectItem(int index, int hotbarSize = 8)
     {
         for (int i = index; i < _items.Count; i++)
+        {
+            if (i >= hotbarSize && i != _selectedIndex)
+            {
+                _selectedItem = new ItemAsset { };
+                _selectedIndex = 0;
+                OnSelectItemCallback.Invoke(0, _items[0]);
+
+                return 0;
+            }
+
             if (!string.IsNullOrEmpty(_items[i].ID))
             {
                 SetSelectedItem(i);
-                break;
+                return i;
             }
+        }
+
+        return 0;
     }
 
     public void SetSelectedItem(int index) 

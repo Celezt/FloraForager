@@ -47,6 +47,8 @@ public class WateringCanItem : IUse, IStar
     [SerializeField, ListDrawerSettings(Expanded = true, AlwaysAddDefaultValue = true, ShowItemCount = false, DraggableItems = false)]
     private CellType[] _allowedUse = new CellType[] { CellType.Dirt, CellType.Water };
 
+    private WateringCanUI _waterCanUI;
+
     private PlayerStamina _playerStamina;
     private int _usesLeft;
 
@@ -56,17 +58,18 @@ public class WateringCanItem : IUse, IStar
     public void OnInitialize(ItemTypeContext context)
     {
         _usesLeft = 0;
+        _waterCanUI = WateringCanUI.Instance;
     }
 
     public void OnEquip(ItemContext context)
     {
         _playerStamina = context.transform.GetComponent<PlayerStamina>();
-        WateringCanUI.Instance.Show(this);
+        _waterCanUI.Show(this);
     }
 
     public void OnUnequip(ItemContext context)
     {
-        WateringCanUI.Instance.Hide();
+        _waterCanUI.Hide();
     }
 
     public void OnUpdate(ItemContext context)

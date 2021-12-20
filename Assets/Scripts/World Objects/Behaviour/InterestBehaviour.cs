@@ -5,16 +5,49 @@ using UnityEngine.InputSystem;
 using Sirenix.OdinInspector;
 using UnityEngine.AddressableAssets;
 
-public class InterestBehaviour : MonoBehaviour, IInteractable
+public class InterestBehaviour : MonoBehaviour, IStreamable<InterestBehaviour.Data>, IInteractable
 {
+    [SerializeField, ListDrawerSettings(ShowItemCount = false, DraggableItems = false, Expanded = true)]
+    private AssetReferenceText[] _DialogueQueue;
+    [Title("Repeatable")]
     [SerializeField, HideLabel, InlineProperty]
-    private AssetReferenceText dialogue;
+    private AssetReferenceText _repeatable;
+
+    private Data _data;
+
+    public class Data
+    {
+        public Queue<string> Dialogue;
+    }
+
+    public Data OnUpload() => _data;
+    public void OnLoad(object state)
+    {
+        _data = state as Data;
+    }
+    public void OnBeforeSaving()
+    {
+
+    }
 
     public int Priority => 3;
 
+    private void Awake()
+    {
+        _data = new Data() 
+        { 
+            Dialogue = new Queue<string>(System.Array.ConvertAll(_DialogueQueue, d => d.AssetGUID)) 
+        };
+    }
+
     public void OnInteract(InteractContext context)
     {
-        if (!context.performed || string.IsNullOrWhiteSpace(dialogue.AssetGUID))
+        if (!context.performed)
+            return;
+
+        string dialogueAsset = GetDialogue();
+
+        if (string.IsNullOrWhiteSpace(dialogueAsset))
             return;
 
         PlayerInput playerInput = PlayerInput.GetPlayerByIndex(context.playerIndex);
@@ -27,6 +60,14 @@ public class InterestBehaviour : MonoBehaviour, IInteractable
             manager.Completed -= CompleteAction;
         };
 
-        DialogueManager.GetByIndex(context.playerIndex).StartDialogue(dialogue).Completed += CompleteAction;
+        DialogueManager.GetByIndex(context.playerIndex).StartDialogue(dialogueAsset).Completed += CompleteAction;
+    }
+
+    private string GetDialogue()
+    {
+        if (_data.Dialogue.Count > 0)
+            return _data.Dialogue.Dequeue();
+            
+        return _repeatable.AssetGUID;
     }
 }

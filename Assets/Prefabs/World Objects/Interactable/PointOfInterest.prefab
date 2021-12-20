@@ -9,10 +9,12 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 884208527290150561}
+  - component: {fileID: 1731409317911585971}
   - component: {fileID: 884208527290150566}
   - component: {fileID: 884208527290150563}
   - component: {fileID: 884208527290150567}
   - component: {fileID: 884208527290150560}
+  - component: {fileID: 7283462077229304394}
   m_Layer: 0
   m_Name: PointOfInterest
   m_TagString: Untagged
@@ -34,6 +36,24 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1731409317911585971
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 884208527290150564}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 70aa17180d08078449ee357df185a426, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _saveIfDestroyed: 0
+  _respawnableObject: 0
+  _respawnTimeInDays: 2
+  _randomRespawnTime:
+    Min: 0
+    Max: 3
 --- !u!114 &884208527290150566
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -46,11 +66,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0305763735af98f45b61e5fd870c7e30, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  dialogue:
-    m_AssetGUID: 
-    m_SubObjectName: 
-    m_SubObjectType: 
-    m_EditorAssetChanged: 0
 --- !u!65 &884208527290150563
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -105,3 +120,16 @@ MonoBehaviour:
   DrawCenter: 0
   CenterMarkerRadius: 1
   IncludeChildColliders: 0
+--- !u!114 &7283462077229304394
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 884208527290150564}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 98bbc2c1e63e98543830eec78d976795, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  serializedGuid: 
