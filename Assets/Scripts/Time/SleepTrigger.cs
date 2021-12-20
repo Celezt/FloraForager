@@ -29,6 +29,7 @@ public class SleepTrigger : MonoBehaviour
         PlayerInput playerInput = other.GetComponent<PlayerInput>();
 
         UIStateVisibility.Instance.Hide("inventory", "player_hud");
+        playerInput.DeactivateInput();
 
         ConfirmMenuFactory.Instance.CreateMenu(UIStateVisibility.Instance.transform, 10, true,
             "Sleep? Stamina is fully replenished and all unsaved progress is saved", 
@@ -48,6 +49,7 @@ public class SleepTrigger : MonoBehaviour
             new UnityAction(() => 
             {
                 UIStateVisibility.Instance.Show("inventory", "player_hud");
+                playerInput.ActivateInput();
             }));
 
         _Colliding = true;

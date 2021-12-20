@@ -109,8 +109,8 @@ public class SoundPlayer : Singleton<SoundPlayer>
 
         while (_AudioSourcePool[poolIndex].isPlaying)
         {
-            PoolIndex++; 
             poolIndex++;
+            PoolIndex += (poolIndex >= PoolIndex) ? 1 : 0;
         }
 
         AudioSource source = _AudioSourcePool[poolIndex];
