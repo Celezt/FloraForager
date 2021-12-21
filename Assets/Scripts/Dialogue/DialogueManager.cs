@@ -511,8 +511,8 @@ public class DialogueManager : MonoBehaviour
             for (int i = _currentIRichTags.Count - 1; i >= 0; i--) 
             {
                 RichTag richTag = _currentIRichTags[i].Peek();
-                
-                if (currentIndex >= richTag.Range.start && currentIndex < richTag.Range.end - 1)    // Execute in range.
+
+                if (currentIndex >= richTag.Range.start && currentIndex < richTag.Range.end)    // Execute in range.
                 {
                     if (!_richTagsExecuted[i])              // Execute at the start of the process.
                     {
@@ -527,7 +527,8 @@ public class DialogueManager : MonoBehaviour
                     if (returnValue != null)                // Don't Return if the IEnumerator returns null.
                         yieldValue = returnValue;
                 }
-                else if (_richTagsExecuted[i])              // If executed and no longer in range.
+
+                if (_richTagsExecuted[i] && currentIndex >= richTag.Range.end - 1)  // If executed and no longer in range.
                 {
                     richTag.Behaviour.ExitTag(Taggable.CreatePackage(this, _currentLayer), currentIndex, richTag.Range, richTag.Parameter);
 
