@@ -10,6 +10,7 @@ using UnityEngine.InputSystem;
 public class AnimationTag : ITag
 {
     private HumanoidAnimationBehaviour _animationBehaviour;
+    private string _currentActor;
 
     void ITaggable.Initialize(Taggable taggable)
     {
@@ -61,15 +62,37 @@ public class AnimationTag : ITag
             Debug.LogError($"{DialogueUtility.DIALOGUE_EXCEPTION}: No {nameof(HumanoidAnimationBehaviour)} found on given actor: {actorId}");
             return;
         }
+
+        _currentActor = actorId;
     }
 
     void ITag.ExitTag(Taggable taggable, string parameter)
     {
-        _animationBehaviour?.BlendCancelCustomMotion();
+        if (taggable.IsCancelled)
+            return;
+
+        DialogueManager manager = taggable.Unwrap<DialogueManager>();
+        manager.StartCoroutine(WaitCancel());
+        _animationBehaviour = null;
+        _currentActor = null;
     }
 
     IEnumerator ITag.ProcessTag(Taggable taggable, int currentIndex, int length, string parameter)
     {
         yield return null;
+    }
+
+    private IEnumerator WaitCancel()
+    {
+        if (_currentActor == null)
+            yield break;
+
+        HumanoidAnimationBehaviour animationBehaviour = _animationBehaviour;
+        string currentActor = _currentActor;
+
+        yield return new WaitForFixedUpdate();
+
+        if (_currentActor != currentActor)
+            animationBehaviour?.BlendCancelCustomMotion();
     }
 }

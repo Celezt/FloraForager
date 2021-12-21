@@ -317,7 +317,7 @@ public class DialogueManager : MonoBehaviour
 
             {
                 // Cancel tags.
-                _currentNode.Tags.ForEach(x => x.Behaviour.ExitTag(Taggable.CreatePackage(this, _currentNode.Layer), x.Parameter));
+                _currentNode.Tags.ForEach(x => x.Behaviour.ExitTag(Taggable.CreatePackage(this, _currentNode.Layer, true), x.Parameter));
 
                 FindHierarchyNodes(_hierarchyTagTypes, _currentNode.Parent, (hierarchy, parent, tag) =>
                     hierarchy.ExitChild(Taggable.CreatePackage(this, parent.Layer), Taggable.CreatePackage(this, _currentNode.Layer, true), tag.Parameter));
