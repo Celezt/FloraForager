@@ -53,6 +53,14 @@ public class DialogueManager : MonoBehaviour
     /// Base text read speed.
     /// </summary>
     public float AutoTextSpeed => _autoTextSpeed;
+    /// <summary>
+    /// Is the current paragraph skippable. Resets each new paragraph.
+    /// </summary>
+    public bool IsSkippable
+    {
+        get => _isSkippable;
+        set => _isSkippable = value;
+    }
 
     [SerializeField] private TextMeshProUGUI _content;
     [SerializeField] private TextMeshProUGUI _namecard;
@@ -87,6 +95,7 @@ public class DialogueManager : MonoBehaviour
     private int _currentTextIndex;
     private int _currentTextMaxLength;
     private bool _isAutoTextCompleted;
+    private bool _isSkippable;
 
     /// <summary>
     /// Return Dialogue Manager based on the player index connected to it.
@@ -296,7 +305,7 @@ public class DialogueManager : MonoBehaviour
             }
         }
 
-        if (!_isAutoTextCompleted)   // Skip auto text if not yet completed.
+        if (!_isAutoTextCompleted && _isSkippable)   // Skip auto text if not yet completed.
         {
             if (_autoTypeCoroutine != null)
                 StopCoroutine(_autoTypeCoroutine);
@@ -336,6 +345,8 @@ public class DialogueManager : MonoBehaviour
         }
 
         DestroyActions();
+
+        _isSkippable = true;    // Reset is skippable.
 
         ParagraphAsset paragraph = _paragraphStack.Pop();
         StringBuilder text = new StringBuilder(paragraph.Text ?? "");
