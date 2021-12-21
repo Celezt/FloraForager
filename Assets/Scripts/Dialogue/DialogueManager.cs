@@ -35,7 +35,8 @@ public class DialogueManager : MonoBehaviour
     public IReadOnlyDictionary<string, string> Aliases => _aliases;
     public IReadOnlyDictionary<string, ITag> TagTypes => _tagTypes;
     public IReadOnlyDictionary<string, IHierarchyTag> HierarchyTagTypes => _hierarchyTagTypes;
-    public IReadOnlyDictionary<string, RichTagData> RichTagTypes => _richTagTypes;
+    public IReadOnlyDictionary<string, IRichTag> RichTagTypes => _richTagTypes;
+    public IReadOnlyDictionary<string, IEventTag> EventTagTypes => _eventTagTypes;
     public TextMeshProUGUI Text => _content;
     public TextMeshProUGUI Namecard => _namecard;
     public DialogueUtility.Tree Tree => _tree;
@@ -63,11 +64,14 @@ public class DialogueManager : MonoBehaviour
 
     private Stack<ParagraphAsset> _paragraphStack;
     private List<GameObject> _actions;
+    private List<EventTag> _currentEventTags;
+    private List<Queue<RichTag>> _currentIRichTags;
     private Dictionary<string, string> _aliases = new Dictionary<string, string>();
     private Dictionary<string, (ITag, string)> _defaultTagTypes = new Dictionary<string, (ITag, string)>();
     private Dictionary<string, ITag> _tagTypes = new Dictionary<string, ITag>();
     private Dictionary<string, IHierarchyTag> _hierarchyTagTypes = new Dictionary<string, IHierarchyTag>();
-    private Dictionary<string, RichTagData> _richTagTypes = new Dictionary<string, RichTagData>();
+    private Dictionary<string, IRichTag> _richTagTypes = new Dictionary<string, IRichTag>();
+    private Dictionary<string, IEventTag> _eventTagTypes = new Dictionary<string, IEventTag>();
     private Dictionary<string, GameObject> _actors;
 
     private DialogueUtility.Tree _tree;
@@ -81,19 +85,6 @@ public class DialogueManager : MonoBehaviour
     private int _currentTextIndex;
     private int _currentTextMaxLength;
     private bool _isAutoTextCompleted;
-
-    public struct RichTagData
-    {
-        public IRichTag Execution;
-        public Queue<(string, RangeInt)> Sequences;
-    }
-
-    public struct CurrentRichTagData
-    {
-        public IRichTag Execution;
-        public (string, RangeInt) Sequence;
-        public bool HasExecuted;
-    }
 
     /// <summary>
     /// Return Dialogue Manager based on the player index connected to it.
@@ -161,8 +152,10 @@ public class DialogueManager : MonoBehaviour
 
         _currentLayer = 0;
 
-        _tagTypes.ForEach(x => x.Value.OnActive(Taggable.CreatePackage(this, _currentLayer)));
-        _richTagTypes.ForEach(x => x.Value.Execution.OnActive(Taggable.CreatePackage(this, _currentLayer)));
+        // Call all OnActive.
+        _tagTypes.ForEach(x => x.Value.OnActive(Taggable.CreatePackage(this, int.MinValue)));
+        _eventTagTypes.ForEach(x => x.Value.OnActive(Taggable.CreatePackage(this, int.MinValue)));
+        _richTagTypes.ForEach(x => x.Value.OnActive(Taggable.CreatePackage(this, int.MinValue)));
 
         _actors = new Dictionary<string, GameObject>();
 
@@ -175,30 +168,31 @@ public class DialogueManager : MonoBehaviour
                 else
                     _aliases.Add($"actor_{i}", aliases[i]);
             }
-
         }
 
         DialogueAsset asset = JsonConvert.DeserializeObject<DialogueAsset>(handle.Result.text);
 
-        // Create Tree.
-        _tree = new DialogueUtility.Tree();
-
-        // Create root node.
-        _rootNode = new Node(null, _currentLayer, DeserializeTags(asset.Tag, _tagTypes));
-
-        // Add all default tags.
-        List<Tag> tempTags = _rootNode.Tags.ToList();
-        foreach (KeyValuePair<string, (ITag, string)> defaultTag in _defaultTagTypes)
         {
-            if (!tempTags.Any(x => x.Name == defaultTag.Key))
-                tempTags.Add(new Tag() { Name = defaultTag.Key, TagBehaviour = defaultTag.Value.Item1, Parameter = defaultTag.Value.Item2 });
-        }
-        _rootNode.Tags = tempTags.ToArray();
+            // Create Tree.
+            _tree = new DialogueUtility.Tree();
 
-        _rootNode.Tags.ForEach(x => x.TagBehaviour.EnterTag(Taggable.CreatePackage(this, _rootNode.Layer), x.Parameter));
-        _tree.Add(_currentLayer, _rootNode);
-        _currentNode = _rootNode;
-        _currentParent = _rootNode;
+            // Create root node.
+            _rootNode = new Node(null, _currentLayer, DeserializeTags(asset.Tag, _tagTypes));
+
+            // Add all default tags.
+            List<Tag> tempTags = _rootNode.Tags.ToList();
+            foreach (KeyValuePair<string, (ITag, string)> defaultTag in _defaultTagTypes)
+            {
+                if (!tempTags.Any(x => x.Name == defaultTag.Key))
+                    tempTags.Add(new Tag() { Name = defaultTag.Key, Behaviour = defaultTag.Value.Item1, Parameter = defaultTag.Value.Item2 });
+            }
+            _rootNode.Tags = tempTags.ToArray();
+
+            _rootNode.Tags.ForEach(x => x.Behaviour.EnterTag(Taggable.CreatePackage(this, _rootNode.Layer), x.Parameter));
+            _tree.Add(_currentLayer, _rootNode);
+            _currentNode = _rootNode;
+            _currentParent = _rootNode;
+        }
 
         _paragraphStack = new Stack<ParagraphAsset>(asset.Dialogue.Reverse<ParagraphAsset>());
         _currentLayer++;
@@ -210,7 +204,7 @@ public class DialogueManager : MonoBehaviour
 
     public void CancelDialogue()
     {
-        _currentNode.Tags.ForEach(x => x.TagBehaviour.ExitTag(Taggable.CreatePackage(this, _currentNode.Layer), x.Parameter));
+        _currentNode.Tags.ForEach(x => x.Behaviour.ExitTag(Taggable.CreatePackage(this, _currentNode.Layer), x.Parameter));
 
         FindHierarchyNodes(_hierarchyTagTypes, _currentNode.Parent, (hierarchy, parent, tag) =>
             hierarchy.ExitChild(Taggable.CreatePackage(this, parent.Layer), Taggable.CreatePackage(this, _currentNode.Layer), tag.Parameter));
@@ -258,30 +252,35 @@ public class DialogueManager : MonoBehaviour
                 TextMeshProUGUI textMesh = obj.GetComponentInChildren<TextMeshProUGUI>();
 
                 StringBuilder act = new StringBuilder(paragraph.Action[i].Act ?? "");
-                DialogueUtility.Alias(act, _aliases);
+                Alias(act, _aliases);
 
                 textMesh.text = act.ToString();
                 button.onClick.AddListener(() =>
                 {
-                    _currentNode.Tags.ForEach(x => x.TagBehaviour.ExitTag(Taggable.CreatePackage(this, _currentNode.Layer), x.Parameter));
+                    {
+                        // Exit node.
+                        _currentNode.Tags.ForEach(x => x.Behaviour.ExitTag(Taggable.CreatePackage(this, _currentNode.Layer), x.Parameter));
 
-                    FindHierarchyNodes(_hierarchyTagTypes, _currentNode.Parent, (hierarchy, parent, tag) =>
-                        hierarchy.ExitChild(Taggable.CreatePackage(this, parent.Layer), Taggable.CreatePackage(this, _currentNode.Layer), tag.Parameter));
+                        FindHierarchyNodes(_hierarchyTagTypes, _currentNode.Parent, (hierarchy, parent, tag) =>
+                            hierarchy.ExitChild(Taggable.CreatePackage(this, parent.Layer), Taggable.CreatePackage(this, _currentNode.Layer), tag.Parameter));
+                    }
 
                     _currentParent = _currentNode;
                     _currentLayer++;
 
                     _paragraphStack = new Stack<ParagraphAsset>(paragraph.Action[index].Dialogue.Reverse<ParagraphAsset>());
 
-                    // Create node.
-                    Node node = new Node(_currentParent, _currentLayer, DeserializeTags(paragraph.Action[index].Tag, _tagTypes));
-                    node.Tags.ForEach(x => x.TagBehaviour.EnterTag(Taggable.CreatePackage(this, node.Layer), x.Parameter));
-                    _tree.Add(_currentLayer, node);
-                    _currentNode = node;
-                    _currentParent = node;
+                    {
+                        // Create node.
+                        Node node = new Node(_currentParent, _currentLayer, DeserializeTags(paragraph.Action[index].Tag, _tagTypes));
+                        node.Tags.ForEach(x => x.Behaviour.EnterTag(Taggable.CreatePackage(this, node.Layer), x.Parameter));
+                        _tree.Add(_currentLayer, node);
+                        _currentNode = node;
+                        _currentParent = node;
 
-                    FindHierarchyNodes(_hierarchyTagTypes, _currentNode.Parent, (hierarchy, parent, tag) =>
-                         hierarchy.EnterChild(Taggable.CreatePackage(this, parent.Layer), Taggable.CreatePackage(this, node.Layer), tag.Parameter));
+                        FindHierarchyNodes(_hierarchyTagTypes, _currentNode.Parent, (hierarchy, parent, tag) =>
+                             hierarchy.EnterChild(Taggable.CreatePackage(this, parent.Layer), Taggable.CreatePackage(this, node.Layer), tag.Parameter));
+                    }
 
                     _currentLayer++;
                     _isAutoTextCompleted = true;
@@ -310,47 +309,59 @@ public class DialogueManager : MonoBehaviour
             return;
         }
 
-        _currentNode.Tags.ForEach(x => x.TagBehaviour.ExitTag(Taggable.CreatePackage(this, _currentNode.Layer), x.Parameter));
+        {
+            // Exit node.
+            _currentNode.Tags.ForEach(x => x.Behaviour.ExitTag(Taggable.CreatePackage(this, _currentNode.Layer), x.Parameter));
 
-        FindHierarchyNodes(_hierarchyTagTypes, _currentNode.Parent, (hierarchy, parent, tag) =>
-            hierarchy.ExitChild(Taggable.CreatePackage(this, parent.Layer), Taggable.CreatePackage(this, _currentNode.Layer), tag.Parameter));
+            FindHierarchyNodes(_hierarchyTagTypes, _currentNode.Parent, (hierarchy, parent, tag) =>
+                hierarchy.ExitChild(Taggable.CreatePackage(this, parent.Layer), Taggable.CreatePackage(this, _currentNode.Layer), tag.Parameter));
+        }
 
         DestroyActions();
 
         ParagraphAsset paragraph = _paragraphStack.Pop();
-        StringBuilder content = new StringBuilder(paragraph.Text ?? "");
+        StringBuilder text = new StringBuilder(paragraph.Text ?? "");
+        Alias(text, _aliases);
 
-        DialogueUtility.Alias(content, _aliases);
-
-        // Create node.
-        Node node = new Node(_currentParent, _currentLayer, DeserializeTags(paragraph.Tag, _tagTypes));
-        node.Tags.ForEach(x => x.TagBehaviour.EnterTag(Taggable.CreatePackage(this, node.Layer), x.Parameter));
-        _tree.Add(_currentLayer, node);
-        _currentNode = node;
-
-        FindHierarchyNodes(_hierarchyTagTypes, _currentNode.Parent, (hierarchy, parent, tag) => 
-            hierarchy.EnterChild(Taggable.CreatePackage(this, parent.Layer), Taggable.CreatePackage(this, node.Layer), tag.Parameter));
-
-        for (int i = 0; i < _richTagTypes.Count; i++)
         {
-            KeyValuePair<string, RichTagData> richTag = _richTagTypes.ElementAt(i);
-            RichTagData data = richTag.Value;
-            data.Sequences = DeserializeRichTag(content, richTag.Key);
-            _richTagTypes[richTag.Key] = data;
+            // Create node.
+            Node node = new Node(_currentParent, _currentLayer, DeserializeTags(paragraph.Tag, _tagTypes));
+            node.Tags.ForEach(x => x.Behaviour.EnterTag(Taggable.CreatePackage(this, node.Layer), x.Parameter));
+            _tree.Add(_currentLayer, node);
+            _currentNode = node;
+
+            FindHierarchyNodes(_hierarchyTagTypes, _currentNode.Parent, (hierarchy, parent, tag) =>
+                hierarchy.EnterChild(Taggable.CreatePackage(this, parent.Layer), Taggable.CreatePackage(this, node.Layer), tag.Parameter));
         }
 
-        _content.text = content.ToString();
-
-        if (string.IsNullOrWhiteSpace(paragraph.ID))     // Hide namecard if no id exist.
-            _namecardUI.SetActive(false);
-        else
         {
-            _namecardUI.SetActive(true);
+            // Find all current tags.
+            _currentIRichTags = new List<Queue<RichTag>>();
+            for (int i = 0; i < _richTagTypes.Count; i++) // Find current rich tags.
+                if (TryDeserializeRichTag(text, _richTagTypes.ElementAt(i).Key, _richTagTypes, out Queue<RichTag> queue))
+                    _currentIRichTags.Add(queue);
 
-            if (_aliases.TryGetValue(paragraph.ID, out string alias))
-                _namecard.text = alias;
+            _currentEventTags = new List<EventTag>();
+            for (int i = 0; i < _eventTagTypes.Count; i++)  // Find current event tags.
+                if (TryDeserializeEventTag(text, _eventTagTypes.ElementAt(i).Key, _eventTagTypes, out Queue<EventTag> queue))
+                    _currentEventTags.AddRange(queue);
+        }
+
+        {
+            // Render all data.
+            _content.text = text.ToString();
+
+            if (string.IsNullOrWhiteSpace(paragraph.ID))     // Hide namecard if no id exist.
+                _namecardUI.SetActive(false);
             else
-                _namecard.text = paragraph.ID;
+            {
+                _namecardUI.SetActive(true);
+
+                if (_aliases.TryGetValue(paragraph.ID, out string alias))
+                    _namecard.text = alias;
+                else
+                    _namecard.text = paragraph.ID;
+            }
         }
 
         if (_autoTypeCoroutine != null)
@@ -363,9 +374,46 @@ public class DialogueManager : MonoBehaviour
 
     private void Awake()
     {
+        static string ReplaceLastOccurrence(string source, string find, string replace)
+        {
+            int place = source.LastIndexOf(find);
+
+            if (place == -1)
+                return source;
+
+            string result = source.Remove(place, find.Length).Insert(place, replace);
+            return result;
+        }
+
         _dialogues.Add(_playerIndex, this);
 
-        DialogueUtility.InitializeAllTags(this, _tagTypes, _hierarchyTagTypes, _richTagTypes);
+        // Reflect all tags inside the assembly.
+        foreach (Type type in ReflectionUtility.GetTypesWithAttribute<CustomDialogueTagAttribute>(Assembly.GetExecutingAssembly()))
+        {
+            if (!typeof(ITaggable).IsAssignableFrom(type))
+            {
+                Debug.LogError($"{DIALOGUE_EXCEPTION}: {type} has no derived {nameof(ITaggable)}");
+                continue;
+            }
+
+            ITaggable instance = (ITaggable)Activator.CreateInstance(type);
+            CustomDialogueTagAttribute attribute = (CustomDialogueTagAttribute)Attribute.GetCustomAttribute(type, typeof(CustomDialogueTagAttribute));
+
+            instance.Initialize(Taggable.CreatePackage(this, int.MinValue));
+
+            if (instance is ITag)
+            {
+                string name = ReplaceLastOccurrence(instance.GetType().Name, "Tag", "").ToSnakeCase();
+                _tagTypes.Add(name, instance as ITag);
+
+                if (instance is IHierarchyTag)  // Optional variant.
+                    _hierarchyTagTypes.Add(name, instance as IHierarchyTag);
+            }
+            else if (instance is IRichTag)
+                _richTagTypes.Add(ReplaceLastOccurrence(instance.GetType().Name, "RichTag", "").ToSnakeCase(), instance as IRichTag);
+            else if (instance is IEventTag)
+                _eventTagTypes.Add(ReplaceLastOccurrence(instance.GetType().Name, "EventTag", "").ToSnakeCase(), instance as IEventTag );
+        }
     }
 
     private void Start()
@@ -397,21 +445,12 @@ public class DialogueManager : MonoBehaviour
     {
         _isAutoTextCompleted = false;
 
-        List<CurrentRichTagData> currentRichTags = new List<CurrentRichTagData>();
-        List<RichTagData> richTagsUsed = new List<RichTagData>();
-        foreach (RichTagData data in _richTagTypes.Values)  // Look for all rich tags used in this paragraph.
-            if (data.Sequences.Count > 0)
-            {
-                (string, RangeInt) tag = data.Sequences.Dequeue();
-                currentRichTags.Add(new CurrentRichTagData { Execution = data.Execution, Sequence = tag });
-                richTagsUsed.Add(data);
-            }
+        List<bool> _richTagsExecuted = Enumerable.Repeat(false, _currentIRichTags.Count).ToList();
 
         List<(IHierarchyTag, Node, Tag)> _currentHierarchy = new List<(IHierarchyTag, Node, Tag)>();
         FindHierarchyNodes(_hierarchyTagTypes, _currentNode.Parent, (hierarchy, parent, tag) => _currentHierarchy.Add((hierarchy, parent, tag)));   // Look for all hierarchy tags to update.
 
         _content.ForceMeshUpdate();
-
         _parsedText = _content.GetParsedText().ToUpper();
 
         int maxLength = _currentTextMaxLength = _content.textInfo.characterCount + 1;
@@ -422,7 +461,10 @@ public class DialogueManager : MonoBehaviour
 
             _content.maxVisibleCharacters = currentIndex;   // How many letters that should be visible.
 
-            for (int i = 0; i < _currentHierarchy.Count; i++)   // Loop through all current hierarchy tags
+            //
+            // Loop through all current hierarchy tags
+            //
+            for (int i = 0; i < _currentHierarchy.Count; i++)
             {
                 IEnumerator enumerator = _currentHierarchy[i].Item1.ProcessChild(
                                             Taggable.CreatePackage(this, _currentHierarchy[i].Item2.Layer), Taggable.CreatePackage(this, _currentNode.Layer),
@@ -430,58 +472,80 @@ public class DialogueManager : MonoBehaviour
                 enumerator.MoveNext();
                 object returnValue = enumerator.Current;
 
-                if (returnValue != null)  // Don't Return if the IEnumerator returns null.
+                if (returnValue != null)                        // Don't Return if the IEnumerator returns null.
                     yieldValue = returnValue;
             }
-
-            for (int i = 0; i < _currentNode.Tags.Length; i++)   // Loop through all current tags.
+            //
+            // Loop through all current tags.
+            //
+            for (int i = 0; i < _currentNode.Tags.Length; i++)
             {
-                IEnumerator enumerator = _currentNode.Tags[i].TagBehaviour.ProcessTag(Taggable.CreatePackage(this, _currentLayer), _currentTextIndex, _currentTextMaxLength, _currentNode.Tags[i].Parameter);
+                IEnumerator enumerator = _currentNode.Tags[i].Behaviour.ProcessTag(Taggable.CreatePackage(this, _currentLayer), _currentTextIndex, _currentTextMaxLength, _currentNode.Tags[i].Parameter);
                 enumerator.MoveNext();
                 object returnValue = enumerator.Current;
 
-                if (returnValue != null)  // Don't Return if the IEnumerator returns null.
+                if (returnValue != null)                        // Don't Return if the IEnumerator returns null.
                     yieldValue = returnValue;
             }
-
-            for (int i = richTagsUsed.Count - 1; i >= 0; i--)   // Loop through all current rich tags.
+            //
+            // Loop through all current rich tags.
+            //
+            for (int i = _currentIRichTags.Count - 1; i >= 0; i--) 
             {
-                CurrentRichTagData data = currentRichTags[i];
+                RichTag richTag = _currentIRichTags[i].Peek();
                 
-                if (currentIndex >= data.Sequence.Item2.start && currentIndex < data.Sequence.Item2.end) // Execute in range.
+                if (currentIndex >= richTag.Range.start && currentIndex < richTag.Range.end)    // Execute in range.
                 {
-                    if (!data.HasExecuted)  // Execute at the start of the process.
+                    if (!_richTagsExecuted[i])              // Execute at the start of the process.
                     {
-                        data.HasExecuted = true;
-                        data.Execution.EnterTag(Taggable.CreatePackage(this, _currentLayer), currentIndex, data.Sequence.Item2, data.Sequence.Item1);
+                        _richTagsExecuted[i] = true;
+                        richTag.Behaviour.EnterTag(Taggable.CreatePackage(this, _currentLayer), currentIndex, richTag.Range, richTag.Parameter);
                     }
 
-                    currentRichTags[i] = data;
-
-                    IEnumerator enumerator = data.Execution.ProcessTag(Taggable.CreatePackage(this, _currentLayer), currentIndex, data.Sequence.Item2, data.Sequence.Item1);
+                    IEnumerator enumerator = richTag.Behaviour.ProcessTag(Taggable.CreatePackage(this, _currentLayer), currentIndex, richTag.Range, richTag.Parameter);
                     enumerator.MoveNext();
                     object returnValue = enumerator.Current;
  
-                    if (returnValue != null)  // Don't Return if the IEnumerator returns null.
+                    if (returnValue != null)                // Don't Return if the IEnumerator returns null.
                         yieldValue = returnValue;
                 }
-                else if (data.HasExecuted)  // If executed and no longer in range.
+                else if (_richTagsExecuted[i])              // If executed and no longer in range.
                 {
-                    data.Execution.ExitTag(Taggable.CreatePackage(this, _currentLayer), currentIndex, data.Sequence.Item2, data.Sequence.Item1);
+                    richTag.Behaviour.ExitTag(Taggable.CreatePackage(this, _currentLayer), currentIndex, richTag.Range, richTag.Parameter);
 
-                    if (richTagsUsed[i].Sequences.Count > 0)    // Try get next rich tag from this type.
+                    if (_currentIRichTags[i].Count <= 1)    // Remove if no more rich tags of this type is found.
                     {
-                        currentRichTags[i] = new CurrentRichTagData { Execution = richTagsUsed[i].Execution, Sequence = richTagsUsed[i].Sequences.Dequeue() };
+                        _currentIRichTags.RemoveAt(i);
+                        _richTagsExecuted.RemoveAt(i);
                     }
-                    else    // Remove if no more rich tags of this type is found.
+                    else                                    // Try get next rich tag from this type.
                     {
-                        richTagsUsed.RemoveAt(i);
-                        currentRichTags.RemoveAt(i);
+                        _currentIRichTags[i].Dequeue();
+                        _richTagsExecuted[i] = false;
                     }
                 }
             }
+            //
+            // Loop through all current event tags.
+            //
+            for (int i = _currentEventTags.Count - 1; i >= 0; i--)
+            {
+                EventTag eventTag = _currentEventTags[i];
 
-            if (yieldValue != null) // Don't yield if value is null.
+                if (currentIndex >= eventTag.Index)
+                {
+                    IEnumerator enumerator = eventTag.Behaviour.OnTrigger(Taggable.CreatePackage(this, _currentLayer), currentIndex, eventTag.Parameter);
+                    enumerator.MoveNext();
+                    object returnValue = enumerator.Current;
+
+                    if (returnValue != null)            // Don't Return if the IEnumerator returns null.
+                        yieldValue = returnValue;
+
+                    _currentEventTags.RemoveAt(i);
+                }
+            }
+
+            if (yieldValue != null)                     // Don't yield if value is null.
                 yield return yieldValue;
         }
 

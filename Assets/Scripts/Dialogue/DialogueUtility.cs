@@ -51,10 +51,36 @@ public static class DialogueUtility
     public struct Tag : IEquatable<Tag>
     {
         public string Name;
-        public ITag TagBehaviour;
         public string Parameter;
+        public ITag Behaviour;
 
         bool IEquatable<Tag>.Equals(Tag other) => other.Name == Name;
+        public override int GetHashCode() => Name.GetHashCode();
+        public override string ToString() => Name;
+    }
+
+    public struct EventTag : IEquatable<EventTag>
+    {
+        public string Name;
+        public string Parameter;
+        public int Index;
+        public IEventTag Behaviour;
+
+        bool IEquatable<EventTag>.Equals(EventTag other) => other.Name == Name;
+        public override int GetHashCode() => Name.GetHashCode();
+        public override string ToString() => Name;
+    }
+
+    public struct RichTag : IEquatable<RichTag>
+    {
+        public string Name;
+        public string Parameter;
+        public IRichTag Behaviour;
+        public RangeInt Range;
+
+        bool IEquatable<RichTag>.Equals(RichTag other) => other.Name == Name;
+        public override int GetHashCode() => Name.GetHashCode();
+        public override string ToString() => Name;
     }
 
     /// <summary>
@@ -103,15 +129,15 @@ public static class DialogueUtility
     }
 
     /// <summary>
-    /// Extract custom rich tag and return a queue with the value and range of effect,
+    /// Try extract custom rich tag and return a queue with the value and range of effect.
     /// </summary>
-    /// <param name="text">Text.</param>
-    /// <param name="richTag">RichTag to find.</param>
-    /// <returns>Queue with the value and range of effect.</returns>
-    public static Queue<(string, RangeInt)> DeserializeRichTag(StringBuilder text, string richTag)
+    /// <param name="text">Parsed text.</param>
+    /// <param name="richTag">Rich tag to find.</param>
+    /// <returns>If any exist.</returns>
+    public static bool TryDeserializeRichTag(StringBuilder text, string richTag, Dictionary<string, IRichTag> richTagTypes, out Queue<RichTag> queue)
     {
         string copy = text.ToString();
-        Queue<(string, RangeInt)> queue = new Queue<(string, RangeInt)>();
+        queue = new Queue<RichTag>();
         Regex openRegex = new Regex($"<{richTag}(=((?:.(?!\\1|>))*.?)\\1?)?>");
         Regex closeRegex = new Regex($"((<\\/){richTag}(>))");
 
@@ -119,18 +145,24 @@ public static class DialogueUtility
         MatchCollection closeMatches = closeRegex.Matches(text.ToString());
 
         if (openMatches.Count != closeMatches.Count)
-            throw new Exception($"{DIALOGUE_EXCEPTION}: Uneven number of open and closed tags");
+            throw new DialogueException($"Uneven amount of open and close tags");
+
+        if (openMatches.Count <= 0)
+            return false;
 
         for (int i = 0; i < openMatches.Count; i++)
         {
-            Group openGroup = openMatches[i].Groups[2];
-            Group closeGroup = closeMatches[i].Groups[2];
+            int openStartIndex = openMatches[i].Groups[0].Index + openMatches[i].Groups[0].Length;
+            int closeStartIndex = closeMatches[i].Groups[0].Index;
 
             bool insideTag = false;
             int closedIndex = 0;
             int openIndex = 0;
-            for (int j = 0; j < closeGroup.Index; j++)
+            for (int j = 0; j < closeStartIndex; j++)
             {
+                if (new char[] { '{', '}' }.Contains(copy[j]))
+                    continue;
+
                 if (copy[j] == '<')
                     insideTag = true;
                 else if (copy[j] == '>')
@@ -139,18 +171,63 @@ public static class DialogueUtility
                 {
                     closedIndex++;
 
-                    if (j < openGroup.Index)
+                    if (j < openStartIndex)
                         openIndex++;
                 }
             }
 
-            queue.Enqueue((openGroup.Value, new RangeInt(openIndex, closedIndex - openIndex)));
-
+            queue.Enqueue(new RichTag { Name = richTag, Parameter = openMatches[i].Groups[2].Value, Behaviour = richTagTypes[richTag], Range = new RangeInt(openIndex, closedIndex - openIndex) });
             text.Replace(openMatches[i].Groups[0].Value, "");
             text.Replace(closeMatches[i].Groups[0].Value, "");
         }
 
-        return queue;
+        return true;
+    }
+
+    /// <summary>
+    /// Try extract custom event tag and return a queue with the value and index.
+    /// </summary>
+    /// <param name="text">Parsed text.</param>
+    /// <param name="eventTag">Event tag to find.</param>
+    /// <returns>If any exist.</returns>
+    public static bool TryDeserializeEventTag(StringBuilder text, string eventTag, Dictionary<string, IEventTag> eventTagTypes, out Queue<EventTag> queue)
+    {
+        string copy = text.ToString();
+        queue = new Queue<EventTag>();
+        Regex regex = new Regex($"<{eventTag}(=((?:.(?!\\1|>))*.?)\\1?)?>");
+
+        MatchCollection matches = regex.Matches(text.ToString());
+
+        if (matches.Count <= 0)
+            return false;
+
+        for (int i = 0; i < matches.Count; i++)
+        {
+            int endIndex = matches[i].Groups[0].Index;
+
+            int index = 0;
+            bool insideTag = false;
+            for (int j = 0; j < endIndex; j++)
+            {
+                if (new char[] { '{', '}' }.Contains(copy[j]))
+                    continue;
+
+                if (copy[j] == '<')
+                    insideTag = true;
+                else if (copy[j] == '>')
+                    insideTag = false;
+                else if (!insideTag)
+                {
+                    index++;
+                }
+            }
+
+            queue.Enqueue(new EventTag { Name = eventTag, Parameter = matches[i].Groups[2].Value, Index = index, Behaviour = eventTagTypes[eventTag] });
+
+            text.Replace(matches[i].Groups[0].Value, "");
+        }
+
+        return true;
     }
 
     /// <summary>
@@ -165,7 +242,7 @@ public static class DialogueUtility
             if (!tagTypes.ContainsKey(tag))    // If tag type exist.
                 throw new Exception($"{DIALOGUE_EXCEPTION}: {tag} does not exist");
 
-            return new Tag { Name = tag, TagBehaviour = tagTypes[tag], Parameter = parameter };
+            return new Tag { Name = tag, Behaviour = tagTypes[tag], Parameter = parameter };
         }).ToArray() ?? new Tag[0];
 
     /// <summary>
@@ -200,50 +277,10 @@ public static class DialogueUtility
         });
     }
 
-    /// <summary>
-    /// Reflect all tags inside the assembly.
-    /// </summary>
-    /// <param name="manager">Wrapped reference.</param>
-    /// <param name="layer">Hierarchy layer.</param>
-    /// <param name="tagTypes">All actions.</param>
-    public static void InitializeAllTags(DialogueManager manager, IDictionary<string, ITag> tagTypes, IDictionary<string, IHierarchyTag> hierarchyTypes, Dictionary<string, DialogueManager.RichTagData> richTagTypes)
+    public class DialogueException : Exception
     {
-        static string ReplaceLastOccurrence(string source, string find, string replace)
-        {
-            int place = source.LastIndexOf(find);
-
-            if (place == -1)
-                return source;
-
-            string result = source.Remove(place, find.Length).Insert(place, replace);
-            return result;
-        }
-
-        foreach (Type type in ReflectionUtility.GetTypesWithAttribute<CustomDialogueTagAttribute>(Assembly.GetExecutingAssembly()))
-        {
-            if (!typeof(ITaggable).IsAssignableFrom(type))
-            {
-                Debug.LogError($"{DIALOGUE_EXCEPTION}: {type} has no derived {nameof(ITaggable)}");
-                continue;
-            }
-
-            ITaggable instance = (ITaggable)Activator.CreateInstance(type);
-            CustomDialogueTagAttribute attribute = (CustomDialogueTagAttribute)Attribute.GetCustomAttribute(type, typeof(CustomDialogueTagAttribute));
-            
-            instance.Initialize(Taggable.CreatePackage(manager, int.MinValue));
-
-            if (instance is ITag)
-            {
-                string name = ReplaceLastOccurrence(instance.GetType().Name, "Tag", "").ToSnakeCase();
-                tagTypes.Add(name, instance as ITag);
-
-                if (instance is IHierarchyTag)  // Optional variant.
-                    hierarchyTypes.Add(name, instance as IHierarchyTag);
-            }
-            else if (instance is IRichTag)
-            {
-                richTagTypes.Add(ReplaceLastOccurrence(instance.GetType().Name, "RichTag", "").ToSnakeCase(), new DialogueManager.RichTagData { Execution = instance as IRichTag });
-            }
-        }
+        public DialogueException() { }
+        public DialogueException(string message) : base(message) { }
+        public DialogueException(string message, Exception inner) : base(message, inner) { }
     }
 }
