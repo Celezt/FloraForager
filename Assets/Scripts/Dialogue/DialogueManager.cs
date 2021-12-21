@@ -204,15 +204,22 @@ public class DialogueManager : MonoBehaviour
 
     public void CancelDialogue()
     {
-        _currentNode.Tags.ForEach(x => x.Behaviour.ExitTag(Taggable.CreatePackage(this, _currentNode.Layer), x.Parameter));
-
-        FindHierarchyNodes(_hierarchyTagTypes, _currentNode.Parent, (hierarchy, parent, tag) =>
-            hierarchy.ExitChild(Taggable.CreatePackage(this, parent.Layer), Taggable.CreatePackage(this, _currentNode.Layer), tag.Parameter));
-
         _dialogueUI.SetActive(false);
 
         if (_autoTypeCoroutine != null)
             StopCoroutine(_autoTypeCoroutine);
+
+        {
+            // Cancel tags.
+            _currentNode.Tags.ForEach(x => x.Behaviour.ExitTag(Taggable.CreatePackage(this, _currentNode.Layer), x.Parameter));
+
+            FindHierarchyNodes(_hierarchyTagTypes, _currentNode.Parent, (hierarchy, parent, tag) =>
+                hierarchy.ExitChild(Taggable.CreatePackage(this, parent.Layer), Taggable.CreatePackage(this, _currentNode.Layer), tag.Parameter));
+
+            _currentIRichTags.ForEach(x => x.Peek().Pipe(y => y.Behaviour.ExitTag(Taggable.CreatePackage(this, _currentNode.Layer), _currentTextIndex, y.Range, y.Parameter)));
+
+            _currentEventTags.ForEach(x => x.Behaviour.OnTrigger(Taggable.CreatePackage(this, _currentNode.Layer), _currentTextIndex, x.Parameter));
+        }
 
         foreach (KeyValuePair<string, GameObject> item in _actors)
         {
