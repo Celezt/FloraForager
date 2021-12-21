@@ -1,15 +1,15 @@
 {
-  "tag": [ "actors{player, jane}" ],
+  "tag": [ "actors{player, jane}", "audible{true}", "speed{1.2}" ],
   "dialogue": [
     {
       "id": "Jane",
       "text": "*Sigh*",
-      "tag": [ "speed{1.4}", "audible{false}" ]
+      "tag": [ "audible{false}" ]
     },
     {
       "id": "Fiona",
       "text": "Hello Jane! Why the deep sigh?",
-      "tag": [ "pitch{1}", "audible{true}", "animation{player, talking}" ]
+      "tag": [ "pitch{1.0}", "animation{player, talking}" ]
     },
     {
       "id": "Jane",
@@ -19,7 +19,7 @@
     {
       "id": "Fiona",
       "text": "A week ain't so bad",
-      "tag": [ "pitch{1}", "animation{player, talking}" ]
+      "tag": [ "pitch{1.0}", "animation{player, talking}" ]
     },
     {
       "id": "Jane",
