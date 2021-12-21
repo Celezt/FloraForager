@@ -10,7 +10,6 @@ GameObject:
   m_Component:
   - component: {fileID: 1421306173773649276}
   - component: {fileID: 8425940528202653661}
-  - component: {fileID: 5023008303592986860}
   - component: {fileID: 6276009747676118911}
   - component: {fileID: 4917872426752073126}
   - component: {fileID: 6336905623361374831}
@@ -47,20 +46,6 @@ MeshFilter:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2032678476091294719}
   m_Mesh: {fileID: 10208, guid: 0000000000000000e000000000000000, type: 0}
---- !u!136 &5023008303592986860
-CapsuleCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2032678476091294719}
-  m_Material: {fileID: 0}
-  m_IsTrigger: 0
-  m_Enabled: 1
-  m_Radius: 0.61
-  m_Height: 4
-  m_Direction: 1
-  m_Center: {x: 0, y: 2, z: 0}
 --- !u!114 &6276009747676118911
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -92,6 +77,8 @@ MonoBehaviour:
   _leafAmount: 8
   _Tree: {fileID: 3150624274331636692}
   _Stump: {fileID: 6374569872050715626}
+  _TreeCollider: {fileID: 8328081632227528202}
+  _StumpCollider: {fileID: 4779217611439332070}
   _disableColliderOnDestroy: 0
   _data:
     Durability: 6
@@ -139,6 +126,34 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   serializedGuid: 
+--- !u!136 &8328081632227528202
+CapsuleCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3150624274331636692}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_Enabled: 1
+  m_Radius: 0.61
+  m_Height: 4
+  m_Direction: 1
+  m_Center: {x: 0, y: 2, z: 0}
+--- !u!136 &4779217611439332070
+CapsuleCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6374569872050715626}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_Enabled: 1
+  m_Radius: 0.61
+  m_Height: 1.65
+  m_Direction: 1
+  m_Center: {x: 0, y: 0.61, z: 0}
 --- !u!1001 &1712412501055430356
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -382,7 +397,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 919132149155446097, guid: 074338f4936d4f2438d3af49e92b5bdb, type: 3}
       propertyPath: m_IsActive
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 919132149155446097, guid: 074338f4936d4f2438d3af49e92b5bdb, type: 3}
       propertyPath: m_StaticEditorFlags

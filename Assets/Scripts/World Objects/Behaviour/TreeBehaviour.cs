@@ -27,13 +27,13 @@ public class TreeBehaviour : MonoBehaviour, IStreamable<TreeBehaviour.Data>, IUs
     [Header("Objects")]
     [SerializeField] private GameObject _Tree;
     [SerializeField] private GameObject _Stump;
-    [Header("Other")]
+    [Header("Colliders")]
+    [SerializeField] private CapsuleCollider _TreeCollider;
+    [SerializeField] private CapsuleCollider _StumpCollider;
     [SerializeField] private bool _disableColliderOnDestroy = false;
 
     [SerializeField, PropertyOrder(-1), HideLabel, InlineProperty]
     private Data _data;
-
-    private CapsuleCollider _Collider;
 
     [System.Serializable]
     public class Data
@@ -54,7 +54,7 @@ public class TreeBehaviour : MonoBehaviour, IStreamable<TreeBehaviour.Data>, IUs
         if (_Stump != null)
             _Stump.SetActive(destroyed);
         if (_disableColliderOnDestroy)
-            _Collider.enabled = !destroyed;
+            _StumpCollider.enabled = !destroyed;
     }
     void IStreamable.OnBeforeSaving()
     {
@@ -67,7 +67,6 @@ public class TreeBehaviour : MonoBehaviour, IStreamable<TreeBehaviour.Data>, IUs
     private void Awake()
     {
         _data.MaxDurability = _data.Durability;
-        _Collider = GetComponent<CapsuleCollider>();
     }
 
     void IUsable.OnUse(UsedContext context)
@@ -95,14 +94,14 @@ public class TreeBehaviour : MonoBehaviour, IStreamable<TreeBehaviour.Data>, IUs
         {
             SoundPlayer.Instance.Play(_breakSound);
 
-            context.Drop(transform.TransformPoint(_Collider.center), _drops);
+            context.Drop(transform.TransformPoint(_TreeCollider.center), _drops);
 
             if (_Tree != null)
                 _Tree.SetActive(false);
             if (_Stump != null)
                 _Stump.SetActive(true);
             if (_disableColliderOnDestroy)
-                _Collider.enabled = false;
+                _StumpCollider.enabled = false;
 
             if (TryGetComponent(out StreamableBehaviour streamable))
                 streamable.SetToRespawn();

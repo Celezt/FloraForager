@@ -108,13 +108,13 @@ public class ChopItem : IUse, IDestructor, IStar, IValue
         Collider[] colliders = Physics.OverlapBox(context.transform.position + context.transform.rotation * _centerOffset, _halfExtents, context.transform.rotation, LayerMask.NameToLayer("default"));
         List<Collider> usableColliders = new List<Collider>(colliders.Length);
 
-        usableColliders.AddRange(colliders.Where(x => x.TryGetComponent<IUsable>(out _)));
+        usableColliders.AddRange(colliders.Where(x => x.GetComponentInParent<IUsable>() != null));
         
         Collider collider = new KdTree<Collider>(usableColliders).FindClosest(context.transform.position);
 
         if (collider != null)
         {
-            if (!context.CallUsable(collider.GetComponent<IUsable>()))
+            if (!context.CallUsable(collider.GetComponentInParent<IUsable>()))
                 SoundPlayer.Instance.Play(_poorSound);
         }
     }
