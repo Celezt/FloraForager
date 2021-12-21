@@ -55,9 +55,9 @@ public class AudibleTag : IHierarchyTag
         {
             DialogueManager manager = taggable.Unwrap<DialogueManager>();
 
-            if (_audible && currentIndex > 0)
+            if (_audible)
             {
-                string letter = manager.ParsedText[currentIndex - 1].ToString();
+                string letter = manager.ParsedText[currentIndex].ToString();
 
                 if (SoundPlayer.Instance.TryGetSound(letter, out SoundPlayer.Sound sound))
                     SoundPlayer.Instance.Play(letter, 0, _pitch - sound.Pitch);
@@ -83,13 +83,10 @@ public class AudibleTag : IHierarchyTag
         {
             DialogueManager manager = thisTaggable.Unwrap<DialogueManager>();
 
-            if (currentIndex > 0)
-            {
-                string letter = manager.ParsedText[currentIndex - 1].ToString();
+            string letter = manager.ParsedText[currentIndex].ToString();
 
-                if (SoundPlayer.Instance.TryGetSound(letter, out SoundPlayer.Sound sound))
-                    SoundPlayer.Instance.Play(letter, 0, _pitch - sound.Pitch);
-            }
+            if (SoundPlayer.Instance.TryGetSound(letter, out SoundPlayer.Sound sound))
+                SoundPlayer.Instance.Play(letter, 0, _pitch - sound.Pitch);
         }
 
         yield return null;

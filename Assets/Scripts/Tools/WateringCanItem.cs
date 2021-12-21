@@ -123,7 +123,7 @@ public class WateringCanItem : IUse, IStar
             _usesLeft = _maxUses;
             _playerStamina.Stamina += _fillStaminaChange;
         }
-        else if (cell.Type == CellType.Dirt && cell.HeldObject.TryGetComponent(out FloraObject floraObject) && _usesLeft > 0)
+        else if (cell.Type == CellType.Dirt && cell.HeldObject != null && cell.HeldObject.TryGetComponent(out FloraObject floraObject) && _usesLeft > 0)
         {
             if (!floraObject.Flora.Watered)
             {
