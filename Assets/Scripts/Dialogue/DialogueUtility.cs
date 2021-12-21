@@ -240,7 +240,7 @@ public static class DialogueUtility
             string parameter = Regex.Match(x, @"(?<=\{).*?(?=\})").Value;        // Match parameter.
 
             if (!tagTypes.ContainsKey(tag))    // If tag type exist.
-                throw new Exception($"{DIALOGUE_EXCEPTION}: {tag} does not exist");
+                throw new DialogueException($"{tag} does not exist");
 
             return new Tag { Name = tag, Behaviour = tagTypes[tag], Parameter = parameter };
         }).ToArray() ?? new Tag[0];

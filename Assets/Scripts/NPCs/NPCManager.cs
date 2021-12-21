@@ -76,6 +76,8 @@ public class NPCManager : SerializedScriptableSingleton<NPCManager>, IStreamer
 
         return npc;
     }
+    public bool TryGetObject(string id, out NPCBehaviour npc) => _NPCObjects.TryGetValue(id.ToLower(), out npc);
+
     public void AddObject(string id, NPCBehaviour npcObject)
     {
         _NPCObjects.Add(id.ToLower(), npcObject);

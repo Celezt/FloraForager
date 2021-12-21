@@ -49,6 +49,7 @@ public class DialogueManager : MonoBehaviour
     public int CurrentLayer => _currentLayer;
     public int CurrentTextIndex => _currentTextIndex;
     public int CurrentTextMaxLength => _currentTextMaxLength;
+    public int PlayerIndex => _playerIndex;
     /// <summary>
     /// Base text read speed.
     /// </summary>
@@ -84,13 +85,13 @@ public class DialogueManager : MonoBehaviour
     private Dictionary<string, IHierarchyTag> _hierarchyTagTypes = new Dictionary<string, IHierarchyTag>();
     private Dictionary<string, IRichTag> _richTagTypes = new Dictionary<string, IRichTag>();
     private Dictionary<string, IEventTag> _eventTagTypes = new Dictionary<string, IEventTag>();
-    private Dictionary<string, GameObject> _actors;
 
     private DialogueUtility.Tree _tree;
     private Node _rootNode;
     private Node _currentNode;
     private Node _currentParent;
     private Coroutine _autoTypeCoroutine;
+    private Coroutine _skipFadeCoroutine;
 
     private string _parsedText;
     private int _currentLayer;
@@ -133,12 +134,6 @@ public class DialogueManager : MonoBehaviour
         return this;
     }
 
-    public void SetActors(Dictionary<string, GameObject> actors)
-    {
-        _actors = actors;
-    }
-    public IReadOnlyDictionary<string, GameObject> GetActors() => _actors;
-
     public DialogueManager StartDialogue(string address, params string[] aliases)
     {
         Addressables.LoadAssetAsync<TextAsset>(address).Completed += (handle) =>
@@ -173,8 +168,6 @@ public class DialogueManager : MonoBehaviour
         _tagTypes.ForEach(x => x.Value.OnActive(Taggable.CreatePackage(this, int.MinValue)));
         _eventTagTypes.ForEach(x => x.Value.OnActive(Taggable.CreatePackage(this, int.MinValue)));
         _richTagTypes.ForEach(x => x.Value.OnActive(Taggable.CreatePackage(this, int.MinValue)));
-
-        _actors = new Dictionary<string, GameObject>();
 
         if (aliases.NotNullOrEmpty())
         {
@@ -211,6 +204,8 @@ public class DialogueManager : MonoBehaviour
             _currentParent = _rootNode;
         }
 
+        _skipFadeCoroutine = StartCoroutine(SkipFade());
+
         _paragraphStack = new Stack<ParagraphAsset>(asset.Dialogue.Reverse<ParagraphAsset>());
         _currentLayer++;
         _isAutoTextCompleted = true;
@@ -228,19 +223,15 @@ public class DialogueManager : MonoBehaviour
         if (_autoTypeCoroutine != null)
             StopCoroutine(_autoTypeCoroutine);
 
+        if (_skipFadeCoroutine != null)
+            StopCoroutine(_skipFadeCoroutine);
+
         {
             // Exit tags.
             _currentNode.Tags.ForEach(x => x.Behaviour.ExitTag(Taggable.CreatePackage(this, _currentNode.Layer), x.Parameter));
 
             FindHierarchyNodes(_hierarchyTagTypes, _currentNode.Parent, (hierarchy, parent, tag) =>
                 hierarchy.ExitChild(Taggable.CreatePackage(this, parent.Layer), Taggable.CreatePackage(this, _currentNode.Layer), tag.Parameter));
-        }
-
-        foreach (KeyValuePair<string, GameObject> item in _actors)
-        {
-            HumanoidAnimationBehaviour animationBehaviour;
-            if ((animationBehaviour = item.Value.GetComponentInChildren<HumanoidAnimationBehaviour>()) != null)
-                animationBehaviour.BlendCancelCustomMotion();
         }
 
         Completed.Invoke(this);
@@ -469,12 +460,6 @@ public class DialogueManager : MonoBehaviour
         }
     }
 
-    private void Update()
-    {
-        if (_isDialogueActive && _skipSymbol != null)
-            _skipSymbol.alpha = _isSkippable ? Mathf.PingPong(Time.time * _skipFadeSpeed, 1) : 0.0f;
-    }
-
     private void OnDestroy()
     {
         _dialogues.Remove(_playerIndex);
@@ -484,6 +469,17 @@ public class DialogueManager : MonoBehaviour
     private void StartDialogueConsole(string address, params string[] aliases) => StartDialogue(address, aliases);
     private void SetAutoTextSpeedConsole(float speed) => _autoTextSpeed = speed;
     #endregion
+
+    private IEnumerator SkipFade()
+    {
+        while (true)
+        {
+            if (_isDialogueActive && _skipSymbol != null)
+                _skipSymbol.alpha = _isSkippable ? Mathf.PingPong(Time.time * _skipFadeSpeed, 1) : 0.0f;
+
+            yield return null;
+        }
+    }
 
     private IEnumerator AutoType(ParagraphAsset paragraph)
     {

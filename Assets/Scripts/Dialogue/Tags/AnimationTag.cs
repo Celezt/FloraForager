@@ -1,3 +1,5 @@
+using System;
+using System.Linq;
 using System.Text.RegularExpressions;
 using System.Collections;
 using System.Collections.Generic;
@@ -7,57 +9,67 @@ using UnityEngine.InputSystem;
 [CustomDialogueTag]
 public class AnimationTag : ITag
 {
-    public void Initialize(Taggable taggable)
+    private HumanoidAnimationBehaviour _animationBehaviour;
+
+    void ITaggable.Initialize(Taggable taggable)
     {
 
     }
 
-    public void EnterTag(Taggable taggable, string parameter)
+    void ITaggable.OnActive(Taggable taggable)
     {
-        parameter = Regex.Replace(parameter, @"\s", "");
 
-        string[] args = parameter.Split(',');
+    }
 
-        if (args.Length < 2)
+    void ITag.EnterTag(Taggable taggable, string parameter)
+    {
+        DialogueManager manager = taggable.Unwrap<DialogueManager>();
+
+        string[] args = Regex.Replace(parameter, @"\s", "").Split(',');
+
+        if (args.Length == 0)
         {
-            Debug.LogError("insufficient amount of arguments");
+            Debug.LogError($"{DialogueUtility.DIALOGUE_EXCEPTION}: Requires actor id and clip as an argument");
+            return;
+        }
+        else if (args.Length == 1)
+        {
+            Debug.LogError($"{DialogueUtility.DIALOGUE_EXCEPTION}: Requires clip as an argument");
+            return;
+        }
+        else if (args.Length > 3)
+        {
+            Debug.LogError($"{DialogueUtility.DIALOGUE_EXCEPTION}: Too many arguments");
             return;
         }
 
-        string actor = args[0];
-        string animation = args[1];
-        bool loop = true;
+        string actorId = args[0];
+        string clip = args[1];
+        bool loop = args.Length > 2 ? bool.Parse(args[2]) : true;
 
-        if (args.Length > 2)
-            loop = bool.Parse(args[2]);
+        // Get humanoid animation behaviour.
+        if (new string[] { "fiona", "player" }.Contains(actorId))
+            _animationBehaviour = PlayerInput.GetPlayerByIndex(manager.PlayerIndex).GetComponentInChildren<HumanoidAnimationBehaviour>();
+        else if (NPCManager.Instance.TryGetObject(actorId, out NPCBehaviour npc))
+            _animationBehaviour = npc.GetComponentInChildren<HumanoidAnimationBehaviour>();
 
-        foreach (KeyValuePair<string, GameObject> item in taggable.Unwrap<DialogueManager>().GetActors())
+        // Play custom motion.
+        if (_animationBehaviour != null)
+            _animationBehaviour.CustomMotionRaise(DialogueAnimations.Instance.Get(clip), loop: loop);
+        else
         {
-            HumanoidAnimationBehaviour animationBehaviour;
-            if ((animationBehaviour = item.Value.GetComponentInChildren<HumanoidAnimationBehaviour>()) != null)
-            {
-                if (string.Equals(actor, item.Key, System.StringComparison.InvariantCultureIgnoreCase))
-                    animationBehaviour.CustomMotionRaise(DialogueAnimations.Instance.Get(animation), loop: loop);
-                else
-                    animationBehaviour.BlendCancelCustomMotion();
-            }
-            else
-                Debug.LogError($"no HumanoidAnimationBehaviour found on given actor: {item.Key}");
+            Debug.LogError($"{DialogueUtility.DIALOGUE_EXCEPTION}: No {nameof(HumanoidAnimationBehaviour)} found on given actor: {actorId}");
+            return;
         }
     }
 
-    public void ExitTag(Taggable taggable, string parameter)
+    void ITag.ExitTag(Taggable taggable, string parameter)
     {
-
+        _animationBehaviour?.BlendCancelCustomMotion();
     }
 
-    public IEnumerator ProcessTag(Taggable taggable, int currentIndex, int length, string parameter)
+    IEnumerator ITag.ProcessTag(Taggable taggable, int currentIndex, int length, string parameter)
     {
         yield return null;
-    }
-
-    public void OnActive(Taggable taggable)
-    {
-
     }
 }
