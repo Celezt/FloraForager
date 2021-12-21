@@ -62,15 +62,17 @@ public class DialogueManager : MonoBehaviour
         set => _isSkippable = value;
     }
 
+    [SerializeField, Min(0)] private int _playerIndex;
     [SerializeField] private TextMeshProUGUI _content;
     [SerializeField] private TextMeshProUGUI _namecard;
+    [SerializeField] private TextMeshProUGUI _skipSymbol;
     [SerializeField] private GameObject _namecardUI;
     [SerializeField] private GameObject _dialogueUI;
     [SerializeField] private Transform _buttonParent;
     [SerializeField] private GameObject _buttonType;
     [SerializeField] private AssetLabelReference _aliasLabel;
     [SerializeField] private float _autoTextSpeed = 0.1f;
-    [SerializeField, Min(0)] private int _playerIndex;
+    [SerializeField] private float _skipFadeSpeed = 0.5f;
 
     private Stack<ParagraphAsset> _paragraphStack;
     private List<GameObject> _actions;
@@ -95,6 +97,7 @@ public class DialogueManager : MonoBehaviour
     private int _currentTextIndex;
     private int _currentTextMaxLength;
     private bool _isAutoTextCompleted;
+    private bool _isDialogueActive;
     private bool _isSkippable;
 
     /// <summary>
@@ -158,10 +161,13 @@ public class DialogueManager : MonoBehaviour
 
     public void StartDialogue(AsyncOperationHandle<TextAsset> handle, params string[] aliases)
     {
+        _isDialogueActive = true;
+
         Started.Invoke(this);
         _dialogueUI.SetActive(true);
 
         _currentLayer = 0;
+        _isSkippable = true;
 
         // Call all OnActive.
         _tagTypes.ForEach(x => x.Value.OnActive(Taggable.CreatePackage(this, int.MinValue)));
@@ -215,6 +221,8 @@ public class DialogueManager : MonoBehaviour
 
     public void CancelDialogue()
     {
+        _isDialogueActive = false;
+
         _dialogueUI.SetActive(false);
 
         if (_autoTypeCoroutine != null)
@@ -305,8 +313,11 @@ public class DialogueManager : MonoBehaviour
             }
         }
 
-        if (!_isAutoTextCompleted && _isSkippable)   // Skip auto text if not yet completed.
+        if (!_isAutoTextCompleted)  // Skip auto text if not yet completed.
         {
+            if (!_isSkippable)      // If not allowed to skip whiles auto text is running.
+                return;
+
             if (_autoTypeCoroutine != null)
                 StopCoroutine(_autoTypeCoroutine);
 
@@ -345,8 +356,6 @@ public class DialogueManager : MonoBehaviour
         }
 
         DestroyActions();
-
-        _isSkippable = true;    // Reset is skippable.
 
         ParagraphAsset paragraph = _paragraphStack.Pop();
         StringBuilder text = new StringBuilder(paragraph.Text ?? "");
@@ -458,6 +467,12 @@ public class DialogueManager : MonoBehaviour
             DialogueUtility.LoadAliases(_aliasLabel, _aliases);
             _initializedTags = true;
         }
+    }
+
+    private void Update()
+    {
+        if (_isDialogueActive && _skipSymbol != null)
+            _skipSymbol.alpha = _isSkippable ? Mathf.PingPong(Time.time * _skipFadeSpeed, 1) : 0.0f;
     }
 
     private void OnDestroy()
