@@ -471,7 +471,7 @@ public class DialogueManager : MonoBehaviour
         _content.ForceMeshUpdate();
         _parsedText = _content.GetParsedText().ToUpper();
 
-        int maxLength = _currentTextMaxLength = _content.textInfo.characterCount + 1;
+        int maxLength = _currentTextMaxLength = _content.textInfo.characterCount;
         for (int currentIndex = 0; currentIndex < maxLength; currentIndex++)  
         {
             object yieldValue = null;
