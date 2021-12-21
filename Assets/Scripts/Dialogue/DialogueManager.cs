@@ -210,15 +210,11 @@ public class DialogueManager : MonoBehaviour
             StopCoroutine(_autoTypeCoroutine);
 
         {
-            // Cancel tags.
+            // Exit tags.
             _currentNode.Tags.ForEach(x => x.Behaviour.ExitTag(Taggable.CreatePackage(this, _currentNode.Layer), x.Parameter));
 
             FindHierarchyNodes(_hierarchyTagTypes, _currentNode.Parent, (hierarchy, parent, tag) =>
                 hierarchy.ExitChild(Taggable.CreatePackage(this, parent.Layer), Taggable.CreatePackage(this, _currentNode.Layer), tag.Parameter));
-
-            _currentIRichTags.ForEach(x => x.Peek().Pipe(y => y.Behaviour.ExitTag(Taggable.CreatePackage(this, _currentNode.Layer), _currentTextIndex, y.Range, y.Parameter)));
-
-            _currentEventTags.ForEach(x => x.Behaviour.OnTrigger(Taggable.CreatePackage(this, _currentNode.Layer), _currentTextIndex, x.Parameter));
         }
 
         foreach (KeyValuePair<string, GameObject> item in _actors)
@@ -305,6 +301,19 @@ public class DialogueManager : MonoBehaviour
 
             _isAutoTextCompleted = true;
             _content.maxVisibleCharacters = int.MaxValue;
+
+            {
+                // Cancel tags.
+                _currentNode.Tags.ForEach(x => x.Behaviour.ExitTag(Taggable.CreatePackage(this, _currentNode.Layer), x.Parameter));
+
+                FindHierarchyNodes(_hierarchyTagTypes, _currentNode.Parent, (hierarchy, parent, tag) =>
+                    hierarchy.ExitChild(Taggable.CreatePackage(this, parent.Layer), Taggable.CreatePackage(this, _currentNode.Layer, true), tag.Parameter));
+
+                _currentIRichTags.ForEach(x => x.Peek().Pipe(y => y.Behaviour.ExitTag(Taggable.CreatePackage(this, _currentNode.Layer, true), _currentTextIndex, y.Range, y.Parameter)));
+
+                _currentEventTags.ForEach(x => x.Behaviour.OnTrigger(Taggable.CreatePackage(this, _currentNode.Layer, true), _currentTextIndex, x.Parameter).MoveNext());
+            }
+
             return;
         }
 
