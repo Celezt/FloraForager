@@ -1,5 +1,5 @@
 {
-  "tag": [ "actors{player, monica}" ],
+  "tag": [ "actors{player, monica}", "speed{1.2}", "audible{true}" ],
   "dialogue": [
     {
       "id": "Monica",
@@ -8,18 +8,13 @@
     },
     {
       "id": "Monica",
-      "text": "Here, some freshly cracked Porocks for your efforts. Cracked them myself with these guns",
+      "text": "Here, some freshly cracked Porocks for your efforts. Cracked them myself with these guns <audible=false>*Kisses biceps*</audible>",
       "tag": [ "pitch{0.8}", "animation{monica, talking}" ]
-    },
-    {
-      "id": "Monica",
-      "text": "*Kisses biceps*",
-      "tag": [ "pitch{0.8}", "animation{null, talking}", "audible{false}" ]
     },
     {
       "id": "Fiona",
       "text": "Oh ok... Thanks!",
-      "tag": [ "pitch{1}", "audible{true}", "animation{player, talking}" ]
+      "tag": [ "pitch{1.0}", "animation{player, talking}" ]
     }
   ]
 }
