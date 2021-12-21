@@ -33,7 +33,7 @@ public class SpeedRichTag : IRichTag
         if (!float.TryParse(parameter, NumberStyles.Float, CultureInfo.InvariantCulture, out float speedMultiplier))
         {
             Debug.LogError($"{DialogueUtility.DIALOGUE_EXCEPTION}: {parameter} could not be parsed to float");
-            yield break;
+            yield return null;
         }
 
         yield return new WaitForSeconds(manager.AutoTextSpeed / speedMultiplier);

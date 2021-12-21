@@ -3,30 +3,29 @@ using System.Collections.Generic;
 using UnityEngine;
 
 [CustomDialogueTag]
-public struct AudioTag : ITag
+public class AudioTag : ITag
 {
-    public void Initialize(Taggable taggable)
+    void ITaggable.Initialize(Taggable taggable)
     {
 
     }
 
-    public void OnActive(Taggable taggable)
+    void ITaggable.OnActive(Taggable taggable)
     {
 
     }
 
-    public void EnterTag(Taggable taggable, string parameter)
+    void ITag.EnterTag(Taggable taggable, string parameter)
     {
         SoundPlayer.Instance.Play(parameter);
     }
 
-
-    public void ExitTag(Taggable taggable, string parameter)
+    void ITag.ExitTag(Taggable taggable, string parameter)
     {
 
     }
 
-    public IEnumerator ProcessTag(Taggable taggable, int currentIndex, int length, string parameter)
+    IEnumerator ITag.ProcessTag(Taggable taggable, int currentIndex, int length, string parameter)
     {
         yield return null;
     }
