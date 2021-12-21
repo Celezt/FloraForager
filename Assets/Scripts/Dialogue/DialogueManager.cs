@@ -491,35 +491,28 @@ public class DialogueManager : MonoBehaviour
             _content.maxVisibleCharacters = currentIndex + 1;   // How many letters that should be visible.
 
             //
-            // Loop through all current hierarchy tags
+            // Loop through all current event tags.
             //
-            for (int i = 0; i < _currentHierarchy.Count; i++)
+            for (int i = _currentEventTags.Count - 1; i >= 0; i--)
             {
-                IEnumerator enumerator = _currentHierarchy[i].Item1.ProcessChild(
-                                            Taggable.CreatePackage(this, _currentHierarchy[i].Item2.Layer), Taggable.CreatePackage(this, _currentNode.Layer),
-                                            currentIndex, maxLength, _currentHierarchy[i].Item3.Parameter);
-                enumerator.MoveNext();
-                object returnValue = enumerator.Current;
+                EventTag eventTag = _currentEventTags[i];
 
-                if (returnValue != null)                        // Don't Return if the IEnumerator returns null.
-                    yieldValue = returnValue;
-            }
-            //
-            // Loop through all current tags.
-            //
-            for (int i = 0; i < _currentNode.Tags.Length; i++)
-            {
-                IEnumerator enumerator = _currentNode.Tags[i].Behaviour.ProcessTag(Taggable.CreatePackage(this, _currentLayer), _currentTextIndex, _currentTextMaxLength, _currentNode.Tags[i].Parameter);
-                enumerator.MoveNext();
-                object returnValue = enumerator.Current;
+                if (currentIndex >= eventTag.Index)
+                {
+                    IEnumerator enumerator = eventTag.Behaviour.OnTrigger(Taggable.CreatePackage(this, _currentLayer), currentIndex, eventTag.Parameter);
+                    enumerator.MoveNext();
+                    object returnValue = enumerator.Current;
 
-                if (returnValue != null)                        // Don't Return if the IEnumerator returns null.
-                    yieldValue = returnValue;
+                    if (returnValue != null && yieldValue == null)            // Don't Return if the IEnumerator returns null and no yield value has been set yet.
+                        yieldValue = returnValue;
+
+                    _currentEventTags.RemoveAt(i);
+                }
             }
             //
             // Loop through all current rich tags.
             //
-            for (int i = _currentIRichTags.Count - 1; i >= 0; i--) 
+            for (int i = _currentIRichTags.Count - 1; i >= 0; i--)
             {
                 RichTag richTag = _currentIRichTags[i].Peek();
 
@@ -534,8 +527,8 @@ public class DialogueManager : MonoBehaviour
                     IEnumerator enumerator = richTag.Behaviour.ProcessTag(Taggable.CreatePackage(this, _currentLayer), currentIndex, richTag.Range, richTag.Parameter);
                     enumerator.MoveNext();
                     object returnValue = enumerator.Current;
- 
-                    if (returnValue != null)                // Don't Return if the IEnumerator returns null.
+
+                    if (returnValue != null && yieldValue == null)            // Don't Return if the IEnumerator returns null and no yield value has been set yet.
                         yieldValue = returnValue;
                 }
 
@@ -556,24 +549,31 @@ public class DialogueManager : MonoBehaviour
                 }
             }
             //
-            // Loop through all current event tags.
+            // Loop through all current tags.
             //
-            for (int i = _currentEventTags.Count - 1; i >= 0; i--)
+            for (int i = 0; i < _currentNode.Tags.Length; i++)
             {
-                EventTag eventTag = _currentEventTags[i];
+                IEnumerator enumerator = _currentNode.Tags[i].Behaviour.ProcessTag(Taggable.CreatePackage(this, _currentLayer), _currentTextIndex, _currentTextMaxLength, _currentNode.Tags[i].Parameter);
+                enumerator.MoveNext();
+                object returnValue = enumerator.Current;
 
-                if (currentIndex >= eventTag.Index)
-                {
-                    IEnumerator enumerator = eventTag.Behaviour.OnTrigger(Taggable.CreatePackage(this, _currentLayer), currentIndex, eventTag.Parameter);
-                    enumerator.MoveNext();
-                    object returnValue = enumerator.Current;
-
-                    if (returnValue != null)            // Don't Return if the IEnumerator returns null.
-                        yieldValue = returnValue;
-
-                    _currentEventTags.RemoveAt(i);
-                }
+                if (returnValue != null && yieldValue == null)            // Don't Return if the IEnumerator returns null and no yield value has been set yet.
+                    yieldValue = returnValue;
             }
+            //
+            // Loop through all current hierarchy tags
+            //
+            for (int i = 0; i < _currentHierarchy.Count; i++)
+            {
+                IEnumerator enumerator = _currentHierarchy[i].Item1.ProcessChild(
+                                            Taggable.CreatePackage(this, _currentHierarchy[i].Item2.Layer), Taggable.CreatePackage(this, _currentNode.Layer),
+                                            currentIndex, maxLength, _currentHierarchy[i].Item3.Parameter);
+                enumerator.MoveNext();
+                object returnValue = enumerator.Current;
+
+                if (returnValue != null && yieldValue == null)            // Don't Return if the IEnumerator returns null and no yield value has been set yet.
+                    yieldValue = returnValue;
+            }     
 
             if (yieldValue != null)                     // Don't yield if value is null.
                 yield return yieldValue;
