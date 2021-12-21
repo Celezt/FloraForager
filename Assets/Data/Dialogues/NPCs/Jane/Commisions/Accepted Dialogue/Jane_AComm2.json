@@ -1,15 +1,15 @@
 {
-  "tag": [ "actors{player, jane}" ],
+  "tag": [ "actors{player, jane}", "audible{true}", "speed{1.2}" ],
   "dialogue": [
     {
       "id": "Jane",
       "text": "Hmm, what to do? Oh, hey there Fiona!",
-      "tag": [ "pitch{1.3}", "animation{jane, talking}", "speed{1.4}" ]
+      "tag": [ "pitch{1.3}", "animation{jane, talking}" ]
     },
     {
       "id": "Fiona",
       "text": "Hi, Jane! What are you thinking about",
-      "tag": [ "pitch{1}", "animation{player, talking}" ]
+      "tag": [ "pitch{1.0}", "animation{player, talking}" ]
     },
     {
       "id": "Jane",
@@ -19,7 +19,7 @@
     {
       "id": "Fiona",
       "text": "Sounds rough, well I'll leave you to it then.",
-      "tag": [ "pitch{1}", "animation{player, talking}" ]
+      "tag": [ "pitch{1.0}", "animation{player, talking}" ]
     },
     {
       "id": " Jane",
@@ -29,7 +29,7 @@
     {
       "id": "Fiona",
       "text": "Seeds you say? Hmm... I accept",
-      "tag": [ "pitch{1}", "animation{player, talking}" ]
+      "tag": [ "pitch{1.0}", "animation{player, talking}" ]
     }
   ]
 }

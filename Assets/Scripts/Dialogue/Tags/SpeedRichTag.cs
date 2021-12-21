@@ -36,6 +36,9 @@ public class SpeedRichTag : IRichTag
             yield return null;
         }
 
+        if (speedMultiplier == 0.0f)
+            yield return null;
+
         yield return new WaitForSeconds(manager.AutoTextSpeed / speedMultiplier);
     }
 }

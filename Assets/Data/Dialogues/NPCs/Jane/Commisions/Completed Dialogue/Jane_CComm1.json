@@ -1,20 +1,20 @@
 {
-  "tag": [ "actors{player, jane}" ],
+  "tag": [ "actors{player, jane}", "audible{true}", "speed{1.2}" ],
   "dialogue": [
     {
       "id": "Jane",
       "text": "Wow, you are sooo helpful! Really great job",
-      "tag": [ "pitch{1.3}", "animation{jane, talking}", "speed{1.4}" ]
+      "tag": [ "pitch{1.3}", "animation{jane, talking}" ]
     },
     {
       "id": "Fiona",
       "text": "No sweat",
-      "tag": [ "pitch{1}", "animation{player, talking}" ]
+      "tag": [ "pitch{1.0}", "animation{player, talking}" ]
     },
     {
       "id": "Jane",
       "text": "*Jane gives Fiona big smile*",
-      "tag": [ "pitch{1.3}", "audible{false}", "animation{null, talking}" ]
+      "tag": [ "pitch{1.3}", "animation{null, talking}", "audible{false}" ]
     }
   ]
 }
