@@ -37,6 +37,8 @@ public class DialogueManager : MonoBehaviour
     public IReadOnlyDictionary<string, IHierarchyTag> HierarchyTagTypes => _hierarchyTagTypes;
     public IReadOnlyDictionary<string, IRichTag> RichTagTypes => _richTagTypes;
     public IReadOnlyDictionary<string, IEventTag> EventTagTypes => _eventTagTypes;
+    public IReadOnlyList<Queue<RichTag>> CurrentRichTag => _currentIRichTags;
+    public IReadOnlyList<EventTag> CurrentEventTag => _currentEventTags;
     public TextMeshProUGUI Text => _content;
     public TextMeshProUGUI Namecard => _namecard;
     public DialogueUtility.Tree Tree => _tree;
@@ -510,7 +512,7 @@ public class DialogueManager : MonoBehaviour
             {
                 RichTag richTag = _currentIRichTags[i].Peek();
                 
-                if (currentIndex >= richTag.Range.start && currentIndex < richTag.Range.end)    // Execute in range.
+                if (currentIndex >= richTag.Range.start && currentIndex < richTag.Range.end - 1)    // Execute in range.
                 {
                     if (!_richTagsExecuted[i])              // Execute at the start of the process.
                     {
