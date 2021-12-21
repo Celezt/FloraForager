@@ -477,7 +477,7 @@ public class DialogueManager : MonoBehaviour
             object yieldValue = null;
             _currentTextIndex = currentIndex;
 
-            _content.maxVisibleCharacters = currentIndex;   // How many letters that should be visible.
+            _content.maxVisibleCharacters = currentIndex + 1;   // How many letters that should be visible.
 
             //
             // Loop through all current hierarchy tags
