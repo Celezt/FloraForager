@@ -43,9 +43,9 @@ public class AudibleRichTag : IRichTag
         bool audible;
         if (string.IsNullOrEmpty(parameter) || (bool.TryParse(parameter, out audible) && audible))
         {
-            if (_audible && currentIndex > 0)
+            if (_audible)
             {
-                string letter = manager.ParsedText[currentIndex - 1].ToString();
+                string letter = manager.ParsedText[currentIndex].ToString();
 
                 if (SoundPlayer.Instance.TryGetSound(letter, out SoundPlayer.Sound sound))
                     SoundPlayer.Instance.Play(letter, 0, _pitch - sound.Pitch);
