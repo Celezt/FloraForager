@@ -1,16 +1,17 @@
-using System;
 using System.Linq;
-using System.Text.RegularExpressions;
 using System.Collections;
 using System.Collections.Generic;
+using System.Text.RegularExpressions;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
 [CustomDialogueTag]
-public class AnimationTag : ITag
+public class AnimationRichTag : IRichTag
 {
     private HumanoidAnimationBehaviour _animationBehaviour;
     private string _currentActor;
+    private string _clipName;
+    private bool _isLooping;
 
     void ITaggable.Initialize(Taggable taggable)
     {
@@ -22,7 +23,7 @@ public class AnimationTag : ITag
 
     }
 
-    void ITag.EnterTag(Taggable taggable, string parameter)
+    void IRichTag.EnterTag(Taggable taggable, int currentIndex, RangeInt range, string parameter)
     {
         DialogueManager manager = taggable.Unwrap<DialogueManager>();
 
@@ -54,9 +55,17 @@ public class AnimationTag : ITag
         else if (NPCManager.Instance.TryGetObject(actorId, out NPCBehaviour npc))
             _animationBehaviour = npc.GetComponentInChildren<HumanoidAnimationBehaviour>();
 
-        // Play custom motion.
+        // Play custom motion.wdd
         if (_animationBehaviour != null)
-            _animationBehaviour.CustomMotionRaise(DialogueAnimations.Instance.Get(clip), loop: loop);
+            if (new string[] { "null", "none", "empty" }.Contains(clip))
+            {
+                _isLooping = _animationBehaviour.IsCustomMotionLooping;
+                _clipName = _animationBehaviour.CurrentCustomClip.name;
+                Debug.Log(_clipName);
+                _animationBehaviour.BlendCancelCustomMotion();
+            }
+            else
+                _animationBehaviour.CustomMotionRaise(DialogueAnimations.Instance.Get(clip.ToSnakeCase()), loop: loop);
         else
         {
             Debug.LogError($"{DialogueUtility.DIALOGUE_EXCEPTION}: No {nameof(HumanoidAnimationBehaviour)} found on given actor: {actorId}");
@@ -66,10 +75,17 @@ public class AnimationTag : ITag
         _currentActor = actorId;
     }
 
-    void ITag.ExitTag(Taggable taggable, string parameter)
+    void IRichTag.ExitTag(Taggable taggable, int currentIndex, RangeInt range, string parameter)
     {
         if (taggable.IsCancelled)
             return;
+
+        if (!string.IsNullOrEmpty(_clipName))   // Replay previous animation if animation was stopped.
+        {
+            _animationBehaviour.CustomMotionRaise(DialogueAnimations.Instance.Get(_clipName), loop: _isLooping);
+            _clipName = null;
+            return;
+        }
 
         DialogueManager manager = taggable.Unwrap<DialogueManager>();
         manager.StartCoroutine(WaitCancel());
@@ -77,9 +93,9 @@ public class AnimationTag : ITag
         _currentActor = null;
     }
 
-    IEnumerator ITag.ProcessTag(Taggable taggable, int currentIndex, int length, string parameter)
+    IEnumerator IRichTag.ProcessTag(Taggable taggable, int currentIndex, RangeInt range, string parameter)
     {
-        yield return null;
+        yield return null; 
     }
 
     private IEnumerator WaitCancel()
