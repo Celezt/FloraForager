@@ -9,8 +9,8 @@ using UnityEngine.InputSystem;
 [CustomDialogueTag]
 public class AnimationTag : ITag
 {
-    private HumanoidAnimationBehaviour _animationBehaviour;
-    private string _currentActor;
+    private Queue<HumanoidAnimationBehaviour> _animationBehaviourQueue;
+    private Queue<string> _currentActorQueue;
 
     void ITaggable.Initialize(Taggable taggable)
     {
@@ -19,7 +19,8 @@ public class AnimationTag : ITag
 
     void ITaggable.OnActive(Taggable taggable)
     {
-
+        _animationBehaviourQueue = new Queue<HumanoidAnimationBehaviour>();
+        _currentActorQueue = new Queue<string>();
     }
 
     void ITag.EnterTag(Taggable taggable, string parameter)
@@ -49,21 +50,22 @@ public class AnimationTag : ITag
         bool loop = args.Length > 2 ? bool.Parse(args[2]) : true;
 
         // Get humanoid animation behaviour.
+        HumanoidAnimationBehaviour animationBehaviour = null;
         if (new string[] { "fiona", "player" }.Contains(actorId))
-            _animationBehaviour = PlayerInput.GetPlayerByIndex(manager.PlayerIndex).GetComponentInChildren<HumanoidAnimationBehaviour>();
+            _animationBehaviourQueue.Enqueue(animationBehaviour = PlayerInput.GetPlayerByIndex(manager.PlayerIndex).GetComponentInChildren<HumanoidAnimationBehaviour>());
         else if (NPCManager.Instance.TryGetObject(actorId, out NPCBehaviour npc))
-            _animationBehaviour = npc.GetComponentInChildren<HumanoidAnimationBehaviour>();
+            _animationBehaviourQueue.Enqueue(animationBehaviour = npc.GetComponentInChildren<HumanoidAnimationBehaviour>());
 
         // Play custom motion.
-        if (_animationBehaviour != null)
-            _animationBehaviour.CustomMotionRaise(DialogueAnimations.Instance.Get(clip), loop: loop);
+        if (animationBehaviour != null)
+            animationBehaviour.CustomMotionRaise(DialogueAnimations.Instance.Get(clip), loop: loop);
         else
         {
             Debug.LogError($"{DialogueUtility.DIALOGUE_EXCEPTION}: No {nameof(HumanoidAnimationBehaviour)} found on given actor: {actorId}");
             return;
         }
 
-        _currentActor = actorId;
+        _currentActorQueue.Enqueue(actorId);
     }
 
     void ITag.ExitTag(Taggable taggable, string parameter)
@@ -74,14 +76,11 @@ public class AnimationTag : ITag
 
         if (!manager.IsDialogueActive)  // Cancel animation if dialogue is no longer running.
         {
-            _animationBehaviour?.BlendCancelCustomMotion();
+            _animationBehaviourQueue.Dequeue()?.BlendCancelCustomMotion();
             return;
         }
 
-
         manager.StartCoroutine(WaitCancel());
-        _animationBehaviour = null;
-        _currentActor = null;
     }
 
     IEnumerator ITag.ProcessTag(Taggable taggable, int currentIndex, int length, string parameter)
@@ -91,15 +90,15 @@ public class AnimationTag : ITag
 
     private IEnumerator WaitCancel()
     {
-        if (_currentActor == null)
+        if (_currentActorQueue.Count <= 0)
             yield break;
 
-        HumanoidAnimationBehaviour animationBehaviour = _animationBehaviour;
-        string currentActor = _currentActor;
+        HumanoidAnimationBehaviour animationBehaviour = _animationBehaviourQueue.Dequeue();
+        string currentActor = _currentActorQueue.Dequeue();
 
         yield return new WaitForFixedUpdate();
 
-        if (_currentActor == null || _currentActor != currentActor)
+        if (_currentActorQueue.Count <= 0 || !_currentActorQueue.Contains(currentActor))
             animationBehaviour?.BlendCancelCustomMotion();
     }
 }
