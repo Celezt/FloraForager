@@ -37,7 +37,7 @@ public class DialogueManager : MonoBehaviour
     public IReadOnlyDictionary<string, IHierarchyTag> HierarchyTagTypes => _hierarchyTagTypes;
     public IReadOnlyDictionary<string, IRichTag> RichTagTypes => _richTagTypes;
     public IReadOnlyDictionary<string, IEventTag> EventTagTypes => _eventTagTypes;
-    public IReadOnlyList<Queue<RichTag>> CurrentRichTag => _currentIRichTags;
+    public IReadOnlyList<RichTag> CurrentRichTag => _currentIRichTags;
     public IReadOnlyList<EventTag> CurrentEventTag => _currentEventTags;
     public TextMeshProUGUI Text => _content;
     public TextMeshProUGUI Namecard => _namecard;
@@ -86,7 +86,7 @@ public class DialogueManager : MonoBehaviour
     private Stack<ParagraphAsset> _paragraphStack;
     private List<GameObject> _actions;
     private List<EventTag> _currentEventTags;
-    private List<Queue<RichTag>> _currentIRichTags;
+    private List<RichTag> _currentIRichTags;
     private Dictionary<string, string> _aliases = new Dictionary<string, string>();
     private Dictionary<string, (ITag, string)> _defaultTagTypes = new Dictionary<string, (ITag, string)>();
     private Dictionary<string, ITag> _tagTypes = new Dictionary<string, ITag>();
@@ -333,7 +333,7 @@ public class DialogueManager : MonoBehaviour
                 FindHierarchyNodes(_hierarchyTagTypes, _currentNode.Parent, (hierarchy, parent, tag) =>
                     hierarchy.ExitChild(Taggable.CreatePackage(this, parent.Layer), Taggable.CreatePackage(this, _currentNode.Layer), tag.Parameter));
 
-                _currentIRichTags.ForEach(x => x.Peek().Pipe(y => y.Behaviour.ExitTag(Taggable.CreatePackage(this, _currentNode.Layer), _currentTextIndex, y.Range, y.Parameter)));
+                _currentIRichTags.ForEach(x => x.Pipe(y => y.Behaviour.ExitTag(Taggable.CreatePackage(this, _currentNode.Layer), _currentTextIndex, y.Range, y.Parameter)));
 
                 _currentEventTags.ForEach(x => x.Behaviour.OnTrigger(Taggable.CreatePackage(this, _currentNode.Layer), _currentTextIndex, x.Parameter).MoveNext());
 
@@ -378,10 +378,11 @@ public class DialogueManager : MonoBehaviour
 
         {
             // Find all current tags.
-            _currentIRichTags = new List<Queue<RichTag>>();
+            _currentIRichTags = new List<RichTag>();
             for (int i = 0; i < _richTagTypes.Count; i++) // Find current rich tags.
                 if (TryDeserializeRichTag(text, _richTagTypes.ElementAt(i).Key, _richTagTypes, out Queue<RichTag> queue))
-                    _currentIRichTags.Add(queue);
+                    _currentIRichTags.AddRange(queue);
+            _currentIRichTags.Reverse();    // Invert the order of all rich tags.
 
             _currentEventTags = new List<EventTag>();
             for (int i = 0; i < _eventTagTypes.Count; i++)  // Find current event tags.
@@ -517,6 +518,7 @@ public class DialogueManager : MonoBehaviour
             //
             // Loop through all current event tags.
             //
+            object currentValue = null;
             for (int i = _currentEventTags.Count - 1; i >= 0; i--)
             {
                 EventTag eventTag = _currentEventTags[i];
@@ -528,17 +530,22 @@ public class DialogueManager : MonoBehaviour
                     object returnValue = enumerator.Current;
 
                     if (returnValue != null && yieldValue == null)            // Don't Return if the IEnumerator returns null and no yield value has been set yet.
-                        yieldValue = returnValue;
+                        currentValue = returnValue;
 
                     _currentEventTags.RemoveAt(i);
                 }
             }
+
+            if (yieldValue == null)
+                yieldValue = currentValue;
+
             //
             // Loop through all current rich tags.
             //
+            currentValue = null;
             for (int i = _currentIRichTags.Count - 1; i >= 0; i--)
             {
-                RichTag richTag = _currentIRichTags[i].Peek();
+                RichTag richTag = _currentIRichTags[i];
 
                 if (currentIndex >= richTag.Range.start && currentIndex < richTag.Range.end)    // Execute in range.
                 {
@@ -553,25 +560,21 @@ public class DialogueManager : MonoBehaviour
                     object returnValue = enumerator.Current;
 
                     if (returnValue != null && yieldValue == null)            // Don't Return if the IEnumerator returns null and no yield value has been set yet.
-                        yieldValue = returnValue;
+                        currentValue = returnValue;
                 }
 
                 if (_richTagsExecuted[i] && currentIndex >= richTag.Range.end - 1)  // If executed and no longer in range.
                 {
                     richTag.Behaviour.ExitTag(Taggable.CreatePackage(this, _currentLayer), currentIndex, richTag.Range, richTag.Parameter);
 
-                    if (_currentIRichTags[i].Count <= 1)    // Remove if no more rich tags of this type is found.
-                    {
-                        _currentIRichTags.RemoveAt(i);
-                        _richTagsExecuted.RemoveAt(i);
-                    }
-                    else                                    // Try get next rich tag from this type.
-                    {
-                        _currentIRichTags[i].Dequeue();
-                        _richTagsExecuted[i] = false;
-                    }
+                    _currentIRichTags.RemoveAt(i);
+                    _richTagsExecuted.RemoveAt(i);
                 }
             }
+
+            if (yieldValue == null)
+                yieldValue = currentValue;
+
             //
             // Loop through all current tags.
             //

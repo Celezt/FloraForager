@@ -153,7 +153,7 @@ public static class DialogueUtility
         for (int i = 0; i < openMatches.Count; i++)
         {
             int openStartIndex = openMatches[i].Groups[0].Index + openMatches[i].Groups[0].Length;
-            int closeStartIndex = closeMatches[i].Groups[0].Index;
+            int closeStartIndex = closeMatches[closeMatches.Count - 1 - i].Groups[0].Index;  // Invert close matches.
 
             bool insideTag = false;
             int closedIndex = 0;
