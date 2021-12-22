@@ -8,10 +8,12 @@ using UnityEngine.InputSystem;
 [CustomDialogueTag]
 public class AnimationRichTag : IRichTag
 {
-    private HumanoidAnimationBehaviour _animationBehaviour;
-    private string _currentActor;
-    private AnimationClip _previousClip;
-    private bool _previousIsLooping;
+    public Stack<string> CurrentActorsStack => _currentActorStack;
+
+    private Stack<HumanoidAnimationBehaviour> _animationBehaviourStack;
+    private Stack<string> _currentActorStack;
+    private Stack<AnimationClip> _previousClipStack;
+    private Stack<bool> _previousIsLoopingStack;
 
     void ITaggable.Initialize(Taggable taggable)
     {
@@ -20,7 +22,10 @@ public class AnimationRichTag : IRichTag
 
     void ITaggable.OnActive(Taggable taggable)
     {
-
+        _animationBehaviourStack = new Stack<HumanoidAnimationBehaviour>();
+        _currentActorStack = new Stack<string>();
+        _previousClipStack = new Stack<AnimationClip>();
+        _previousIsLoopingStack = new Stack<bool>();
     }
 
     void IRichTag.EnterTag(Taggable taggable, int currentIndex, RangeInt range, string parameter)
@@ -50,28 +55,31 @@ public class AnimationRichTag : IRichTag
         bool loop = args.Length > 2 ? bool.Parse(args[2]) : true;
 
         // Get humanoid animation behaviour.
+        HumanoidAnimationBehaviour animationBehaviour = null;
         if (new string[] { "fiona", "player" }.Contains(actorId))
-            _animationBehaviour = PlayerInput.GetPlayerByIndex(manager.PlayerIndex).GetComponentInChildren<HumanoidAnimationBehaviour>();
+            _animationBehaviourStack.Push(animationBehaviour = PlayerInput.GetPlayerByIndex(manager.PlayerIndex).GetComponentInChildren<HumanoidAnimationBehaviour>());
         else if (NPCManager.Instance.TryGetObject(actorId, out NPCBehaviour npc))
-            _animationBehaviour = npc.GetComponentInChildren<HumanoidAnimationBehaviour>();
+            _animationBehaviourStack.Push(animationBehaviour = npc.GetComponentInChildren<HumanoidAnimationBehaviour>());
 
         // Play custom motion.wdd
-        if (_animationBehaviour != null)
+        if (animationBehaviour != null)
+        {
             if (new string[] { "null", "none", "empty" }.Contains(clip))
             {
-                _previousIsLooping = _animationBehaviour.IsCustomMotionLooping;
-                _previousClip = _animationBehaviour.CurrentCustomClip;
-                _animationBehaviour.BlendCancelCustomMotion();
+                _previousIsLoopingStack.Push(animationBehaviour.IsCustomMotionLooping);
+                _previousClipStack.Push(animationBehaviour.CurrentCustomClip);
+                animationBehaviour.BlendCancelCustomMotion();
             }
             else
-                _animationBehaviour.CustomMotionRaise(DialogueAnimations.Instance.Get(clip.ToSnakeCase()), loop: loop);
+                animationBehaviour.CustomMotionRaise(DialogueAnimations.Instance.Get(clip.ToSnakeCase()), loop: loop);
+        }
         else
         {
             Debug.LogError($"{DialogueUtility.DIALOGUE_EXCEPTION}: No {nameof(HumanoidAnimationBehaviour)} found on given actor: {actorId}");
             return;
         }
 
-        _currentActor = actorId;
+        _currentActorStack.Push(actorId);
     }
 
     void IRichTag.ExitTag(Taggable taggable, int currentIndex, RangeInt range, string parameter)
@@ -80,22 +88,20 @@ public class AnimationRichTag : IRichTag
         if (manager.IsAutoCancelled)
             return;
 
-        if (_previousClip != null)   // Replay previous animation if animation was stopped.
+        if (_previousClipStack.Count > 0)   // Replay previous animation if animation was stopped.
         {
-            _animationBehaviour.CustomMotionRaise(_previousClip, loop: _previousIsLooping);
-            _previousClip = null;
+            _animationBehaviourStack.Pop().CustomMotionRaise(_previousClipStack.Pop(), loop: _previousIsLoopingStack.Pop());
+            _previousClipStack = null;
             return;
         }
 
         if (!manager.IsDialogueActive)  // Cancel animation if dialogue is no longer running.
         {
-            _animationBehaviour?.BlendCancelCustomMotion();
+            _animationBehaviourStack.Pop()?.BlendCancelCustomMotion();
             return;
         }
 
         manager.StartCoroutine(WaitCancel());
-        _animationBehaviour = null;
-        _currentActor = null;
     }
 
     IEnumerator IRichTag.ProcessTag(Taggable taggable, int currentIndex, RangeInt range, string parameter)
@@ -105,15 +111,15 @@ public class AnimationRichTag : IRichTag
 
     private IEnumerator WaitCancel()
     {
-        if (_currentActor == null)
+        if (_currentActorStack.Count <= 0)
             yield break;
 
-        HumanoidAnimationBehaviour animationBehaviour = _animationBehaviour;
-        string currentActor = _currentActor;
+        HumanoidAnimationBehaviour animationBehaviour = _animationBehaviourStack.Pop();
+        string currentActor = _currentActorStack.Pop();
 
         yield return new WaitForFixedUpdate();
 
-        if (_currentActor == null || _currentActor != currentActor)
+        if (_currentActorStack.Count <= 0 || _currentActorStack.Contains(currentActor))
             animationBehaviour?.BlendCancelCustomMotion();
     }
 }

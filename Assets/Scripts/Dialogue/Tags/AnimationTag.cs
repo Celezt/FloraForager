@@ -80,7 +80,7 @@ public class AnimationTag : ITag
             return;
         }
 
-        manager.StartCoroutine(WaitCancel());
+        manager.StartCoroutine(WaitCancel(manager));
     }
 
     IEnumerator ITag.ProcessTag(Taggable taggable, int currentIndex, int length, string parameter)
@@ -88,7 +88,7 @@ public class AnimationTag : ITag
         yield return null;
     }
 
-    private IEnumerator WaitCancel()
+    private IEnumerator WaitCancel(DialogueManager manager)
     {
         if (_currentActorQueue.Count <= 0)
             yield break;
@@ -97,6 +97,9 @@ public class AnimationTag : ITag
         string currentActor = _currentActorQueue.Dequeue();
 
         yield return new WaitForFixedUpdate();
+
+        if ((manager.RichTagTypes["animation"] as AnimationRichTag).CurrentActorsStack.Contains(currentActor))
+            yield break;
 
         if (_currentActorQueue.Count <= 0 || !_currentActorQueue.Contains(currentActor))
             animationBehaviour?.BlendCancelCustomMotion();
