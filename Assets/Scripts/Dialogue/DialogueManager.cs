@@ -62,6 +62,14 @@ public class DialogueManager : MonoBehaviour
         get => _isSkippable;
         set => _isSkippable = value;
     }
+    /// <summary>
+    /// If auto text was cancelled. 
+    /// </summary>
+    public bool IsAutoCancelled => _isAutoCancelled;
+    /// <summary>
+    /// If dialogue is running.
+    /// </summary>
+    public bool IsDialogueActive => _isDialogueActive;
 
     [SerializeField, Min(0)] private int _playerIndex;
     [SerializeField] private TextMeshProUGUI _content;
@@ -100,6 +108,7 @@ public class DialogueManager : MonoBehaviour
     private bool _isAutoTextCompleted;
     private bool _isDialogueActive;
     private bool _isSkippable;
+    private bool _isAutoCancelled;
 
     /// <summary>
     /// Return Dialogue Manager based on the player index connected to it.
@@ -316,15 +325,19 @@ public class DialogueManager : MonoBehaviour
             _content.maxVisibleCharacters = int.MaxValue;
 
             {
+                _isAutoCancelled = true;
+
                 // Cancel tags.
-                _currentNode.Tags.ForEach(x => x.Behaviour.ExitTag(Taggable.CreatePackage(this, _currentNode.Layer, true), x.Parameter));
+                _currentNode.Tags.ForEach(x => x.Behaviour.ExitTag(Taggable.CreatePackage(this, _currentNode.Layer), x.Parameter));
 
                 FindHierarchyNodes(_hierarchyTagTypes, _currentNode.Parent, (hierarchy, parent, tag) =>
-                    hierarchy.ExitChild(Taggable.CreatePackage(this, parent.Layer), Taggable.CreatePackage(this, _currentNode.Layer, true), tag.Parameter));
+                    hierarchy.ExitChild(Taggable.CreatePackage(this, parent.Layer), Taggable.CreatePackage(this, _currentNode.Layer), tag.Parameter));
 
-                _currentIRichTags.ForEach(x => x.Peek().Pipe(y => y.Behaviour.ExitTag(Taggable.CreatePackage(this, _currentNode.Layer, true), _currentTextIndex, y.Range, y.Parameter)));
+                _currentIRichTags.ForEach(x => x.Peek().Pipe(y => y.Behaviour.ExitTag(Taggable.CreatePackage(this, _currentNode.Layer), _currentTextIndex, y.Range, y.Parameter)));
 
-                _currentEventTags.ForEach(x => x.Behaviour.OnTrigger(Taggable.CreatePackage(this, _currentNode.Layer, true), _currentTextIndex, x.Parameter).MoveNext());
+                _currentEventTags.ForEach(x => x.Behaviour.OnTrigger(Taggable.CreatePackage(this, _currentNode.Layer), _currentTextIndex, x.Parameter).MoveNext());
+
+                _isAutoCancelled = false;
             }
 
             return;

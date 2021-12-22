@@ -76,7 +76,8 @@ public class AnimationRichTag : IRichTag
 
     void IRichTag.ExitTag(Taggable taggable, int currentIndex, RangeInt range, string parameter)
     {
-        if (taggable.IsCancelled)
+        DialogueManager manager = taggable.Unwrap<DialogueManager>();
+        if (manager.IsAutoCancelled)
             return;
 
         if (_previousClip != null)   // Replay previous animation if animation was stopped.
@@ -86,7 +87,6 @@ public class AnimationRichTag : IRichTag
             return;
         }
 
-        DialogueManager manager = taggable.Unwrap<DialogueManager>();
         manager.StartCoroutine(WaitCancel());
         _animationBehaviour = null;
         _currentActor = null;

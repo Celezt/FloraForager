@@ -67,11 +67,11 @@ public class AnimationTag : ITag
     }
 
     void ITag.ExitTag(Taggable taggable, string parameter)
-    {
-        if (taggable.IsCancelled)
+    {       
+        DialogueManager manager = taggable.Unwrap<DialogueManager>();
+        if (manager.IsAutoCancelled)
             return;
 
-        DialogueManager manager = taggable.Unwrap<DialogueManager>();
         manager.StartCoroutine(WaitCancel());
         _animationBehaviour = null;
         _currentActor = null;

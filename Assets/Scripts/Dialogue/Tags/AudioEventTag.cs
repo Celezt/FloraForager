@@ -17,7 +17,8 @@ public class AudioEventTag : IEventTag
 
     IEnumerator IEventTag.OnTrigger(Taggable taggable, int index, string parameter)
     {
-        if (!taggable.IsCancelled)
+        DialogueManager manager = taggable.Unwrap<DialogueManager>();
+        if (!manager.IsAutoCancelled)
             SoundPlayer.Instance.Play(parameter);
 
         yield return null;
