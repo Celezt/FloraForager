@@ -10,8 +10,8 @@ public class AnimationRichTag : IRichTag
 {
     private HumanoidAnimationBehaviour _animationBehaviour;
     private string _currentActor;
-    private string _clipName;
-    private bool _isLooping;
+    private AnimationClip _previousClip;
+    private bool _previousIsLooping;
 
     void ITaggable.Initialize(Taggable taggable)
     {
@@ -59,9 +59,8 @@ public class AnimationRichTag : IRichTag
         if (_animationBehaviour != null)
             if (new string[] { "null", "none", "empty" }.Contains(clip))
             {
-                _isLooping = _animationBehaviour.IsCustomMotionLooping;
-                _clipName = _animationBehaviour.CurrentCustomClip.name;
-                Debug.Log(_clipName);
+                _previousIsLooping = _animationBehaviour.IsCustomMotionLooping;
+                _previousClip = _animationBehaviour.CurrentCustomClip;
                 _animationBehaviour.BlendCancelCustomMotion();
             }
             else
@@ -80,10 +79,10 @@ public class AnimationRichTag : IRichTag
         if (taggable.IsCancelled)
             return;
 
-        if (!string.IsNullOrEmpty(_clipName))   // Replay previous animation if animation was stopped.
+        if (_previousClip != null)   // Replay previous animation if animation was stopped.
         {
-            _animationBehaviour.CustomMotionRaise(DialogueAnimations.Instance.Get(_clipName), loop: _isLooping);
-            _clipName = null;
+            _animationBehaviour.CustomMotionRaise(_previousClip, loop: _previousIsLooping);
+            _previousClip = null;
             return;
         }
 
