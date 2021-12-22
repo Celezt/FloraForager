@@ -72,6 +72,13 @@ public class AnimationTag : ITag
         if (manager.IsAutoCancelled)
             return;
 
+        if (!manager.IsDialogueActive)  // Cancel animation if dialogue is no longer running.
+        {
+            _animationBehaviour?.BlendCancelCustomMotion();
+            return;
+        }
+
+
         manager.StartCoroutine(WaitCancel());
         _animationBehaviour = null;
         _currentActor = null;
