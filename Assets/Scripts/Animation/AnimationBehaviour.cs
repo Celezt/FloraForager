@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class HumanoidAnimationBehaviour : MonoBehaviour
+public class AnimationBehaviour : MonoBehaviour
 {
     private static readonly int VELOCITY_HASH = Animator.StringToHash("Velocity");
     private static readonly int CUSTOM_INDEX_HASH = Animator.StringToHash("CustomIndex");
@@ -33,7 +33,7 @@ public class HumanoidAnimationBehaviour : MonoBehaviour
     /// If currently running a custom animation.
     /// </summary>
     public bool IsCustomMotionRunning => _isCustomMotionRunning;
-     
+
     [SerializeField] private Animator _animator;
     [SerializeField] private Transform _holdTransform;
     [SerializeField] private Vector3 _target;
@@ -72,6 +72,7 @@ public class HumanoidAnimationBehaviour : MonoBehaviour
     /// <param name="loop">Loop animation until manually canceled or another custom motion is activated.</param>
     public void CustomMotionRaise(AnimationClip clip, float speedMultiplier = 1, bool loop = false, System.Action<CustomMotionInfo> enterCallback = null, System.Action<CustomMotionInfo> exitCallback = null)
     {
+        Debug.Log(clip.name);
         if (clip == null)
             return;
 
@@ -91,26 +92,6 @@ public class HumanoidAnimationBehaviour : MonoBehaviour
         _enterCustomMotion = enterCallback;
         _exitCustomMotionQueue.Enqueue(exitCallback);
         _customIndex = (_customIndex + 1) % 2;
-    }
-
-    public void InternalCustomMotionEnterRaise(CustomMotionInfo info)
-    {
-        _enterCustomMotion?.Invoke(info);
-        _enterCustomMotion = null;
-    }
-
-    public void InternalCustomMotionExitRaise(CustomMotionInfo info)
-    {
-        if (_exitCustomMotionQueue.Count > 0)
-            _exitCustomMotionQueue.Dequeue()?.Invoke(info);
-
-        _isCustomMotionRunning = (_exitCustomMotionQueue.Count > 0);
-
-        if (!_isCustomMotionRunning)
-        {
-            _animator.SetLayerWeight(1, 1);
-            _currentCustomClip = null;
-        }
     }
 
     private void Start()
@@ -134,5 +115,38 @@ public class HumanoidAnimationBehaviour : MonoBehaviour
     {
         //Quaternion rotation = Quaternion.LookRotation(_target - _headTransform.position);
         //_animator.SetBoneLocalRotation(HumanBodyBones.Neck, _rotationHeadOffset * Quaternion.Inverse(_headTransform.rotation) * rotation * Quaternion.Euler(_rotationHeadOffset.eulerAngles.x * 0.75f, 0, 0));
+    }
+
+    public class Internal
+    {
+        public Queue<System.Action<CustomMotionInfo>> ExitCustomMotionQueue => _animationBehaviour._exitCustomMotionQueue;
+
+        private AnimationBehaviour _animationBehaviour;
+
+        public Internal(AnimationBehaviour animationBehaviour)
+        {
+            _animationBehaviour = animationBehaviour;
+        }
+
+        public void CustomMotionEnter(CustomMotionInfo info)
+        {
+            _animationBehaviour._enterCustomMotion?.Invoke(info);
+            _animationBehaviour._enterCustomMotion = null;
+        }
+
+        public void CustomMotionExit(CustomMotionInfo info)
+        {
+            if (_animationBehaviour._exitCustomMotionQueue.Count > 0)
+                _animationBehaviour._exitCustomMotionQueue.Dequeue()?.Invoke(info);
+
+            Debug.Log(_animationBehaviour._exitCustomMotionQueue.Count);
+            _animationBehaviour._isCustomMotionRunning = (_animationBehaviour._exitCustomMotionQueue.Count > 0);
+
+            if (!_animationBehaviour._isCustomMotionRunning)
+            {
+                _animationBehaviour._animator.SetLayerWeight(1, 1);
+                _animationBehaviour._currentCustomClip = null;
+            }
+        }
     }
 }

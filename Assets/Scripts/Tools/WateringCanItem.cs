@@ -99,7 +99,7 @@ public class WateringCanItem : IUse, IStar
             GameObject model = null;
 
             context.transform.GetComponentInChildren<PlayerMovement>().ActivaInput.Add(_stunFillDuration);
-            context.transform.GetComponentInChildren<HumanoidAnimationBehaviour>().CustomMotionRaise(_fillClip,
+            context.transform.GetComponentInChildren<AnimationBehaviour>().CustomMotionRaise(_fillClip,
                 enterCallback: info =>
                 {
                     if (_model == null)
@@ -132,7 +132,7 @@ public class WateringCanItem : IUse, IStar
                 GameObject model = null;
 
                 context.transform.GetComponentInChildren<PlayerMovement>().ActivaInput.Add(_stunWateringDuration);
-                context.transform.GetComponentInChildren<HumanoidAnimationBehaviour>().CustomMotionRaise(_wateringClip,
+                context.transform.GetComponentInChildren<AnimationBehaviour>().CustomMotionRaise(_wateringClip,
                     enterCallback: info =>
                     {
                         if (_model == null)

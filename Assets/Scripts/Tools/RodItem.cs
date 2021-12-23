@@ -140,7 +140,7 @@ public class RodItem : IUse, IStar, IValue
 
         context.behaviour.ApplyCooldown();
 
-        HumanoidAnimationBehaviour animationBehaviour = playerInput.GetComponentInChildren<HumanoidAnimationBehaviour>();
+        AnimationBehaviour animationBehaviour = playerInput.GetComponentInChildren<AnimationBehaviour>();
         PlayerMovement playerMovement = playerInput.GetComponent<PlayerMovement>();
 
         playerMovement.SetDirection((GameGrid.Instance.MouseHit - context.transform.position).normalized.xz());

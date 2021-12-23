@@ -222,7 +222,7 @@ public static class DialogueUtility
                 }
             }
 
-            queue.Enqueue(new EventTag { Name = eventTag, Parameter = matches[i].Groups[2].Value, Index = index, Behaviour = eventTagTypes[eventTag] });
+            queue.Enqueue(new EventTag { Name = eventTag, Parameter = matches[i].Groups[2].Value, Index = index - 1, Behaviour = eventTagTypes[eventTag] });
 
             text.Replace(matches[i].Groups[0].Value, "");
         }

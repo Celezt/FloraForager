@@ -91,7 +91,7 @@ public class PlayerMovement : MonoBehaviour
 
     [SerializeField] private Rigidbody _rigidbody;
     [SerializeField] private Collider _collider;
-    [SerializeField] private HumanoidAnimationBehaviour _animationBehaviour;
+    [SerializeField] private AnimationBehaviour _animationBehaviour;
     [SerializeField] private PivotMode _pivotMode;
     [SerializeField, ConditionalField(nameof(_pivotMode), false, PivotMode.Camera)] private Camera _camera;
     [SerializeField, ConditionalField(nameof(_pivotMode), false, PivotMode.Target)] private Transform _pivot;

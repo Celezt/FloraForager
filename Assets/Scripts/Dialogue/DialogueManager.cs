@@ -313,6 +313,8 @@ public class DialogueManager : MonoBehaviour
             }
         }
 
+        _isAutoCancelled = false;
+
         if (!_isAutoTextCompleted)  // Skip auto text if not yet completed.
         {
             if (!_isSkippable)      // If not allowed to skip whiles auto text is running.
@@ -336,8 +338,6 @@ public class DialogueManager : MonoBehaviour
                 _currentIRichTags.ForEach(x => x.Pipe(y => y.Behaviour.ExitTag(Taggable.CreatePackage(this, _currentNode.Layer), _currentTextIndex, y.Range, y.Parameter)));
 
                 _currentEventTags.ForEach(x => x.Behaviour.OnTrigger(Taggable.CreatePackage(this, _currentNode.Layer), _currentTextIndex, x.Parameter).MoveNext());
-
-                _isAutoCancelled = false;
             }
 
             return;

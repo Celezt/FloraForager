@@ -26,7 +26,7 @@ public class PlayerStamina : MonoBehaviour
     public event System.Action OnStaminaEmptied = delegate { };
 
     private PlayerMovement _PlayerMovement;
-    private HumanoidAnimationBehaviour _animationBehaviour;
+    private AnimationBehaviour _animationBehaviour;
 
     private float _Stamina;
     private float _Sleepy; // rate to increase stamina drain rate
@@ -47,7 +47,7 @@ public class PlayerStamina : MonoBehaviour
     private void Awake()
     {
         _PlayerMovement = GetComponent<PlayerMovement>();
-        _animationBehaviour = GetComponentInChildren<HumanoidAnimationBehaviour>();
+        _animationBehaviour = GetComponentInChildren<AnimationBehaviour>();
 
         DebugLogConsole.AddCommandInstance("player.stamina_change", "Change player's stamina", nameof(ChangeStamina), this);
         DebugLogConsole.AddCommandInstance("player.stamina_set", "Set player's stamina", nameof(SetStamina), this);

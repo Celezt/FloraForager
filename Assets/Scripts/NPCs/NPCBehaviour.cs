@@ -10,7 +10,7 @@ using UnityEngine.InputSystem;
 public class NPCBehaviour : MonoBehaviour, IInteractable, IUsable
 {
     [SerializeField]
-    private HumanoidAnimationBehaviour _HumanoidAnimationBehaviour;
+    private AnimationBehaviour _HumanoidAnimationBehaviour;
     [SerializeField]
     private AnimationClip _ScaredClip;
     [SerializeField] 

@@ -8,11 +8,11 @@ public readonly struct CustomMotionInfo : IEquatable<CustomMotionInfo>
 {
     public readonly AnimatorStateInfo stateInfo;
     public readonly Animator animator;
-    public readonly HumanoidAnimationBehaviour animationBehaviour;
+    public readonly AnimationBehaviour animationBehaviour;
 
     public bool Equals(CustomMotionInfo other) => stateInfo.Equals(other.stateInfo);
 
-    public CustomMotionInfo(AnimatorStateInfo stateInfo, HumanoidAnimationBehaviour animationBehaviour, Animator animator)
+    public CustomMotionInfo(AnimatorStateInfo stateInfo, AnimationBehaviour animationBehaviour, Animator animator)
     {
         this.stateInfo = stateInfo;
         this.animator = animator;

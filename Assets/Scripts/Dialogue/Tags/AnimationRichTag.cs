@@ -10,7 +10,7 @@ public class AnimationRichTag : IRichTag
 {
     public Stack<string> CurrentActorsStack => _currentActorStack;
 
-    private Stack<HumanoidAnimationBehaviour> _animationBehaviourStack;
+    private Stack<AnimationBehaviour> _animationBehaviourStack;
     private Stack<string> _currentActorStack;
     private Stack<AnimationClip> _previousClipStack;
     private Stack<bool> _previousIsLoopingStack;
@@ -22,7 +22,7 @@ public class AnimationRichTag : IRichTag
 
     void ITaggable.OnActive(Taggable taggable)
     {
-        _animationBehaviourStack = new Stack<HumanoidAnimationBehaviour>();
+        _animationBehaviourStack = new Stack<AnimationBehaviour>();
         _currentActorStack = new Stack<string>();
         _previousClipStack = new Stack<AnimationClip>();
         _previousIsLoopingStack = new Stack<bool>();
@@ -54,14 +54,33 @@ public class AnimationRichTag : IRichTag
         string clip = args[1];
         bool loop = args.Length > 2 ? bool.Parse(args[2]) : true;
 
-        // Get humanoid animation behaviour.
-        HumanoidAnimationBehaviour animationBehaviour = null;
-        if (new string[] { "fiona", "player" }.Contains(actorId))
-            _animationBehaviourStack.Push(animationBehaviour = PlayerInput.GetPlayerByIndex(manager.PlayerIndex).GetComponentInChildren<HumanoidAnimationBehaviour>());
-        else if (NPCManager.Instance.TryGetObject(actorId, out NPCBehaviour npc))
-            _animationBehaviourStack.Push(animationBehaviour = npc.GetComponentInChildren<HumanoidAnimationBehaviour>());
+        if (!AnimationManager.Instance.Clips.ContainsKey(clip)) // If clip does not exist.
+        {
+            string closestClip = "";
+            int closestDistance = int.MaxValue;
+            foreach (string name in AnimationManager.Instance.Clips.Keys)
+            {
+                int distance = clip.LevenshteinDistance(name);
 
-        // Play custom motion.wdd
+                if (distance < closestDistance)
+                {
+                    closestDistance = distance;
+                    closestClip = name;
+                }
+            }
+
+            Debug.LogError($"{DialogueUtility.DIALOGUE_EXCEPTION}: \"{clip}\" does not exit. Should it be \"{closestClip}\"?");
+            return;
+        }
+
+        // Get humanoid animation behaviour.
+        AnimationBehaviour animationBehaviour = null;
+        if (new string[] { "fiona", "player" }.Contains(actorId))
+            _animationBehaviourStack.Push(animationBehaviour = PlayerInput.GetPlayerByIndex(manager.PlayerIndex).GetComponentInChildren<AnimationBehaviour>());
+        else if (NPCManager.Instance.TryGetObject(actorId, out NPCBehaviour npc))
+            _animationBehaviourStack.Push(animationBehaviour = npc.GetComponentInChildren<AnimationBehaviour>());
+
+        // Play custom motion.
         if (animationBehaviour != null)
         {
             if (new string[] { "null", "none", "empty" }.Contains(clip))
@@ -71,11 +90,11 @@ public class AnimationRichTag : IRichTag
                 animationBehaviour.BlendCancelCustomMotion();
             }
             else
-                animationBehaviour.CustomMotionRaise(DialogueAnimations.Instance.Get(clip.ToSnakeCase()), loop: loop);
+                animationBehaviour.CustomMotionRaise(AnimationManager.Instance.Clips[clip.ToSnakeCase()], loop: loop);
         }
         else
         {
-            Debug.LogError($"{DialogueUtility.DIALOGUE_EXCEPTION}: No {nameof(HumanoidAnimationBehaviour)} found on given actor: {actorId}");
+            Debug.LogError($"{DialogueUtility.DIALOGUE_EXCEPTION}: No {nameof(AnimationBehaviour)} found on given actor: {actorId}");
             return;
         }
 
@@ -85,12 +104,10 @@ public class AnimationRichTag : IRichTag
     void IRichTag.ExitTag(Taggable taggable, int currentIndex, RangeInt range, string parameter)
     {
         DialogueManager manager = taggable.Unwrap<DialogueManager>();
-        if (manager.IsAutoCancelled)
-            return;
 
         if (_previousClipStack.Count > 0)   // Replay previous animation if animation was stopped.
         {
-            _animationBehaviourStack.Pop().CustomMotionRaise(_previousClipStack.Pop(), loop: _previousIsLoopingStack.Pop());
+            _animationBehaviourStack.Pop()?.CustomMotionRaise(_previousClipStack.Pop(), loop: _previousIsLoopingStack.Pop());
             _previousClipStack = null;
             return;
         }
@@ -101,7 +118,8 @@ public class AnimationRichTag : IRichTag
             return;
         }
 
-        manager.StartCoroutine(WaitCancel());
+        if (_currentActorStack.Count > 0)
+            manager.StartCoroutine(WaitCancel(manager));
     }
 
     IEnumerator IRichTag.ProcessTag(Taggable taggable, int currentIndex, RangeInt range, string parameter)
@@ -109,15 +127,15 @@ public class AnimationRichTag : IRichTag
         yield return null; 
     }
 
-    private IEnumerator WaitCancel()
+    private IEnumerator WaitCancel(DialogueManager manager)
     {
-        if (_currentActorStack.Count <= 0)
-            yield break;
-
-        HumanoidAnimationBehaviour animationBehaviour = _animationBehaviourStack.Pop();
+        AnimationBehaviour animationBehaviour = _animationBehaviourStack.Pop();
         string currentActor = _currentActorStack.Pop();
 
         yield return new WaitForFixedUpdate();
+
+        if ((manager.TagTypes["animation"] as AnimationTag).CurrentActorsQueue.Contains(currentActor))
+            yield break;
 
         if (_currentActorStack.Count <= 0 || _currentActorStack.Contains(currentActor))
             animationBehaviour?.BlendCancelCustomMotion();

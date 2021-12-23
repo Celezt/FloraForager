@@ -9,8 +9,18 @@ using UnityEngine.InputSystem;
 [CustomDialogueTag]
 public class AnimationTag : ITag
 {
-    private Queue<HumanoidAnimationBehaviour> _animationBehaviourQueue;
+    public Queue<string> CurrentActorsQueue => _currentActorQueue;
+
+    private Queue<AnimationBehaviour> _animationBehaviourQueue;
+    private Queue<ClipData> _clipDataQueue;
     private Queue<string> _currentActorQueue;
+    private Queue<bool> _isRunningQueue;
+
+    private struct ClipData
+    {
+        public string ClipName;
+        public bool IsLoop;
+    }
 
     void ITaggable.Initialize(Taggable taggable)
     {
@@ -19,8 +29,10 @@ public class AnimationTag : ITag
 
     void ITaggable.OnActive(Taggable taggable)
     {
-        _animationBehaviourQueue = new Queue<HumanoidAnimationBehaviour>();
+        _animationBehaviourQueue = new Queue<AnimationBehaviour>();
+        _clipDataQueue = new Queue<ClipData>();
         _currentActorQueue = new Queue<string>();
+        _isRunningQueue = new Queue<bool>();
     }
 
     void ITag.EnterTag(Taggable taggable, string parameter)
@@ -46,33 +58,57 @@ public class AnimationTag : ITag
         }
 
         string actorId = args[0];
-        string clip = args[1];
+        string clip = args[1].ToSnakeCase();
         bool loop = args.Length > 2 ? bool.Parse(args[2]) : true;
 
-        // Get humanoid animation behaviour.
-        HumanoidAnimationBehaviour animationBehaviour = null;
-        if (new string[] { "fiona", "player" }.Contains(actorId))
-            _animationBehaviourQueue.Enqueue(animationBehaviour = PlayerInput.GetPlayerByIndex(manager.PlayerIndex).GetComponentInChildren<HumanoidAnimationBehaviour>());
-        else if (NPCManager.Instance.TryGetObject(actorId, out NPCBehaviour npc))
-            _animationBehaviourQueue.Enqueue(animationBehaviour = npc.GetComponentInChildren<HumanoidAnimationBehaviour>());
-
-        // Play custom motion.
-        if (animationBehaviour != null)
-            animationBehaviour.CustomMotionRaise(DialogueAnimations.Instance.Get(clip), loop: loop);
-        else
+        if (!AnimationManager.Instance.Clips.ContainsKey(clip)) // If clip does not exist.
         {
-            Debug.LogError($"{DialogueUtility.DIALOGUE_EXCEPTION}: No {nameof(HumanoidAnimationBehaviour)} found on given actor: {actorId}");
+            string closestClip = "";
+            int closestDistance = int.MaxValue;
+            foreach (string name in AnimationManager.Instance.Clips.Keys)
+            {
+                int distance = clip.LevenshteinDistance(name);
+
+                if (distance < closestDistance)
+                {
+                    closestDistance = distance;
+                    closestClip = name;
+                }
+            }
+
+            Debug.LogError($"{DialogueUtility.DIALOGUE_EXCEPTION}: \"{clip}\" does not exit. Should it be \"{closestClip}\"?");
             return;
         }
 
+        // Get humanoid animation behaviour.
+        AnimationBehaviour animationBehaviour = null;
+        if (new string[] { "fiona", "player" }.Contains(actorId))
+            _animationBehaviourQueue.Enqueue(animationBehaviour = PlayerInput.GetPlayerByIndex(manager.PlayerIndex).GetComponentInChildren<AnimationBehaviour>());
+        else if (NPCManager.Instance.TryGetObject(actorId, out NPCBehaviour npc))
+            _animationBehaviourQueue.Enqueue(animationBehaviour = npc.GetComponentInChildren<AnimationBehaviour>());
+
+        // Play custom motion.
+        if (animationBehaviour != null)
+            animationBehaviour.CustomMotionRaise(AnimationManager.Instance.Clips[clip], loop: loop);
+        else
+        {
+            Debug.LogError($"{DialogueUtility.DIALOGUE_EXCEPTION}: No {nameof(AnimationBehaviour)} found on given actor: {actorId}");
+            return;
+        }
+
+        _clipDataQueue.Enqueue(new ClipData { ClipName = clip, IsLoop = loop });
         _currentActorQueue.Enqueue(actorId);
+        _isRunningQueue.Enqueue(true);
     }
 
     void ITag.ExitTag(Taggable taggable, string parameter)
     {       
         DialogueManager manager = taggable.Unwrap<DialogueManager>();
         if (manager.IsAutoCancelled)
+        {
+            ProcessAnimation(manager);
             return;
+        }
 
         if (!manager.IsDialogueActive)  // Cancel animation if dialogue is no longer running.
         {
@@ -80,28 +116,57 @@ public class AnimationTag : ITag
             return;
         }
 
-        manager.StartCoroutine(WaitCancel(manager));
+        if (_currentActorQueue.Count > 0)
+            manager.StartCoroutine(WaitCancel(manager));
     }
 
     IEnumerator ITag.ProcessTag(Taggable taggable, int currentIndex, int length, string parameter)
     {
+        DialogueManager manager = taggable.Unwrap<DialogueManager>();
+        ProcessAnimation(manager);
+
         yield return null;
     }
 
     private IEnumerator WaitCancel(DialogueManager manager)
     {
-        if (_currentActorQueue.Count <= 0)
-            yield break;
-
-        HumanoidAnimationBehaviour animationBehaviour = _animationBehaviourQueue.Dequeue();
+        AnimationBehaviour animationBehaviour = _animationBehaviourQueue.Dequeue();
         string currentActor = _currentActorQueue.Dequeue();
+        _isRunningQueue.Clear();
+        _clipDataQueue.Clear();
 
         yield return new WaitForFixedUpdate();
 
-        if ((manager.RichTagTypes["animation"] as AnimationRichTag).CurrentActorsStack.Contains(currentActor))
+        if ((manager.RichTagTypes["animation"] as AnimationRichTag).CurrentActorsStack.Contains(currentActor) ||
+            (manager.EventTagTypes["clip"] as ClipEventTag).IsPlaying)
             yield break;
 
         if (_currentActorQueue.Count <= 0 || !_currentActorQueue.Contains(currentActor))
             animationBehaviour?.BlendCancelCustomMotion();
+    }
+
+    private void ProcessAnimation(DialogueManager manager)
+    {
+        AnimationBehaviour animationBehaviour = _animationBehaviourQueue.Dequeue();
+        ClipData clipData = _clipDataQueue.Dequeue();
+        string actor = _currentActorQueue.Dequeue();
+        bool isRunning = _isRunningQueue.Dequeue();
+
+        if (!(manager.RichTagTypes["animation"] as AnimationRichTag).CurrentActorsStack.Contains(actor) &&
+            !(manager.EventTagTypes["clip"] as ClipEventTag).IsPlaying)
+        {
+            if (!isRunning)
+            {
+                isRunning = true;
+                animationBehaviour.CustomMotionRaise(AnimationManager.Instance.Clips[clipData.ClipName], loop: clipData.IsLoop);
+            }
+        }
+        else
+            isRunning = false;
+
+        _animationBehaviourQueue.Enqueue(animationBehaviour);
+        _clipDataQueue.Enqueue(clipData);
+        _currentActorQueue.Enqueue(actor);
+        _isRunningQueue.Enqueue(isRunning);
     }
 }

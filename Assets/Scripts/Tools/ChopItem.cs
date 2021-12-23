@@ -80,7 +80,7 @@ public class ChopItem : IUse, IDestructor, IStar, IValue
         GameObject model = null;
 
         context.transform.GetComponentInChildren<PlayerMovement>().ActivaInput.Add(_stunDuration);
-        context.transform.GetComponentInChildren<HumanoidAnimationBehaviour>().CustomMotionRaise(_clip,
+        context.transform.GetComponentInChildren<AnimationBehaviour>().CustomMotionRaise(_clip,
             enterCallback: info =>
             {
                 if (_model == null)
