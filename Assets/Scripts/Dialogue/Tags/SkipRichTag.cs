@@ -29,7 +29,6 @@ public class SkipRichTag : IRichTag
             Debug.LogError($"{ DialogueUtility.DIALOGUE_EXCEPTION}: {parameter} could not be parsed to bool");
             return;
         }
-
         _originalSkip = manager.IsSkippable;
         manager.IsSkippable = _isSkippable = skippable;
     }
