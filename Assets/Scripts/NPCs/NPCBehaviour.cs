@@ -126,7 +126,7 @@ public class NPCBehaviour : MonoBehaviour, IInteractable, IUsable
         if (_ScaredClip == null)
             return;
 
-        _HumanoidAnimationBehaviour.CustomMotionRaise(_ScaredClip);
+        _HumanoidAnimationBehaviour.Play(_ScaredClip);
     }
 
     public void StartDialogue(int playerIndex, string assetGUID)

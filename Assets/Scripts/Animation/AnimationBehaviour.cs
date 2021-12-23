@@ -28,19 +28,21 @@ public class AnimationBehaviour : MonoBehaviour
     /// <summary>
     /// If currently in a loop.
     /// </summary>
-    public bool IsCustomMotionLooping => _isCustomMotionLooping;
+    public bool IsLooping => _isLooping;
     /// <summary>
     /// If currently running a custom animation.
     /// </summary>
-    public bool IsCustomMotionRunning => _isCustomMotionRunning;
+    public bool IsRunning => _isRunning;
+
+    public InternalBehaviour Internal;
 
     [SerializeField] private Animator _animator;
     [SerializeField] private Transform _holdTransform;
     [SerializeField] private Vector3 _target;
 
     private AnimatorOverrideController _animatorOverrideController;
-    private Queue<System.Action<CustomMotionInfo>> _exitCustomMotionQueue = new Queue<System.Action<CustomMotionInfo>>();
-    private System.Action<CustomMotionInfo> _enterCustomMotion;
+    private System.Action<CustomMotionInfo> _enterCallback;
+    private System.Action<CustomMotionInfo> _exitCallback;
     private Transform _headTransform;
     private AnimationClip _currentCustomClip;
 
@@ -48,35 +50,34 @@ public class AnimationBehaviour : MonoBehaviour
     private float _walkSpeed;
     private float _oldVelocity;
     private int _customIndex;
-    private bool _isCustomMotionRunning;
-    private bool _isCustomMotionLooping;
+    private bool _isRunning;
+    private bool _isLooping;
 
     /// <summary>
     /// Manually cancel custom motion loop. Will run until the current loop is done.
     /// </summary>
-    public void CancelLoop() => _animator.SetBool(IS_CUSTOM_LOOP_HASH, false);
-
+    public void StopLoop() => _animator.SetBool(IS_CUSTOM_LOOP_HASH, false);
     /// <summary>
     /// Instant cancel the current custom motion.
     /// </summary>
-    public void ForceCancelCustomMotion() => _animator.SetTrigger(IS_CUSTOM_FORCE_CANCEL_TRIGGER_HASH);
+    public void ForceCancel() => _animator.SetTrigger(IS_CUSTOM_FORCE_CANCEL_TRIGGER_HASH);
     /// <summary>
     /// Cancel and blend the current custom motion.
     /// </summary>
-    public void BlendCancelCustomMotion() => _animator.SetTrigger(IS_CUSTOM_BLEND_CANCEL_TRIGGER_HASH);
+    public void Cancel() => _animator.SetTrigger(IS_CUSTOM_BLEND_CANCEL_TRIGGER_HASH);
 
     /// <summary>
     /// Raise a new custom animation.
     /// </summary>
-    /// <param name="motion">Custom animation.</param>
+    /// <param name="clip">Custom animation.</param>
+    /// <param name="speedMultiplier">How fast to play the animation.</param>
     /// <param name="loop">Loop animation until manually canceled or another custom motion is activated.</param>
-    public void CustomMotionRaise(AnimationClip clip, float speedMultiplier = 1, bool loop = false, System.Action<CustomMotionInfo> enterCallback = null, System.Action<CustomMotionInfo> exitCallback = null)
+    public void Play(AnimationClip clip, float speedMultiplier = 1, bool loop = false, System.Action<CustomMotionInfo> enterCallback = null, System.Action<CustomMotionInfo> exitCallback = null)
     {
-        Debug.Log(clip.name);
         if (clip == null)
             return;
 
-        _isCustomMotionRunning = true;
+        _isRunning = true;
 
         if (_customIndex > 0)
             _animatorOverrideController["EmptyCustomMotion1"] = clip;
@@ -85,13 +86,18 @@ public class AnimationBehaviour : MonoBehaviour
 
         _currentCustomClip = clip;
         _animator.SetLayerWeight(1, 0);
-        _animator.SetBool(IS_CUSTOM_LOOP_HASH, _isCustomMotionLooping = loop);
+        _animator.SetBool(IS_CUSTOM_LOOP_HASH, _isLooping = loop);
         _animator.SetInteger(CUSTOM_INDEX_HASH, _customIndex);
         _animator.SetFloat(CUSTOM_MOTION_SPEED_HASH, speedMultiplier);
         _animator.SetTrigger(CUSTOM_TRIGGER_HASH);
-        _enterCustomMotion = enterCallback;
-        _exitCustomMotionQueue.Enqueue(exitCallback);
+        _enterCallback = enterCallback;
+        _exitCallback = exitCallback;
         _customIndex = (_customIndex + 1) % 2;
+    }
+
+    private void Awake()
+    {
+        Internal = new InternalBehaviour(this);
     }
 
     private void Start()
@@ -117,32 +123,31 @@ public class AnimationBehaviour : MonoBehaviour
         //_animator.SetBoneLocalRotation(HumanBodyBones.Neck, _rotationHeadOffset * Quaternion.Inverse(_headTransform.rotation) * rotation * Quaternion.Euler(_rotationHeadOffset.eulerAngles.x * 0.75f, 0, 0));
     }
 
-    public class Internal
+    public class InternalBehaviour
     {
-        public Queue<System.Action<CustomMotionInfo>> ExitCustomMotionQueue => _animationBehaviour._exitCustomMotionQueue;
-
+        private Queue<System.Action<CustomMotionInfo>> _exitCustomMotionQueue = new Queue<System.Action<CustomMotionInfo>>();
         private AnimationBehaviour _animationBehaviour;
 
-        public Internal(AnimationBehaviour animationBehaviour)
+        public InternalBehaviour(AnimationBehaviour animationBehaviour)
         {
             _animationBehaviour = animationBehaviour;
         }
 
-        public void CustomMotionEnter(CustomMotionInfo info)
+        public void EnterCallback(CustomMotionInfo info)
         {
-            _animationBehaviour._enterCustomMotion?.Invoke(info);
-            _animationBehaviour._enterCustomMotion = null;
+            _exitCustomMotionQueue.Enqueue(_animationBehaviour._exitCallback);
+            _animationBehaviour._enterCallback?.Invoke(info);
+            _animationBehaviour._enterCallback = null;
         }
 
-        public void CustomMotionExit(CustomMotionInfo info)
+        public void ExitCallback(CustomMotionInfo info)
         {
-            if (_animationBehaviour._exitCustomMotionQueue.Count > 0)
-                _animationBehaviour._exitCustomMotionQueue.Dequeue()?.Invoke(info);
+            if (_exitCustomMotionQueue.Count > 0)
+                _exitCustomMotionQueue.Dequeue()?.Invoke(info);
 
-            Debug.Log(_animationBehaviour._exitCustomMotionQueue.Count);
-            _animationBehaviour._isCustomMotionRunning = (_animationBehaviour._exitCustomMotionQueue.Count > 0);
+            _animationBehaviour._isRunning = (_exitCustomMotionQueue.Count > 0);
 
-            if (!_animationBehaviour._isCustomMotionRunning)
+            if (!_animationBehaviour._isRunning)
             {
                 _animationBehaviour._animator.SetLayerWeight(1, 1);
                 _animationBehaviour._currentCustomClip = null;

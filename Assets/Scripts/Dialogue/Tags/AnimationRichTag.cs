@@ -85,12 +85,12 @@ public class AnimationRichTag : IRichTag
         {
             if (new string[] { "null", "none", "empty" }.Contains(clip))
             {
-                _previousIsLoopingStack.Push(animationBehaviour.IsCustomMotionLooping);
+                _previousIsLoopingStack.Push(animationBehaviour.IsLooping);
                 _previousClipStack.Push(animationBehaviour.CurrentCustomClip);
-                animationBehaviour.BlendCancelCustomMotion();
+                animationBehaviour.Cancel();
             }
             else
-                animationBehaviour.CustomMotionRaise(AnimationManager.Instance.Clips[clip.ToSnakeCase()], loop: loop);
+                animationBehaviour.Play(AnimationManager.Instance.Clips[clip.ToSnakeCase()], loop: loop);
         }
         else
         {
@@ -107,14 +107,14 @@ public class AnimationRichTag : IRichTag
 
         if (_previousClipStack.Count > 0)   // Replay previous animation if animation was stopped.
         {
-            _animationBehaviourStack.Pop()?.CustomMotionRaise(_previousClipStack.Pop(), loop: _previousIsLoopingStack.Pop());
+            _animationBehaviourStack.Pop()?.Play(_previousClipStack.Pop(), loop: _previousIsLoopingStack.Pop());
             _previousClipStack = null;
             return;
         }
 
         if (!manager.IsDialogueActive)  // Cancel animation if dialogue is no longer running.
         {
-            _animationBehaviourStack.Pop()?.BlendCancelCustomMotion();
+            _animationBehaviourStack.Pop()?.Cancel();
             return;
         }
 
@@ -138,6 +138,6 @@ public class AnimationRichTag : IRichTag
             yield break;
 
         if (_currentActorStack.Count <= 0 || _currentActorStack.Contains(currentActor))
-            animationBehaviour?.BlendCancelCustomMotion();
+            animationBehaviour?.Cancel();
     }
 }

@@ -117,11 +117,11 @@ public class PlayerStamina : MonoBehaviour
     }
     private IEnumerator PassOutAnimation()
     {
-        _animationBehaviour.CustomMotionRaise(_passOutClip);
+        _animationBehaviour.Play(_passOutClip);
         yield return new WaitForSeconds(_passOutClip.length);
-        _animationBehaviour.CustomMotionRaise(_sleepClip, loop: true);
+        _animationBehaviour.Play(_sleepClip, loop: true);
         yield return new WaitUntil(() => !SleepSchedule.Instance.IsSleeping);
-        _animationBehaviour.ForceCancelCustomMotion();
+        _animationBehaviour.ForceCancel();
     }
 
     public void Recover(bool penalty)

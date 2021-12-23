@@ -75,7 +75,7 @@ public class SeedItem : IUse, IStar, IValue
             context.behaviour.ApplyCooldown();
 
             context.transform.GetComponentInChildren<PlayerMovement>().ActivaInput.Add(_stunDuration);
-            context.transform.GetComponentInChildren<AnimationBehaviour>().CustomMotionRaise(_sowClip);
+            context.transform.GetComponentInChildren<AnimationBehaviour>().Play(_sowClip);
 
             yield return new WaitForSeconds(_onUse);
 

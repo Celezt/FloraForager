@@ -89,7 +89,7 @@ public class AnimationTag : ITag
 
         // Play custom motion.
         if (animationBehaviour != null)
-            animationBehaviour.CustomMotionRaise(AnimationManager.Instance.Clips[clip], loop: loop);
+            animationBehaviour.Play(AnimationManager.Instance.Clips[clip], loop: loop);
         else
         {
             Debug.LogError($"{DialogueUtility.DIALOGUE_EXCEPTION}: No {nameof(AnimationBehaviour)} found on given actor: {actorId}");
@@ -112,7 +112,7 @@ public class AnimationTag : ITag
 
         if (!manager.IsDialogueActive)  // Cancel animation if dialogue is no longer running.
         {
-            _animationBehaviourQueue.Dequeue()?.BlendCancelCustomMotion();
+            _animationBehaviourQueue.Dequeue()?.Cancel();
             return;
         }
 
@@ -142,7 +142,7 @@ public class AnimationTag : ITag
             yield break;
 
         if (_currentActorQueue.Count <= 0 || !_currentActorQueue.Contains(currentActor))
-            animationBehaviour?.BlendCancelCustomMotion();
+            animationBehaviour?.Cancel();
     }
 
     private void ProcessAnimation(DialogueManager manager)
@@ -158,7 +158,7 @@ public class AnimationTag : ITag
             if (!isRunning)
             {
                 isRunning = true;
-                animationBehaviour.CustomMotionRaise(AnimationManager.Instance.Clips[clipData.ClipName], loop: clipData.IsLoop);
+                animationBehaviour.Play(AnimationManager.Instance.Clips[clipData.ClipName], loop: clipData.IsLoop);
             }
         }
         else

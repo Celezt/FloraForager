@@ -82,22 +82,20 @@ public class ClipEventTag : IEventTag
 
             _isPlaying = true;
             _previousClip = animationBehaviour.CurrentCustomClip;
-            _previousIsLooping = animationBehaviour.IsCustomMotionLooping;
-            Debug.Log("yo");
-            animationBehaviour.CustomMotionRaise(AnimationManager.Instance.Clips[clip.ToSnakeCase()], exitCallback: x =>
+            _previousIsLooping = animationBehaviour.IsLooping;
+            animationBehaviour.Play(AnimationManager.Instance.Clips[clip.ToSnakeCase()], exitCallback: x =>
             {
                 _isPlaying = false;
-                Debug.Log("hej");
                 if (_previousClip == null)
                     return;
 
                 if (!manager.CurrentNode.Tags.Any(x => x.Name == "animation"))
-                    animationBehaviour.BlendCancelCustomMotion();
+                    animationBehaviour.Cancel();
 
                 if (!(manager.TagTypes["animation"] as AnimationTag).CurrentActorsQueue.Contains(actorId) ||
                     manager.CurrentTextIndex >= manager.CurrentTextMaxLength - 1 ||
                     manager.IsAutoCancelled)
-                    animationBehaviour.CustomMotionRaise(_previousClip, loop: _previousIsLooping);
+                    animationBehaviour.Play(_previousClip, loop: _previousIsLooping);
             });
         }
         else

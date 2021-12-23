@@ -160,7 +160,7 @@ public class RodItem : IUse, IStar, IValue
         IEnumerator Exit() // exit from fishing
         {
             playerMovement.ActivaInput.Add(_stunCatchDuration);
-            animationBehaviour.CustomMotionRaise(_catchClip,
+            animationBehaviour.Play(_catchClip,
                 enterCallback: info =>
                 {
                     if (_model == null)
@@ -191,7 +191,7 @@ public class RodItem : IUse, IStar, IValue
         // -- CAST ROD --
 
         playerMovement.ActivaInput.Add(_stunCastDuration);
-        animationBehaviour.CustomMotionRaise(_castClip,
+        animationBehaviour.Play(_castClip,
             enterCallback: info =>
             {
                 if (_model == null)
@@ -211,7 +211,7 @@ public class RodItem : IUse, IStar, IValue
         
         // -- IDLE LOOP --
 
-        animationBehaviour.CustomMotionRaise(_idleClip, loop: true,
+        animationBehaviour.Play(_idleClip, loop: true,
             enterCallback: info =>
             {
                 if (_model == null)
@@ -250,7 +250,7 @@ public class RodItem : IUse, IStar, IValue
 
         // -- FISHING --
 
-        animationBehaviour.CustomMotionRaise(_hookClip, loop: true,
+        animationBehaviour.Play(_hookClip, loop: true,
             enterCallback: info =>
             {
                 if (_model == null)
