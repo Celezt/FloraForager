@@ -138,29 +138,29 @@ public class CommissionLog : Singleton<CommissionLog>
 
         _Selected = commission;
 
-        string objectives = "<u><b>Objectives</b></u>\n<size=22>";
+        string objectives = "<u><b>Objectives</b></u>\n<size=26>";
         commission.Objectives.ForEach(o =>
         {
             objectives += o.Status + '\n';
         });
         objectives += "</size>";
 
-        string rewards = "<u><b>Rewards</b></u>\n<size=22>";
+        string rewards = "<u><b>Rewards</b></u>\n<size=26>";
         foreach (ItemAsset reward in commission.CommissionData.Rewards)
         {
             rewards += reward.Amount + " " + ItemTypeSettings.Instance.ItemNameChunk[reward.ID] + "\n";
         }
         rewards += "</size>";
 
-        string daysLeft = "<u><b>Time limit</b></u>\n<size=22>" + commission.DaysLeft.ToString() + " Days</size>";
+        string daysLeft = "<u><b>Time limit</b></u>\n<size=26>" + commission.DaysLeft.ToString() + " Days</size>";
 
-        string giver = "<u><b>Giver</b></u>\n<size=22>" + commission.Giver + "</size>";
+        string giver = "<u><b>Giver</b></u>\n<size=26>" + commission.Giver + "</size>";
 
-        string repeatable = "<u><b>Repeatable</b></u>\n<size=22>" + (commission.Repeatable ? "Yes" : "No") + "</size>";
+        string repeatable = "<u><b>Repeatable</b></u>\n<size=26>" + (commission.Repeatable ? "Yes" : "No") + "</size>";
 
         string completed = commission.IsCompleted ? "<color=green>(Complete)</color>" : string.Empty;
 
-        _Description.text = string.Format("<u><b>Description</b></u>\n<size=22>{0}</size>\n\n{1}\n{2}\n{3}\n\n{4}\n\n{5}\n\n{6}",
+        _Description.text = string.Format("<u><b>Description</b></u>\n<size=26>{0}</size>\n\n{1}\n{2}\n{3}\n\n{4}\n\n{5}\n\n{6}",
             commission.CommissionData.Description,
             objectives, rewards, daysLeft, giver, repeatable, completed);
     }
