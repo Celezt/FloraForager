@@ -40,12 +40,21 @@ public class InterestBehaviour : MonoBehaviour, IStreamable<InterestBehaviour.Da
         };
     }
 
+    private void Start()
+    {
+        if (_DialogueQueue.Length <= 0 && string.IsNullOrEmpty(_repeatable.AssetGUID))
+            Destroy(this);
+    }
+
     public void OnInteract(InteractContext context)
     {
         if (!context.performed)
             return;
 
         string dialogueAsset = GetDialogue();
+        
+        if (_DialogueQueue.Length <= 0 && string.IsNullOrEmpty(_repeatable.AssetGUID))
+            Destroy(this);
 
         if (string.IsNullOrWhiteSpace(dialogueAsset))
             return;
