@@ -10,7 +10,7 @@ GameObject:
   m_Component:
   - component: {fileID: 392738783921315202}
   - component: {fileID: 5679459228907625354}
-  - component: {fileID: 522065308170820867}
+  - component: {fileID: 1109117254288476111}
   m_Layer: 0
   m_Name: Frush_Decoration
   m_TagString: Untagged
@@ -57,8 +57,8 @@ LODGroup:
     renderers:
     - renderer: {fileID: 8255911200310467311}
   m_Enabled: 1
---- !u!65 &522065308170820867
-BoxCollider:
+--- !u!136 &1109117254288476111
+CapsuleCollider:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
@@ -67,9 +67,10 @@ BoxCollider:
   m_Material: {fileID: 0}
   m_IsTrigger: 0
   m_Enabled: 1
-  serializedVersion: 2
-  m_Size: {x: 3.2863173, y: 3.1552749, z: 3.697669}
-  m_Center: {x: 0, y: 1.488702, z: 0}
+  m_Radius: 1.3517396
+  m_Height: 3.8266234
+  m_Direction: 2
+  m_Center: {x: 0, y: 1.49, z: 0}
 --- !u!1 &4645617252897084359
 GameObject:
   m_ObjectHideFlags: 0
