@@ -1,10 +1,10 @@
 {
-  "tag": [ "audible{true}" ],
+  "tag": [ "audible{true}", "speed{0.6}" ],
   "dialogue": [
     {
       "id": "Fiona",
       "text": "Here you go, 4 gel",
-      "tag": [ "pitch{1}", "speed{1.4}", "animation{player, talk}" ]
+      "tag": [ "pitch{1.0}", "animation{player, talk}" ]
     },
     {
       "id": "Jane",
@@ -14,7 +14,7 @@
     {
       "id": "Fiona",
       "text": "But... what about the seeds?",
-      "tag": [ "pitch{1}", "animation{player, talk}" ]
+      "tag": [ "pitch{1.0}", "animation{player, talk}" ]
     },
     {
       "id": "Jane",
@@ -24,7 +24,7 @@
     {
       "id": "Fiona",
       "text": "...",
-      "tag": [ "pitch{1}", "animation{player, talk}" ]
+      "tag": [ "pitch{1.0}" ]
     },
     {
       "id": "Jane",
@@ -34,7 +34,7 @@
     {
       "id": "Fiona",
       "text": "Thanks",
-      "tag": [ "pitch{1}" ]
+      "tag": [ "pitch{1.0}", "animation{player, talk}" ]
     }
   ]
 }
