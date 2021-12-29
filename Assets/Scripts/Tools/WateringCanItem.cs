@@ -90,7 +90,11 @@ public class WateringCanItem : IUse, IStar
         }
 
         if (!MathUtility.PointInArc(GameGrid.Instance.MouseHit, context.transform.position, context.transform.localEulerAngles.y, _arc, _radius))
+        {
+            MessageLog.Instance.Send("Outside Usable Range", Color.red, 14f, 2f);
+            SoundPlayer.Instance.Play("use_error");
             yield break;
+        }
 
         if (cell.Type == CellType.Water) // fill watering can
         {
@@ -123,51 +127,67 @@ public class WateringCanItem : IUse, IStar
             _usesLeft = _maxUses;
             _playerStamina.Stamina += _fillStaminaChange;
         }
-        else if (cell.Type == CellType.Dirt && cell.HeldObject != null && cell.HeldObject.TryGetComponent(out FloraObject floraObject) && _usesLeft > 0)
+        else if (cell.Type == CellType.Dirt && cell.HeldObject != null && cell.HeldObject.TryGetComponent(out FloraObject floraObject))
         {
             if (!floraObject.Flora.Watered)
             {
-                context.behaviour.ApplyCooldown();
+                if (_usesLeft > 0)
+                {
+                    context.behaviour.ApplyCooldown();
 
-                GameObject model = null;
+                    GameObject model = null;
 
-                context.transform.GetComponentInChildren<PlayerMovement>().ActivaInput.Add(_stunWateringDuration);
-                context.transform.GetComponentInChildren<AnimationBehaviour>().Play(_wateringClip,
-                    enterCallback: info =>
-                    {
-                        if (_model == null)
-                            return;
+                    context.transform.GetComponentInChildren<PlayerMovement>().ActivaInput.Add(_stunWateringDuration);
+                    context.transform.GetComponentInChildren<AnimationBehaviour>().Play(_wateringClip,
+                        enterCallback: info =>
+                        {
+                            if (_model == null)
+                                return;
 
-                        model = Object.Instantiate(_model, info.animationBehaviour.HoldTransform);
-                    },
-                    exitCallback: info =>
-                    {
-                        if (_model == null)
-                            return;
+                            model = Object.Instantiate(_model, info.animationBehaviour.HoldTransform);
+                        },
+                        exitCallback: info =>
+                        {
+                            if (_model == null)
+                                return;
 
-                        Object.Destroy(model);
-                    }
-                );
+                            Object.Destroy(model);
+                        }
+                    );
 
-                yield return new WaitForSeconds(_onWateringUse);
+                    yield return new WaitForSeconds(_onWateringUse);
 
-                model.GetComponentInChildren<ParticleSystem>().Play();
+                    model.GetComponentInChildren<ParticleSystem>().Play();
 
-                if (SoundPlayer.Instance.TryGetSound(_wateringSound, out SoundPlayer.Sound sound))
-                    SoundPlayer.Instance.Play(_wateringSound, -sound.Volume / _maxUses * (_maxUses - _usesLeft));
+                    if (SoundPlayer.Instance.TryGetSound(_wateringSound, out SoundPlayer.Sound sound))
+                        SoundPlayer.Instance.Play(_wateringSound, -sound.Volume / _maxUses * (_maxUses - _usesLeft));
 
-                --_usesLeft;
-                _playerStamina.Stamina += _waterStaminaChange;
+                    --_usesLeft;
+                    _playerStamina.Stamina += _waterStaminaChange;
 
-                floraObject.Flora.Water();
+                    floraObject.Flora.Water();
 
-                yield return new WaitForSeconds(0.8f);
+                    yield return new WaitForSeconds(0.8f);
 
-                model.GetComponentInChildren<ParticleSystem>().Stop();
+                    model.GetComponentInChildren<ParticleSystem>().Stop();
+                }
+                else
+                {
+                    MessageLog.Instance.Send("Watering Can is Empty", Color.red);
+                    SoundPlayer.Instance.Play("use_error");
+                }
+            }
+            else
+            {
+                MessageLog.Instance.Send("Plant Already Watered", Color.red);
+                SoundPlayer.Instance.Play("use_error");
             }
         }
         else
+        {
+            MessageLog.Instance.Send("Can't Use There", Color.red);
             SoundPlayer.Instance.Play("use_error");
+        }
 
         yield break;
     }
