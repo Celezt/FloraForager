@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEditor;
+using Sirenix.OdinInspector;
 using MyBox;
 
 public class LoadSceneTrigger : MonoBehaviour
@@ -12,9 +13,11 @@ public class LoadSceneTrigger : MonoBehaviour
     [SerializeField, Scene]
     private string _SceneToLoad;
 
-    [Header("Next Scene Load")]
+    [Title("On Next Scene Load")]
     [SerializeField]
     private string _ObjectIDToLoadPlayer; // id of the object in the newly loaded scene to assign player position and rotation
+
+    [Title("Player Settings")]
     [SerializeField]
     private Vector3 _PlayerLoadPosition;
     [SerializeField]

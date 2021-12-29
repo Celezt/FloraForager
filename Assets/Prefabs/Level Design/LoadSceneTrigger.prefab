@@ -11,6 +11,7 @@ GameObject:
   - component: {fileID: 2562352333364703687}
   - component: {fileID: 2562352333364703686}
   - component: {fileID: 2562352333364703705}
+  - component: {fileID: 5741115606864339268}
   m_Layer: 10
   m_Name: LoadSceneTrigger
   m_TagString: Untagged
@@ -62,3 +63,28 @@ MonoBehaviour:
   _ObjectIDToLoadPlayer: 
   _PlayerLoadPosition: {x: 0, y: -1, z: 0}
   _PlayerLoadRotation: {x: 0, y: 0, z: 0, w: 1}
+--- !u!114 &5741115606864339268
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2562352333364703704}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e1cd926bb9d510543847bc79ae7379f9, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  Preset: 0
+  CustomWireColor: {r: 0, g: 0, b: 1, a: 0.2627451}
+  CustomFillColor: {r: 0.09158063, g: 0.29573452, b: 0.9245283, a: 0.09803922}
+  CustomCenterColor: {r: 0.6, g: 0.7, b: 1, a: 0.7}
+  Alpha: 1
+  WireColor: {r: 0, g: 0, b: 1, a: 0.2627451}
+  FillColor: {r: 0.09158063, g: 0.29573452, b: 0.9245283, a: 0.09803922}
+  CenterColor: {r: 0.6, g: 0.7, b: 1, a: 0.7}
+  DrawFill: 1
+  DrawWire: 1
+  DrawCenter: 0
+  CenterMarkerRadius: 1
+  IncludeChildColliders: 0
