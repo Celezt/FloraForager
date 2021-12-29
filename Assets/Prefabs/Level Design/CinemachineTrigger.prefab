@@ -11,7 +11,6 @@ GameObject:
   - component: {fileID: 7206121127640312285}
   - component: {fileID: 7206121127640312274}
   - component: {fileID: 7206121127640312275}
-  - component: {fileID: 7206121127640312272}
   - component: {fileID: 7206121127640312273}
   m_Layer: 10
   m_Name: CinemachineTrigger
@@ -84,22 +83,6 @@ BoxCollider:
   serializedVersion: 2
   m_Size: {x: 2, y: 2, z: 2}
   m_Center: {x: 0, y: 0, z: 0}
---- !u!114 &7206121127640312272
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7206121127640312278}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 1d46243b6ef293043a07f529fba2a469, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  _gizmo: d_ViewToolOrbit On@2x
-  _tint: {r: 1, g: 0.091738336, b: 0.042452812, a: 1}
-  _allowScaling: 1
-  _placement: 0
 --- !u!114 &7206121127640312273
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -113,12 +96,12 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   Preset: 0
-  CustomWireColor: {r: 1, g: 0, b: 0.01886797, a: 0.6862745}
-  CustomFillColor: {r: 0.81960785, g: 0.102431834, b: 0.027450966, a: 0.49019608}
+  CustomWireColor: {r: 1, g: 0.95709896, b: 0, a: 0.89411765}
+  CustomFillColor: {r: 0.987765, g: 1, b: 0.15566039, a: 0.12156863}
   CustomCenterColor: {r: 0.6, g: 0.7, b: 1, a: 0.7}
   Alpha: 1
-  WireColor: {r: 1, g: 0, b: 0.01886797, a: 0.6862745}
-  FillColor: {r: 0.81960785, g: 0.102431834, b: 0.027450966, a: 0.49019608}
+  WireColor: {r: 1, g: 0.95709896, b: 0, a: 0.89411765}
+  FillColor: {r: 0.987765, g: 1, b: 0.15566039, a: 0.12156863}
   CenterColor: {r: 0.6, g: 0.7, b: 1, a: 0.7}
   DrawFill: 1
   DrawWire: 1
