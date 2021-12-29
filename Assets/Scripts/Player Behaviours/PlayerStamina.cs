@@ -12,6 +12,8 @@ public class PlayerStamina : MonoBehaviour
     [SerializeField]
     private AnimationClip _sleepClip;
     [SerializeField]
+    private ParticleSystem _dustParticles;
+    [SerializeField]
     private float _MaxStamina = 100.0f;
     [SerializeField]
     private float _WalkingDrain = 0.1f;  // amount stamina drained every second
@@ -64,6 +66,8 @@ public class PlayerStamina : MonoBehaviour
             {
                 OnStaminaDrained -= RunningDrain;
                 OnStaminaDrained += WalkingDrain;
+                
+                _dustParticles.Stop();
             }
             else
             {
@@ -95,6 +99,14 @@ public class PlayerStamina : MonoBehaviour
     }
     private void RunningDrain()
     {
+        if (_PlayerMovement.RawVelocity.magnitude > float.Epsilon)
+        {
+            if (!_dustParticles.isPlaying)
+                _dustParticles.Play();
+        }
+        else if (_dustParticles.isPlaying)
+            _dustParticles.Stop();
+
         Drain(_RunningDrain * ((_PlayerMovement.RawVelocity.magnitude > float.Epsilon) ? 1.0f : 0.0f));
     }
     private void NightDrain()

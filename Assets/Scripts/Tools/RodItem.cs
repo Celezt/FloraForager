@@ -108,7 +108,11 @@ public class RodItem : IUse, IStar, IValue
         }
 
         if (!MathUtility.PointInArc(GameGrid.Instance.MouseHit, context.transform.position, context.transform.localEulerAngles.y, _arc, _radius))
+        {
+            MessageLog.Instance.Send("Outside Usable Range", Color.red, 14f, 2f);
+            SoundPlayer.Instance.Play("use_error");
             yield break;
+        }
 
         PlayerInput playerInput = PlayerInput.GetPlayerByIndex(context.playerIndex);
         Inventory inventory = playerInput.GetComponent<PlayerInfo>().Inventory;
@@ -120,6 +124,7 @@ public class RodItem : IUse, IStar, IValue
 
         if (fishBaitsIndices.Count <= 0) // if no baits found, return
         {
+            MessageLog.Instance.Send("No Bait in Inventory", Color.red);
             SoundPlayer.Instance.Play("use_error");
             yield break;
         }
@@ -129,6 +134,7 @@ public class RodItem : IUse, IStar, IValue
 
         if (fishBaitCandidates.Count <= 0) // if there is no candidate bait that can be used on allowed type
         {
+            MessageLog.Instance.Send("No Usable Bait", Color.red);
             SoundPlayer.Instance.Play("use_error");
             yield break;
         }
