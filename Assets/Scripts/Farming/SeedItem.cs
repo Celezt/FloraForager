@@ -63,29 +63,39 @@ public class SeedItem : IUse, IStar, IValue
             yield break;
 
         Cell cell;
-        if ((cell = GameGrid.Instance.HoveredCell) == null || GameGrid.Instance.HoveredCell.Occupied ||
-            !_allowedUse.Contains(GameGrid.Instance.HoveredCell.Type))
+        if ((cell = GameGrid.Instance.HoveredCell) == null || !_allowedUse.Contains(cell.Type))
         {
             SoundPlayer.Instance.Play("use_error");
             yield break;
         }
 
-        if (MathUtility.PointInArc(GameGrid.Instance.MouseHit, context.transform.position, context.transform.localEulerAngles.y, _arc, _radius))
+        if (!MathUtility.PointInArc(GameGrid.Instance.MouseHit, context.transform.position, context.transform.localEulerAngles.y, _arc, _radius))
         {
-            context.behaviour.ApplyCooldown();
-
-            context.transform.GetComponentInChildren<PlayerMovement>().ActivaInput.Add(_stunDuration);
-            context.transform.GetComponentInChildren<AnimationBehaviour>().Play(_sowClip);
-
-            yield return new WaitForSeconds(_onUse);
-
-            FloraMaster.Instance.Add(_flora, cell);
-
-            SoundPlayer.Instance.Play("place_seed");
-
-            context.Consume();
-            _playerStamina.Stamina += _staminaChange;
+            MessageLog.Instance.Send("Outside Usable Range", Color.red, 14f, 2f);
+            SoundPlayer.Instance.Play("use_error");
+            yield break;
         }
+
+        if (cell.Occupied)
+        {
+            MessageLog.Instance.Send("Tile is Occupied", Color.red);
+            SoundPlayer.Instance.Play("use_error");
+            yield break;
+        }
+
+        context.behaviour.ApplyCooldown();
+
+        context.transform.GetComponentInChildren<PlayerMovement>().ActivaInput.Add(_stunDuration);
+        context.transform.GetComponentInChildren<AnimationBehaviour>().Play(_sowClip);
+
+        yield return new WaitForSeconds(_onUse);
+
+        FloraMaster.Instance.Add(_flora, cell);
+
+        SoundPlayer.Instance.Play("place_seed");
+
+        context.Consume();
+        _playerStamina.Stamina += _staminaChange;
 
         yield break;
     }
