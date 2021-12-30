@@ -36,7 +36,8 @@ public class CustomMotionBehaviour : StateMachineBehaviour
 
     private IEnumerator Exit(CustomMotionInfo info)
     {
-        yield return new WaitForSeconds(Time.deltaTime * 5f);
+        yield return new WaitForSeconds(Time.unscaledDeltaTime * 5f);
+
         _animationBehaviour.Internal.ExitCallback(info);
     }
 }
