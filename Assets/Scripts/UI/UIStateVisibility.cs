@@ -2,32 +2,52 @@ using System.Linq;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.InputSystem;
 using Sirenix.Serialization;
 using Sirenix.OdinInspector;
 using MyBox;
 
 public class UIStateVisibility : Singleton<UIStateVisibility>
 {
-    [SerializeField, ListDrawerSettings(DraggableItems = false, ShowItemCount = false, Expanded = true)]
+    [SerializeField, ListDrawerSettings(ShowItemCount = false, Expanded = true)]
     private List<UIState> _States = new List<UIState>();
 
     private Dictionary<string, GameObject> _StatesDictionary = new Dictionary<string, GameObject>();
 
-    private void Start()
+    private PlayerAction _PlayerAction;
+
+    private void Awake()
     {
         _StatesDictionary = _States.ToDictionary(s => s.Key, s => s.GameObject);
         _States = null;
 
+        _PlayerAction = new PlayerAction();
+    }
+
+    private void Start()
+    {
         DialogueManager.GetByIndex(0).Started += (DialogueManager manager) => 
         {
             Show("dialogue");
-            Hide("player_hud", "inventory");
+            Hide("player_hud", "inventory", "world_info", "commission_log", "commission_giver");
         };
         DialogueManager.GetByIndex(0).Completed += (DialogueManager manager) =>
         {
-            Show("player_hud", "inventory");
+            Show("player_hud", "inventory", "world_info", "commission_log", "commission_giver");
             Hide("dialogue");
         };
+    }
+
+    private void OnEnable()
+    {
+        _PlayerAction.Enable();
+        _PlayerAction.Ground.HideHUD.started += OnShowHide;
+    }
+
+    private void OnDisable()
+    {
+        _PlayerAction.Disable();
+        _PlayerAction.Ground.HideHUD.started -= OnShowHide;
     }
 
     public void Show(params string[] showStates)
@@ -103,6 +123,30 @@ public class UIStateVisibility : Singleton<UIStateVisibility>
             return null;
 
         return _StatesDictionary[key];
+    }
+
+    public bool State(string key)
+    {
+        if (!_StatesDictionary.ContainsKey(key))
+            return false;
+
+        return _StatesDictionary[key].activeSelf;
+    }
+
+    public void OnShowHide(InputAction.CallbackContext context)
+    {
+        if (DebugManager.IsFocused)
+            return;
+
+        if (!Get("player_hud").TryGetComponent(out CanvasGroup playerHUD) ||
+            !Get("hotbar").TryGetComponent(out CanvasGroup hotbar))
+            return;
+
+        playerHUD.alpha = 1.0f - playerHUD.alpha;
+        hotbar.alpha = 1.0f - hotbar.alpha;
+
+        playerHUD.blocksRaycasts = !playerHUD.blocksRaycasts;
+        hotbar.blocksRaycasts = !hotbar.blocksRaycasts;
     }
 
     [System.Serializable]
