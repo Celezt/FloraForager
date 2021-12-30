@@ -2,6 +2,7 @@
 using UnityEngine.InputSystem;
 using Sirenix.Serialization;
 using Sirenix.OdinInspector;
+using UnityEngine;
 
 public class HarvestScythe : IHarvest
 {
@@ -17,7 +18,13 @@ public class HarvestScythe : IHarvest
     {
         if (flora.Completed)
         {
-            context.Drop(flora.Cell.HeldObject.transform.position, Rewards);
+            GameObject heldObject = flora.Cell.HeldObject;
+
+            Bounds bounds = new Bounds();
+            if (heldObject.TryGetComponent(out MeshFilter meshFilter))
+                bounds = meshFilter.mesh.bounds;
+
+            context.Drop(heldObject.transform.position + Vector3.up * bounds.extents.y, Rewards);
             return true;
         }
 

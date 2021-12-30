@@ -115,7 +115,10 @@ public class ChopItem : IUse, IDestructor, IStar, IValue
         if (collider != null)
         {
             if (!context.CallUsable(collider.GetComponentInParent<IUsable>()))
+            {
+                MessageLog.Instance.Send("Unsuitable Tool", Color.red, 14f, 2f);
                 SoundPlayer.Instance.Play(_poorSound);
+            }
         }
     }
 }

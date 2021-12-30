@@ -124,7 +124,7 @@ public class RodItem : IUse, IStar, IValue
 
         if (fishBaitsIndices.Count <= 0) // if no baits found, return
         {
-            MessageLog.Instance.Send("No Bait in Inventory", Color.red);
+            MessageLog.Instance.Send("No Bait In Inventory", Color.red);
             SoundPlayer.Instance.Play("use_error");
             yield break;
         }

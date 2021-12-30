@@ -78,7 +78,7 @@ public class SeedItem : IUse, IStar, IValue
 
         if (cell.Occupied)
         {
-            MessageLog.Instance.Send("Tile is Occupied", Color.red);
+            MessageLog.Instance.Send("Tile Is Occupied", Color.red);
             SoundPlayer.Instance.Play("use_error");
             yield break;
         }

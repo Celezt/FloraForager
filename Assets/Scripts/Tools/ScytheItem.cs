@@ -24,8 +24,6 @@ public class ScytheItem : IUse, IDestructor, IStar, IValue
     [SerializeField]
     private string _swingSound = "swing_tool";
     [SerializeField]
-    private string _hitSound;
-    [SerializeField]
     private string _poorSound = "hit_poor";
     [SerializeField]
     private AnimationClip _clip;
@@ -110,12 +108,16 @@ public class ScytheItem : IUse, IDestructor, IStar, IValue
         Collider[] colliders = PhysicsC.OverlapArc(context.transform.position, context.transform.forward, Vector3.up, _radius, _arc, LayerMask.NameToLayer("default"));
 
         for (int i = 0; i < colliders.Length; i++)
-            if (colliders[i].TryGetComponent(out IUsable usable))
+        {
+            IUsable usable;
+            if ((usable = colliders[i].GetComponentInParent<IUsable>()) != null)
             {
-                if (context.CallUsable(usable))
-                    SoundPlayer.Instance.Play(_hitSound);
-                else
+                if (!context.CallUsable(usable))
+                { 
+                    MessageLog.Instance.Send("Unsuitable Tool", Color.red, 14f, 2f);
                     SoundPlayer.Instance.Play(_poorSound);
+                }
             }
+        }
     }
 }
