@@ -34,6 +34,9 @@ public class PlayerInventory : MonoBehaviour
     private int _selectedIndex;
     private int _playerIndex;
 
+    private string[] _shownStates;
+    private float _currentTimeScale;
+
     public void OnHotbar(InputAction.CallbackContext context)
     {
         if (DebugManager.IsFocused)
@@ -59,25 +62,30 @@ public class PlayerInventory : MonoBehaviour
 
         if (_isInventoryOpen)
         {
-            UIStateVisibility.Instance.Hide("player_hud");
-            SoundPlayer.Instance.Play(_openSound);
+            _currentTimeScale = Time.timeScale;
+            _shownStates = UIStateVisibility.Instance.GetShownStates();
+
+            Time.timeScale = 0.0f;
+            UIStateVisibility.Instance.Hide("player_hud", "world_info", "commission_log", "commission_giver");
 
             _inventoryLayout.SetActive(true);
             _hotbarLayout.SetActive(false);
 
-            Time.timeScale = 0;
             PlayerInput.GetPlayerByIndex(_playerIndex).DeactivateInput();
+
+            SoundPlayer.Instance.Play(_openSound);
         }
         else
         {
-            UIStateVisibility.Instance.Show("player_hud");
-            SoundPlayer.Instance.Play(_closeSound);
+            Time.timeScale = _currentTimeScale;
+            UIStateVisibility.Instance.Show(_shownStates);
 
             _hotbarLayout.SetActive(true);
             _inventoryLayout.SetActive(false);
 
-            Time.timeScale = 1;
             PlayerInput.GetPlayerByIndex(_playerIndex).ActivateInput();
+
+            SoundPlayer.Instance.Play(_closeSound);
         }
     }
 

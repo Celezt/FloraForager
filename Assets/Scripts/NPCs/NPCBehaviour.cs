@@ -137,7 +137,7 @@ public class NPCBehaviour : MonoBehaviour, IInteractable, IUsable
         PlayerMovement playerMovement = playerInput.GetComponent<PlayerMovement>();
         UseBehaviour playerUse = playerInput.GetComponent<UseBehaviour>();
 
-        UIStateVisibility.Instance.Hide("player_hud", "inventory");
+        UIStateVisibility.Instance.Hide("player_hud", "inventory", "world_info", "commission_log", "commission_giver");
 
         if (_RotateBack != null)
             StopCoroutine(_RotateBack);

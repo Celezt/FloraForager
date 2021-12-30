@@ -94,6 +94,15 @@
                     "processors": "",
                     "interactions": "",
                     "initialStateCheck": true
+                },
+                {
+                    "name": "HideHUD",
+                    "type": "Button",
+                    "id": "ee0500a5-2dda-436c-adcb-7c2b08f8ce43",
+                    "expectedControlType": "Button",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
                 }
             ],
             "bindings": [
@@ -391,6 +400,17 @@
                     "processors": "NormalizeVector2,ScaleVector2(y=0.05)",
                     "groups": "KeyboardAndMouse",
                     "action": "Zoom",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "b6400ce3-29a8-4493-b76b-2b4a56028bc4",
+                    "path": "<Keyboard>/f2",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "KeyboardAndMouse",
+                    "action": "HideHUD",
                     "isComposite": false,
                     "isPartOfComposite": false
                 }
