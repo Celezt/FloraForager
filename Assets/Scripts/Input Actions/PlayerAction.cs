@@ -116,6 +116,15 @@ public partial class @PlayerAction : IInputActionCollection2, IDisposable
                     ""processors"": """",
                     ""interactions"": """",
                     ""initialStateCheck"": true
+                },
+                {
+                    ""name"": ""HideHUD"",
+                    ""type"": ""Button"",
+                    ""id"": ""ee0500a5-2dda-436c-adcb-7c2b08f8ce43"",
+                    ""expectedControlType"": ""Button"",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
                 }
             ],
             ""bindings"": [
@@ -413,6 +422,17 @@ public partial class @PlayerAction : IInputActionCollection2, IDisposable
                     ""processors"": ""NormalizeVector2,ScaleVector2(y=0.05)"",
                     ""groups"": ""KeyboardAndMouse"",
                     ""action"": ""Zoom"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""b6400ce3-29a8-4493-b76b-2b4a56028bc4"",
+                    ""path"": ""<Keyboard>/f2"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": ""KeyboardAndMouse"",
+                    ""action"": ""HideHUD"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
                 }
@@ -946,6 +966,7 @@ public partial class @PlayerAction : IInputActionCollection2, IDisposable
         m_Ground_CommissionLog = m_Ground.FindAction("CommissionLog", throwIfNotFound: true);
         m_Ground_Pause = m_Ground.FindAction("Pause", throwIfNotFound: true);
         m_Ground_Zoom = m_Ground.FindAction("Zoom", throwIfNotFound: true);
+        m_Ground_HideHUD = m_Ground.FindAction("HideHUD", throwIfNotFound: true);
         // Fishing
         m_Fishing = asset.FindActionMap("Fishing", throwIfNotFound: true);
         m_Fishing_Drag = m_Fishing.FindAction("Drag", throwIfNotFound: true);
@@ -1032,6 +1053,7 @@ public partial class @PlayerAction : IInputActionCollection2, IDisposable
     private readonly InputAction m_Ground_CommissionLog;
     private readonly InputAction m_Ground_Pause;
     private readonly InputAction m_Ground_Zoom;
+    private readonly InputAction m_Ground_HideHUD;
     public struct GroundActions
     {
         private @PlayerAction m_Wrapper;
@@ -1046,6 +1068,7 @@ public partial class @PlayerAction : IInputActionCollection2, IDisposable
         public InputAction @CommissionLog => m_Wrapper.m_Ground_CommissionLog;
         public InputAction @Pause => m_Wrapper.m_Ground_Pause;
         public InputAction @Zoom => m_Wrapper.m_Ground_Zoom;
+        public InputAction @HideHUD => m_Wrapper.m_Ground_HideHUD;
         public InputActionMap Get() { return m_Wrapper.m_Ground; }
         public void Enable() { Get().Enable(); }
         public void Disable() { Get().Disable(); }
@@ -1085,6 +1108,9 @@ public partial class @PlayerAction : IInputActionCollection2, IDisposable
                 @Zoom.started -= m_Wrapper.m_GroundActionsCallbackInterface.OnZoom;
                 @Zoom.performed -= m_Wrapper.m_GroundActionsCallbackInterface.OnZoom;
                 @Zoom.canceled -= m_Wrapper.m_GroundActionsCallbackInterface.OnZoom;
+                @HideHUD.started -= m_Wrapper.m_GroundActionsCallbackInterface.OnHideHUD;
+                @HideHUD.performed -= m_Wrapper.m_GroundActionsCallbackInterface.OnHideHUD;
+                @HideHUD.canceled -= m_Wrapper.m_GroundActionsCallbackInterface.OnHideHUD;
             }
             m_Wrapper.m_GroundActionsCallbackInterface = instance;
             if (instance != null)
@@ -1119,6 +1145,9 @@ public partial class @PlayerAction : IInputActionCollection2, IDisposable
                 @Zoom.started += instance.OnZoom;
                 @Zoom.performed += instance.OnZoom;
                 @Zoom.canceled += instance.OnZoom;
+                @HideHUD.started += instance.OnHideHUD;
+                @HideHUD.performed += instance.OnHideHUD;
+                @HideHUD.canceled += instance.OnHideHUD;
             }
         }
     }
@@ -1307,6 +1336,7 @@ public partial class @PlayerAction : IInputActionCollection2, IDisposable
         void OnCommissionLog(InputAction.CallbackContext context);
         void OnPause(InputAction.CallbackContext context);
         void OnZoom(InputAction.CallbackContext context);
+        void OnHideHUD(InputAction.CallbackContext context);
     }
     public interface IFishingActions
     {
