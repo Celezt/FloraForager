@@ -8,6 +8,8 @@ using UnityEngine;
 [CustomDialogueTag]
 public class AudioTag : ITag
 {
+    private string _soundName;
+
     void ITaggable.Initialize(Taggable taggable)
     {
 
@@ -41,25 +43,18 @@ public class AudioTag : ITag
         if (args.Length > 2)
             bool.TryParse(args[2], out loop);
 
-        SoundPlayer.Instance.Play(args.First(), 0, 0, 0, cooldown, loop);
+        _soundName = args.First();
+
+        SoundPlayer.Instance.Play(_soundName, 0, 0, 0, cooldown, loop);
     }
 
     void ITag.ExitTag(Taggable taggable, string parameter)
     {
-        string[] args = Regex.Replace(parameter, @"\s", "").Split(',');
+        if (taggable.Unwrap<DialogueManager>().IsAutoCancelled)
+            return;
 
-        if (args.Length == 0)
-        {
-            Debug.LogError($"{DialogueUtility.DIALOGUE_EXCEPTION}: Requires a sound name");
-            return;
-        }
-        else if (args.Length > 3)
-        {
-            Debug.LogError($"{DialogueUtility.DIALOGUE_EXCEPTION}: Too many arguments");
-            return;
-        }
-        
-        SoundPlayer.Instance.Stop(args.First());
+        SoundPlayer.Instance.Stop(_soundName);
+        _soundName = string.Empty;
     }
 
     IEnumerator ITag.ProcessTag(Taggable taggable, int currentIndex, int length, string parameter)
