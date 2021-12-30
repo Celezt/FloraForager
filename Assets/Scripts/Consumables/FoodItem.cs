@@ -54,8 +54,7 @@ public class FoodItem : IUse, IStar, IValue
         _playerStamina.Stamina += _staminaChange;
 
         foreach (IEffect effect in _effects)
-            if (!effect.Duration.IsActive)
-                effect.OnEffect(context);
+            effect.OnEffect(context);
 
         SoundPlayer.Instance.Play(_eatSound);
 
