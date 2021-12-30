@@ -13,9 +13,16 @@ public class MessageText : MonoBehaviour
     [HideInInspector]
     public bool IsAlive;
 
+    private RectTransform _rectTransform;
+
     private float _speed;
     private float _time;
     private float _totalTime;
+
+    private void Start()
+    {
+        _rectTransform = GetComponent<RectTransform>();
+    }
 
     public void Initialize(string message, Color color, float speed, float time)
     {
@@ -30,7 +37,9 @@ public class MessageText : MonoBehaviour
 
     private void Update()
     {
-        transform.position += Vector3.up * _speed * Time.deltaTime;
+        Vector2 position = _rectTransform.anchoredPosition;
+        position.y += _speed * Time.deltaTime;
+        _rectTransform.anchoredPosition = position;
 
         _time -= Time.deltaTime;
         _messageText.alpha = _fadeCurve.Evaluate(_time / _totalTime);

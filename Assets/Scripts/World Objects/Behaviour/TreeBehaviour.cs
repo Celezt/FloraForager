@@ -88,7 +88,10 @@ public class TreeBehaviour : MonoBehaviour, IStreamable<TreeBehaviour.Data>, IUs
             SoundPlayer.Instance.Play(_hitSound);
         }
         else
+        {
+            MessageLog.Instance.Send("Inadequate Tool", Color.red, 14f, 2f);
             SoundPlayer.Instance.Play("hit_poor");
+        }
 
         if (_data.Durability <= 0)
         {
