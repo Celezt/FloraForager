@@ -107,31 +107,36 @@ public class CommissionGiverWindow : Singleton<CommissionGiverWindow>
         _ScrollRect.content = _Description.GetComponent<RectTransform>();
         _ScrollRect.viewport = _DescriptionArea.GetComponent<RectTransform>();
 
-        string objectives = "<u><b>Objectives</b></u>\n<size=26>";
+        string description = "<u><b>Description</b></u>\n<size=26>" + commission.CommissionData.Description + "</size>\n";
+
+        string objectives = "\n<u><b>Objectives</b></u>\n<size=26>";
         commission.Objectives.ForEach(o =>
         {
             objectives += o.Objective + '\n';
         });
         objectives += "</size>";
 
-        string rewards = "<u><b>Rewards</b></u>\n<size=26>";
+        string rewards = "\n<u><b>Rewards</b></u>\n<size=26>";
         foreach (ItemAsset reward in commission.CommissionData.Rewards)
         {
             rewards += reward.Amount + " " + ItemTypeSettings.Instance.ItemNameChunk[reward.ID] + "\n";
         }
         rewards += "</size>";
 
-        string daysLeft = "<u><b>Time limit</b></u>\n<size=26>" + commission.CommissionData.TimeLimit.ToString() + " Days</size>";
+        string daysLeft = commission.HasTimeLimit ? "\n<u><b>Time limit</b></u>\n<size=26>" + commission.CommissionData.TimeLimit.ToString() + " Days</size>\n" : string.Empty;
 
-        string minRelation = "<u><b>Min Relations</b></u>\n<size=26>" + commission.CommissionData.MinRelation + "</size>";
+        string minRelation = "\n<u><b>Min Relations</b></u>\n<size=26>" + commission.CommissionData.MinRelation + "</size>\n";
 
-        string repeatable = "<u><b>Repeatable</b></u>\n<size=26>" + (commission.Repeatable ? "Yes" : "No") + "</size>";
+        string repeatable = "\n<u><b>Repeatable</b></u>\n<size=26>" + (commission.Repeatable ? "Yes" : "No") + "</size>\n";
 
-        string completed = commission.IsCompleted ? "<color=green>(Complete)</color>" : string.Empty;
+        string completed = commission.IsCompleted ? "\n<color=green>(Complete)</color>" : string.Empty;
 
-        _Description.text = string.Format("<u><b>Description</b></u>\n<size=26>{0}</size>\n\n{1}\n{2}\n{3}\n\n{4}\n\n{5}\n\n{6}",
-            commission.CommissionData.Description,
-            objectives, rewards, daysLeft, minRelation, repeatable, completed);
+        _Description.text = string.Format("{0}{1}{2}{3}{4}{5}{6}",
+            description, objectives, rewards, daysLeft, minRelation, repeatable, completed);
+
+        LayoutRebuilder.ForceRebuildLayoutImmediate(_Description.GetComponent<RectTransform>());
+
+        _ScrollRect.verticalNormalizedPosition = 1f;
     }
 
     public void Open()

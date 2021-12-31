@@ -16,7 +16,9 @@ public class CommissionInfo : SerializedScriptableObject
     [Title("Challenge")]
     [SerializeField]
     private bool _Repeatable = false;
-    [SerializeField, LabelText("Time Limit In Days")] 
+    [SerializeField]
+    private bool _HasTimeLimit = false;
+    [SerializeField, ShowIf("_HasTimeLimit"), LabelText("Time Limit In Days")] 
     private int _TimeLimit;
     [OdinSerialize, ListDrawerSettings(DraggableItems = false, ShowItemCount = false, Expanded = true), Required]
     private IObjective[] _Objectives;
@@ -43,6 +45,7 @@ public class CommissionInfo : SerializedScriptableObject
     public string Description => _Description;
 
     public bool Repeatable => _Repeatable;
+    public bool HasTimeLimit => _HasTimeLimit;
     public int TimeLimit => _TimeLimit;
     public IObjective[] Objectives => _Objectives;
 
