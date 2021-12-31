@@ -29,6 +29,7 @@ public class Commission : IStreamable<Commission.Data>
 
     public string Title => _Data.Commission.Title;
     public bool Repeatable => _Data.Commission.Repeatable;
+    public bool HasTimeLimit => _Data.Commission.HasTimeLimit;
     public IObjective[] Objectives => _Data.Commission.Objectives;
     public string Giver => _Data.Commission.Giver;
     public int DaysLeft => _Data.DaysLeft;
@@ -83,7 +84,7 @@ public class Commission : IStreamable<Commission.Data>
 
     public void DayPassed()
     {
-        if (--_Data.DaysLeft <= 0)
+        if (HasTimeLimit && --_Data.DaysLeft <= 0)
         {
             Penalty();
             CommissionLog.Instance.Remove(this);

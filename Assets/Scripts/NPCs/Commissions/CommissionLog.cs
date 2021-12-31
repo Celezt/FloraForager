@@ -16,6 +16,9 @@ public class CommissionLog : Singleton<CommissionLog>
     [SerializeField] private Transform _CommissionArea;
     [SerializeField] private TMP_Text _Description;
 
+    [SerializeField] private ScrollRect _CommissionScrollRect;
+    [SerializeField] private ScrollRect _DescriptionScrollRect;
+
     [Space(10)]
     [SerializeField]
     private string _OpenSound = "open_window";
@@ -138,31 +141,35 @@ public class CommissionLog : Singleton<CommissionLog>
 
         _Selected = commission;
 
-        string objectives = "<u><b>Objectives</b></u>\n<size=26>";
+        string description = "<u><b>Description</b></u>\n<size=26>" + commission.CommissionData.Description + "</size>\n";
+
+        string objectives = "\n<u><b>Objectives</b></u>\n<size=26>";
         commission.Objectives.ForEach(o =>
         {
             objectives += o.Status + '\n';
         });
         objectives += "</size>";
 
-        string rewards = "<u><b>Rewards</b></u>\n<size=26>";
+        string rewards = "\n<u><b>Rewards</b></u>\n<size=26>";
         foreach (ItemAsset reward in commission.CommissionData.Rewards)
         {
             rewards += reward.Amount + " " + ItemTypeSettings.Instance.ItemNameChunk[reward.ID] + "\n";
         }
         rewards += "</size>";
 
-        string daysLeft = "<u><b>Time limit</b></u>\n<size=26>" + commission.DaysLeft.ToString() + " Days</size>";
+        string daysLeft = commission.HasTimeLimit ? "\n<u><b>Time limit</b></u>\n<size=26>" + commission.DaysLeft.ToString() + " Days</size>\n" : string.Empty;
 
-        string giver = "<u><b>Giver</b></u>\n<size=26>" + commission.Giver + "</size>";
+        string repeatable = "\n<u><b>Repeatable</b></u>\n<size=26>" + (commission.Repeatable ? "Yes" : "No") + "</size>\n";
 
-        string repeatable = "<u><b>Repeatable</b></u>\n<size=26>" + (commission.Repeatable ? "Yes" : "No") + "</size>";
+        string giver = "\n<u><b>Giver</b></u>\n<size=26>" + commission.Giver + "</size>\n";
 
-        string completed = commission.IsCompleted ? "<color=green>(Complete)</color>" : string.Empty;
+        string completed = commission.IsCompleted ? "\n<color=green>(Complete)</color>" : string.Empty;
 
-        _Description.text = string.Format("<u><b>Description</b></u>\n<size=26>{0}</size>\n\n{1}\n{2}\n{3}\n\n{4}\n\n{5}\n\n{6}",
-            commission.CommissionData.Description,
-            objectives, rewards, daysLeft, giver, repeatable, completed);
+        _Description.text = string.Format("{0}{1}{2}{3}{4}{5}{6}",
+            description, objectives, rewards, daysLeft, repeatable, giver, completed);
+
+        LayoutRebuilder.ForceRebuildLayoutImmediate(_Description.GetComponent<RectTransform>());
+        _DescriptionScrollRect.verticalNormalizedPosition = 1f;
     }
 
     public void OnOpenExit(InputAction.CallbackContext context)
@@ -176,6 +183,9 @@ public class CommissionLog : Singleton<CommissionLog>
         }
         else
         {
+            LayoutRebuilder.ForceRebuildLayoutImmediate(_CommissionScrollRect.GetComponent<RectTransform>());
+            _CommissionScrollRect.verticalNormalizedPosition = 1f;
+
             SoundPlayer.Instance.Play(_OpenSound);
 
             _CanvasGroup.alpha = 1.0f;

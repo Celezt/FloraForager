@@ -7,6 +7,7 @@ public struct CommissionData
     public string Description;
 
     public bool Repeatable;
+    public bool HasTimeLimit;
     public int TimeLimit;
     public IObjective[] Objectives;
 
