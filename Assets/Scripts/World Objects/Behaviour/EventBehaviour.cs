@@ -31,10 +31,7 @@ public class EventBehaviour : MonoBehaviour, IStreamable<EventBehaviour.Data>
         _data = state as Data;
 
         if (_data.IsInvoked)
-        {
-            EventsBeforeDestroy.Invoke();
-            Destroy(this);
-        }
+            Destroy();
     }
     public void OnBeforeSaving()
     {
@@ -53,6 +50,8 @@ public class EventBehaviour : MonoBehaviour, IStreamable<EventBehaviour.Data>
         {
             if (!_data.IsInvoked && _invokeOnStart)
                 Invoke();
+            else
+                Destroy();
         }
     }
 
@@ -61,6 +60,15 @@ public class EventBehaviour : MonoBehaviour, IStreamable<EventBehaviour.Data>
         EventsOnInvoke.Invoke();
         AddDialogue();
 
+        if (_saveIfInvoked)
+            _data.IsInvoked = true;
+
+        Destroy(this);
+    }
+
+    public void Destroy()
+    {
+        EventsBeforeDestroy.Invoke();
         Destroy(this);
     }
 
@@ -77,15 +85,6 @@ public class EventBehaviour : MonoBehaviour, IStreamable<EventBehaviour.Data>
             {
                 NPCManager.Instance.EnqueueDialogue(dialogueEvent.NPC, dialouge.Dialogue, dialouge.Priority);
             }
-        }
-    }
-
-    private void OnDestroy()
-    {
-        if (gameObject.scene.isLoaded)
-        {
-            if (_saveIfInvoked)
-                _data.IsInvoked = true;
         }
     }
 
