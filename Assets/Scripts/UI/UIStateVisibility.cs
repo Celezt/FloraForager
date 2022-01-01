@@ -41,7 +41,8 @@ public class UIStateVisibility : Singleton<UIStateVisibility>
             GameTimeBehaviour.Active = true;
         };
 
-        Show("player_hud");
+        if (Get("player_hud").TryGetComponent(out CanvasGroup playerHUD))
+            playerHUD.alpha = 1.0f;
     }
 
     private void OnEnable()
