@@ -42,7 +42,7 @@ public class InterestBehaviour : MonoBehaviour, IStreamable<InterestBehaviour.Da
 
     private void Start()
     {
-        if (_DialogueQueue.Length <= 0 && string.IsNullOrEmpty(_repeatable.AssetGUID))
+        if (_data.Dialogue.Count <= 0 && string.IsNullOrEmpty(_repeatable.AssetGUID))
             Destroy(this);
     }
 
@@ -53,7 +53,7 @@ public class InterestBehaviour : MonoBehaviour, IStreamable<InterestBehaviour.Da
 
         string dialogueAsset = GetDialogue();
         
-        if (_DialogueQueue.Length <= 0 && string.IsNullOrEmpty(_repeatable.AssetGUID))
+        if (_data.Dialogue.Count <= 0 && string.IsNullOrEmpty(_repeatable.AssetGUID))
             Destroy(this);
 
         if (string.IsNullOrWhiteSpace(dialogueAsset))

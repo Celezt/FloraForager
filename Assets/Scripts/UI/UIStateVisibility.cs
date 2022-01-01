@@ -30,11 +30,15 @@ public class UIStateVisibility : Singleton<UIStateVisibility>
         {
             Show("dialogue");
             Hide("player_hud", "inventory", "world_info", "commission_log", "commission_giver");
+
+            GameTimeBehaviour.Active = false;
         };
         DialogueManager.GetByIndex(0).Completed += (DialogueManager manager) =>
         {
             Show("player_hud", "inventory", "world_info", "commission_log", "commission_giver");
             Hide("dialogue");
+
+            GameTimeBehaviour.Active = true;
         };
     }
 
