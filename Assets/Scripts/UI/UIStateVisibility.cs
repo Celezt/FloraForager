@@ -40,6 +40,8 @@ public class UIStateVisibility : Singleton<UIStateVisibility>
 
             GameTimeBehaviour.Active = true;
         };
+
+        Show("player_hud");
     }
 
     private void OnEnable()

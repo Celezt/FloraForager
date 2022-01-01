@@ -116,10 +116,11 @@ public class PlayerInventory : MonoBehaviour
 
     private void Start()
     {
-        //Show(_hotbarHandler.GetComponent<CanvasGroup>());
-        //Hide(_inventoryHandler.GetComponent<CanvasGroup>());
         _hotbarLayout.SetActive(true);
         _inventoryLayout.SetActive(false);
+
+        if (TryGetComponent(out CanvasGroup canvasGroup))
+            canvasGroup.alpha = 1;
 
         PlayerInput playerInput = PlayerInput.GetPlayerByIndex(0);
 
