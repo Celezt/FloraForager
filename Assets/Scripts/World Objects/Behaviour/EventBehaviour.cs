@@ -28,8 +28,6 @@ public class EventBehaviour : MonoBehaviour, IStreamable<EventBehaviour.Data>
     {
         _data = state as Data;
 
-        EventsBeforeDestroy.Invoke();
-
         if (_data.IsInvoked)
             Destroy(this);
         else if (_invokeOnStart)
@@ -73,6 +71,8 @@ public class EventBehaviour : MonoBehaviour, IStreamable<EventBehaviour.Data>
     {
         if (gameObject.scene.isLoaded)
         {
+            EventsBeforeDestroy.Invoke();
+
             if (_saveIfInvoked && _data != null)
                 _data.IsInvoked = true;
         }
