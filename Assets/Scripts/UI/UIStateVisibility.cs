@@ -81,6 +81,13 @@ public class UIStateVisibility : Singleton<UIStateVisibility>
             Hide(item.Key);
         }
     }
+    public void ShowAll()
+    {
+        foreach (KeyValuePair<string, GameObject> item in _StatesDictionary)
+        {
+            Show(item.Key);
+        }
+    }
 
     public void ShowAndHide(string showState, params string[] hideStates)
     {
