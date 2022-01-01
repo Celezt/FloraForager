@@ -20,6 +20,10 @@ public class StaminaTag : ITag
     void ITag.EnterTag(Taggable taggable, string parameter)
     {
 
+    }
+
+    void ITag.ExitTag(Taggable taggable, string parameter)
+    {
         if (!int.TryParse(parameter, NumberStyles.Integer, CultureInfo.InvariantCulture, out int staminaChange))
         {
             Debug.LogError($"{DialogueUtility.DIALOGUE_EXCEPTION}: {parameter} could not be parsed to float");
@@ -28,11 +32,6 @@ public class StaminaTag : ITag
 
         DialogueManager manager = taggable.Unwrap<DialogueManager>();
         PlayerInput.GetPlayerByIndex(manager.PlayerIndex).GetComponent<PlayerStamina>().Stamina += staminaChange;
-    }
-
-    void ITag.ExitTag(Taggable taggable, string parameter)
-    {
-   
     }
 
     IEnumerator ITag.ProcessTag(Taggable taggable, int currentIndex, int length, string parameter)
