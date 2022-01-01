@@ -75,6 +75,7 @@ public class MainMenu : MonoBehaviour
 
     public void OnSurvey()
     {
-        Application.OpenURL("https://forms.gle/hHU988g859QK2Gbx6");
+        //Application.OpenURL("https://forms.gle/hHU988g859QK2Gbx6");
+        Application.OpenURL("https://forms.gle/xkPvQVAhkxpJd2Mm6");
     }
 }
