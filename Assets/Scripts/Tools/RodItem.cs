@@ -73,8 +73,6 @@ public class RodItem : IUse, IStar, IValue
     [SerializeField, ListDrawerSettings(Expanded = true, AlwaysAddDefaultValue = true, ShowItemCount = false, DraggableItems = false)]
     private CellType[] _allowedUse = new CellType[] { CellType.Water };
 
-    private PlayerStamina _playerStamina;
-
     void IItem.OnInitialize(ItemTypeContext context)
     {
 
@@ -82,7 +80,7 @@ public class RodItem : IUse, IStar, IValue
 
     void IItem.OnEquip(ItemContext context)
     {
-        _playerStamina = context.transform.GetComponent<PlayerStamina>();
+
     }
 
     void IItem.OnUnequip(ItemContext context)
@@ -146,8 +144,8 @@ public class RodItem : IUse, IStar, IValue
 
         context.behaviour.ApplyCooldown();
 
-        AnimationBehaviour animationBehaviour = playerInput.GetComponentInChildren<AnimationBehaviour>();
-        PlayerMovement playerMovement = playerInput.GetComponent<PlayerMovement>();
+        AnimationBehaviour animationBehaviour = context.playerInfo.AnimationBehaviour;
+        PlayerMovement playerMovement = context.playerInfo.PlayerMovement;
 
         playerMovement.SetDirection((GameGrid.Instance.MouseHit - context.transform.position).normalized.xz());
 
@@ -211,7 +209,7 @@ public class RodItem : IUse, IStar, IValue
         yield return new WaitForSeconds(_onSwing);
 
         SoundPlayer.Instance.Play(_castSound);
-        _playerStamina.Stamina += _staminaChange;
+        context.playerInfo.PlayerStamina.Stamina += _staminaChange;
 
         yield return new WaitForSeconds(_onCastUse - _onSwing);
         

@@ -35,8 +35,6 @@ public class SeedItem : IUse, IStar, IValue
     [SerializeField, ListDrawerSettings(Expanded = true, AlwaysAddDefaultValue = true, ShowItemCount = false, DraggableItems = false)]
     private CellType[] _allowedUse = new CellType[] { CellType.Dirt };
 
-    private PlayerStamina _playerStamina;
-
     void IItem.OnInitialize(ItemTypeContext context)
     {
 
@@ -44,7 +42,7 @@ public class SeedItem : IUse, IStar, IValue
 
     public void OnEquip(ItemContext context)
     {
-        _playerStamina = context.transform.GetComponent<PlayerStamina>();
+
     }
 
     public void OnUnequip(ItemContext context)
@@ -85,8 +83,8 @@ public class SeedItem : IUse, IStar, IValue
 
         context.behaviour.ApplyCooldown();
 
-        context.transform.GetComponentInChildren<PlayerMovement>().ActivaInput.Add(_stunDuration);
-        context.transform.GetComponentInChildren<AnimationBehaviour>().Play(_sowClip);
+        context.playerInfo.PlayerMovement.ActivaInput.Add(_stunDuration);
+        context.playerInfo.AnimationBehaviour.Play(_sowClip);
 
         yield return new WaitForSeconds(_onUse);
 
@@ -95,7 +93,7 @@ public class SeedItem : IUse, IStar, IValue
         SoundPlayer.Instance.Play("place_seed");
 
         context.Consume();
-        _playerStamina.Stamina += _staminaChange;
+        context.playerInfo.PlayerStamina.Stamina += _staminaChange;
 
         yield break;
     }

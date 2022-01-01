@@ -7,6 +7,9 @@ using UnityEngine.SceneManagement;
 
 public class PlayerInfo : MonoBehaviour
 {
+    [SerializeField] private PlayerMovement _playerMovement;
+    [SerializeField] private AnimationBehaviour _animationBehaviour;
+    [Space(10)]
     [SerializeField]
     private float _FadeOutTime = 2.0f;
     [SerializeField]
@@ -18,9 +21,12 @@ public class PlayerInfo : MonoBehaviour
 
     private bool _DataExists;
 
+    public PlayerMovement PlayerMovement => _playerMovement;
+    public AnimationBehaviour AnimationBehaviour => _animationBehaviour;
+
     public PlayerData Data => _Data;
     public Inventory Inventory => _Inventory;
-    public PlayerStamina Stamina => _Stamina;
+    public PlayerStamina PlayerStamina => _Stamina;
 
     private void Awake()
     {

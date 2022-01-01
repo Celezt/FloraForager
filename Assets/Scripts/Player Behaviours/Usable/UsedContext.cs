@@ -8,8 +8,8 @@ public readonly struct UsedContext
 {
     public readonly IUse used;
     public readonly List<string> labels;
-    public readonly UseBehaviour useBehaviour;
     public readonly Transform transform;
+    public readonly UseBehaviour useBehaviour;
     public readonly string name;
     public readonly string id;
     public readonly int playerIndex;
