@@ -74,6 +74,22 @@ public class UIStateVisibility : Singleton<UIStateVisibility>
             value.SetActive(false);
         }
     }
+
+    public void Show(string showState)
+    {
+        if (!_StatesDictionary.TryGetValue(showState, out GameObject value))
+            return;
+
+        value.SetActive(true);
+    }
+    public void Hide(string hideState)
+    {
+        if (!_StatesDictionary.TryGetValue(hideState, out GameObject value))
+            return;
+
+        value.SetActive(false);
+    }
+
     public void HideAll()
     {
         foreach (KeyValuePair<string, GameObject> item in _StatesDictionary)
