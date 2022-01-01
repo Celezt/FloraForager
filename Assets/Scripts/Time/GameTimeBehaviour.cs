@@ -7,6 +7,8 @@ using IngameDebugConsole;
 
 public class GameTimeBehaviour : MonoBehaviour
 {
+    public static bool Active = true;
+
     private void Awake()
     {
         GameTime.Instance.UpdateTime();
@@ -15,7 +17,7 @@ public class GameTimeBehaviour : MonoBehaviour
 
     private void Update()
     {
-        GameTime.Instance.ElapsedTime += (decimal)Time.deltaTime;
+        GameTime.Instance.ElapsedTime += Active ? (decimal)Time.deltaTime : 0M;
         GameTime.Instance.UpdateTime();
     }
 
