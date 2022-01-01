@@ -65,7 +65,7 @@ public class PauseMenu : MonoBehaviour
             _ShownStates = UIStateVisibility.Instance.GetShownStates();
 
             Time.timeScale = 0.0f;
-            UIStateVisibility.Instance.Hide("player_hud", "inventory", "world_info", "commission_log", "commission_giver");
+            UIStateVisibility.Instance.Hide("gameplay");
         }
         else
         {
