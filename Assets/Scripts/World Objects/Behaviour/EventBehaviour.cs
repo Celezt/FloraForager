@@ -8,10 +8,10 @@ using Sirenix.OdinInspector;
 public class EventBehaviour : MonoBehaviour, IStreamable<EventBehaviour.Data>
 {
     [SerializeField] private bool _saveIfInvoked = true;
-    [SerializeField] private bool _isTrigger = false;
     [SerializeField] private bool _invokeOnStart = false;
 
     [PropertySpace(5)]
+    public UnityEvent EventsBeforeDestroy;
     public UnityEvent Events;
     [SerializeField, LabelText("Dialogue To Add")]
     [ListDrawerSettings(DraggableItems = false, ShowItemCount = false, Expanded = true)]
@@ -28,8 +28,12 @@ public class EventBehaviour : MonoBehaviour, IStreamable<EventBehaviour.Data>
     {
         _data = state as Data;
 
+        EventsBeforeDestroy.Invoke();
+
         if (_data.IsInvoked)
             Destroy(this);
+        else if (_invokeOnStart)
+            Invoke();
     }
     public void OnBeforeSaving()
     {
@@ -39,12 +43,6 @@ public class EventBehaviour : MonoBehaviour, IStreamable<EventBehaviour.Data>
     private void Awake()
     {
         _data = new Data();
-    }
-
-    private void Start()
-    {
-        if (_invokeOnStart)
-            Invoke();
     }
 
     public void Invoke()
@@ -82,7 +80,7 @@ public class EventBehaviour : MonoBehaviour, IStreamable<EventBehaviour.Data>
 
     private void OnTriggerEnter(Collider other)
     {
-        if (_isTrigger && other.CompareTag("Player"))
+        if (other.CompareTag("Player"))
             Invoke();
     }
 }

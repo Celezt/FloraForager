@@ -1256,7 +1256,7 @@ CanvasGroup:
   m_Enabled: 1
   m_Alpha: 0
   m_Interactable: 0
-  m_BlocksRaycasts: 1
+  m_BlocksRaycasts: 0
   m_IgnoreParentGroups: 0
 --- !u!1 &4367286922605624372
 GameObject:
@@ -1931,6 +1931,8 @@ MonoBehaviour:
     GameObject: {fileID: 8308406700869849710}
   - Key: commission_giver
     GameObject: {fileID: 5138243771835068168}
+  - Key: fishing
+    GameObject: {fileID: 8290001282407352317}
   - Key: dialogue
     GameObject: {fileID: 3874807983932649760}
   - Key: pause_menu
@@ -2358,6 +2360,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: f9ed0680a3a0d5f45aaae53110642090, type: 3}
+--- !u!1 &8290001282407352317 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 7205167729391354700, guid: f9ed0680a3a0d5f45aaae53110642090, type: 3}
+  m_PrefabInstance: {fileID: 1221009717385921713}
+  m_PrefabAsset: {fileID: 0}
 --- !u!224 &2875494736919536597 stripped
 RectTransform:
   m_CorrespondingSourceObject: {fileID: 3969407280374261604, guid: f9ed0680a3a0d5f45aaae53110642090, type: 3}
@@ -4832,14 +4839,14 @@ PrefabInstance:
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: bc34da17c281a3a4cb0920c783ef0dd3, type: 3}
---- !u!1 &5138243771835068168 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 8257553287976482980, guid: bc34da17c281a3a4cb0920c783ef0dd3, type: 3}
-  m_PrefabInstance: {fileID: 3879303022599591852}
-  m_PrefabAsset: {fileID: 0}
 --- !u!224 &5138243771835068167 stripped
 RectTransform:
   m_CorrespondingSourceObject: {fileID: 8257553287976482987, guid: bc34da17c281a3a4cb0920c783ef0dd3, type: 3}
+  m_PrefabInstance: {fileID: 3879303022599591852}
+  m_PrefabAsset: {fileID: 0}
+--- !u!1 &5138243771835068168 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 8257553287976482980, guid: bc34da17c281a3a4cb0920c783ef0dd3, type: 3}
   m_PrefabInstance: {fileID: 3879303022599591852}
   m_PrefabAsset: {fileID: 0}
 --- !u!1001 &3915591664008810664
@@ -5746,7 +5753,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4013648791350348119, guid: b505728982b9e62459e1d3beaaa11f62, type: 3}
       propertyPath: m_Value
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: b505728982b9e62459e1d3beaaa11f62, type: 3}

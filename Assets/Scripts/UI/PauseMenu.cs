@@ -53,6 +53,18 @@ public class PauseMenu : MonoBehaviour
         _CanvasGroup.alpha = 1.0f - _CanvasGroup.alpha;
         _CanvasGroup.blocksRaycasts = !_CanvasGroup.blocksRaycasts;
 
+        CanvasGroup canvasGroup;
+        if (UIStateVisibility.Instance.Get("fishing").TryGetComponent(out canvasGroup))
+        {
+            canvasGroup.alpha = 1.0f - canvasGroup.alpha;
+            canvasGroup.blocksRaycasts = !canvasGroup.blocksRaycasts;
+        }
+        if (UIStateVisibility.Instance.Get("dialogue").TryGetComponent(out canvasGroup))
+        {
+            canvasGroup.alpha = 1.0f - canvasGroup.alpha;
+            canvasGroup.blocksRaycasts = !canvasGroup.blocksRaycasts;
+        }
+
         if (_ConfirmMenu != null)
         {
             Destroy(_ConfirmMenu);
