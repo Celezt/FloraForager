@@ -63,7 +63,7 @@ public class UICraftingMenu : Singleton<UICraftingMenu>
         PlayerInfo playerInfo = PlayerInput.GetPlayerByIndex(0).GetComponent<PlayerInfo>();
 
         Inventory inventory = playerInfo.Inventory;
-        PlayerStamina playerStamina = playerInfo.Stamina;
+        PlayerStamina playerStamina = playerInfo.PlayerStamina;
 
         foreach (ItemAsset requirement in _SelectedItem.Requirements)
         {

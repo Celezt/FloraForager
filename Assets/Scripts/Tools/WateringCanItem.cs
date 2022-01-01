@@ -49,7 +49,6 @@ public class WateringCanItem : IUse, IStar
 
     private WateringCanUI _waterCanUI;
 
-    private PlayerStamina _playerStamina;
     private int _usesLeft;
 
     public int UsesLeft => _usesLeft;
@@ -63,7 +62,6 @@ public class WateringCanItem : IUse, IStar
 
     public void OnEquip(ItemContext context)
     {
-        _playerStamina = context.transform.GetComponent<PlayerStamina>();
         _waterCanUI.Show(this);
     }
 
@@ -102,8 +100,8 @@ public class WateringCanItem : IUse, IStar
 
             GameObject model = null;
 
-            context.transform.GetComponentInChildren<PlayerMovement>().ActivaInput.Add(_stunFillDuration);
-            context.transform.GetComponentInChildren<AnimationBehaviour>().Play(_fillClip,
+            context.playerInfo.PlayerMovement.ActivaInput.Add(_stunFillDuration);
+            context.playerInfo.AnimationBehaviour.Play(_fillClip,
                 enterCallback: info =>
                 {
                     if (_model == null)
@@ -125,7 +123,7 @@ public class WateringCanItem : IUse, IStar
             SoundPlayer.Instance.Play(_fillSound);
 
             _usesLeft = _maxUses;
-            _playerStamina.Stamina += _fillStaminaChange;
+            context.playerInfo.PlayerStamina.Stamina += _fillStaminaChange;
         }
         else if (cell.Type == CellType.Dirt && cell.HeldObject != null && cell.HeldObject.TryGetComponent(out FloraObject floraObject))
         {
@@ -137,8 +135,8 @@ public class WateringCanItem : IUse, IStar
 
                     GameObject model = null;
 
-                    context.transform.GetComponentInChildren<PlayerMovement>().ActivaInput.Add(_stunWateringDuration);
-                    context.transform.GetComponentInChildren<AnimationBehaviour>().Play(_wateringClip,
+                    context.playerInfo.PlayerMovement.ActivaInput.Add(_stunWateringDuration);
+                    context.playerInfo.AnimationBehaviour.Play(_wateringClip,
                         enterCallback: info =>
                         {
                             if (_model == null)
@@ -163,7 +161,7 @@ public class WateringCanItem : IUse, IStar
                         SoundPlayer.Instance.Play(_wateringSound, -sound.Volume / _maxUses * (_maxUses - _usesLeft));
 
                     --_usesLeft;
-                    _playerStamina.Stamina += _waterStaminaChange;
+                    context.playerInfo.PlayerStamina.Stamina += _waterStaminaChange;
 
                     floraObject.Flora.Water();
 

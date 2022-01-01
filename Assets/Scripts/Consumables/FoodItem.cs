@@ -22,8 +22,6 @@ public class FoodItem : IUse, IStar, IValue
     [SerializeField, InlineProperty]
     private List<IEffect> _effects = new List<IEffect>(); 
 
-    private PlayerStamina _playerStamina;
-
     void IItem.OnInitialize(ItemTypeContext context)
     {
 
@@ -31,7 +29,7 @@ public class FoodItem : IUse, IStar, IValue
 
     void IItem.OnEquip(ItemContext context)
     {
-        _playerStamina = context.transform.GetComponent<PlayerStamina>();
+
     }
 
     void IItem.OnUnequip(ItemContext context)
@@ -51,7 +49,7 @@ public class FoodItem : IUse, IStar, IValue
 
         context.behaviour.ApplyCooldown();
 
-        _playerStamina.Stamina += _staminaChange;
+        context.playerInfo.PlayerStamina.Stamina += _staminaChange;
 
         foreach (IEffect effect in _effects)
             effect.OnEffect(context);

@@ -40,8 +40,6 @@ public class ChopItem : IUse, IDestructor, IStar, IValue
     [SerializeField]
     private Vector3 _centerOffset = new Vector3(0, 0, 1f);
 
-    PlayerStamina _playerStamina;
-
     void IItem.OnInitialize(ItemTypeContext context)
     {
 
@@ -49,8 +47,6 @@ public class ChopItem : IUse, IDestructor, IStar, IValue
 
     void IItem.OnEquip(ItemContext context)
     {
-        _playerStamina = context.transform.GetComponent<PlayerStamina>();
-
 #if UNITY_EDITOR
         context.behaviour.OnDrawGizmosAction = () =>
         {
@@ -79,8 +75,8 @@ public class ChopItem : IUse, IDestructor, IStar, IValue
 
         GameObject model = null;
 
-        context.transform.GetComponentInChildren<PlayerMovement>().ActivaInput.Add(_stunDuration);
-        context.transform.GetComponentInChildren<AnimationBehaviour>().Play(_clip,
+        context.playerInfo.PlayerMovement.ActivaInput.Add(_stunDuration);
+        context.playerInfo.AnimationBehaviour.Play(_clip,
             enterCallback: info =>
             {
                 if (_model == null)
@@ -103,7 +99,7 @@ public class ChopItem : IUse, IDestructor, IStar, IValue
 
         yield return new WaitForSeconds(_onUse - _onSwing);
 
-        _playerStamina.Stamina += _staminaChange;
+        context.playerInfo.PlayerStamina.Stamina += _staminaChange;
        
         Collider[] colliders = Physics.OverlapBox(context.transform.position + context.transform.rotation * _centerOffset, _halfExtents, context.transform.rotation, LayerMask.NameToLayer("default"));
         List<Collider> usableColliders = new List<Collider>(colliders.Length);

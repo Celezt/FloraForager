@@ -147,7 +147,9 @@ public class UseBehaviour : MonoBehaviour
         _playerInfo.Inventory.OnRemoveItemCallback += (index, item) =>
         {
             if (item.Amount <= 0 && _cooldown.Item1 == index && _cooldown.Item2.IsActive)
+            {
                 _cooldown.Item2 = Duration.Empty;
+            }
 
             if (index == _slotIndex)
             {
