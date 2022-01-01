@@ -81,6 +81,9 @@ public class PlayerStamina : MonoBehaviour
 
     private void Update()
     {
+        if (!GameTimeBehaviour.Active)
+            return;
+
         OnStaminaDrained.Invoke();
         if (_Stamina <= 0.0f && !SleepSchedule.Instance.IsSleeping)
         {

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Events;
 using Sirenix.OdinInspector;
+using MyBox;
 
 [RequireComponent(typeof(StreamableBehaviour))]
 public class EventBehaviour : MonoBehaviour, IStreamable<EventBehaviour.Data>
@@ -12,12 +13,13 @@ public class EventBehaviour : MonoBehaviour, IStreamable<EventBehaviour.Data>
 
     [PropertySpace(5)]
     public UnityEvent EventsBeforeDestroy;
-    public UnityEvent Events;
+    public UnityEvent EventsOnInvoke;
     [SerializeField, LabelText("Dialogue To Add")]
     [ListDrawerSettings(DraggableItems = false, ShowItemCount = false, Expanded = true)]
     private DialogueEvent[] _dialogue = null;
 
     private Data _data;
+    private System.Guid _guid;
 
     public class Data
     {
@@ -29,9 +31,10 @@ public class EventBehaviour : MonoBehaviour, IStreamable<EventBehaviour.Data>
         _data = state as Data;
 
         if (_data.IsInvoked)
+        {
+            EventsBeforeDestroy.Invoke();
             Destroy(this);
-        else if (_invokeOnStart)
-            Invoke();
+        }
     }
     public void OnBeforeSaving()
     {
@@ -41,11 +44,21 @@ public class EventBehaviour : MonoBehaviour, IStreamable<EventBehaviour.Data>
     private void Awake()
     {
         _data = new Data();
+        _guid = GetComponent<GuidComponent>().Guid;
+    }
+
+    private void Start()
+    {
+        if (GameManager.Stream.StreamedData.ContainsKey(_guid))
+        {
+            if (!_data.IsInvoked && _invokeOnStart)
+                Invoke();
+        }
     }
 
     public void Invoke()
     {
-        Events.Invoke();
+        EventsOnInvoke.Invoke();
         AddDialogue();
 
         Destroy(this);
@@ -71,9 +84,7 @@ public class EventBehaviour : MonoBehaviour, IStreamable<EventBehaviour.Data>
     {
         if (gameObject.scene.isLoaded)
         {
-            EventsBeforeDestroy.Invoke();
-
-            if (_saveIfInvoked && _data != null)
+            if (_saveIfInvoked)
                 _data.IsInvoked = true;
         }
     }
