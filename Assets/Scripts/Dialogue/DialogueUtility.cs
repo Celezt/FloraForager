@@ -129,105 +129,135 @@ public static class DialogueUtility
     }
 
     /// <summary>
-    /// Try extract custom rich tag and return a queue with the value and range of effect.
+    /// Extract all custom rich tag and return a queue with the value and range of effect.
     /// </summary>
-    /// <param name="text">Parsed text.</param>
-    /// <param name="richTag">Rich tag to find.</param>
-    /// <returns>If any exist.</returns>
-    public static bool TryDeserializeRichTag(StringBuilder text, string richTag, Dictionary<string, IRichTag> richTagTypes, out Queue<RichTag> queue)
+    public static Queue<RichTag> DeserializeRichTag(StringBuilder text, Dictionary<string, IRichTag> richTagTypes)
     {
+        Queue<RichTag> outRichTagQueue = new Queue<RichTag>();
+        Stack<RichTag> richTagStack = new Stack<RichTag>();
         string copy = text.ToString();
-        queue = new Queue<RichTag>();
-        Regex openRegex = new Regex($"<{richTag}(=((?:.(?!\\1|>))*.?)\\1?)?>");
-        Regex closeRegex = new Regex($"((<\\/){richTag}(>))");
+        bool insideTag = false;
+        int length = 0; // Length without any tags or other descriptive information.
+        int offset = 0; // How much is removed.
 
-        MatchCollection openMatches = openRegex.Matches(text.ToString());
-        MatchCollection closeMatches = closeRegex.Matches(text.ToString());
-
-        if (openMatches.Count != closeMatches.Count)
-            throw new DialogueException($"Uneven amount of open and close tags");
-
-        if (openMatches.Count <= 0)
-            return false;
-
-        for (int i = 0; i < openMatches.Count; i++)
+        for (int i = 0; i < copy.Length; i++)
         {
-            int openStartIndex = openMatches[i].Groups[0].Index + openMatches[i].Groups[0].Length;
-            int closeStartIndex = closeMatches[closeMatches.Count - 1 - i].Groups[0].Index;  // Invert close matches.
+            if (new char[] { '{', '}' }.Contains(copy[i]))
+                continue;
 
-            bool insideTag = false;
-            int closedIndex = 0;
-            int openIndex = 0;
-            for (int j = 0; j < closeStartIndex; j++)
+            if (copy[i] == '<')
+                insideTag = true;
+            else if (copy[i] == '>')
+                insideTag = false;
+            else if (insideTag) // If inside a rich tag.
             {
-                if (new char[] { '{', '}' }.Contains(copy[j]))
-                    continue;
+                int endClampIndex = copy.IndexOf('>', i);
+                int parameterIndex = copy.IndexOf('=', i, endClampIndex - i);   // Optional
+                string name = copy.Substring(i, (parameterIndex != -1 ? parameterIndex : endClampIndex) - i);
 
-                if (copy[j] == '<')
-                    insideTag = true;
-                else if (copy[j] == '>')
-                    insideTag = false;
-                else if (!insideTag)
+                if (name.IsNullOrEmpty())
+                    throw new DialogueException("No name was found inside <?> at " + i);
+
+                if (endClampIndex == -1)
+                    throw new DialogueException("Rich tag is missing a > at " + i);
+
+                bool isEndClamp = name[0] == '/';
+                name = name.TrimStart('/');
+
+                if (richTagTypes.TryGetValue(name, out IRichTag richTagBehaviour))  // If rich tag exist.
                 {
-                    closedIndex++;
+                    if (isEndClamp)
+                    {
+                        RichTag richTag = richTagStack.Pop();
+                        richTag.Range = new RangeInt(richTag.Range.start, length - richTag.Range.start);
 
-                    if (j < openStartIndex)
-                        openIndex++;
+                        if (richTag.Name == name)
+                            outRichTagQueue.Enqueue(richTag);
+                        else
+                            throw new DialogueException($"{name} is missing a start");
+                    }
+                    else
+                    {
+                        richTagStack.Push(new RichTag
+                        {
+                            Name = name,
+                            Behaviour = richTagBehaviour,
+                            Range = new RangeInt(length, 0),
+                            Parameter = parameterIndex != -1 ? copy.Substring(parameterIndex + 1, endClampIndex - parameterIndex - 1) : ""
+                        });
+                    }
+
+                    text.Remove(i - offset - 1, endClampIndex - i + 2);
+                    offset += endClampIndex - i + 2;
                 }
-            }
 
-            queue.Enqueue(new RichTag { Name = richTag, Parameter = openMatches[i].Groups[2].Value, Behaviour = richTagTypes[richTag], Range = new RangeInt(openIndex, closedIndex - openIndex) });
-            text.Replace(openMatches[i].Groups[0].Value, "");
-            text.Replace(closeMatches[i].Groups[0].Value, "");
+                i = endClampIndex;
+                insideTag = false;
+            }
+            else
+                length++;
         }
 
-        return true;
+        if (richTagStack.Count > 0)
+            throw new DialogueException("Not all rich tags has a ending");
+
+        return outRichTagQueue;
     }
 
     /// <summary>
-    /// Try extract custom event tag and return a queue with the value and index.
+    /// Extract all custom event tag and return a queue with the value and index.
     /// </summary>
-    /// <param name="text">Parsed text.</param>
-    /// <param name="eventTag">Event tag to find.</param>
-    /// <returns>If any exist.</returns>
-    public static bool TryDeserializeEventTag(StringBuilder text, string eventTag, Dictionary<string, IEventTag> eventTagTypes, out Queue<EventTag> queue)
+    public static Queue<EventTag> DeserializeEventTag(StringBuilder text, Dictionary<string, IEventTag> eventTagTypes)
     {
+        Queue<EventTag> outEventTagQueue = new Queue<EventTag>();
         string copy = text.ToString();
-        queue = new Queue<EventTag>();
-        Regex regex = new Regex($"<{eventTag}(=((?:.(?!\\1|>))*.?)\\1?)?>");
+        bool insideTag = false;
+        int length = 0; // Length without any tags or other descriptive information.
+        int offset = 0; // How much is removed.
 
-        MatchCollection matches = regex.Matches(text.ToString());
-
-        if (matches.Count <= 0)
-            return false;
-
-        for (int i = 0; i < matches.Count; i++)
+        for (int i = 0; i < copy.Length; i++)
         {
-            int endIndex = matches[i].Groups[0].Index;
+            if (new char[] { '{', '}' }.Contains(copy[i]))
+                continue;
 
-            int index = 0;
-            bool insideTag = false;
-            for (int j = 0; j < endIndex; j++)
+            if (copy[i] == '<')
+                insideTag = true;
+            else if (copy[i] == '>')
+                insideTag = false;
+            else if (insideTag) // If inside a rich tag.
             {
-                if (new char[] { '{', '}' }.Contains(copy[j]))
-                    continue;
+                int endClampIndex = copy.IndexOf('>', i);
+                int parameterIndex = copy.IndexOf('=', i, endClampIndex - i);   // Optional
+                string name = copy.Substring(i, (parameterIndex != -1 ? parameterIndex : endClampIndex) - i);
 
-                if (copy[j] == '<')
-                    insideTag = true;
-                else if (copy[j] == '>')
-                    insideTag = false;
-                else if (!insideTag)
+                if (name.IsNullOrEmpty())
+                    throw new DialogueException("No name was found inside <?> at " + i);
+
+                if (endClampIndex == -1)
+                    throw new DialogueException("Event tag is missing a > at " + i);
+
+                if (eventTagTypes.TryGetValue(name, out IEventTag richTagBehaviour))  // If rich tag exist.
                 {
-                    index++;
+                    outEventTagQueue.Enqueue(new EventTag
+                    {
+                        Name = name,
+                        Behaviour = richTagBehaviour,
+                        Index = length,
+                        Parameter = parameterIndex != -1 ? copy.Substring(parameterIndex + 1, endClampIndex - parameterIndex - 1) : ""
+                    });
+
+                    text.Remove(i - offset - 1, endClampIndex - i + 2);
+                    offset += endClampIndex - i + 2;
                 }
+
+                i = endClampIndex;
+                insideTag = false;
             }
-
-            queue.Enqueue(new EventTag { Name = eventTag, Parameter = matches[i].Groups[2].Value, Index = index - 1, Behaviour = eventTagTypes[eventTag] });
-
-            text.Replace(matches[i].Groups[0].Value, "");
+            else
+                length++;
         }
 
-        return true;
+        return outEventTagQueue;
     }
 
     /// <summary>

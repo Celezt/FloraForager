@@ -377,17 +377,10 @@ public class DialogueManager : MonoBehaviour
         }
 
         {
-            // Find all current tags.
-            _currentIRichTags = new List<RichTag>();
-            for (int i = 0; i < _richTagTypes.Count; i++) // Find current rich tags.
-                if (TryDeserializeRichTag(text, _richTagTypes.ElementAt(i).Key, _richTagTypes, out Queue<RichTag> queue))
-                    _currentIRichTags.AddRange(queue);
-            _currentIRichTags.Reverse();    // Invert the order of all rich tags.
+            // Find all current tags inside the text.
+            _currentIRichTags = new List<RichTag>(DeserializeRichTag(text, _richTagTypes));
 
-            _currentEventTags = new List<EventTag>();
-            for (int i = 0; i < _eventTagTypes.Count; i++)  // Find current event tags.
-                if (TryDeserializeEventTag(text, _eventTagTypes.ElementAt(i).Key, _eventTagTypes, out Queue<EventTag> queue))
-                    _currentEventTags.AddRange(queue);
+            _currentEventTags = new List<EventTag>(DeserializeEventTag(text, _eventTagTypes));
         }
 
         {
@@ -506,14 +499,13 @@ public class DialogueManager : MonoBehaviour
 
         _content.ForceMeshUpdate();
         _parsedText = _content.GetParsedText().ToUpper();
+        _content.maxVisibleCharacters = 0;
 
         int maxLength = _currentTextMaxLength = _content.textInfo.characterCount;
         for (int currentIndex = 0; currentIndex < maxLength; currentIndex++)  
         {
             object yieldValue = null;
             _currentTextIndex = currentIndex;
-
-            _content.maxVisibleCharacters = currentIndex + 1;   // How many letters that should be visible.
 
             //
             // Loop through all current event tags.
@@ -604,6 +596,8 @@ public class DialogueManager : MonoBehaviour
 
             if (yieldValue != null)                     // Don't yield if value is null.
                 yield return yieldValue;
+
+            _content.maxVisibleCharacters = currentIndex + 1;   // How many letters that should be visible.
         }
 
         _isAutoTextCompleted = true;
