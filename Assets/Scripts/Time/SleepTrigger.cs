@@ -28,9 +28,7 @@ public class SleepTrigger : MonoBehaviour
 
         PlayerInput playerInput = other.GetComponent<PlayerInput>();
 
-        string[] _shownStates = UIStateVisibility.Instance.GetShownStates();
-
-        UIStateVisibility.Instance.Hide(_shownStates);
+        UIStateVisibility.Instance.Hide("gameplay");
         playerInput.DeactivateInput();
 
         ConfirmMenuFactory.Instance.CreateMenu(UIStateVisibility.Instance.transform, 10, true,
@@ -44,13 +42,13 @@ public class SleepTrigger : MonoBehaviour
 
                 void SleptAction(bool value)
                 {
-                    UIStateVisibility.Instance.Show(_shownStates);
+                    UIStateVisibility.Instance.Show("gameplay");
                     SleepSchedule.Instance.OnSlept -= SleptAction;
                 };
             }), 
             new UnityAction(() => 
             {
-                UIStateVisibility.Instance.Show(_shownStates);
+                UIStateVisibility.Instance.Show("gameplay");
                 playerInput.ActivateInput();
             }));
 
