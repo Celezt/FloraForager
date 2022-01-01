@@ -21,6 +21,8 @@ public class UseBehaviour : MonoBehaviour
 
     private (int, Duration) _cooldown = (0, new Duration());
 
+    private Dictionary<int, Dictionary<string, Coroutine>> _useCoroutines;
+
     private int _slotIndex;
     private int _amount;
 
@@ -47,7 +49,10 @@ public class UseBehaviour : MonoBehaviour
         if (_itemType == null || _use == null)
             return;
 
-        StartCoroutine(OnUseCoroutine(context));
+        if (!_useCoroutines.ContainsKey(_slotIndex))
+            _useCoroutines[_slotIndex] = new Dictionary<string, Coroutine>();
+
+        _useCoroutines[_slotIndex][$"{context.performed}{context.started}{context.canceled}"] = StartCoroutine(OnUseCoroutine(context));
     }
 
     public void ControlsChangedEvent(PlayerInput playerInput)
@@ -87,10 +92,14 @@ public class UseBehaviour : MonoBehaviour
         return false;
     }
 
-    private void Start()
+    private void Awake()
     {
         _playerInput = GetComponent<PlayerInput>();
+        _useCoroutines = new Dictionary<int, Dictionary<string, Coroutine>>();
+    }
 
+    private void Start()
+    {
         _playerInfo.Inventory.OnInventoryInitalizeCallback += (_) =>
         {
             _slotIndex = _playerInfo.Inventory.SelectedIndex;
@@ -148,7 +157,18 @@ public class UseBehaviour : MonoBehaviour
         {
             if (item.Amount <= 0 && _cooldown.Item1 == index && _cooldown.Item2.IsActive)
             {
+                foreach (string key in _useCoroutines[index].Keys.ToList())
+                {
+                    if (!_useCoroutines[index].TryGetValue(key, out Coroutine coroutine) || coroutine == null)
+                        continue;
+
+                    StopCoroutine(coroutine);
+                }
+
+                _playerInfo.AnimationBehaviour.ForceCancel();
                 _cooldown.Item2 = Duration.Empty;
+
+                _playerInfo.PlayerMovement.ActivaInput.Clear();
             }
 
             if (index == _slotIndex)
@@ -189,6 +209,8 @@ public class UseBehaviour : MonoBehaviour
 
     private IEnumerator OnUseCoroutine(InputAction.CallbackContext context)
     {
+        int slotIndex = _slotIndex;
+
         if (!_cooldown.Item2.IsActive)
         {
             IEnumerator UseTowardsCursor()
@@ -199,7 +221,7 @@ public class UseBehaviour : MonoBehaviour
                     this,
                     _playerInfo,
                     _playerInput.playerIndex,
-                    _slotIndex,
+                    slotIndex,
                     _amount,
                     context.canceled,
                     context.started,
@@ -213,6 +235,8 @@ public class UseBehaviour : MonoBehaviour
 
             yield return UseTowardsCursor();
         }
+
+        _useCoroutines[slotIndex].Remove($"{context.performed}{context.started}{context.canceled}");
     }
 
     public void ApplyCooldown()
