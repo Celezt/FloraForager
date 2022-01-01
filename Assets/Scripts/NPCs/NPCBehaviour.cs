@@ -11,8 +11,6 @@ public class NPCBehaviour : MonoBehaviour, IInteractable, IUsable
 {
     [SerializeField]
     private AnimationBehaviour _HumanoidAnimationBehaviour;
-    [SerializeField]
-    private AnimationClip _ScaredClip;
     [SerializeField] 
     private string _NameID;
     [SerializeField]
@@ -123,10 +121,10 @@ public class NPCBehaviour : MonoBehaviour, IInteractable, IUsable
 
     void IUsable.OnUse(UsedContext context)
     {
-        if (_ScaredClip == null)
+        if (!AnimationManager.Instance.Clips.TryGetValue("scared", out AnimationClip scaredClip))
             return;
 
-        _HumanoidAnimationBehaviour.Play(_ScaredClip);
+        _HumanoidAnimationBehaviour.Play(scaredClip);
     }
 
     public void StartDialogue(int playerIndex, string assetGUID)
@@ -137,7 +135,7 @@ public class NPCBehaviour : MonoBehaviour, IInteractable, IUsable
         PlayerMovement playerMovement = playerInput.GetComponent<PlayerMovement>();
         UseBehaviour playerUse = playerInput.GetComponent<UseBehaviour>();
 
-        UIStateVisibility.Instance.Hide("player_hud", "inventory", "world_info", "commission_log", "commission_giver");
+        UIStateVisibility.Instance.Hide("gameplay");
 
         if (_RotateBack != null)
             StopCoroutine(_RotateBack);
