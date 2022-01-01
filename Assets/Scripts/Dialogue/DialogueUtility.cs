@@ -134,7 +134,7 @@ public static class DialogueUtility
     public static Queue<RichTag> DeserializeRichTag(StringBuilder text, Dictionary<string, IRichTag> richTagTypes)
     {
         Queue<RichTag> outRichTagQueue = new Queue<RichTag>();
-        Stack<RichTag> richTagStack = new Stack<RichTag>();
+        Dictionary<string, Stack<RichTag>> richTagFound = new Dictionary<string, Stack<RichTag>>();
         string copy = text.ToString();
         bool insideTag = false;
         int length = 0; // Length without any tags or other descriptive information.
@@ -168,7 +168,7 @@ public static class DialogueUtility
                 {
                     if (isEndClamp)
                     {
-                        RichTag richTag = richTagStack.Pop();
+                        RichTag richTag = richTagFound[name].Pop();
                         richTag.Range = new RangeInt(richTag.Range.start, length - richTag.Range.start);
 
                         if (richTag.Name == name)
@@ -178,7 +178,10 @@ public static class DialogueUtility
                     }
                     else
                     {
-                        richTagStack.Push(new RichTag
+                        if (!richTagFound.ContainsKey(name))
+                            richTagFound.Add(name, new Stack<RichTag>());
+
+                        richTagFound[name].Push(new RichTag
                         {
                             Name = name,
                             Behaviour = richTagBehaviour,
@@ -198,8 +201,11 @@ public static class DialogueUtility
                 length++;
         }
 
-        if (richTagStack.Count > 0)
-            throw new DialogueException("Not all rich tags has a ending");
+        foreach (Stack<RichTag> stack in richTagFound.Values)
+        {
+            if (stack.Count > 0)
+                throw new DialogueException($"{stack.Pop().Name} is missing a ending");
+        }
 
         return outRichTagQueue;
     }
