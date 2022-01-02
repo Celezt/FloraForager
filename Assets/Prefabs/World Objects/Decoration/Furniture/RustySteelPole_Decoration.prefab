@@ -1,5 +1,18 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
+--- !u!65 &8297758039845069791
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4206427139458860276}
+  m_Material: {fileID: 13400000, guid: 9bfea5fa8573a434bb6cdd09d5eecab7, type: 2}
+  m_IsTrigger: 0
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Size: {x: 0.15291268, y: 2, z: 0.17656834}
+  m_Center: {x: -0.000000033527613, y: 1, z: -0.000000022351742}
 --- !u!205 &2796882531160046075
 LODGroup:
   m_ObjectHideFlags: 0
@@ -19,19 +32,6 @@ LODGroup:
     renderers:
     - renderer: {fileID: 2405141289104155937}
   m_Enabled: 1
---- !u!65 &8297758039845069791
-BoxCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 4206427139458860276}
-  m_Material: {fileID: 0}
-  m_IsTrigger: 0
-  m_Enabled: 1
-  serializedVersion: 2
-  m_Size: {x: 0.15291268, y: 2, z: 0.17656834}
-  m_Center: {x: -0.000000033527613, y: 1, z: -0.000000022351742}
 --- !u!1001 &3936518687314360741
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -89,7 +89,7 @@ PrefabInstance:
       objectReference: {fileID: 2100000, guid: bdbc83335a9a8164d93a5cbe9f4290d5, type: 2}
     - target: {fileID: 919132149155446097, guid: 6043ce392b6bfe24aa77cf2b544090ff, type: 3}
       propertyPath: m_Name
-      value: SteelPole_Decoration
+      value: RustySteelPole_Decoration
       objectReference: {fileID: 0}
     - target: {fileID: 919132149155446097, guid: 6043ce392b6bfe24aa77cf2b544090ff, type: 3}
       propertyPath: m_StaticEditorFlags
