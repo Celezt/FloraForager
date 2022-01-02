@@ -8,8 +8,8 @@ public class ButtonEvents : MonoBehaviour, IPointerEnterHandler, IPointerDownHan
 {
     [SerializeField]
     private string _EnterSound = "enter_button";
-    //[SerializeField]
-    //private string _PressSound = "press_button";
+    [SerializeField]
+    private string _PressSound = "press_button";
 
     public void OnPointerEnter(PointerEventData eventData)
     {
