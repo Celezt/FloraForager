@@ -37,7 +37,7 @@ RenderSettings:
   m_ReflectionBounces: 1
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
-  m_Sun: {fileID: 0}
+  m_Sun: {fileID: 1976271695960753684, guid: 7563237cb3c82544a9d7b5cd15523afa, type: 3}
   m_IndirectSpecularColor: {r: 0.12731749, g: 0.13414757, b: 0.1210787, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
@@ -1756,6 +1756,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _EnterSound: enter_button
+  _PressSound: press_button
 --- !u!114 &362049051
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -5880,6 +5881,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _EnterSound: enter_button
+  _PressSound: press_button
 --- !u!1 &1066139130
 GameObject:
   m_ObjectHideFlags: 0
@@ -6298,6 +6300,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _EnterSound: enter_button
+  _PressSound: press_button
 --- !u!114 &1137838196
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -6615,6 +6618,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _EnterSound: enter_button
+  _PressSound: press_button
 --- !u!1 &1219421615
 GameObject:
   m_ObjectHideFlags: 0
@@ -6669,6 +6673,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _EnterSound: enter_button
+  _PressSound: press_button
 --- !u!114 &1219421618
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -6911,6 +6916,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _EnterSound: enter_button
+  _PressSound: press_button
 --- !u!1 &1240063984
 GameObject:
   m_ObjectHideFlags: 0
@@ -9112,6 +9118,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _EnterSound: enter_button
+  _PressSound: press_button
 --- !u!1 &1776458155
 GameObject:
   m_ObjectHideFlags: 0
@@ -9223,14 +9230,6 @@ PrefabInstance:
       value: 0.5
       objectReference: {fileID: 0}
     - target: {fileID: 3268740171634543653, guid: fead85a3053c91f4f802a0d5c63d94b9, type: 3}
-      propertyPath: m_SizeDelta.x
-      value: 700
-      objectReference: {fileID: 0}
-    - target: {fileID: 3268740171634543653, guid: fead85a3053c91f4f802a0d5c63d94b9, type: 3}
-      propertyPath: m_SizeDelta.y
-      value: 845
-      objectReference: {fileID: 0}
-    - target: {fileID: 3268740171634543653, guid: fead85a3053c91f4f802a0d5c63d94b9, type: 3}
       propertyPath: m_LocalPosition.x
       value: 0
       objectReference: {fileID: 0}
@@ -9257,14 +9256,6 @@ PrefabInstance:
     - target: {fileID: 3268740171634543653, guid: fead85a3053c91f4f802a0d5c63d94b9, type: 3}
       propertyPath: m_LocalRotation.z
       value: -0
-      objectReference: {fileID: 0}
-    - target: {fileID: 3268740171634543653, guid: fead85a3053c91f4f802a0d5c63d94b9, type: 3}
-      propertyPath: m_AnchoredPosition.x
-      value: -0.000141
-      objectReference: {fileID: 0}
-    - target: {fileID: 3268740171634543653, guid: fead85a3053c91f4f802a0d5c63d94b9, type: 3}
-      propertyPath: m_AnchoredPosition.y
-      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 3268740171634543653, guid: fead85a3053c91f4f802a0d5c63d94b9, type: 3}
       propertyPath: m_LocalEulerAnglesHint.x
@@ -9997,6 +9988,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _EnterSound: enter_button
+  _PressSound: press_button
 --- !u!1 &1939525762
 GameObject:
   m_ObjectHideFlags: 0
@@ -10327,6 +10319,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _EnterSound: enter_button
+  _PressSound: press_button
 --- !u!1 &2005897527
 GameObject:
   m_ObjectHideFlags: 0
