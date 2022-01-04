@@ -19,11 +19,16 @@ public class RockBehaviour : MonoBehaviour, IStreamable<RockBehaviour.Data>, IUs
     [SerializeField] private float _shakeAngleRotation = 0.0f;
     [Header("Particle Settings")]
     [SerializeField] private ParticleSystem _particleSystem;
+    [SerializeField] private ParticleSystem _particleSystemPuff;
+    [SerializeField] private int _rockAmount = 0;
+    [SerializeField] private int _puffAmount = 0;
+    [Header("Objects")]
+    [SerializeField] private GameObject _Rock;
+    [Header("Colliders")]
+    [SerializeField] private BoxCollider _RockCollider;
 
     [SerializeField, PropertyOrder(-1), HideLabel, InlineProperty]
     private Data _data;
-
-    private BoxCollider _Collider;
 
     [System.Serializable]
     public class Data
@@ -35,9 +40,12 @@ public class RockBehaviour : MonoBehaviour, IStreamable<RockBehaviour.Data>, IUs
     public Data OnUpload() => _data;
     public void OnLoad(object state)
     {
-        Data data = state as Data;
+        _data = state as Data;
 
-        _data = data;
+        bool destroyed = _data.Durability <= 0;
+
+        if (_Rock != null)
+            _Rock.SetActive(!destroyed);
     }
     void IStreamable.OnBeforeSaving()
     {
@@ -51,14 +59,10 @@ public class RockBehaviour : MonoBehaviour, IStreamable<RockBehaviour.Data>, IUs
     {
         _data.MaxDurability = _data.Durability;
     }
-    private void Start()
-    {
-        _Collider = GetComponent<BoxCollider>();
-    }
 
     void IUsable.OnUse(UsedContext context)
     {
-        if (!(context.used is IDestructor))
+        if (!(context.used is IDestructor) || _data.Durability <= 0)
             return;
 
         if (context.Damage(ref _data.Durability, new MinMaxFloat(1, 2), _star))
@@ -67,7 +71,7 @@ public class RockBehaviour : MonoBehaviour, IStreamable<RockBehaviour.Data>, IUs
                 context.Shake(_shakeTransform, _shakeDuration, strength: _shakeStrength, angleRotation: _shakeAngleRotation);
 
             if (_particleSystem != null)
-                _particleSystem.Emit(100);
+                _particleSystem.Emit(_rockAmount);
 
             SoundPlayer.Instance.Play(_hitSound);
         }
@@ -81,8 +85,16 @@ public class RockBehaviour : MonoBehaviour, IStreamable<RockBehaviour.Data>, IUs
         {
             SoundPlayer.Instance.Play(_breakSound);
 
-            context.Drop(transform.TransformPoint(_Collider.center), _drops);
-            gameObject.SetActive(false);
+            if (_particleSystemPuff != null)
+                _particleSystemPuff.Emit(_puffAmount);
+
+            context.Drop(transform.TransformPoint(_RockCollider.center), _drops);
+
+            if (_Rock != null)
+                _Rock.SetActive(false);
+
+            if (TryGetComponent(out StreamableBehaviour streamable))
+                streamable.SetToRespawn();
         }
     }
 }

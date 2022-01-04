@@ -99,6 +99,9 @@ public class TreeBehaviour : MonoBehaviour, IStreamable<TreeBehaviour.Data>, IUs
         {
             SoundPlayer.Instance.Play(_breakSound);
 
+            if (_particleSystemPuff != null)
+                _particleSystemPuff.Emit(_puffAmount);
+
             context.Drop(transform.TransformPoint(_TreeCollider.center), _drops);
 
             if (_Tree != null)
@@ -107,9 +110,6 @@ public class TreeBehaviour : MonoBehaviour, IStreamable<TreeBehaviour.Data>, IUs
                 _Stump.SetActive(true);
             if (_disableColliderOnDestroy)
                 _StumpCollider.enabled = false;
-
-            if (_particleSystemPuff != null)
-                _particleSystemPuff.Emit(_puffAmount);
 
             if (TryGetComponent(out StreamableBehaviour streamable))
                 streamable.SetToRespawn();
