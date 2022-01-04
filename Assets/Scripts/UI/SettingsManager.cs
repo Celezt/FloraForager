@@ -81,7 +81,7 @@ public class SettingsManager : MonoBehaviour
         {
             _MainMixer.SetFloat("MasterVolume", Mathf.Log(_GameSettings.MasterVolume) * 20);
             _MainMixer.SetFloat("MusicVolume", Mathf.Log(_GameSettings.MusicVolume) * 20);
-            _MainMixer.SetFloat("EffectsVolume", Mathf.Log(_GameSettings.AmbientVolume) * 20);
+            _MainMixer.SetFloat("EffectsVolume", Mathf.Log(_GameSettings.EffectsVolume) * 20);
             _MainMixer.SetFloat("AmbientVolume", Mathf.Log(_GameSettings.AmbientVolume) * 20);
         }
     }

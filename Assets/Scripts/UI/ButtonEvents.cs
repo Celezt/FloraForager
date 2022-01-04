@@ -18,6 +18,6 @@ public class ButtonEvents : MonoBehaviour, IPointerEnterHandler, IPointerDownHan
 
     public void OnPointerDown(PointerEventData eventData)
     {
-        SoundPlayer.Instance.Play(_EnterSound);
+        SoundPlayer.Instance.Play(_PressSound);
     }
 }
