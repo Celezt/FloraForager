@@ -22,8 +22,10 @@ public class TreeBehaviour : MonoBehaviour, IStreamable<TreeBehaviour.Data>, IUs
     [Header("Particle Settings")]
     [SerializeField] private ParticleSystem _particleSystem;
     [SerializeField] private ParticleSystem _particleSystemLeaf;
+    [SerializeField] private ParticleSystem _particleSystemPuff;
     [SerializeField] private int _woodAmount = 0;
     [SerializeField] private int _leafAmount = 0;
+    [SerializeField] private int _puffAmount = 0;
     [Header("Objects")]
     [SerializeField] private GameObject _Tree;
     [SerializeField] private GameObject _Stump;
@@ -105,6 +107,9 @@ public class TreeBehaviour : MonoBehaviour, IStreamable<TreeBehaviour.Data>, IUs
                 _Stump.SetActive(true);
             if (_disableColliderOnDestroy)
                 _StumpCollider.enabled = false;
+
+            if (_particleSystemPuff != null)
+                _particleSystemPuff.Emit(_puffAmount);
 
             if (TryGetComponent(out StreamableBehaviour streamable))
                 streamable.SetToRespawn();
