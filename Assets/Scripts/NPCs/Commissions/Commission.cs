@@ -72,10 +72,23 @@ public class Commission : IStreamable<Commission.Data>
     {
         _Data.Commission.Objectives.ForEach(o => o.Completed());
 
-        Inventory inventory = PlayerInput.GetPlayerByIndex(0).GetComponent<PlayerInfo>().Inventory;
+        PlayerInfo playerInfo = PlayerInput.GetPlayerByIndex(0).GetComponent<PlayerInfo>();
+
+        Inventory inventory = playerInfo.Inventory;
 
         for (int i = 0; i < _Data.Commission.Rewards.Length; ++i)
-            inventory.Insert(_Data.Commission.Rewards[i]);
+        {
+            ItemAsset item = _Data.Commission.Rewards[i];
+            if (!inventory.Insert(item))
+            {
+                Vector3 dropPosition = playerInfo.transform.position;
+                if (playerInfo.transform.TryGetComponent(out Collider collider))
+                    dropPosition = collider.bounds.center;
+
+                UnityEngine.Object.Instantiate(ItemTypeSettings.Instance.ItemObject, dropPosition, Quaternion.identity)
+                    .Spawn(new ItemAsset { ID = item.ID, Amount = item.Amount }, playerInfo.transform.forward.xz());
+            }
+        }
 
         NPCManager.Instance.Get(Giver).Relation.AddRelation(_Data.Commission.RewardRelation);
 

@@ -1,3 +1,4 @@
+using System.Linq;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -22,7 +23,7 @@ public class ItemBehaviour : MonoBehaviour
 
     private Transform _checkTransform;
     private Inventory _inventory;
-    
+
     private bool _isdropped = true;
 
     public void Spawn(ItemAsset item) => Spawn(item, Random.insideUnitCircle.normalized);
@@ -41,10 +42,7 @@ public class ItemBehaviour : MonoBehaviour
 
     private void InsideCheck()
     {
-        if (!_isdropped)
-            return;
-
-        if (string.IsNullOrEmpty(_item.ID))
+        if (!_isdropped || string.IsNullOrEmpty(_item.ID))
             return;
 
         Vector3 position = transform.position;
@@ -54,11 +52,10 @@ public class ItemBehaviour : MonoBehaviour
         {
             _checkTransform = colliders[0].transform;
 
-            if (_inventory == null)
-                if (_checkTransform.TryGetComponent(out PlayerInfo playerInfo))
-                        _inventory = playerInfo.Inventory;
+            if (_inventory == null && _checkTransform.TryGetComponent(out PlayerInfo playerInfo))
+                _inventory = playerInfo.Inventory;
 
-            if (_inventory != null && _inventory.FindEmptySpace(_item.ID) > 0)  // If their is still space left.
+            if (_inventory != null && _inventory.FindEmptySpace(_item.ID) > 0)  // If their is still space left
                 StartCoroutine(Absorb());
         }
         else
@@ -148,8 +145,17 @@ public class ItemBehaviour : MonoBehaviour
 
         if (gameObject.scene.isLoaded)
         {
-            _inventory?.Insert(_item.ID, _item.Amount);
-            SoundPlayer.Instance?.Play(_pickupSound, 0, 0, 0, 0.04f);
+            if (!_inventory.Insert(_item))
+            {
+                Vector3 dropPosition = _checkTransform.position;
+                if (_checkTransform.TryGetComponent(out Collider collider))
+                    dropPosition = collider.bounds.center;
+
+                Instantiate(ItemTypeSettings.Instance.ItemObject, dropPosition, Quaternion.identity)
+                    .Spawn(new ItemAsset { ID = _item.ID, Amount = _item.Amount }, Vector3.zero);
+            }
+            else
+                SoundPlayer.Instance.Play(_pickupSound, 0, 0, 0, 0.04f);
         }
     }
 }

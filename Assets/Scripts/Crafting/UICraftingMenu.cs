@@ -57,8 +57,14 @@ public class UICraftingMenu : Singleton<UICraftingMenu>
 
     public void CraftItem()
     {
-        if (_SelectedItem == null || !CanCraft(_SelectedItem))
+        if (_SelectedItem == null)
             return;
+
+        if (!CanCraft(_SelectedItem))
+        {
+            MessageLog.Instance.Send("Lack the Required Resources", Color.red);
+            return;
+        }
 
         PlayerInfo playerInfo = PlayerInput.GetPlayerByIndex(0).GetComponent<PlayerInfo>();
 
@@ -70,7 +76,16 @@ public class UICraftingMenu : Singleton<UICraftingMenu>
             inventory.Remove(requirement.ID, requirement.Amount);
         }
 
-        inventory.Insert(_SelectedItem.Item);
+        if (!inventory.Insert(_SelectedItem.Item))
+        {
+            Vector3 dropPosition = playerInfo.transform.position;
+            if (playerInfo.transform.TryGetComponent(out Collider collider))
+                dropPosition = collider.bounds.center;
+
+            Instantiate(ItemTypeSettings.Instance.ItemObject, dropPosition, Quaternion.identity)
+                .Spawn(new ItemAsset { ID = _SelectedItem.Item.ID, Amount = _SelectedItem.Item.Amount }, playerInfo.transform.forward.xz());
+        }
+
         playerStamina.Stamina += _SelectedItem.StaminaChange;
 
         SoundPlayer.Instance.Play("craft");

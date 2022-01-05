@@ -16,18 +16,17 @@ public class HarvestScythe : IHarvest
 
     public bool Harvest(UsedContext context, Flora flora)
     {
-        if (flora.Completed)
-        {
-            GameObject heldObject = flora.Cell.HeldObject;
+        if (!flora.Completed)
+            return false;
 
-            Bounds bounds = new Bounds();
-            if (heldObject.TryGetComponent(out MeshFilter meshFilter))
-                bounds = meshFilter.mesh.bounds;
+        GameObject heldObject = flora.Cell.HeldObject;
 
-            context.Drop(heldObject.transform.position + Vector3.up * bounds.extents.y, Rewards);
-            return true;
-        }
+        Bounds bounds = new Bounds();
+        if (heldObject.TryGetComponent(out MeshFilter meshFilter))
+            bounds = meshFilter.mesh.bounds;
 
-        return false;
+        context.Drop(heldObject.transform.position + Vector3.up * bounds.extents.y, Rewards);
+
+        return true;
     }
 }
