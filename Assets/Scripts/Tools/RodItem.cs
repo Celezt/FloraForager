@@ -149,7 +149,7 @@ public class RodItem : IUse, IStar, IValue
 
         playerMovement.SetDirection((GameGrid.Instance.MouseHit - context.transform.position).normalized.xz());
 
-        UIStateVisibility.Instance.Hide("inventory", "stamina");
+        UIStateVisibility.Instance.Hide("inventory", "player_hud");
         playerInput.DeactivateInput();
 
         RodItem rodItem = ItemTypeSettings.Instance.ItemTypeChunk[context.id].Behaviour as RodItem;
@@ -188,7 +188,7 @@ public class RodItem : IUse, IStar, IValue
 
             yield return new WaitForSeconds(_onCatchUse - _onCatch);
 
-            UIStateVisibility.Instance.Show("inventory", "stamina");
+            UIStateVisibility.Instance.Show("inventory", "player_hud");
             playerInput.ActivateInput();
         };
 

@@ -241,6 +241,6 @@ public class UseBehaviour : MonoBehaviour
 
     public void ApplyCooldown()
     {
-        _cooldown = (_slotIndex, new Duration(_use.Cooldown));
+        _cooldown = (_slotIndex, _use != null ? new Duration(_use.Cooldown) : Duration.Empty);
     }
 }
