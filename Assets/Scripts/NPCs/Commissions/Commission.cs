@@ -86,7 +86,7 @@ public class Commission : IStreamable<Commission.Data>
                     dropPosition = collider.bounds.center;
 
                 UnityEngine.Object.Instantiate(ItemTypeSettings.Instance.ItemObject, dropPosition, Quaternion.identity)
-                    .Spawn(new ItemAsset { ID = item.ID, Amount = item.Amount }, playerInfo.transform.forward.xz());
+                    .Spawn(new ItemAsset { ID = item.ID, Amount = item.Amount }, Vector2.zero);
             }
         }
 

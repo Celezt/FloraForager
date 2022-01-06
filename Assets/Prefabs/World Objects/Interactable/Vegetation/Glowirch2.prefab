@@ -179,12 +179,12 @@ PrefabInstance:
     m_TransformParent: {fileID: 1421306173773649276}
     m_Modifications:
     - target: {fileID: 7267777741509580460, guid: 3d2d5ade8949ef44ca78a2b52c0de5a8, type: 3}
-      propertyPath: InitialModule.startSize.scalar
-      value: 0.1
+      propertyPath: ShapeModule.m_Position.y
+      value: 0.3
       objectReference: {fileID: 0}
     - target: {fileID: 7267777741509580460, guid: 3d2d5ade8949ef44ca78a2b52c0de5a8, type: 3}
-      propertyPath: InitialModule.startSize.minScalar
-      value: 0.03
+      propertyPath: ShapeModule.radius.value
+      value: 0.19
       objectReference: {fileID: 0}
     - target: {fileID: 7267777741509580460, guid: 3d2d5ade8949ef44ca78a2b52c0de5a8, type: 3}
       propertyPath: EmissionModule.m_Bursts.Array.data[0].countCurve.scalar
@@ -194,42 +194,6 @@ PrefabInstance:
       propertyPath: m_RootOrder
       value: 2
       objectReference: {fileID: 0}
-    - target: {fileID: 7267777741509580461, guid: 3d2d5ade8949ef44ca78a2b52c0de5a8, type: 3}
-      propertyPath: m_LocalPosition.x
-      value: -0.025
-      objectReference: {fileID: 0}
-    - target: {fileID: 7267777741509580461, guid: 3d2d5ade8949ef44ca78a2b52c0de5a8, type: 3}
-      propertyPath: m_LocalPosition.y
-      value: 0.248
-      objectReference: {fileID: 0}
-    - target: {fileID: 7267777741509580461, guid: 3d2d5ade8949ef44ca78a2b52c0de5a8, type: 3}
-      propertyPath: m_LocalRotation.w
-      value: 0.7071068
-      objectReference: {fileID: 0}
-    - target: {fileID: 7267777741509580461, guid: 3d2d5ade8949ef44ca78a2b52c0de5a8, type: 3}
-      propertyPath: m_LocalRotation.x
-      value: -0.7071068
-      objectReference: {fileID: 0}
-    - target: {fileID: 7267777741509580461, guid: 3d2d5ade8949ef44ca78a2b52c0de5a8, type: 3}
-      propertyPath: m_LocalRotation.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 7267777741509580461, guid: 3d2d5ade8949ef44ca78a2b52c0de5a8, type: 3}
-      propertyPath: m_LocalRotation.z
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 7267777741509580461, guid: 3d2d5ade8949ef44ca78a2b52c0de5a8, type: 3}
-      propertyPath: m_LocalEulerAnglesHint.x
-      value: -90
-      objectReference: {fileID: 0}
-    - target: {fileID: 7267777741509580461, guid: 3d2d5ade8949ef44ca78a2b52c0de5a8, type: 3}
-      propertyPath: m_LocalEulerAnglesHint.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 7267777741509580461, guid: 3d2d5ade8949ef44ca78a2b52c0de5a8, type: 3}
-      propertyPath: m_LocalEulerAnglesHint.z
-      value: 0
-      objectReference: {fileID: 0}
     - target: {fileID: 7267777741509580462, guid: 3d2d5ade8949ef44ca78a2b52c0de5a8, type: 3}
       propertyPath: m_Name
       value: MushroomEffect
@@ -238,10 +202,6 @@ PrefabInstance:
       propertyPath: m_StaticEditorFlags
       value: 64
       objectReference: {fileID: 0}
-    - target: {fileID: 7267777741509580463, guid: 3d2d5ade8949ef44ca78a2b52c0de5a8, type: 3}
-      propertyPath: m_Materials.Array.data[0]
-      value: 
-      objectReference: {fileID: 2100000, guid: 8509024e587cc1b40bfcf36ae1a96fa4, type: 2}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 3d2d5ade8949ef44ca78a2b52c0de5a8, type: 3}
 --- !u!4 &7136688166675361379 stripped
