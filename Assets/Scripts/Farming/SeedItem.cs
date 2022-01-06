@@ -69,7 +69,7 @@ public class SeedItem : IUse, IStar, IValue
 
         if (!MathUtility.PointInArc(GameGrid.Instance.MouseHit, context.transform.position, context.transform.localEulerAngles.y, _arc, _radius))
         {
-            MessageLog.Instance.Send("Outside Usable Range", Color.red, 14f, 2f);
+            MessageLog.Instance.Send("Pressed Outside Usable Range", Color.red, 14f, 2f);
             SoundPlayer.Instance.Play("use_error");
             yield break;
         }

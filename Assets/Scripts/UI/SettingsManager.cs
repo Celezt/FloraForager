@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using UnityEngine;
 using UnityEngine.Audio;
 
@@ -38,7 +39,10 @@ public class SettingsManager : MonoBehaviour
         _SettingsMenu = GetComponent<SettingsMenu>();
 
         _GameSettings = new GameSettings();
-        _Resolutions = Screen.resolutions;
+        _Resolutions = Screen.resolutions
+            .OrderByDescending(r => r.width)
+            .ThenByDescending(r => r.height)
+            .ThenByDescending(r => r.refreshRate).ToArray();
 
         Load();
         Apply();
@@ -51,18 +55,15 @@ public class SettingsManager : MonoBehaviour
     /// </summary>
     private void Load()
     {
-        _GameSettings.IsFullscreen = Convert.ToBoolean(PlayerPrefs.GetInt(IsFullscreen, 0));
-        _GameSettings.ResolutionIndex = PlayerPrefs.GetInt(ResolutionIndex, _Resolutions.Length - 1);
+        _GameSettings.IsFullscreen = PlayerPrefs.GetInt(IsFullscreen, 0) != 0;
+        _GameSettings.ResolutionIndex = Mathf.Clamp(PlayerPrefs.GetInt(ResolutionIndex, 0), 0, _Resolutions.Length - 1);
 
-        _GameSettings.VerticalSync = PlayerPrefs.GetInt(VerticalSync, QualitySettings.vSyncCount);
+        _GameSettings.VerticalSync = Mathf.Clamp(PlayerPrefs.GetInt(VerticalSync, QualitySettings.vSyncCount), 0, 2);
 
-        _GameSettings.MasterVolume = PlayerPrefs.GetFloat(MasterVolume, 0.75f);
-        _GameSettings.MusicVolume = PlayerPrefs.GetFloat(MusicVolume, 1.0f);
-        _GameSettings.EffectsVolume = PlayerPrefs.GetFloat(EffectsVolume, 1.0f);
-        _GameSettings.AmbientVolume = PlayerPrefs.GetFloat(AmbientVolume, 1.0f);
-
-        _GameSettings.ResolutionIndex = (_GameSettings.ResolutionIndex >= _Resolutions.Length) 
-            ? _Resolutions.Length - 1 : _GameSettings.ResolutionIndex;
+        _GameSettings.MasterVolume = Mathf.Clamp(PlayerPrefs.GetFloat(MasterVolume, 0.75f), 0f, 1f);
+        _GameSettings.MusicVolume = Mathf.Clamp(PlayerPrefs.GetFloat(MusicVolume, 1.0f), 0f, 1f);
+        _GameSettings.EffectsVolume = Mathf.Clamp(PlayerPrefs.GetFloat(EffectsVolume, 1.0f), 0f, 1f);
+        _GameSettings.AmbientVolume = Mathf.Clamp(PlayerPrefs.GetFloat(AmbientVolume, 1.0f), 0f, 1f);
     }
 
     /// <summary>
