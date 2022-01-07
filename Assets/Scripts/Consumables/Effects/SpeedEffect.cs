@@ -16,7 +16,7 @@ public struct SpeedEffect : IEffect
         if (_duration.IsActive)
             context.transform.GetComponent<PlayerMovement>().SpeedMultipliers.Remove(_duration);
 
-        MessageLog.Instance.Send((SpeedMultiplier >= 0f ? "+" : string.Empty) + $"{SpeedMultiplier * 100f - 100f}% Speed", Color.green);
+        MessageLog.Instance.Send((SpeedMultiplier >= 1f ? "+" : string.Empty) + $"{SpeedMultiplier * 100f - 100f}% Speed", Color.green);
 
         _duration = context.transform.GetComponent<PlayerMovement>().SpeedMultipliers.Add(Time, SpeedMultiplier);
     }
