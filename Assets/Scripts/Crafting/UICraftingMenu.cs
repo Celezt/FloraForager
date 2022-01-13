@@ -83,7 +83,7 @@ public class UICraftingMenu : Singleton<UICraftingMenu>
                 dropPosition = collider.bounds.center;
 
             Instantiate(ItemTypeSettings.Instance.ItemObject, dropPosition, Quaternion.identity)
-                .Spawn(new ItemAsset { ID = _SelectedItem.Item.ID, Amount = _SelectedItem.Item.Amount }, playerInfo.transform.forward.xz());
+                .Spawn(new ItemAsset { ID = _SelectedItem.Item.ID, Amount = _SelectedItem.Item.Amount }, Vector2.zero);
         }
 
         playerStamina.Stamina += _SelectedItem.StaminaChange;
